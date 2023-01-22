@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>Hgm</RootNamespace>
+        <NoWarn>8632</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ContentWithTargetPath Include="res/**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
+            <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+        </ContentWithTargetPath>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Petal\Petal.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="FNA">
+        <HintPath>..\Petal\lib\FNA.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Scenes" />
+    </ItemGroup>
+</Project>
