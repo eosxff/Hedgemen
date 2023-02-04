@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Petal.Assets;
 using Petal.Input;
+using Petal.Scenery;
 using Petal.Util;
 using Petal.Windowing;
 
@@ -11,7 +11,14 @@ namespace Petal;
 
 public class PetalGame : Game
 {
+	public static PetalGame Instance
+	{
+		get;
+		private set;
+	}
+	
 	private WindowMode _windowMode;
+	private Scene? _scene;
 	
 	public GraphicsDeviceManager Graphics
 	{
@@ -27,6 +34,17 @@ public class PetalGame : Game
 	public InputProvider Input
 	{
 		get;
+	}
+
+	public Scene? Scene
+	{
+		get => _scene;
+		set
+		{
+			_scene?.Exit();
+			_scene = value;
+			_scene?.Initialize();
+		}
 	}
 
 	public WindowMode WindowMode
@@ -66,6 +84,7 @@ public class PetalGame : Game
 	{
 		Graphics = new GraphicsDeviceManager(this);
 		Input = new InputProvider();
+		Instance = this;
 	}
 
 	public void ApplyGameSettings(GameSettings settings)
@@ -73,8 +92,9 @@ public class PetalGame : Game
 		Graphics.PreferredBackBufferWidth = settings.WindowWidth;
 		Graphics.PreferredBackBufferHeight = settings.WindowHeight;
 		Graphics.SynchronizeWithVerticalRetrace = settings.Vsync;
-		
-		IsFixedTimeStep = settings.Vsync;
+
+		IsMouseVisible = settings.IsMouseVisible;
+		IsFixedTimeStep = !settings.Vsync;
 		TargetElapsedTime = TimeSpan.FromMilliseconds(1000d / settings.PreferredFramerate);
 		WindowMode = settings.WindowMode;
 		
@@ -89,7 +109,8 @@ public class PetalGame : Game
 			WindowHeight = Graphics.PreferredBackBufferHeight,
 			WindowMode = WindowMode.Windowed,
 			PreferredFramerate = (int)Math.Round(1000d / TargetElapsedTime.Milliseconds),
-			Vsync = IsFixedTimeStep
+			Vsync = IsFixedTimeStep,
+			IsMouseVisible = IsMouseVisible
 		};
 
 		return settings;
@@ -111,22 +132,21 @@ public class PetalGame : Game
 			WindowHeight = 540,
 			PreferredFramerate = 60,
 			Vsync = false,
-			WindowMode = WindowMode.Windowed
+			WindowMode = WindowMode.Windowed,
+			IsMouseVisible = true
 		};
 	}
 
 	protected override void Draw(GameTime gameTime)
 	{
+		Scene?.Draw();
 		base.Draw(gameTime);
 	}
 
 	protected override void Update(GameTime gameTime)
 	{
 		Input.Update(gameTime, Matrix.Identity);
-		
-		if(Input.KeyPressed(Keys.Space))
-			Exit();
-		
+		Scene?.Update();
 		base.Update(gameTime);
 	}
 }

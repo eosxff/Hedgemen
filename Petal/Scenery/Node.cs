@@ -1,6 +1,6 @@
 ﻿namespace Petal.Scenery;
 
-public abstract class SceneNode
+public abstract class Node
 {
 	
 }
