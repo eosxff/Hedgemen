@@ -153,11 +153,7 @@ public abstract class Node
 
 	protected virtual void OnDraw(GameTime time) { }
 	
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public TNode Add<TNode>(TNode child) where TNode : Node
-		=> (TNode)Add((Node)child); // lol
-	
-	public Node Add(Node child)
 	{
 		_children.Add(child);
 		child.Parent = this;
