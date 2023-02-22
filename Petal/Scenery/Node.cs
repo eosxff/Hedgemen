@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 
 namespace Petal.Framework.Scenery;
@@ -58,11 +59,17 @@ public abstract class Node
 		set;
 	} = true;
 
+	private Anchor _anchor = Anchor.TopLeft;
+	
 	public Anchor Anchor
 	{
-		get;
-		set;
-	} = Anchor.TopLeft;
+		get => _anchor;
+		set
+		{
+			_anchor = value;
+			MarkAsDirty();
+		}
+	}
 
 	public Node? Parent
 	{
@@ -76,19 +83,40 @@ public abstract class Node
 		internal set;
 	} = null;
 
+	private Rectangle _bounds;
+	
 	public Rectangle Bounds
 	{
-		get;
-		set;
+		get => _bounds;
+		set
+		{
+			_bounds = value;
+
+			foreach (var child in Children)
+				child.MarkAsDirty();
+
+			MarkAsDirty();
+		}
 	}
+
+	public Rectangle Size
+		=> new(0, 0, Bounds.Width, Bounds.Height);
+
+	private bool _isDirty = true;
 
 	protected Node()
 	{
-		Bounds = GetDefaultBounds();
+		_bounds = GetDefaultBounds();
 	}
 
 	public void Update(GameTime time, NodeSelection selection)
 	{
+		if (_isDirty)
+		{
+			UpdateBounds();
+			UpdateChildrenBounds();
+		}
+		
 		OnBeforeUpdate?.Invoke(this);
 		
 		OnUpdate(time, selection);
@@ -124,7 +152,11 @@ public abstract class Node
 	}
 
 	protected virtual void OnDraw(GameTime time) { }
-
+	
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public TNode Add<TNode>(TNode child) where TNode : Node
+		=> (TNode)Add((Node)child); // lol
+	
 	public Node Add(Node child)
 	{
 		_children.Add(child);
@@ -171,8 +203,10 @@ public abstract class Node
 
 	public Node? GetHoveredNode(Vector2 position)
 	{
-		foreach (var child in Children)
+		for (int i = Children.Count - 1; i >= 0; --i)
 		{
+			var child = Children[i];
+
 			if (!child.IsActive)
 				continue;
 			
@@ -182,15 +216,6 @@ public abstract class Node
 				return node;
 		}
 
-		/*for (int i = Children.Count - 1; i >= 0; --i)
-		{
-			var child = Children[i];
-			var node = child.GetHoveredNode(position);
-
-			if (node != null)
-				return node;
-		}*/
-
 		if(IsActive)
 			return IsHovering(position) ? this : null;
 
@@ -199,8 +224,7 @@ public abstract class Node
 
 	public void Destroy()
 	{
-		Console.WriteLine(Parent?.Name);
-		/*foreach (var child in Children.ToList())
+		foreach (var child in Children.ToList())
 		{
 			child.Destroy();
 		}
@@ -208,9 +232,88 @@ public abstract class Node
 		Parent?.Remove(this);
 		Scene?.RemoveNode(this);
 		
-		OnDestroy?.Invoke(this);*/
+		OnDestroy?.Invoke(this);
+	}
+	
+	protected virtual Rectangle CalculateBounds(Rectangle bounds)
+	{
+		if (Scene == null)
+			return bounds;
 		
-		//Scene?.RemoveNode(this);
-		Parent?.Remove(this);
+		var parentBounds = Scene.Root.Bounds;
+
+		if(Parent != null)
+			parentBounds = Parent.Bounds;
+
+		var relBounds = bounds;
+		var absBounds = new Rectangle(0, 0, bounds.Width, bounds.Height);
+
+		switch (Anchor)
+		{
+			case Anchor.TopLeft:
+				absBounds.X += parentBounds.Left;
+				absBounds.Y += parentBounds.Top;
+				break;
+			case Anchor.Top:
+				absBounds.X += parentBounds.Center.X - (relBounds.Width / 2);
+				absBounds.Y += parentBounds.Top;
+				break;
+			case Anchor.TopRight:
+				absBounds.X += parentBounds.Right - (relBounds.Width);
+				absBounds.Y += parentBounds.Top;
+				break;
+			case Anchor.CenterLeft:
+				absBounds.X += parentBounds.Left;
+				absBounds.Y += parentBounds.Center.Y - (relBounds.Height / 2);
+				break;
+			case Anchor.Center: 
+				absBounds.X += parentBounds.Center.X - (relBounds.Width / 2);
+				absBounds.Y += parentBounds.Center.Y - (relBounds.Height / 2);
+				break;
+			case Anchor.CenterRight:
+				absBounds.X += parentBounds.Right - (relBounds.Width);
+				absBounds.Y += parentBounds.Center.Y - (relBounds.Height / 2);
+				break;
+			case Anchor.BottomLeft:
+				absBounds.X += parentBounds.Left;
+				absBounds.Y += parentBounds.Bottom - (relBounds.Height);
+				break;
+			case Anchor.Bottom:
+				absBounds.X += parentBounds.Center.X - (relBounds.Width / 2);
+				absBounds.Y += parentBounds.Bottom - (relBounds.Height);
+				break;
+			case Anchor.BottomRight:
+				absBounds.X += parentBounds.Right - (relBounds.Width);
+				absBounds.Y += parentBounds.Bottom - (relBounds.Height);
+				break;
+		}
+		
+		return absBounds;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private bool MarkAsDirty()
+		=> _isDirty = true;
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void MarkAsClean()
+		=> _isDirty = false;
+
+	private void UpdateBounds()
+	{
+		_bounds = CalculateBounds(_bounds);
+		MarkAsClean();
+	}
+	
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	private void UpdateChildrenBounds()
+	{
+		_bounds = CalculateBounds(_bounds);
+		MarkAsClean();
+		
+		foreach (var child in Children)
+		{
+			child.UpdateChildrenBounds();
+		}
 	}
 }

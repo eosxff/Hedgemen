@@ -36,28 +36,43 @@ public class Hedgemen : PetalGame
 		
 		var texture = Assets.LoadAsset<Texture2D>(new FileInfo("peach.png").Open(FileMode.Open));
 		
-		scene.Root.Add(new Image
+		var image = scene.Root.Add(new Image
 		{
 			Bounds = new Rectangle(0, 0, 50, 50),
 			Texture = texture,
 			Name = "hedgemen:image_1",
-			Color = Color.Red
+			Color = Color.Red,
+			Anchor = Anchor.TopLeft
 		});
+
+		for (int i = 0; i < 200; ++i)
+		{
+			var imageChild = image.Add(new Image
+			{
+				Bounds = new Rectangle(0, 0, 50, 50),
+				Texture = texture,
+				Name = $"hedgemen:image_1-{i+1}",
+				Color = image.Color,
+				Anchor = image.Anchor
+			});
+		}
 		
 		var image2 = scene.Root.Add(new Image
 		{
-			Bounds = new Rectangle(25, 25, 50, 50),
+			Bounds = new Rectangle(0, 0, 32, 32),
 			Texture = texture,
 			Name = "hedgemen:image_2",
-			Color = Color.Green
+			Color = Color.Green,
+			Anchor = Anchor.Center
 		});
 		
 		var image3 = image2.Add(new Image
 		{
-			Bounds = new Rectangle(50, 50, 50, 50),
+			Bounds = new Rectangle(0, 0, 16, 16),
 			Texture = texture,
 			Name = "hedgemen:image_3",
-			Color = Color.Blue
+			Color = Color.Blue,
+			Anchor = Anchor.BottomLeft
 		});
 
 		scene.AfterUpdate += (sender, args) =>
@@ -71,6 +86,17 @@ public class Hedgemen : PetalGame
 					selection.Target?.Destroy();
 				}
 			}
+		};
+
+		scene.BeforeUpdate += (sender, args) =>
+		{
+			//Console.WriteLine(image2.Bounds);
+			if (ShouldResetAnchor())
+			{
+				image2.Anchor = (Anchor)(_rng.Next(0, 9));
+				image3.Anchor = (Anchor)(_rng.Next(0, 9));
+			}
+			//image3.Anchor = Anchor.BottomLeft;
 		};
 
 		ChangeScenes(scene);
@@ -87,6 +113,16 @@ public class Hedgemen : PetalGame
 			WindowMode = WindowMode.Windowed,
 			IsMouseVisible = true
 		};
+	}
+
+	private int _frames = 0;
+	private Random _rng = new();
+	private bool ShouldResetAnchor()
+	{
+		_frames++;
+		if(_frames % 60 == 0)
+			Console.WriteLine($"Frames: {_frames}");
+		return _frames % 60 == 0;
 	}
 
 	protected override void OnExiting(object sender, EventArgs args)

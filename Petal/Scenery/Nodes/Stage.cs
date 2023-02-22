@@ -55,15 +55,6 @@ public class Stage : Node
 			return;
 
 		var mousePosition = Scene.Input.MousePosition;
-		
-		/*foreach (var child in Children)
-		{
-			if (child.Scene == null)
-				continue;
-
-			if (child.GetHoveredNode(mousePosition) != null)
-				selection.Target = child;
-		}*/
 
 		if (Children.Count > 0)
 		{
@@ -83,4 +74,7 @@ public class Stage : Node
 		if (IsInteractable && IsHovering(mousePosition))
 			selection.Target = this;
 	}
+
+	protected override Rectangle CalculateBounds(Rectangle bounds)
+		=> new(0, 0, VirtualResolution.X, VirtualResolution.Y);
 }

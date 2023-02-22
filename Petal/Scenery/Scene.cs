@@ -48,7 +48,7 @@ public class Scene
 	public event EventHandler BeforeExit;
 	public event EventHandler AfterExit;
 	
-	public readonly Dictionary<NamespacedString, Node> _nodesInScene = new(); // todo
+	private readonly Dictionary<NamespacedString, Node> _nodesInScene = new();
 
 	public Node? FindNode(NamespacedString name)
 	{
