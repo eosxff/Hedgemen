@@ -1,17 +1,16 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Petal.Assets;
-using Petal.Input;
-using Petal.Scenery;
-using Petal.Util;
-using Petal.Windowing;
+using Petal.Framework.Assets;
+using Petal.Framework.Scenery;
+using Petal.Framework.Windowing;
+using Petal.Framework.Util;
 
-namespace Petal;
+namespace Petal.Framework;
 
 public class PetalGame : Game
 {
-	public static PetalGame Instance
+	public static PetalGame Petal
 	{
 		get;
 		private set;
@@ -31,20 +30,16 @@ public class PetalGame : Game
 		private set;
 	}
 
-	public InputProvider Input
-	{
-		get;
-	}
-
 	public Scene? Scene
 	{
 		get => _scene;
-		set
-		{
-			_scene?.Exit();
-			_scene = value;
-			_scene?.Initialize();
-		}
+	}
+
+	public void ChangeScenes(Scene scene)
+	{
+		_scene?.Exit();
+		_scene = scene;
+		_scene?.Initialize();
 	}
 
 	public WindowMode WindowMode
@@ -74,6 +69,8 @@ public class PetalGame : Game
 					Window.SetBorderless(false);
 					Graphics.ToggleFullScreen();
 					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 			
 			Graphics.ApplyChanges();
@@ -83,8 +80,7 @@ public class PetalGame : Game
 	public PetalGame()
 	{
 		Graphics = new GraphicsDeviceManager(this);
-		Input = new InputProvider();
-		Instance = this;
+		Petal = this;
 	}
 
 	public void ApplyGameSettings(GameSettings settings)
@@ -108,12 +104,19 @@ public class PetalGame : Game
 			WindowWidth = Graphics.PreferredBackBufferWidth,
 			WindowHeight = Graphics.PreferredBackBufferHeight,
 			WindowMode = WindowMode.Windowed,
-			PreferredFramerate = (int)Math.Round(1000d / TargetElapsedTime.Milliseconds),
+			// we don't use TargetElapsedTime.Milliseconds due to precision loss
+			PreferredFramerate = (int)(1000d / (TargetElapsedTime.Ticks / 10000d)),
 			Vsync = IsFixedTimeStep,
 			IsMouseVisible = IsMouseVisible
 		};
 
 		return settings;
+	}
+
+	protected override void OnExiting(object sender, EventArgs args)
+	{
+		base.OnExiting(sender, args);
+		Petal = null;
 	}
 
 	protected override void Initialize()
@@ -139,14 +142,13 @@ public class PetalGame : Game
 
 	protected override void Draw(GameTime gameTime)
 	{
-		Scene?.Draw();
+		Scene?.Draw(gameTime);
 		base.Draw(gameTime);
 	}
 
 	protected override void Update(GameTime gameTime)
 	{
-		Input.Update(gameTime, Matrix.Identity);
-		Scene?.Update();
+		Scene?.Update(gameTime);
 		base.Update(gameTime);
 	}
 }

@@ -1,35 +1,79 @@
 ﻿using System;
 using System.IO;
-using Hgm.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Petal;
-using Petal.Graphics;
-using Petal.Input;
-using Petal.Windowing;
+using Petal.Framework;
+using Petal.Framework.Input;
+using Petal.Framework.Scenery;
+using Petal.Framework.Scenery.Nodes;
+using Petal.Framework.Windowing;
 
 namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
-	private Renderer _renderer;
-	private Texture2D _texture;
-	
+	public static Hedgemen Instance
+	{
+		get;
+		private set;
+	}
+
 	public Hedgemen()
 	{
-		
+		Instance = this;
 	}
 
 	protected override void Initialize()
 	{
 		base.Initialize();
-		_renderer = new SceneRenderer();
-		_texture = Assets.LoadAsset<Texture2D>(new FileInfo("peach.png").Open(FileMode.Open));
-		Scene = new MainMenu
+		
+		var scene = new Scene(new Stage
 		{
-			BackgroundColor = Color.CornflowerBlue
+			Tag = "root",
+			Name = "hedgemen:ui/root_node",
+			VirtualResolution = new Vector2Int(640, 360)
+		});
+		
+		var texture = Assets.LoadAsset<Texture2D>(new FileInfo("peach.png").Open(FileMode.Open));
+		
+		scene.Root.Add(new Image
+		{
+			Bounds = new Rectangle(0, 0, 50, 50),
+			Texture = texture,
+			Name = "hedgemen:image_1",
+			Color = Color.Red
+		});
+		
+		var image2 = scene.Root.Add(new Image
+		{
+			Bounds = new Rectangle(25, 25, 50, 50),
+			Texture = texture,
+			Name = "hedgemen:image_2",
+			Color = Color.Green
+		});
+		
+		var image3 = image2.Add(new Image
+		{
+			Bounds = new Rectangle(50, 50, 50, 50),
+			Texture = texture,
+			Name = "hedgemen:image_3",
+			Color = Color.Blue
+		});
+
+		scene.AfterUpdate += (sender, args) =>
+		{
+			if (sender is Scene self)
+			{
+				if (self.Input.MouseButtonClicked(MouseButtons.LeftButton))
+				{
+					var selection = new NodeSelection();
+					self.Root.ScanForTargetNode(selection);
+					selection.Target?.Destroy();
+				}
+			}
 		};
+
+		ChangeScenes(scene);
 	}
 
 	protected override GameSettings GetInitialGameSettings()
@@ -39,30 +83,14 @@ public class Hedgemen : PetalGame
 			PreferredFramerate = 60,
 			Vsync = false,
 			WindowWidth = 1200,
-			WindowHeight = 800,
+			WindowHeight = 700,
 			WindowMode = WindowMode.Windowed,
 			IsMouseVisible = true
 		};
 	}
 
-	protected override void Update(GameTime gameTime)
+	protected override void OnExiting(object sender, EventArgs args)
 	{
-		base.Update(gameTime);
-		
-		if(Input.KeyPressed(Keys.Escape))
-			Exit();
-		
-		if (Input.MouseButtonClicked(MouseButtons.LeftButton))
-		{
-			if (!Input.IsRecordingTypedChars)
-				Input.IsRecordingTypedChars = true;
-			else
-				Console.WriteLine(Input.GetTypedChars());
-		}
-	}
-
-	protected override void Draw(GameTime gameTime)
-	{
-		base.Draw(gameTime);
+		base.OnExiting(sender, args);
 	}
 }

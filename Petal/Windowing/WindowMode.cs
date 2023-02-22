@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Petal.Windowing;
+namespace Petal.Framework.Windowing;
 
 public enum WindowMode
 {

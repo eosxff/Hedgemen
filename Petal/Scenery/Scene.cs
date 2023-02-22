@@ -1,84 +1,124 @@
-﻿using Microsoft.Xna.Framework;
-using Petal.Graphics;
-using Petal.Scenery.Nodes;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Petal.Framework.Graphics;
+using Petal.Framework.Input;
+using Petal.Framework.Scenery.Nodes;
 
-namespace Petal.Scenery;
+namespace Petal.Framework.Scenery;
 
-public abstract class Scene
+public delegate void SceneEvent(Scene scene);
+
+public class Scene
 {
+	public Renderer Renderer
+	{
+		get;
+	} = null;
+	
 	public Color BackgroundColor
 	{
 		get;
 		set;
 	} = Color.CornflowerBlue;
 
-	public Node Root
+	public Stage Root
 	{
 		get;
-		protected set;
 	}
 
-	public Renderer Renderer
+	public InputProvider Input
 	{
 		get;
-		protected set;
 	}
 
-	protected Scene()
+	public NodeSelection NodeSelector
 	{
+		get;
+	} = new ();
+	
+	public event EventHandler BeforeUpdate;
+	public event EventHandler AfterUpdate;
+	
+	public event EventHandler BeforeDraw;
+	public event EventHandler AfterDraw;
+
+	public event EventHandler AfterInitialize;
+
+	public event EventHandler BeforeExit;
+	public event EventHandler AfterExit;
+	
+	public readonly Dictionary<NamespacedString, Node> _nodesInScene = new(); // todo
+
+	public Node? FindNode(NamespacedString name)
+	{
+		_nodesInScene.TryGetValue(name, out var node);
+		return node;
+	}
+
+	public Scene(Stage root)
+	{
+		Input = new InputProvider();
+		Root = root;
+		Root.Scene = this;
 		
-	}
-
-	public void Initialize()
-	{
 		Renderer = new SceneRenderer();
-		Root = new Group();
-		AfterInitialize();
+		Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
 	}
 
-	protected virtual void AfterInitialize()
+	public void Update(GameTime time)
 	{
+		Input.Update(time, Renderer.RenderState.TransformationMatrix);
 		
+		BeforeUpdate?.Invoke(this, EventArgs.Empty);
+
+		NodeSelector.Reset();
+		Root.ScanForTargetNode(NodeSelector);
+		Root.Update(time, NodeSelector);
+
+		AfterUpdate?.Invoke(this, EventArgs.Empty);
 	}
 
-	public void Update()
-	{
-		BeforeUpdate();
-		
-		AfterUpdate();
-	}
-
-	protected virtual void BeforeUpdate()
-	{
-		
-	}
-
-	protected virtual void AfterUpdate()
-	{
-		
-	}
-
-	public void Draw()
+	public void Draw(GameTime time)
 	{
 		Renderer.RenderState.Graphics.GraphicsDevice.Clear(BackgroundColor);
 		
-		BeforeDraw();
-
-		AfterDraw();
+		BeforeDraw?.Invoke(this, EventArgs.Empty);
+		
+		Root.Draw(time);
+		
+		AfterDraw?.Invoke(this, EventArgs.Empty);
 	}
 
-	protected virtual void BeforeDraw()
+	public void Exit()
 	{
-		
+		BeforeExit?.Invoke(this, EventArgs.Empty);
+		Renderer.Dispose();
+		AfterExit?.Invoke(this, EventArgs.Empty);
 	}
 
-	protected virtual void AfterDraw()
+	internal void Initialize()
 	{
+		Root.OnVirtualResolutionChanged += stage =>
+		{
+			if (stage.Scene == null)
+				return;
+			
+			stage.Scene.Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
+		};
 		
+		AfterInitialize?.Invoke(this, EventArgs.Empty);
+	}
+	
+	internal void AddNode(Node node)
+	{
+		_nodesInScene.Add(node.Name, node);
+		node.Scene = this;
 	}
 
-	public virtual void Exit()
+	internal void RemoveNode(Node node)
 	{
-		
+		_nodesInScene.Remove(node.Name);
+		node.Scene = null;
 	}
 }

@@ -1,14 +1,15 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace Petal.Graphics;
+namespace Petal.Framework.Graphics;
 
 public sealed class SceneRenderer : Renderer
 {
-	private SpriteBatch _renderer;
+	private readonly SpriteBatch _renderer;
 	
 	public SceneRenderer()
 	{
-		_renderer = new SpriteBatch(PetalGame.Instance.GraphicsDevice);
+		_renderer = new SpriteBatch(PetalGame.Petal.GraphicsDevice);
 	}
 	
 	public override void Begin()
@@ -59,5 +60,10 @@ public sealed class SceneRenderer : Renderer
 			data.Scale,
 			data.SpriteEffects,
 			data.LayerDepth);
+	}
+
+	public override void Dispose()
+	{
+		_renderer.Dispose();
 	}
 }

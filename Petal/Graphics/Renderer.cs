@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Petal.Graphics;
+namespace Petal.Framework.Graphics;
 
-public abstract class Renderer
+public abstract class Renderer : IDisposable
 {
 	public RendererState RenderState
 	{
@@ -20,6 +21,7 @@ public abstract class Renderer
 	public abstract void End();
 	public abstract void Draw(RenderData data);
 	public abstract void Draw(RenderStringData data);
+	public abstract void Dispose();
 }
 
 public struct RenderData
@@ -28,60 +30,53 @@ public struct RenderData
 	{
 		get;
 		init;
-	}
+	} = null;
 
 	public Rectangle? SrcRect
 	{
 		get;
 		init;
-	}
+	} = null;
 
 	public Rectangle DstRect
 	{
 		get;
 		init;
-	}
+	} = new(0, 0, 1, 1);
 
 	public Color Color
 	{
 		get;
 		init;
-	}
+	} = Color.White;
 
 	public float Rotation
 	{
 		get;
 		init;
-	}
+	} = 0.0f;
 
 	public Vector2 Origin
 	{
 		get;
 		init;
-	}
+	} = Vector2.Zero;
 
 	public SpriteEffects SpriteEffects
 	{
 		get;
 		init;
-	}
+	} = SpriteEffects.None;
 
 	public float LayerDepth
 	{
 		get;
 		init;
-	}
+	} = 0.0f;
 
 	public RenderData()
 	{
-		Texture = null;
-		SrcRect = null;
-		DstRect = Rectangle.Empty;
-		Color = Color.White;
-		Rotation = 0.0f;
-		Origin = Vector2.Zero;
-		SpriteEffects = SpriteEffects.None;
-		LayerDepth = 0;
+		
 	}
 }
 
@@ -91,66 +86,58 @@ public struct RenderStringData
 	{
 		get;
 		init;
-	}
+	} = string.Empty;
 
 	public SpriteFont Font
 	{
 		get;
 		init;
-	}
+	} = null;
 
 	public Vector2 Position
 	{
 		get;
 		init;
-	}
+	} = Vector2.Zero;
 
 	public Color Color
 	{
 		get;
 		init;
-	}
-	
+	} = Color.White;
+
 	public float Rotation
-	{ 
+	{
 		get;
 		init;
-	}
+	} = 1.0f;
 
 	public Vector2 Origin
 	{
 		get;
 		init;
-	}
+	} = new(0.0f, 0.0f);
 
 	public float Scale
 	{
 		get;
 		init;
-	}
+	} = 1.0f;
 
 	public SpriteEffects SpriteEffects
 	{
 		get;
 		init;
-	}
+	} = SpriteEffects.None;
 
 	public float LayerDepth
 	{
 		get;
 		init;
-	}
+	} = 0.0f;
 	
 	public RenderStringData()
 	{
-		Text = string.Empty;
-		Font = null;
-		Position = Vector2.Zero;
-		Color = Color.White;
-		Rotation = 0.0f;
-		Origin = Vector2.Zero;
-		Scale = 1.0f;
-		SpriteEffects = SpriteEffects.None;
-		LayerDepth = 0;
+		
 	}
 }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Text.Json;
-using Petal.Windowing;
+using Petal.Framework.Windowing;
 
-namespace Petal;
+namespace Petal.Framework;
 
 [Serializable]
-public sealed class GameSettings
+public struct GameSettings
 {
 	public static JsonSerializerOptions JsonDeserializeOptions
 		=> new();
@@ -46,13 +46,18 @@ public sealed class GameSettings
 		set;
 	} = true;
 
+	public GameSettings()
+	{
+		
+	}
+
 	public static GameSettings FromJson(string json)
 	{
-		var settings = JsonSerializer.Deserialize<GameSettings>(json, JsonDeserializeOptions);
+		var settings = JsonSerializer.Deserialize<GameSettings?>(json, JsonDeserializeOptions);
 		if (settings == null)
 		{
 			throw new ArgumentException($"Settings can not be created from json.");
 		}
-		return settings;
+		return (GameSettings)settings;
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Content;
 
-namespace Petal.Assets;
+namespace Petal.Framework.Assets;
 
 internal class StubContentManager : ContentManager
 {

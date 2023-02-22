@@ -1,5 +1,5 @@
 ﻿using Hgm;
-using Petal;
+using Petal.Framework;
 
 using PetalGame game = new Hedgemen();
 game.Run();

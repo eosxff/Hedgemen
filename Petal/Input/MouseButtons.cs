@@ -1,4 +1,4 @@
-﻿namespace Petal.Input;
+﻿namespace Petal.Framework.Input;
 
 public enum MouseButtons
 {

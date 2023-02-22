@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Petal.Graphics;
+namespace Petal.Framework.Graphics;
 
 public class RendererState
 {
@@ -61,7 +61,7 @@ public class RendererState
 
 	public RendererState()
 	{
-		Graphics = PetalGame.Instance.Graphics;
+		Graphics = PetalGame.Petal.Graphics;
 		RasterizerState = new RasterizerState
 		{
 			CullMode = CullMode.CullCounterClockwiseFace,

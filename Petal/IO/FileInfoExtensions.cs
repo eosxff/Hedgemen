@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Petal.IO;
+namespace Petal.Framework.IO;
 
 public static class FileInfoExtensions
 {

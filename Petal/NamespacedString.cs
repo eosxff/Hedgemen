@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
-namespace Petal;
+namespace Petal.Framework;
 
 [Serializable]
 public struct NamespacedString

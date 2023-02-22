@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 
-namespace Petal.Assets;
+namespace Petal.Framework.Assets;
 
 public sealed class AssetLoader
 {
@@ -14,7 +14,7 @@ public sealed class AssetLoader
 	public event OnAssetLoaded AssetLoaded = _ => { };
 	public event OnAssetUnknownType AssetUnknownType = _ => { };
 
-	private GraphicsDevice _graphicsDevice;
+	private readonly GraphicsDevice _graphicsDevice;
 
 	public AssetLoader(GraphicsDevice graphicsDevice)
 	{

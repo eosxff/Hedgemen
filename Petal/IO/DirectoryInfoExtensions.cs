@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.VisualBasic.FileIO;
 
-namespace Petal.IO;
+namespace Petal.Framework.IO;
 
 public delegate bool FileListFilter(FileInfo fileHandle);
 public delegate bool DirectoryListFilter(DirectoryInfo directory);

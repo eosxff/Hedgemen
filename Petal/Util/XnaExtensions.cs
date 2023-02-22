@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Petal.Util;
+namespace Petal.Framework.Util;
 
 public static class XnaExtensions
 {

@@ -4,11 +4,11 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Petal.Input;
+namespace Petal.Framework.Input;
 
 public class InputProvider : IKeyboardProvider, IMouseProvider
 {
-	private StringBuilder _typedChars;
+	private readonly StringBuilder _typedChars;
 
 	private KeyboardState _currentKeys;
 	private KeyboardState _previousKeys;
@@ -41,7 +41,7 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 		};
 	}
 	
-	public void Update(GameTime gameTime, Matrix scaleMatrix)
+	public void Update(GameTime time, Matrix scaleMatrix)
 	{
 		if(_shouldClearTypedChars)
 		{
@@ -132,7 +132,8 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 	public bool AnyMouseButtonClicked(params MouseButtons[] buttons)
 	{
 		return buttons.Any(e => 
-			MouseStateFired(_previousButtons, e, ButtonState.Pressed) && !MouseStateFired(_currentButtons, e, ButtonState.Pressed));
+			MouseStateFired(_previousButtons, e, ButtonState.Pressed) && 
+			!MouseStateFired(_currentButtons, e, ButtonState.Pressed));
 	}
 
 	public bool MouseButtonUp(MouseButtons button)
@@ -149,13 +150,15 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 
 	public bool MouseButtonReleased(MouseButtons button)
 	{
-		return MouseStateFired(_currentButtons, button, ButtonState.Released) && MouseStateFired(_previousButtons, button, ButtonState.Pressed);
+		return MouseStateFired(_currentButtons, button, ButtonState.Released) && 
+		       MouseStateFired(_previousButtons, button, ButtonState.Pressed);
 	}
 
 	public bool AnyMouseButtonReleased(params MouseButtons[] buttons)
 	{
 		return buttons.Any(e => 
-			MouseStateFired(_currentButtons, e, ButtonState.Released) && MouseStateFired(_previousButtons, e, ButtonState.Pressed));
+			MouseStateFired(_currentButtons, e, ButtonState.Released) && 
+			MouseStateFired(_previousButtons, e, ButtonState.Pressed));
 	}
 
 	public int MouseWheel => _currentButtons.ScrollWheelValue;

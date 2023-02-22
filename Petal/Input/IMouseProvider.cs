@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Petal.Input;
+namespace Petal.Framework.Input;
 
 public interface IMouseProvider
 {
