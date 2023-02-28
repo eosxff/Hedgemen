@@ -3,12 +3,12 @@
 public enum Anchor
 {
 	TopLeft,
-	Top,
+	TopCenter,
 	TopRight,
 	CenterLeft,
 	Center,
 	CenterRight,
 	BottomLeft,
-	Bottom,
+	BottomCenter,
 	BottomRight
 }

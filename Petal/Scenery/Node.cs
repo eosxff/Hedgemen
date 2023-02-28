@@ -91,10 +91,6 @@ public abstract class Node
 		set
 		{
 			_bounds = value;
-
-			foreach (var child in Children)
-				child.MarkAsDirty();
-
 			MarkAsDirty();
 		}
 	}
@@ -250,7 +246,7 @@ public abstract class Node
 				absBounds.X += parentBounds.Left;
 				absBounds.Y += parentBounds.Top;
 				break;
-			case Anchor.Top:
+			case Anchor.TopCenter:
 				absBounds.X += parentBounds.Center.X - (relBounds.Width / 2);
 				absBounds.Y += parentBounds.Top;
 				break;
@@ -274,7 +270,7 @@ public abstract class Node
 				absBounds.X += parentBounds.Left;
 				absBounds.Y += parentBounds.Bottom - (relBounds.Height);
 				break;
-			case Anchor.Bottom:
+			case Anchor.BottomCenter:
 				absBounds.X += parentBounds.Center.X - (relBounds.Width / 2);
 				absBounds.Y += parentBounds.Bottom - (relBounds.Height);
 				break;
@@ -282,6 +278,8 @@ public abstract class Node
 				absBounds.X += parentBounds.Right - (relBounds.Width);
 				absBounds.Y += parentBounds.Bottom - (relBounds.Height);
 				break;
+			default:
+				throw new ArgumentOutOfRangeException();
 		}
 		
 		return absBounds;
@@ -301,7 +299,7 @@ public abstract class Node
 		MarkAsClean();
 	}
 	
-	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void UpdateChildrenBounds()
 	{
 		_bounds = CalculateBounds(_bounds);

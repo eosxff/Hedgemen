@@ -45,19 +45,7 @@ public class Hedgemen : PetalGame
 			Anchor = Anchor.TopLeft
 		});
 
-		for (int i = 0; i < 200; ++i)
-		{
-			var imageChild = image.Add(new Image
-			{
-				Bounds = new Rectangle(0, 0, 50, 50),
-				Texture = texture,
-				Name = $"hedgemen:image_1-{i+1}",
-				Color = image.Color,
-				Anchor = image.Anchor
-			});
-		}
-		
-		var image2 = scene.Root.Add(new Image
+		var image2 = image.Add(new Image
 		{
 			Bounds = new Rectangle(0, 0, 32, 32),
 			Texture = texture,
@@ -90,13 +78,12 @@ public class Hedgemen : PetalGame
 
 		scene.BeforeUpdate += (sender, args) =>
 		{
-			//Console.WriteLine(image2.Bounds);
 			if (ShouldResetAnchor())
 			{
+				image.Anchor = (Anchor)(_rng.Next(0, 9));
 				image2.Anchor = (Anchor)(_rng.Next(0, 9));
 				image3.Anchor = (Anchor)(_rng.Next(0, 9));
 			}
-			//image3.Anchor = Anchor.BottomLeft;
 		};
 
 		ChangeScenes(scene);
