@@ -31,9 +31,12 @@ public class Hedgemen : PetalGame
 		{
 			Tag = "root",
 			Name = "hedgemen:ui/root_node",
-			VirtualResolution = new Vector2Int(640, 360)
-		});
-		
+			VirtualResolution = new Vector2Int(640, 360),
+		})
+		{
+			BackgroundColor = Color.CornflowerBlue
+		};
+
 		var texture = Assets.LoadAsset<Texture2D>(new FileInfo("peach.png").Open(FileMode.Open));
 		
 		var image = scene.Root.Add(new Image
@@ -56,7 +59,7 @@ public class Hedgemen : PetalGame
 		
 		var image3 = image2.Add(new Image
 		{
-			Bounds = new Rectangle(0, 0, 16, 16),
+			Bounds = new Rectangle(6, 6, 16, 16),
 			Texture = texture,
 			Name = "hedgemen:image_3",
 			Color = Color.Blue,
@@ -72,6 +75,11 @@ public class Hedgemen : PetalGame
 					var selection = new NodeSelection();
 					self.Root.ScanForTargetNode(selection);
 					selection.Target?.Destroy();
+				}
+
+				if (self.Input.MouseButtonClicked(MouseButtons.RightButton))
+				{
+					self.FindNode("hedgemen:image_3")?.Destroy();
 				}
 			}
 		};
@@ -107,8 +115,8 @@ public class Hedgemen : PetalGame
 	private bool ShouldResetAnchor()
 	{
 		_frames++;
-		if(_frames % 60 == 0)
-			Console.WriteLine($"Frames: {_frames}");
+		//if(_frames % 60 == 0)
+		//	Console.WriteLine($"Frames: {_frames}");
 		return _frames % 60 == 0;
 	}
 

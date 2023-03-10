@@ -84,6 +84,7 @@ public abstract class Node
 	} = null;
 
 	private Rectangle _bounds;
+	private Rectangle _absoluteBounds;
 	
 	public Rectangle Bounds
 	{
@@ -94,6 +95,9 @@ public abstract class Node
 			MarkAsDirty();
 		}
 	}
+
+	public Rectangle AbsoluteBounds
+		=> _absoluteBounds;
 
 	public Rectangle Size
 		=> new(0, 0, Bounds.Width, Bounds.Height);
@@ -232,13 +236,13 @@ public abstract class Node
 		if (Scene == null)
 			return bounds;
 		
-		var parentBounds = Scene.Root.Bounds;
+		var parentBounds = Scene.Root.AbsoluteBounds;
 
 		if(Parent != null)
-			parentBounds = Parent.Bounds;
+			parentBounds = Parent.AbsoluteBounds;
 
 		var relBounds = bounds;
-		var absBounds = new Rectangle(0, 0, bounds.Width, bounds.Height);
+		var absBounds = relBounds;
 
 		switch (Anchor)
 		{
@@ -295,19 +299,25 @@ public abstract class Node
 
 	private void UpdateBounds()
 	{
-		_bounds = CalculateBounds(_bounds);
+		CalculateAbsoluteBounds(_bounds);
 		MarkAsClean();
 	}
 	
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void UpdateChildrenBounds()
 	{
-		_bounds = CalculateBounds(_bounds);
+		CalculateAbsoluteBounds(_bounds);
 		MarkAsClean();
 		
 		foreach (var child in Children)
 		{
 			child.UpdateChildrenBounds();
 		}
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void CalculateAbsoluteBounds(Rectangle relativeBounds)
+	{
+		_absoluteBounds = CalculateBounds(relativeBounds);
 	}
 }

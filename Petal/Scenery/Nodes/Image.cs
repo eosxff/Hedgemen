@@ -28,7 +28,7 @@ public class Image : Node
 		Scene.Renderer.Draw(new RenderData
 		{
 			Texture = Texture,
-			DstRect = Bounds,
+			DstRect = AbsoluteBounds,
 			Color = Color
 		});
 		

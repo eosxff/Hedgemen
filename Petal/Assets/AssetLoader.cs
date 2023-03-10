@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 
 namespace Petal.Framework.Assets;
 
-public sealed class AssetLoader
+public sealed class AssetLoader : IDisposable
 {
 	public delegate void OnAssetLoaded(object asset);
 	public delegate void OnAssetUnknownType(Type type);
@@ -15,10 +16,12 @@ public sealed class AssetLoader
 	public event OnAssetUnknownType AssetUnknownType = _ => { };
 
 	private readonly GraphicsDevice _graphicsDevice;
+	private readonly ContentManager _content;
 
 	public AssetLoader(GraphicsDevice graphicsDevice)
 	{
 		_graphicsDevice = graphicsDevice;
+		_content = new ContentManager(PetalGame.Petal.Services);
 	}
 
 	public T LoadAsset<T>(Stream stream)
@@ -58,6 +61,27 @@ public sealed class AssetLoader
 		
 		AssetUnknownType(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
-		                            $"'{nameof(name)}, {uri}'.");
+		                            $"'{nameof(name)}, {name} | '{nameof(uri)}, {uri}'.");
+	}
+
+	public T LoadAsset<T>(string path)
+	{
+		var assetType = typeof(T);
+
+		if (assetType == typeof(SpriteFont))
+		{
+			object asset = _content.Load<SpriteFont>(path);
+			AssetLoaded(asset);
+			return (T)asset;
+		}
+		
+		AssetUnknownType(assetType);
+		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
+		                            $"'{nameof(path)}, {path}'.");
+	}
+
+	public void Dispose()
+	{
+		_content?.Dispose();
 	}
 }

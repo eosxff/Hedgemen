@@ -64,6 +64,14 @@ public class Scene
 		
 		Renderer = new SceneRenderer();
 		Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
+		
+		Root.OnVirtualResolutionChanged += stage =>
+		{
+			if (stage.Scene == null)
+				return;
+			
+			stage.Scene.Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
+		};
 	}
 
 	public void Update(GameTime time)
@@ -99,14 +107,6 @@ public class Scene
 
 	internal void Initialize()
 	{
-		Root.OnVirtualResolutionChanged += stage =>
-		{
-			if (stage.Scene == null)
-				return;
-			
-			stage.Scene.Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
-		};
-		
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
 	}
 	

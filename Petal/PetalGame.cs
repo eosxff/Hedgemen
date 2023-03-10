@@ -116,6 +116,7 @@ public class PetalGame : Game
 	protected override void OnExiting(object sender, EventArgs args)
 	{
 		base.OnExiting(sender, args);
+		Assets.Dispose();
 		Petal = null;
 	}
 
