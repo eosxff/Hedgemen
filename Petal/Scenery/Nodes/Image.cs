@@ -18,6 +18,11 @@ public class Image : Node
 		set;
 	}
 
+	protected override Rectangle GetDefaultBounds()
+	{
+		return new Rectangle(0, 0, 125, 35);
+	}
+
 	protected override void OnDraw(GameTime time)
 	{
 		if (Scene == null || Texture == null)

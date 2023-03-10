@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 
 namespace Petal.Framework.Scenery.Nodes;
@@ -48,8 +49,8 @@ public class Stage : Node
 	{
 		IsInteractable = false;
 	}
-
-	public void ScanForTargetNode(NodeSelection selection)
+	
+	public void SearchForTargetNode(NodeSelection selection)
 	{
 		if (Scene == null)
 			return;
@@ -73,6 +74,13 @@ public class Stage : Node
 
 		if (IsInteractable && IsHovering(mousePosition))
 			selection.Target = this;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void SearchForTargetNode(out NodeSelection selection)
+	{
+		selection = new NodeSelection();
+		SearchForTargetNode(selection);
 	}
 
 	protected override Rectangle CalculateBounds(Rectangle bounds)

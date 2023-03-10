@@ -44,9 +44,31 @@ public class Hedgemen : PetalGame
 			Bounds = new Rectangle(0, 0, 50, 50),
 			Texture = texture,
 			Name = "hedgemen:image_1",
-			Color = Color.Red,
+			Color = Color.White,
 			Anchor = Anchor.Center
 		});
+
+		image.OnFocusGained += node =>
+		{
+			if (node is Image imageNode)
+			{
+				imageNode.Color = Color.Red;
+			}
+		};
+		
+		image.OnFocusLost += node =>
+		{
+			if (node is Image imageNode)
+			{
+				imageNode.Color = Color.White;
+				imageNode.Destroy();
+			}
+		};
+
+		image.OnMouseHover += node => Console.WriteLine("MouseHover");
+		image.OnMouseDown += node => Console.WriteLine("MouseDown");
+		image.OnMousePressed += node => Console.WriteLine("MousePressed");
+		image.OnMouseReleased += node => Console.WriteLine("MouseReleased");
 
 		var image2 = image.Add(new Image
 		{
@@ -59,21 +81,20 @@ public class Hedgemen : PetalGame
 		
 		var image3 = image2.Add(new Image
 		{
-			Bounds = new Rectangle(16, 16, 16, 16),
+			Bounds = new Rectangle(8, 8, 16, 16),
 			Texture = texture,
 			Name = "hedgemen:image_3",
 			Color = Color.Blue,
 			Anchor = Anchor.BottomLeft
 		});
 
-		scene.AfterUpdate += (sender, args) =>
+		/*scene.AfterUpdate += (sender, args) =>
 		{
 			if (sender is Scene self)
 			{
 				if (self.Input.MouseButtonClicked(MouseButtons.LeftButton))
 				{
-					var selection = new NodeSelection();
-					self.Root.ScanForTargetNode(selection);
+					self.Root.SearchForTargetNode(out var selection);
 					selection.Target?.Destroy();
 				}
 
@@ -82,7 +103,7 @@ public class Hedgemen : PetalGame
 					self.FindNode("hedgemen:image_3")?.Destroy();
 				}
 			}
-		};
+		};*/
 
 		scene.BeforeUpdate += (sender, args) =>
 		{

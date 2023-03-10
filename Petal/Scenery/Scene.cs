@@ -7,8 +7,6 @@ using Petal.Framework.Scenery.Nodes;
 
 namespace Petal.Framework.Scenery;
 
-public delegate void SceneEvent(Scene scene);
-
 public class Scene
 {
 	public Renderer Renderer
@@ -80,8 +78,9 @@ public class Scene
 		
 		BeforeUpdate?.Invoke(this, EventArgs.Empty);
 
-		NodeSelector.Reset();
-		Root.ScanForTargetNode(NodeSelector);
+		
+		NodeSelector.Update();
+		Root.SearchForTargetNode(NodeSelector);
 		Root.Update(time, NodeSelector);
 
 		AfterUpdate?.Invoke(this, EventArgs.Empty);

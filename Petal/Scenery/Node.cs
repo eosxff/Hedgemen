@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
+using Petal.Framework.Input;
 
 namespace Petal.Framework.Scenery;
 
@@ -22,7 +23,16 @@ public abstract class Node
 	public event NodeEvent<Node> OnAddedToParent;
 	
 	public event NodeEvent<Node> OnChildRemoved;
-	public event NodeEvent<Node> OnRemovedFromParent; 
+	public event NodeEvent<Node> OnRemovedFromParent;
+
+	public event NodeEvent<Node> OnFocusGained;
+	public event NodeEvent<Node> OnFocusLost;
+
+	public event NodeEvent<Node> OnMouseHover;
+	public event NodeEvent<Node> OnMouseDown;
+	public event NodeEvent<Node> OnMousePressed;
+	public event NodeEvent<Node> OnMouseReleased;
+
 
 	private readonly List<Node> _children = new();
 
@@ -58,6 +68,12 @@ public abstract class Node
 		get;
 		set;
 	} = true;
+
+	public NodeState State
+	{
+		get;
+		private set;
+	} = NodeState.Default;
 
 	private Anchor _anchor = Anchor.TopLeft;
 	
@@ -111,6 +127,8 @@ public abstract class Node
 
 	public void Update(GameTime time, NodeSelection selection)
 	{
+		ArgumentNullException.ThrowIfNull(Scene, $"{nameof(Scene)} cannot be null when being updated!");
+		
 		if (_isDirty)
 		{
 			UpdateBounds();
@@ -125,6 +143,34 @@ public abstract class Node
 		{
 			child.Update(time, selection);
 		}
+
+		if (IsInteractable)
+		{
+			bool isTarget = selection.Target == this;
+			bool isMouseDown = Scene.Input.MouseButtonClick(MouseButtons.LeftButton);
+			bool isMousePressed = Scene.Input.MouseButtonClicked(MouseButtons.LeftButton);
+			bool isMouseReleased = Scene.Input.MouseButtonReleased(MouseButtons.LeftButton);
+			
+			UpdateNodeState(selection, isMouseDown, isMousePressed, isMouseReleased);
+			
+			if(State == NodeState.MouseHover)
+				OnMouseHover?.Invoke(this);
+			
+			else if(State == NodeState.MouseDown && isMouseReleased)
+				OnMouseReleased?.Invoke(this);
+			
+			else if(State == NodeState.MouseDown && isMousePressed)
+				OnMousePressed?.Invoke(this);
+			
+			else if(State == NodeState.MouseDown && isMouseDown)
+				OnMouseDown?.Invoke(this);
+			
+			if(isTarget && selection.PreviousTarget != this)
+				OnFocusGained?.Invoke(this);
+			
+			else if(!isTarget && selection.PreviousTarget == this)
+				OnFocusLost?.Invoke(this);
+		}
 		
 		OnAfterUpdate?.Invoke(this);
 	}
@@ -136,6 +182,8 @@ public abstract class Node
 
 	public void Draw(GameTime time)
 	{
+		ArgumentNullException.ThrowIfNull(Scene, $"{nameof(Scene)} cannot be null when being drawn!");
+		
 		if (!IsVisible)
 			return;
 		
@@ -317,6 +365,27 @@ public abstract class Node
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void CalculateAbsoluteBounds(Rectangle relativeBounds)
 	{
+		if (relativeBounds == Rectangle.Empty)
+			relativeBounds = GetDefaultBounds();
+		
 		_absoluteBounds = CalculateBounds(relativeBounds);
+	}
+
+	private void UpdateNodeState(NodeSelection selection, bool isMouseDown, bool isMousePressed, bool isMouseReleased)
+	{
+		if (Scene == null)
+			return;
+
+		bool isTarget = selection.Target == this;
+
+		if (isTarget)
+		{
+			State = NodeState.MouseHover;
+		}
+
+		if ((isMouseDown || isMousePressed) && isTarget)
+		{
+			State = NodeState.MouseDown;
+		}
 	}
 }
