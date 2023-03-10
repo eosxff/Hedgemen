@@ -120,7 +120,7 @@ public abstract class Node
 
 	private bool _isDirty = true;
 
-	internal bool INTERNAL_MarkedForDeletion = false;
+	internal bool InternalMarkedForDeletion = false;
 
 	protected Node()
 	{
@@ -211,7 +211,7 @@ public abstract class Node
 	{
 		_children.Add(child);
 		child.Parent = this;
-		Scene?.AddNode(child);
+		Scene?.InternalAddNode(child);
 		
 		child.OnAddedToParent?.Invoke(child);
 		
@@ -230,7 +230,7 @@ public abstract class Node
 	{
 		_children.Remove(child);
 		child.Parent = null;
-		Scene?.RemoveNode(child);
+		Scene?.InternalRemoveNode(child);
 		
 		child.OnRemovedFromParent?.Invoke(child);
 		
@@ -274,7 +274,7 @@ public abstract class Node
 
 	public void MarkDestroy()
 	{
-		INTERNAL_MarkedForDeletion = true;
+		InternalMarkedForDeletion = true;
 	}
 
 	public void Destroy()
@@ -285,7 +285,7 @@ public abstract class Node
 		}
 		
 		Parent?.Remove(this);
-		Scene?.RemoveNode(this);
+		Scene?.InternalRemoveNode(this);
 		
 		OnDestroy?.Invoke(this);
 	}

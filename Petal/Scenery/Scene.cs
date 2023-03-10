@@ -108,26 +108,26 @@ public class Scene
 	{
 		foreach (var node in _nodesInScene.Values)
 		{
-			if (node.INTERNAL_MarkedForDeletion)
+			if (node.InternalMarkedForDeletion)
 			{
 				node.Destroy();
-				node.INTERNAL_MarkedForDeletion = false;
+				node.InternalMarkedForDeletion = false;
 			}
 		}
 	}
 
-	internal void Initialize()
+	public void Initialize()
 	{
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
 	}
 	
-	internal void AddNode(Node node)
+	internal void InternalAddNode(Node node)
 	{
 		_nodesInScene.Add(node.Name, node);
 		node.Scene = this;
 	}
 
-	internal void RemoveNode(Node node)
+	internal void InternalRemoveNode(Node node)
 	{
 		_nodesInScene.Remove(node.Name);
 		node.Scene = null;
