@@ -45,7 +45,7 @@ public class Hedgemen : PetalGame
 			Texture = texture,
 			Name = "hedgemen:image_1",
 			Color = Color.Red,
-			Anchor = Anchor.TopLeft
+			Anchor = Anchor.Center
 		});
 
 		var image2 = image.Add(new Image
@@ -59,7 +59,7 @@ public class Hedgemen : PetalGame
 		
 		var image3 = image2.Add(new Image
 		{
-			Bounds = new Rectangle(6, 6, 16, 16),
+			Bounds = new Rectangle(16, 16, 16, 16),
 			Texture = texture,
 			Name = "hedgemen:image_3",
 			Color = Color.Blue,
@@ -114,6 +114,7 @@ public class Hedgemen : PetalGame
 	private Random _rng = new();
 	private bool ShouldResetAnchor()
 	{
+		return false;
 		_frames++;
 		//if(_frames % 60 == 0)
 		//	Console.WriteLine($"Frames: {_frames}");

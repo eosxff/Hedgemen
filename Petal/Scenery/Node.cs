@@ -184,7 +184,7 @@ public abstract class Node
 	}
 
 	public virtual bool IsHovering(Vector2 position)
-		=> Bounds.Contains((int) position.X, (int) position.Y);
+		=> AbsoluteBounds.Contains((int) position.X, (int) position.Y);
 
 	public virtual bool IsHoveringRecursive(Vector2 position)
 	{
@@ -241,8 +241,7 @@ public abstract class Node
 		if(Parent != null)
 			parentBounds = Parent.AbsoluteBounds;
 
-		var relBounds = bounds;
-		var absBounds = relBounds;
+		var absBounds = bounds;
 
 		switch (Anchor)
 		{
@@ -251,36 +250,36 @@ public abstract class Node
 				absBounds.Y += parentBounds.Top;
 				break;
 			case Anchor.TopCenter:
-				absBounds.X += parentBounds.Center.X - (relBounds.Width / 2);
+				absBounds.X += parentBounds.Center.X - (bounds.Width / 2);
 				absBounds.Y += parentBounds.Top;
 				break;
 			case Anchor.TopRight:
-				absBounds.X += parentBounds.Right - (relBounds.Width);
+				absBounds.X += parentBounds.Right - (bounds.Width);
 				absBounds.Y += parentBounds.Top;
 				break;
 			case Anchor.CenterLeft:
 				absBounds.X += parentBounds.Left;
-				absBounds.Y += parentBounds.Center.Y - (relBounds.Height / 2);
+				absBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
 				break;
 			case Anchor.Center: 
-				absBounds.X += parentBounds.Center.X - (relBounds.Width / 2);
-				absBounds.Y += parentBounds.Center.Y - (relBounds.Height / 2);
+				absBounds.X += parentBounds.Center.X - (bounds.Width / 2);
+				absBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
 				break;
 			case Anchor.CenterRight:
-				absBounds.X += parentBounds.Right - (relBounds.Width);
-				absBounds.Y += parentBounds.Center.Y - (relBounds.Height / 2);
+				absBounds.X += parentBounds.Right - (bounds.Width);
+				absBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
 				break;
 			case Anchor.BottomLeft:
 				absBounds.X += parentBounds.Left;
-				absBounds.Y += parentBounds.Bottom - (relBounds.Height);
+				absBounds.Y += parentBounds.Bottom - (bounds.Height);
 				break;
 			case Anchor.BottomCenter:
-				absBounds.X += parentBounds.Center.X - (relBounds.Width / 2);
-				absBounds.Y += parentBounds.Bottom - (relBounds.Height);
+				absBounds.X += parentBounds.Center.X - (bounds.Width / 2);
+				absBounds.Y += parentBounds.Bottom - (bounds.Height);
 				break;
 			case Anchor.BottomRight:
-				absBounds.X += parentBounds.Right - (relBounds.Width);
-				absBounds.Y += parentBounds.Bottom - (relBounds.Height);
+				absBounds.X += parentBounds.Right - (bounds.Width);
+				absBounds.Y += parentBounds.Bottom - (bounds.Height);
 				break;
 			default:
 				throw new ArgumentOutOfRangeException();
