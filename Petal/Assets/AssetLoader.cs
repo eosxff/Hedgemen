@@ -64,6 +64,22 @@ public sealed class AssetLoader : IDisposable
 		                            $"'{nameof(name)}, {name} | '{nameof(uri)}, {uri}'.");
 	}
 
+	public T LoadAsset<T>(byte[] assetBytes)
+	{
+		var assetType = typeof(T);
+
+		if (assetType == typeof(Effect))
+		{
+			object asset = new Effect(_graphicsDevice, assetBytes);
+			AssetLoaded(asset);
+			return (T) asset;
+		}
+		
+		AssetUnknownType(assetType);
+		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
+		                            $"'{nameof(assetBytes)}, {assetBytes}'.");
+	}
+
 	public T LoadAsset<T>(string path)
 	{
 		var assetType = typeof(T);

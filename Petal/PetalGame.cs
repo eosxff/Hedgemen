@@ -70,14 +70,14 @@ public class PetalGame : Game
 					Graphics.ToggleFullScreen();
 					break;
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException(_windowMode.ToString());
 			}
 			
 			Graphics.ApplyChanges();
 		}
 	}
 
-	public PetalGame()
+	protected PetalGame()
 	{
 		Graphics = new GraphicsDeviceManager(this);
 		Petal = this;

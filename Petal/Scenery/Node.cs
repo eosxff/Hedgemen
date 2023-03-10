@@ -120,6 +120,8 @@ public abstract class Node
 
 	private bool _isDirty = true;
 
+	internal bool INTERNAL_MarkedForDeletion = false;
+
 	protected Node()
 	{
 		_bounds = GetDefaultBounds();
@@ -165,11 +167,15 @@ public abstract class Node
 			if(State == NodeState.MouseDown && isMouseDown)
 				OnMouseDown?.Invoke(this);
 
-			if(isTarget && selection.PreviousTarget != this)
-				OnFocusGained?.Invoke(this);
-			
-			else if(!isTarget && selection.PreviousTarget == this)
-				OnFocusLost?.Invoke(this);
+			switch (isTarget)
+			{
+				case true when selection.PreviousTarget != this:
+					OnFocusGained?.Invoke(this);
+					break;
+				case false when selection.PreviousTarget == this:
+					OnFocusLost?.Invoke(this);
+					break;
+			}
 		}
 		
 		OnAfterUpdate?.Invoke(this);
@@ -266,6 +272,11 @@ public abstract class Node
 		return null;
 	}
 
+	public void MarkDestroy()
+	{
+		INTERNAL_MarkedForDeletion = true;
+	}
+
 	public void Destroy()
 	{
 		foreach (var child in Children.ToList())
@@ -330,7 +341,7 @@ public abstract class Node
 				absBounds.Y += parentBounds.Bottom - (bounds.Height);
 				break;
 			default:
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException(Anchor.ToString());
 		}
 		
 		return absBounds;

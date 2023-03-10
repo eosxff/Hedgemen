@@ -77,11 +77,11 @@ public class Scene
 		Input.Update(time, Renderer.RenderState.TransformationMatrix);
 		
 		BeforeUpdate?.Invoke(this, EventArgs.Empty);
-
 		
 		NodeSelector.Update();
 		Root.SearchForTargetNode(NodeSelector);
 		Root.Update(time, NodeSelector);
+		DestroyAllMarkedNodes();
 
 		AfterUpdate?.Invoke(this, EventArgs.Empty);
 	}
@@ -102,6 +102,18 @@ public class Scene
 		BeforeExit?.Invoke(this, EventArgs.Empty);
 		Renderer.Dispose();
 		AfterExit?.Invoke(this, EventArgs.Empty);
+	}
+
+	private void DestroyAllMarkedNodes()
+	{
+		foreach (var node in _nodesInScene.Values)
+		{
+			if (node.INTERNAL_MarkedForDeletion)
+			{
+				node.Destroy();
+				node.INTERNAL_MarkedForDeletion = false;
+			}
+		}
 	}
 
 	internal void Initialize()

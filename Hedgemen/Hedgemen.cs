@@ -66,7 +66,11 @@ public class Hedgemen : PetalGame
 
 		//image.OnMouseHover += node => Console.WriteLine("MouseHover");
 		image.OnMouseDown += node => Console.WriteLine("MouseDown");
-		image.OnMousePressed += node => Console.WriteLine("Click!");
+		image.OnMousePressed += node =>
+		{
+			Console.WriteLine("Click!");
+			node.MarkDestroy();
+		};
 		image.OnMouseReleased += node => Console.WriteLine("MouseReleased");
 		
 		var image2 = image.Add(new Image
