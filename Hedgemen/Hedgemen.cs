@@ -61,15 +61,14 @@ public class Hedgemen : PetalGame
 			if (node is Image imageNode)
 			{
 				imageNode.Color = Color.White;
-				imageNode.Destroy();
 			}
 		};
 
-		image.OnMouseHover += node => Console.WriteLine("MouseHover");
+		//image.OnMouseHover += node => Console.WriteLine("MouseHover");
 		image.OnMouseDown += node => Console.WriteLine("MouseDown");
-		image.OnMousePressed += node => Console.WriteLine("MousePressed");
+		image.OnMousePressed += node => Console.WriteLine("Click!");
 		image.OnMouseReleased += node => Console.WriteLine("MouseReleased");
-
+		
 		var image2 = image.Add(new Image
 		{
 			Bounds = new Rectangle(0, 0, 32, 32),

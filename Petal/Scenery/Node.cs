@@ -152,19 +152,19 @@ public abstract class Node
 			bool isMouseReleased = Scene.Input.MouseButtonReleased(MouseButtons.LeftButton);
 			
 			UpdateNodeState(selection, isMouseDown, isMousePressed, isMouseReleased);
-			
+
 			if(State == NodeState.MouseHover)
 				OnMouseHover?.Invoke(this);
 			
-			else if(State == NodeState.MouseDown && isMouseReleased)
+			if(State == NodeState.MouseDown && isMouseReleased)
 				OnMouseReleased?.Invoke(this);
 			
-			else if(State == NodeState.MouseDown && isMousePressed)
+			if(State == NodeState.MouseDown && isMousePressed)
 				OnMousePressed?.Invoke(this);
 			
-			else if(State == NodeState.MouseDown && isMouseDown)
+			if(State == NodeState.MouseDown && isMouseDown)
 				OnMouseDown?.Invoke(this);
-			
+
 			if(isTarget && selection.PreviousTarget != this)
 				OnFocusGained?.Invoke(this);
 			
@@ -373,6 +373,8 @@ public abstract class Node
 
 	private void UpdateNodeState(NodeSelection selection, bool isMouseDown, bool isMousePressed, bool isMouseReleased)
 	{
+		State = NodeState.Default;
+		
 		if (Scene == null)
 			return;
 
