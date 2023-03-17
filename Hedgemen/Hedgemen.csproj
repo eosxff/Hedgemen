@@ -17,12 +17,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Petal\Petal.csproj" />
+      <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <Reference Include="FNA">
-        <HintPath>..\Petal\lib\FNA.dll</HintPath>
+        <HintPath>..\Petal.Framework\lib\FNA.dll</HintPath>
       </Reference>
     </ItemGroup>
 

@@ -1,15 +1,27 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Petal.Framework.Scenery;
 
 public sealed class Skin
 {
-	public ButtonData Button;
+	public static Func<Skin> DefaultSkin
+	{
+		get;
+		set;
+	}
+
+	public ButtonData Button
+	{
+		get;
+		set;
+	}
 
 	public sealed class ButtonData
 	{
-		public Content<Texture2D> ButtonRegularTexture;
-		public Content<Texture2D> ButtonHoverTexture;
-		public Content<Texture2D> ButtonDownTexture;
+		// todo should not be nullable
+		public ContentReference<Texture2D>? ButtonRegularTexture;
+		public ContentReference<Texture2D>? ButtonHoverTexture;
+		public ContentReference<Texture2D>? ButtonDownTexture;
 	}
 }

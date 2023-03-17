@@ -9,6 +9,8 @@ namespace Petal.Framework.Scenery;
 
 public class Scene
 {
+	// todo letterboxing
+	
 	public Renderer Renderer
 	{
 		get;
@@ -34,6 +36,12 @@ public class Scene
 	{
 		get;
 	} = new ();
+
+	public Skin Skin
+	{
+		get;
+		set;
+	}
 	
 	public event EventHandler BeforeUpdate;
 	public event EventHandler AfterUpdate;
@@ -54,8 +62,9 @@ public class Scene
 		return node;
 	}
 
-	public Scene(Stage root)
+	public Scene(Stage root, Skin skin)
 	{
+		Skin = skin;
 		Input = new InputProvider();
 		Root = root;
 		Root.Scene = this;

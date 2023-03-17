@@ -3,7 +3,6 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
-using Petal.Framework.Input;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Windowing;
@@ -12,6 +11,24 @@ namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
+	private class Animal
+	{
+		public virtual string AnimalName
+			=> "Animal";
+	}
+
+	private class Dog : Animal
+	{
+		public override string AnimalName
+			=> "Dog";
+	}
+
+	private class Cat : Animal
+	{
+		public override string AnimalName
+			=> "Cat";
+	}
+	
 	public static Hedgemen Instance
 	{
 		get;
@@ -23,25 +40,66 @@ public class Hedgemen : PetalGame
 		Instance = this;
 	}
 
+	public ContentBank GameContent
+	{
+		get;
+	} = new ();
+
 	protected override void Initialize()
 	{
 		base.Initialize();
+
+		GameContent.Register("hedgemen:favourite_pet", new Animal());
+		Console.WriteLine(GameContent.Get<Animal>("hedgemen:favourite_pet").Item?.AnimalName);
+		GameContent.Replace("hedgemen:favourite_pet", new Dog());
+		Console.WriteLine(GameContent.Get<Animal>("hedgemen:favourite_pet").Item?.AnimalName);
+		GameContent.Replace("hedgemen:favourite_pet", new Cat());
+		Console.WriteLine(GameContent.Get<Animal>("hedgemen:favourite_pet").Item?.AnimalName);
+
+		GameContent.Register("hedgemen:best_number_ever", 128);
+		GameContent.Register("hedgemen:best_object_ever", new object());
 		
+		// image these textures actually existed in the content bank!
+		var skin = new Skin
+		{
+			Button = new Skin.ButtonData
+			{
+				ButtonDownTexture = GameContent.Get<Texture2D>("hedgemen:textures/ui_button_down"),
+				ButtonHoverTexture = GameContent.Get<Texture2D>("hedgemen:textures/ui_button_hover"),
+				ButtonRegularTexture = GameContent.Get<Texture2D>("hedgemen:textures/ui_button_regular")
+			}
+		};
+
+		var contentRef = GameContent.Get("hedgemen:best_number_ever");
+
+		/*if (contentRef.Item is int bestNumberEver)
+		{
+			Console.WriteLine("Best Number Ever: " + bestNumberEver);
+		}
+
+		var contentItem = GameContent.Get<object>("hedgemen:best_object_ever");
+
+		if (contentItem.Item is not null)
+		{
+			Console.WriteLine("Best Object Ever: " + contentItem.Item);
+		}*/
+
 		var scene = new Scene(new Stage
 		{
 			Tag = "root",
 			Name = "hedgemen:ui/root_node",
 			VirtualResolution = new Vector2Int(640, 360),
-		})
+		}, null)
 		{
-			BackgroundColor = Color.CornflowerBlue
+			BackgroundColor = Color.CornflowerBlue,
+			Skin = skin
 		};
 
 		var texture = Assets.LoadAsset<Texture2D>(new FileInfo("peach.png").Open(FileMode.Open));
 		
 		var image = scene.Root.Add(new Image
 		{
-			Bounds = new Rectangle(0, 0, 50, 50),
+			Bounds = new Rectangle(0, 0, 64, 64),
 			Texture = texture,
 			Name = "hedgemen:image_1",
 			Color = Color.White,
@@ -65,13 +123,13 @@ public class Hedgemen : PetalGame
 		};
 
 		//image.OnMouseHover += node => Console.WriteLine("MouseHover");
-		image.OnMouseDown += node => Console.WriteLine("MouseDown");
+		/*image.OnMouseDown += node => Console.WriteLine("MouseDown");
 		image.OnMousePressed += node =>
 		{
 			Console.WriteLine("Click!");
-			node.MarkDestroy();
+			node.MarkedForDeletion = true;
 		};
-		image.OnMouseReleased += node => Console.WriteLine("MouseReleased");
+		image.OnMouseReleased += node => Console.WriteLine("MouseReleased");*/
 		
 		var image2 = image.Add(new Image
 		{
@@ -91,22 +149,19 @@ public class Hedgemen : PetalGame
 			Anchor = Anchor.BottomLeft
 		});
 
-		/*scene.AfterUpdate += (sender, args) =>
+		var image4 = scene.Root.Add(new Image
 		{
-			if (sender is Scene self)
-			{
-				if (self.Input.MouseButtonClicked(MouseButtons.LeftButton))
-				{
-					self.Root.SearchForTargetNode(out var selection);
-					selection.Target?.Destroy();
-				}
+			Bounds = new Rectangle(0, 0, 64, 64),
+			Anchor = Anchor.TopRight,
+			Color = Color.White,
+			Name = "hedgemen:image_4",
+			Texture = texture
+		});
 
-				if (self.Input.MouseButtonClicked(MouseButtons.RightButton))
-				{
-					self.FindNode("hedgemen:image_3")?.Destroy();
-				}
-			}
-		};*/
+		image4.OnMousePressed += node =>
+		{
+			node.MarkedForDeletion = true;
+		};
 
 		scene.BeforeUpdate += (sender, args) =>
 		{
@@ -140,8 +195,8 @@ public class Hedgemen : PetalGame
 	{
 		return false;
 		_frames++;
-		//if(_frames % 60 == 0)
-		//	Console.WriteLine($"Frames: {_frames}");
+		if(_frames % 60 == 0)
+			Console.WriteLine($"Frames: {_frames}");
 		return _frames % 60 == 0;
 	}
 
