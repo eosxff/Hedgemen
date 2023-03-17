@@ -125,6 +125,7 @@ public class PetalGame : Game
 		base.Initialize();
 		Content = new StubContentManager(Services);
 		Assets = new AssetLoader(GraphicsDevice);
+		Window.Title = GetType().Name;
 		ApplyGameSettings(GetInitialGameSettings());
 	}
 

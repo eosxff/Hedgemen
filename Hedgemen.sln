@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hedgemen", "Hedgemen\Hedgem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petal.Framework", "Petal.Framework\Petal.Framework.csproj", "{4B8FB37D-DB86-48B7-81E9-08AE3BF049C4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petal.Framework.Sandbox", "Petal.Framework.Sandbox\Petal.Framework.Sandbox.csproj", "{9D0E6AF8-3194-4627-88E8-A22191ABE749}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{4B8FB37D-DB86-48B7-81E9-08AE3BF049C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B8FB37D-DB86-48B7-81E9-08AE3BF049C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B8FB37D-DB86-48B7-81E9-08AE3BF049C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D0E6AF8-3194-4627-88E8-A22191ABE749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D0E6AF8-3194-4627-88E8-A22191ABE749}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D0E6AF8-3194-4627-88E8-A22191ABE749}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D0E6AF8-3194-4627-88E8-A22191ABE749}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

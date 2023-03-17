@@ -70,7 +70,9 @@ public class Hedgemen : PetalGame
 			}
 		};
 
-		var contentRef = GameContent.Get("hedgemen:best_number_ever");
+		var contentRef = GameContent.Get<Texture2D>("hedgemen:textures/ui_button_down");
+
+		Console.WriteLine($"Found: {contentRef.Item != null}");
 
 		/*if (contentRef.Item is int bestNumberEver)
 		{
@@ -160,7 +162,7 @@ public class Hedgemen : PetalGame
 
 		image4.OnMousePressed += node =>
 		{
-			node.MarkedForDeletion = true;
+			node.IsMarkedForDeletion = true;
 		};
 
 		scene.BeforeUpdate += (sender, args) =>

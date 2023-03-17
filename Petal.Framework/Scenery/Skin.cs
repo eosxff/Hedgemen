@@ -1,16 +1,9 @@
-﻿using System;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 
 namespace Petal.Framework.Scenery;
 
 public sealed class Skin
 {
-	public static Func<Skin> DefaultSkin
-	{
-		get;
-		set;
-	}
-
 	public ButtonData Button
 	{
 		get;

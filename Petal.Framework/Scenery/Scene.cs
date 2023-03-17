@@ -37,10 +37,28 @@ public class Scene
 		get;
 	} = new ();
 
+	private Skin _skin = new();
+
 	public Skin Skin
 	{
-		get;
-		set;
+		get => _skin;
+		set
+		{
+			_skin = value;
+			OnSkinChanged?.Invoke(this, EventArgs.Empty); // maybe add event args?
+		}
+	}
+
+	private ScreenResolutionPolicy _resolutionPolicy = ScreenResolutionPolicy.ExactFit;
+
+	public ScreenResolutionPolicy ResolutionPolicy
+	{
+		get => _resolutionPolicy;
+		set
+		{
+			_resolutionPolicy = value;
+			OnResolutionPolicyChanged?.Invoke(this, EventArgs.Empty);
+		}
 	}
 	
 	public event EventHandler BeforeUpdate;
@@ -53,7 +71,11 @@ public class Scene
 
 	public event EventHandler BeforeExit;
 	public event EventHandler AfterExit;
-	
+
+	public event EventHandler OnResolutionPolicyChanged;
+
+	public event EventHandler OnSkinChanged;
+
 	private readonly Dictionary<NamespacedString, Node> _nodesInScene = new();
 
 	public Node? FindNode(NamespacedString name)
@@ -78,6 +100,11 @@ public class Scene
 				return;
 			
 			stage.Scene.Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
+		};
+
+		OnResolutionPolicyChanged += (sender, args) =>
+		{
+			// todo
 		};
 	}
 
@@ -117,7 +144,7 @@ public class Scene
 	{
 		foreach (var node in _nodesInScene.Values)
 		{
-			if (node.MarkedForDeletion)
+			if (node.IsMarkedForDeletion)
 				node.Destroy();
 		}
 	}

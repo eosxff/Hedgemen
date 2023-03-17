@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ContentWithTargetPath Include="res/**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
+            <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+        </ContentWithTargetPath>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Reference Include="FNA">
+        <HintPath>..\Petal.Framework\lib\FNA.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

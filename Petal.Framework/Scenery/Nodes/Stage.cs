@@ -49,7 +49,7 @@ public class Stage : Node
 	{
 		IsInteractable = false;
 	}
-	
+
 	public void SearchForTargetNode(NodeSelection selection)
 	{
 		if (Scene == null)

@@ -122,7 +122,7 @@ public abstract class Node
 
 	public void Update(GameTime time, NodeSelection selection)
 	{
-		ArgumentNullException.ThrowIfNull(Scene, $"{nameof(Scene)} cannot be null when being updated!");
+		ArgumentNullException.ThrowIfNull(Scene, nameof(Scene));
 		
 		if (_isDirty)
 		{
@@ -265,13 +265,13 @@ public abstract class Node
 		return null;
 	}
 
-	public bool MarkedForDeletion
+	public virtual bool IsMarkedForDeletion
 	{
 		get;
 		set;
-	} = false;
+	}
 
-	public void Destroy()
+	protected internal virtual void Destroy()
 	{
 		foreach (var child in Children.ToList())
 		{
@@ -281,11 +281,37 @@ public abstract class Node
 		Parent?.Remove(this);
 		Scene?.InternalRemoveNode(this);
 
-		MarkedForDeletion = false;
+		IsMarkedForDeletion = false;
 		
 		OnDestroy?.Invoke(this);
 	}
+
+	public bool IsAnyParentMarkedForDeletion
+	{
+		get
+		{
+			var parent = Parent;
+
+			while (parent != null)
+			{
+				if (parent.IsMarkedForDeletion)
+				{
+					return true;
+				}
+				
+				parent = parent.Parent;
+			}
+
+			return false;
+		}
+	}
 	
+	public bool IsAnyMarkedForDeletion
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => IsMarkedForDeletion || IsAnyParentMarkedForDeletion;
+	}
+
 	protected virtual Rectangle CalculateBounds(Rectangle bounds)
 	{
 		if (Scene == null)
