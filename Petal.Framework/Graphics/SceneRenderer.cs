@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 
 namespace Petal.Framework.Graphics;
 
 public sealed class SceneRenderer : Renderer
 {
 	private readonly SpriteBatch _renderer;
-	
+
 	public SceneRenderer()
 	{
 		_renderer = new SpriteBatch(PetalGame.Petal.GraphicsDevice);
@@ -33,7 +32,7 @@ public sealed class SceneRenderer : Renderer
 	{
 		if (data.Texture == null)
 			return;
-		
+
 		_renderer.Draw(
 			data.Texture,
 			data.DstRect,

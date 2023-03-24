@@ -49,28 +49,30 @@ public class SandboxGame : PetalGame
 	{
 		base.Initialize();
 
-		GameContent.Register("hedgemen:favourite_pet", new Animal());
-		Console.WriteLine(GameContent.Get<Animal>("hedgemen:favourite_pet").Item?.AnimalName);
-		GameContent.Replace("hedgemen:favourite_pet", new Dog());
-		Console.WriteLine(GameContent.Get<Animal>("hedgemen:favourite_pet").Item?.AnimalName);
-		GameContent.Replace("hedgemen:favourite_pet", new Cat());
-		Console.WriteLine(GameContent.Get<Animal>("hedgemen:favourite_pet").Item?.AnimalName);
+		Window.AllowUserResizing = true;
+		
+		GameContent.Register("sandbox:favourite_pet", new Animal());
+		Console.WriteLine(GameContent.Get<Animal>("sandbox:favourite_pet").Item?.AnimalName);
+		GameContent.Replace("sandbox:favourite_pet", new Dog());
+		Console.WriteLine(GameContent.Get<Animal>("sandbox:favourite_pet").Item?.AnimalName);
+		GameContent.Replace("sandbox:favourite_pet", new Cat());
+		Console.WriteLine(GameContent.Get<Animal>("sandbox:favourite_pet").Item?.AnimalName);
 
-		GameContent.Register("hedgemen:best_number_ever", 128);
-		GameContent.Register("hedgemen:best_object_ever", new object());
+		GameContent.Register("sandbox:best_number_ever", 128);
+		GameContent.Register("sandbox:best_object_ever", new object());
 		
 		// image these textures actually existed in the content bank!
 		var skin = new Skin
 		{
 			Button = new Skin.ButtonData
 			{
-				ButtonDownTexture = GameContent.Get<Texture2D>("hedgemen:textures/ui_button_down"),
-				ButtonHoverTexture = GameContent.Get<Texture2D>("hedgemen:textures/ui_button_hover"),
-				ButtonRegularTexture = GameContent.Get<Texture2D>("hedgemen:textures/ui_button_regular")
+				ButtonDownTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_down"),
+				ButtonHoverTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_hover"),
+				ButtonRegularTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_regular")
 			}
 		};
 
-		var contentRef = GameContent.Get<Texture2D>("hedgemen:textures/ui_button_down");
+		var contentRef = GameContent.Get<Texture2D>("sandbox:textures/ui_button_down");
 
 		Console.WriteLine($"Found: {contentRef.Item != null}");
 
@@ -79,7 +81,7 @@ public class SandboxGame : PetalGame
 			Console.WriteLine("Best Number Ever: " + bestNumberEver);
 		}
 
-		var contentItem = GameContent.Get<object>("hedgemen:best_object_ever");
+		var contentItem = GameContent.Get<object>("sandbox:best_object_ever");
 
 		if (contentItem.Item is not null)
 		{
@@ -89,11 +91,11 @@ public class SandboxGame : PetalGame
 		var scene = new Scene(new Stage
 		{
 			Tag = "root",
-			Name = "hedgemen:ui/root_node",
+			Name = "sandbox:ui/root_node",
 			VirtualResolution = new Vector2Int(640, 360),
 		}, null)
 		{
-			BackgroundColor = Color.CornflowerBlue,
+			BackgroundColor = Color.Black,
 			Skin = skin
 		};
 
@@ -103,7 +105,7 @@ public class SandboxGame : PetalGame
 		{
 			Bounds = new Rectangle(0, 0, 64, 64),
 			Texture = texture,
-			Name = "hedgemen:image_1",
+			Name = "sandbox:image_1",
 			Color = Color.White,
 			Anchor = Anchor.Center
 		});
@@ -137,7 +139,7 @@ public class SandboxGame : PetalGame
 		{
 			Bounds = new Rectangle(0, 0, 32, 32),
 			Texture = texture,
-			Name = "hedgemen:image_2",
+			Name = "sandbox:image_2",
 			Color = Color.Green,
 			Anchor = Anchor.Center
 		});
@@ -146,17 +148,17 @@ public class SandboxGame : PetalGame
 		{
 			Bounds = new Rectangle(8, 8, 16, 16),
 			Texture = texture,
-			Name = "hedgemen:image_3",
+			Name = "sandbox:image_3",
 			Color = Color.Blue,
 			Anchor = Anchor.BottomLeft
 		});
 
 		var image4 = scene.Root.Add(new Image
 		{
-			Bounds = new Rectangle(0, 0, 64, 64),
-			Anchor = Anchor.TopRight,
+			Bounds = new Rectangle(0, 0, scene.Root.VirtualResolution.X, scene.Root.VirtualResolution.Y),
+			Anchor = Anchor.TopLeft,
 			Color = Color.White,
-			Name = "hedgemen:image_4",
+			Name = "sandbox:image_4",
 			Texture = texture
 		});
 
@@ -175,6 +177,8 @@ public class SandboxGame : PetalGame
 			}
 		};
 
+		scene.ResolutionPolicy = SceneResolutionPolicy.BestFit;
+
 		ChangeScenes(scene);
 	}
 
@@ -184,8 +188,8 @@ public class SandboxGame : PetalGame
 		{
 			PreferredFramerate = 60,
 			Vsync = false,
-			WindowWidth = 1200,
-			WindowHeight = 700,
+			WindowWidth = 960,
+			WindowHeight = 540,
 			WindowMode = WindowMode.Windowed,
 			IsMouseVisible = true
 		};

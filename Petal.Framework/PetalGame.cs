@@ -31,9 +31,7 @@ public class PetalGame : Game
 	}
 
 	public Scene? Scene
-	{
-		get => _scene;
-	}
+		=> _scene;
 
 	public void ChangeScenes(Scene scene)
 	{
@@ -126,7 +124,16 @@ public class PetalGame : Game
 		Content = new StubContentManager(Services);
 		Assets = new AssetLoader(GraphicsDevice);
 		Window.Title = GetType().Name;
+		Window.ClientSizeChanged += WindowOnClientSizeChanged;
+
 		ApplyGameSettings(GetInitialGameSettings());
+	}
+
+	private void WindowOnClientSizeChanged(object sender, EventArgs e)
+	{
+		Graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+		Graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+		Graphics.ApplyChanges();
 	}
 
 	protected virtual GameSettings GetInitialGameSettings()

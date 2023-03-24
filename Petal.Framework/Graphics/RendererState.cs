@@ -11,6 +11,12 @@ public class RendererState
 		set;
 	}
 
+	public RenderTarget2D? RenderTarget
+	{
+		get;
+		internal set;
+	} = null;
+
 	public Rectangle Scissor
 	{
 		get;

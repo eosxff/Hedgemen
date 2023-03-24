@@ -1,10 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Petal.Framework;
 
 public class ContentBank
 {
+	public class ContentRegisteredAsyncArgs : EventArgs
+	{
+		public ContentValue RegisteredContent
+		{
+			get;
+			init;
+		}
+	}
+	
+	public event EventHandler OnContentRegisteredAsync;
+	
 	private readonly Dictionary<NamespacedString, ContentValue> _bank = new();
 
 	public ContentBank()
@@ -24,8 +36,20 @@ public class ContentBank
 		{
 			_bank.TryAdd(contentSig, content);
 		}
-		
+
 		return content;
+	}
+
+	public async Task<ContentValue> RegisterAsync(NamespacedString contentSig, object item)
+	{
+		var task = await Task.Run(() => Register(contentSig, item));
+		
+		OnContentRegisteredAsync?.Invoke(this, new ContentRegisteredAsyncArgs
+		{
+			RegisteredContent = task
+		});
+		
+		return task;
 	}
 
 	public ContentValue Get(NamespacedString contentSig)
@@ -144,4 +168,7 @@ public sealed class ContentReference<TContent>
 
 		return default;
 	}
+
+	public bool IsValid
+		=> Item != null;
 }

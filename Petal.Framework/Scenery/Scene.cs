@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Graphics;
 using Petal.Framework.Input;
 using Petal.Framework.Scenery.Nodes;
 
 namespace Petal.Framework.Scenery;
 
-public class Scene
+public class Scene : IDisposable
 {
-	// todo letterboxing
+	private readonly RenderTarget2D? _renderTarget = null;
 	
 	public Renderer Renderer
 	{
@@ -49,9 +50,9 @@ public class Scene
 		}
 	}
 
-	private ScreenResolutionPolicy _resolutionPolicy = ScreenResolutionPolicy.ExactFit;
+	private SceneResolutionPolicy _resolutionPolicy = SceneResolutionPolicy.ExactFit;
 
-	public ScreenResolutionPolicy ResolutionPolicy
+	public SceneResolutionPolicy ResolutionPolicy
 	{
 		get => _resolutionPolicy;
 		set
@@ -90,9 +91,21 @@ public class Scene
 		Input = new InputProvider();
 		Root = root;
 		Root.Scene = this;
-		
+
 		Renderer = new SceneRenderer();
+
+		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
+
 		Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
+		Root.UpdateResolutionScalar();
+
+		_renderTarget = new RenderTarget2D(
+			graphicsDevice,
+			graphicsDevice.PresentationParameters.BackBufferWidth,
+			graphicsDevice.PresentationParameters.BackBufferHeight,
+			false,
+			graphicsDevice.PresentationParameters.BackBufferFormat,
+			DepthFormat.Depth24);
 		
 		Root.OnVirtualResolutionChanged += stage =>
 		{
@@ -100,6 +113,7 @@ public class Scene
 				return;
 			
 			stage.Scene.Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
+			stage.Scene.Root.UpdateResolutionScalar();
 		};
 
 		OnResolutionPolicyChanged += (sender, args) =>
@@ -110,8 +124,8 @@ public class Scene
 
 	public void Update(GameTime time)
 	{
-		Input.Update(time, Renderer.RenderState.TransformationMatrix);
-		
+		Input.Update(time, Root.VirtualResolutionScaleMatrix);
+
 		BeforeUpdate?.Invoke(this, EventArgs.Empty);
 		
 		NodeSelector.Update();
@@ -124,19 +138,29 @@ public class Scene
 
 	public void Draw(GameTime time)
 	{
-		Renderer.RenderState.Graphics.GraphicsDevice.Clear(BackgroundColor);
-		
+		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
+		graphicsDevice.Clear(BackgroundColor);
 		BeforeDraw?.Invoke(this, EventArgs.Empty);
-		
 		Root.Draw(time);
-		
 		AfterDraw?.Invoke(this, EventArgs.Empty);
+
+		/*graphicsDevice.Clear(Color.Black);
+		
+		Renderer.Begin();
+		Renderer.Draw(new RenderData
+		{
+			//DstRect = Renderer.RenderState.Graphics.GraphicsDevice.Viewport.Bounds,
+			DstRect = Root.Bounds,
+			Texture = _renderTarget,
+			Color = Color.White
+		});
+		Renderer.End();*/
 	}
 
 	public void Exit()
 	{
 		BeforeExit?.Invoke(this, EventArgs.Empty);
-		Renderer.Dispose();
+		Dispose();
 		AfterExit?.Invoke(this, EventArgs.Empty);
 	}
 
@@ -151,9 +175,20 @@ public class Scene
 
 	public void Initialize()
 	{
+		var petal = PetalGame.Petal;
+		
+		petal.Window.ClientSizeChanged += OnWindowClientSizeChanged;
+		Root.UpdateResolutionScalar();
+		
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
 	}
-	
+
+	private void OnWindowClientSizeChanged(object? sender, EventArgs args)
+	{
+		Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
+		Root.UpdateResolutionScalar();
+	}
+
 	internal void InternalAddNode(Node node)
 	{
 		_nodesInScene.Add(node.Name, node);
@@ -164,5 +199,11 @@ public class Scene
 	{
 		_nodesInScene.Remove(node.Name);
 		node.Scene = null;
+	}
+
+	public void Dispose()
+	{
+		_renderTarget?.Dispose();
+		Renderer?.Dispose();
 	}
 }

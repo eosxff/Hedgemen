@@ -1,6 +1,6 @@
 ﻿namespace Petal.Framework.Scenery;
 
-public enum ScreenResolutionPolicy
+public enum SceneResolutionPolicy
 {
 	/// <summary>
 	/// Default. RenderTarget matches the screen size
