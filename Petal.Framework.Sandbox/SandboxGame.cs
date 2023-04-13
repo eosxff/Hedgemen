@@ -177,7 +177,7 @@ public class SandboxGame : PetalGame
 			}
 		};
 
-		scene.ResolutionPolicy = SceneResolutionPolicy.BestFit;
+		scene.ResolutionPolicy = SceneResolutionPolicy.ExactFit;
 
 		ChangeScenes(scene);
 	}

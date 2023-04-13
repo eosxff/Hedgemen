@@ -3,6 +3,6 @@
 public enum NodeState
 {
 	Default,
-	MouseHover,
-	MouseDown
+	Hover,
+	Input
 }

@@ -148,16 +148,16 @@ public abstract class Node
 			
 			UpdateNodeState(selection, isMouseDown, isMousePressed, isMouseReleased);
 
-			if(State == NodeState.MouseHover)
+			if(State == NodeState.Hover)
 				OnMouseHover?.Invoke(this);
 			
-			if(State == NodeState.MouseDown && isMouseReleased)
+			if(State == NodeState.Input && isMouseReleased)
 				OnMouseReleased?.Invoke(this);
 			
-			if(State == NodeState.MouseDown && isMousePressed)
+			if(State == NodeState.Input && isMousePressed)
 				OnMousePressed?.Invoke(this);
 			
-			if(State == NodeState.MouseDown && isMouseDown)
+			if(State == NodeState.Input && isMouseDown)
 				OnMouseDown?.Invoke(this);
 
 			switch (isTarget)
@@ -415,12 +415,12 @@ public abstract class Node
 
 		if (isTarget)
 		{
-			State = NodeState.MouseHover;
+			State = NodeState.Hover;
 		}
 
 		if ((isMouseDown || isMousePressed) && isTarget)
 		{
-			State = NodeState.MouseDown;
+			State = NodeState.Input;
 		}
 	}
 }

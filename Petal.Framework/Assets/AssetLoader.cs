@@ -61,7 +61,7 @@ public sealed class AssetLoader : IDisposable
 		
 		AssetUnknownType(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
-		                            $"'{nameof(name)}, {name} | '{nameof(uri)}, {uri}'.");
+		                            $"'{nameof(name)}: {name} | '{nameof(uri)}: {uri}'.");
 	}
 
 	public T LoadAsset<T>(byte[] assetBytes)
@@ -77,7 +77,7 @@ public sealed class AssetLoader : IDisposable
 		
 		AssetUnknownType(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
-		                            $"'{nameof(assetBytes)}, {assetBytes}'.");
+		                            $"'{nameof(assetBytes)}: {assetBytes}'.");
 	}
 
 	public T LoadAsset<T>(string path)
@@ -90,10 +90,18 @@ public sealed class AssetLoader : IDisposable
 			AssetLoaded(asset);
 			return (T)asset;
 		}
+
+		if (assetType == typeof(Texture2D))
+		{
+			var file = new FileInfo(path);
+			object asset = Texture2D.FromStream(_graphicsDevice, file.Open(FileMode.Open));
+			AssetLoaded(asset);
+			return (T)asset;
+		}
 		
 		AssetUnknownType(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
-		                            $"'{nameof(path)}, {path}'.");
+		                            $"'{nameof(path)}: {path}'.");
 	}
 
 	public void Dispose()

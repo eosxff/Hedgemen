@@ -24,25 +24,25 @@ public class ContentBank
 		
 	}
 
-	public ContentValue Register(NamespacedString contentSig, object item)
+	public ContentValue Register(NamespacedString signature, object item)
 	{
 		var content = new ContentValue
 		{
-			Signature = contentSig,
+			BankedContentSignature = signature,
 			Item = item
 		};
 
 		lock(_bank)
 		{
-			_bank.TryAdd(contentSig, content);
+			_bank.TryAdd(signature, content);
 		}
 
 		return content;
 	}
 
-	public async Task<ContentValue> RegisterAsync(NamespacedString contentSig, object item)
+	public async Task<ContentValue> RegisterAsync(NamespacedString contentName, object item)
 	{
-		var task = await Task.Run(() => Register(contentSig, item));
+		var task = await Task.Run(() => Register(contentName, item));
 		
 		OnContentRegisteredAsync?.Invoke(this, new ContentRegisteredAsyncArgs
 		{
@@ -52,38 +52,38 @@ public class ContentBank
 		return task;
 	}
 
-	public ContentValue Get(NamespacedString contentSig)
+	public ContentValue Get(NamespacedString signature)
 	{
 		lock (_bank)
 		{
-			if (_bank.TryGetValue(contentSig, out var content))
+			if (_bank.TryGetValue(signature, out var content))
 				return content;
 		}
 
 		return new ContentValue
 		{
-			Signature = NamespacedString.Default,
+			BankedContentSignature = NamespacedString.Default,
 			Item = null
 		};
 	}
 
-	public ContentReference<TContent> Get<TContent>(NamespacedString contentSig)
-		=> new (contentSig, this);
+	public ContentReference<TContent> Get<TContent>(NamespacedString signature)
+		=> new (signature, this);
 
-	public bool Replace(NamespacedString contentSig, object item)
+	public bool Replace(NamespacedString signature, object item)
 	{
 		lock(_bank)
 		{
-			if (!_bank.ContainsKey(contentSig))
+			if (!_bank.ContainsKey(signature))
 				return false;
 
 			var note = new ContentValue
 			{
-				Signature = contentSig,
+				BankedContentSignature = signature,
 				Item = item
 			};
 			
-			_bank[contentSig] = note;
+			_bank[signature] = note;
 		}
 
 		return true;
@@ -92,7 +92,7 @@ public class ContentBank
 
 public readonly struct ContentValue
 {
-	public NamespacedString Signature
+	public NamespacedString BankedContentSignature
 	{
 		get;
 		init;
@@ -135,7 +135,7 @@ public readonly struct ContentValue
 
 public sealed class ContentReference<TContent>
 {
-	public NamespacedString Signature
+	public NamespacedString BankedContentSignature
 	{
 		get;
 	}
@@ -146,20 +146,20 @@ public sealed class ContentReference<TContent>
 		private set;
 	}
 	
-	public ContentReference(NamespacedString contentSig, ContentBank bank)
+	public ContentReference(NamespacedString contentName, ContentBank bank)
 	{
-		Signature = contentSig;
-		Item = GetItemFromBank(contentSig, bank);
+		BankedContentSignature = contentName;
+		Item = GetItemFromBank(contentName, bank);
 	}
 
 	public void ReloadItem(ContentBank bank)
 	{
-		Item = GetItemFromBank(Signature, bank);
+		Item = GetItemFromBank(BankedContentSignature, bank);
 	}
 
-	private static TContent GetItemFromBank(NamespacedString contentSig, ContentBank bank)
+	private static TContent GetItemFromBank(NamespacedString contentName, ContentBank bank)
 	{
-		var content = bank.Get(contentSig);
+		var content = bank.Get(contentName);
 
 		if (content.Item is TContent tContent)
 		{

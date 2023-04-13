@@ -6,10 +6,10 @@ namespace Microsoft.Xna.Framework; // ;)
 [Serializable]
 public struct Vector2Int
 {
-	public static Vector2Int Zero = new(0, 0);
-	public static Vector2Int One = new(1, 1);
-	public static Vector2Int UnitX = new(1, 0);
-	public static Vector2Int UnitY = new(0, 1);
+	public static readonly Vector2Int Zero = new(0, 0);
+	public static readonly Vector2Int One = new(1, 1);
+	public static readonly Vector2Int UnitX = new(1, 0);
+	public static readonly Vector2Int UnitY = new(0, 1);
 
 	public int X;
 	public int Y;
