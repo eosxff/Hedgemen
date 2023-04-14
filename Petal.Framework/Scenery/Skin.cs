@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System.Reflection;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Petal.Framework.Scenery;
 
@@ -12,8 +13,8 @@ public sealed class Skin
 
 	public sealed class ButtonData
 	{
-		public ContentReference<Texture2D> ButtonRegularTexture;
-		public ContentReference<Texture2D> ButtonHoverTexture;
-		public ContentReference<Texture2D> ButtonDownTexture;
+		public ContentReference<Texture2D> RegularTexture;
+		public ContentReference<Texture2D> HoverTexture;
+		public ContentReference<Texture2D> InputTexture;
 	}
 }

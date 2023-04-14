@@ -40,7 +40,7 @@ public class SandboxGame : PetalGame
 		Instance = this;
 	}
 
-	public ContentBank GameContent
+	public ContentRegistry GameContent
 	{
 		get;
 	} = new ();
@@ -66,9 +66,9 @@ public class SandboxGame : PetalGame
 		{
 			Button = new Skin.ButtonData
 			{
-				ButtonDownTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_down"),
-				ButtonHoverTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_hover"),
-				ButtonRegularTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_regular")
+				InputTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_down"),
+				HoverTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_hover"),
+				RegularTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_regular")
 			}
 		};
 
@@ -176,8 +176,6 @@ public class SandboxGame : PetalGame
 				image3.Anchor = (Anchor)(_rng.Next(0, 9));
 			}
 		};
-
-		scene.ResolutionPolicy = SceneResolutionPolicy.ExactFit;
 
 		ChangeScenes(scene);
 	}

@@ -330,7 +330,7 @@ public abstract class Node
 				absBounds.X += parentBounds.Left;
 				absBounds.Y += parentBounds.Top;
 				break;
-			case Anchor.TopCenter:
+			case Anchor.Top:
 				absBounds.X += parentBounds.Center.X - (bounds.Width / 2);
 				absBounds.Y += parentBounds.Top;
 				break;
@@ -354,7 +354,7 @@ public abstract class Node
 				absBounds.X += parentBounds.Left;
 				absBounds.Y += parentBounds.Bottom - (bounds.Height);
 				break;
-			case Anchor.BottomCenter:
+			case Anchor.Bottom:
 				absBounds.X += parentBounds.Center.X - (bounds.Width / 2);
 				absBounds.Y += parentBounds.Bottom - (bounds.Height);
 				break;

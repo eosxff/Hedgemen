@@ -38,6 +38,12 @@ public class Scene : IDisposable
 		get;
 	} = new ();
 
+	public ViewportAdapter ViewportAdapter
+	{
+		get;
+		private set;
+	}
+
 	private Skin _skin = new();
 
 	public Skin Skin
@@ -50,18 +56,6 @@ public class Scene : IDisposable
 		}
 	}
 
-	private SceneResolutionPolicy _resolutionPolicy = SceneResolutionPolicy.ExactFit;
-
-	public SceneResolutionPolicy ResolutionPolicy
-	{
-		get => _resolutionPolicy;
-		set
-		{
-			_resolutionPolicy = value;
-			OnResolutionPolicyChanged?.Invoke(this, EventArgs.Empty);
-		}
-	}
-	
 	public event EventHandler BeforeUpdate;
 	public event EventHandler AfterUpdate;
 	
@@ -72,8 +66,6 @@ public class Scene : IDisposable
 
 	public event EventHandler BeforeExit;
 	public event EventHandler AfterExit;
-
-	public event EventHandler OnResolutionPolicyChanged;
 
 	public event EventHandler OnSkinChanged;
 
@@ -92,7 +84,7 @@ public class Scene : IDisposable
 		Root = root;
 		Root.Scene = this;
 
-		Renderer = new SceneRenderer();
+		Renderer = new DefaultRenderer();
 
 		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
 
@@ -116,15 +108,21 @@ public class Scene : IDisposable
 			stage.Scene.Root.UpdateResolutionScalar();
 		};
 
-		OnResolutionPolicyChanged += (sender, args) =>
-		{
-			// todo
-		};
+		ViewportAdapter = new BoxingViewportAdapter(
+			Renderer.RenderState.Graphics.GraphicsDevice,
+			PetalGame.Petal.Window,
+			new Vector2Int(640, 360),
+			new Vector2Int(0, 0));
+
+		/*ViewportAdapter = new ScalingViewportAdapter(
+			Renderer.RenderState.Graphics.GraphicsDevice,
+			new Vector2Int(640, 360));*/
 	}
 
 	public void Update(GameTime time)
 	{
-		Input.Update(time, Root.VirtualResolutionScaleMatrix);
+		//Input.Update(time, Root.VirtualResolutionScaleMatrix);
+		Input.Update(time, ViewportAdapter.GetScaleMatrix());
 
 		BeforeUpdate?.Invoke(this, EventArgs.Empty);
 		
@@ -139,22 +137,18 @@ public class Scene : IDisposable
 	public void Draw(GameTime time)
 	{
 		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
+
+		//graphicsDevice.SetRenderTarget(_renderTarget);
+		
 		graphicsDevice.Clear(BackgroundColor);
+
+		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
+		
 		BeforeDraw?.Invoke(this, EventArgs.Empty);
 		Root.Draw(time);
 		AfterDraw?.Invoke(this, EventArgs.Empty);
-
-		/*graphicsDevice.Clear(Color.Black);
 		
-		Renderer.Begin();
-		Renderer.Draw(new RenderData
-		{
-			//DstRect = Renderer.RenderState.Graphics.GraphicsDevice.Viewport.Bounds,
-			DstRect = Root.Bounds,
-			Texture = _renderTarget,
-			Color = Color.White
-		});
-		Renderer.End();*/
+		//graphicsDevice.SetRenderTarget(null);
 	}
 
 	public void Exit()
@@ -185,8 +179,11 @@ public class Scene : IDisposable
 
 	private void OnWindowClientSizeChanged(object? sender, EventArgs args)
 	{
-		Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
-		Root.UpdateResolutionScalar();
+		//Root.UpdateResolutionScalar();
+		//Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
+
+		ViewportAdapter.Reset();
+		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
 	}
 
 	internal void InternalAddNode(Node node)

@@ -21,7 +21,7 @@ public class Hedgemen : PetalGame
 		Instance = this;
 	}
 
-	public ContentBank GameContent
+	public ContentRegistry ContentRegistry
 	{
 		get;
 	} = new();
@@ -30,13 +30,17 @@ public class Hedgemen : PetalGame
 	{
 		base.Initialize();
 
-		var resource1 = GameContent.Register(
+		Window.AllowUserResizing = true;
+
+		var resource1 = ContentRegistry.Register(
 			"hedgemen:ui/button_down_texture",
 			Assets.LoadAsset<Texture2D>("button_down.png"));
-		GameContent.Register(
+		
+		ContentRegistry.Register(
 			"hedgemen:ui/button_hover_texture",
 			Assets.LoadAsset<Texture2D>("button_hover.png"));
-		GameContent.Register(
+		
+		ContentRegistry.Register(
 			"hedgemen:ui/button_regular_texture",
 			Assets.LoadAsset<Texture2D>("button_regular.png"));
 
@@ -44,26 +48,35 @@ public class Hedgemen : PetalGame
 		{
 			Button = new Skin.ButtonData
 			{
-				ButtonDownTexture = GameContent.Get<Texture2D>("hedgemen:ui/button_down_texture"),
-				ButtonHoverTexture = GameContent.Get<Texture2D>("hedgemen:ui/button_hover_texture"),
-				ButtonRegularTexture = GameContent.Get<Texture2D>("hedgemen:ui/button_regular_texture"),
+				InputTexture = ContentRegistry.Get<Texture2D>("hedgemen:ui/button_down_texture"),
+				HoverTexture = ContentRegistry.Get<Texture2D>("hedgemen:ui/button_hover_texture"),
+				RegularTexture = ContentRegistry.Get<Texture2D>("hedgemen:ui/button_regular_texture"),
 			}
 		};
 		
+		skin.Button.RegularTexture.ReloadItem(ContentRegistry);
 		
+		Console.WriteLine(ContentRegistry.Get("hedgemen:ui/button_down_texture"));
+
 		var scene = new Scene(new Stage
 		{
 			
 		}, skin)
 		{
 			BackgroundColor = Color.CornflowerBlue,
-			ResolutionPolicy = SceneResolutionPolicy.ExactFit
 		};
 
-		var button = scene.Root.Add(new Button(skin)
+		/*var button = scene.Root.Add(new Button(skin)
 		{
-			Bounds = new Rectangle(50, 50, 150, 50),
+			//Bounds = new Rectangle(50, 50, 150, 50),
+			Bounds = new Rectangle(0, 0, 640, 360),
 			Color = Color.White
+		});*/
+
+		var image = scene.Root.Add(new Image
+		{
+			Bounds = new Rectangle(0, 0, 640, 360),
+			Texture = ContentRegistry.Get<Texture2D>("hedgemen:ui/button_down_texture").Item
 		});
 
 		ChangeScenes(scene);

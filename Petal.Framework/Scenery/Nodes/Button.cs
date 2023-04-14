@@ -55,11 +55,11 @@ public class Button : Node
 		switch (State)
 		{
 			case NodeState.Default:
-				return Skin.Button.ButtonRegularTexture;
+				return Skin.Button.RegularTexture;
 			case NodeState.Input:
-				return Skin.Button.ButtonDownTexture;
+				return Skin.Button.InputTexture;
 			case NodeState.Hover:
-				return Skin.Button.ButtonRegularTexture;
+				return Skin.Button.HoverTexture;
 			default:
 				throw new ArgumentOutOfRangeException();
 		}

@@ -10,10 +10,17 @@ namespace Petal.Framework;
 
 public class PetalGame : Game
 {
+	private static PetalGame _instance;
+	
 	public static PetalGame Petal
 	{
-		get;
-		private set;
+		get
+		{
+			ArgumentNullException.ThrowIfNull(_instance);
+			return _instance;
+		}
+		
+		private set => _instance = value;
 	}
 	
 	private WindowMode _windowMode;
@@ -102,7 +109,7 @@ public class PetalGame : Game
 			WindowWidth = Graphics.PreferredBackBufferWidth,
 			WindowHeight = Graphics.PreferredBackBufferHeight,
 			WindowMode = WindowMode.Windowed,
-			// we don't use TargetElapsedTime.Milliseconds due to precision loss
+			// don't use milliseconds (precision loss)
 			PreferredFramerate = (int)(1000d / (TargetElapsedTime.Ticks / 10000d)),
 			Vsync = IsFixedTimeStep,
 			IsMouseVisible = IsMouseVisible

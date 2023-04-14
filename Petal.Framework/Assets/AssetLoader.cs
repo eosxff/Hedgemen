@@ -12,16 +12,16 @@ public sealed class AssetLoader : IDisposable
 	public delegate void OnAssetLoaded(object asset);
 	public delegate void OnAssetUnknownType(Type type);
 
-	public event OnAssetLoaded AssetLoaded = _ => { };
-	public event OnAssetUnknownType AssetUnknownType = _ => { };
+	public event OnAssetLoaded? AssetLoaded;
+	public event OnAssetUnknownType? AssetUnknownType;
 
 	private readonly GraphicsDevice _graphicsDevice;
-	private readonly ContentManager _content;
+	private readonly ContentManager _contentManager;
 
 	public AssetLoader(GraphicsDevice graphicsDevice)
 	{
 		_graphicsDevice = graphicsDevice;
-		_content = new AssetLoaderInternalContentManager(PetalGame.Petal.Services);
+		_contentManager = new AssetLoaderInternalContentManager(PetalGame.Petal.Services);
 	}
 
 	public T LoadAsset<T>(Stream stream)
@@ -31,7 +31,7 @@ public sealed class AssetLoader : IDisposable
 		if (assetType == typeof(Texture2D))
 		{
 			object asset = Texture2D.FromStream(_graphicsDevice, stream);
-			AssetLoaded(asset);
+			AssetLoaded?.Invoke(asset);
 			stream.Close();
 			return (T)asset;
 		}
@@ -39,12 +39,12 @@ public sealed class AssetLoader : IDisposable
 		if (assetType == typeof(SoundEffect))
 		{
 			object asset = SoundEffect.FromStream(stream);
-			AssetLoaded(asset);
+			AssetLoaded?.Invoke(asset);
 			stream.Close();
 			return (T) asset;
 		}
 		
-		AssetUnknownType(assetType);
+		AssetUnknownType?.Invoke(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with '{nameof(stream)}'.");
 	}
 
@@ -55,11 +55,11 @@ public sealed class AssetLoader : IDisposable
 		if (assetType == typeof(Song))
 		{
 			object asset = Song.FromUri(name, uri);
-			AssetLoaded(asset);
+			AssetLoaded?.Invoke(asset);
 			return (T)asset;
 		}
 		
-		AssetUnknownType(assetType);
+		AssetUnknownType?.Invoke(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
 		                            $"'{nameof(name)}: {name} | '{nameof(uri)}: {uri}'.");
 	}
@@ -71,11 +71,11 @@ public sealed class AssetLoader : IDisposable
 		if (assetType == typeof(Effect))
 		{
 			object asset = new Effect(_graphicsDevice, assetBytes);
-			AssetLoaded(asset);
+			AssetLoaded?.Invoke(asset);
 			return (T) asset;
 		}
 		
-		AssetUnknownType(assetType);
+		AssetUnknownType?.Invoke(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
 		                            $"'{nameof(assetBytes)}: {assetBytes}'.");
 	}
@@ -86,8 +86,8 @@ public sealed class AssetLoader : IDisposable
 
 		if (assetType == typeof(SpriteFont))
 		{
-			object asset = _content.Load<SpriteFont>(path);
-			AssetLoaded(asset);
+			object asset = _contentManager.Load<SpriteFont>(path);
+			AssetLoaded?.Invoke(asset);
 			return (T)asset;
 		}
 
@@ -95,24 +95,29 @@ public sealed class AssetLoader : IDisposable
 		{
 			var file = new FileInfo(path);
 			object asset = Texture2D.FromStream(_graphicsDevice, file.Open(FileMode.Open));
-			AssetLoaded(asset);
+			AssetLoaded?.Invoke(asset);
 			return (T)asset;
 		}
 		
-		AssetUnknownType(assetType);
+		AssetUnknownType?.Invoke(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
 		                            $"'{nameof(path)}: {path}'.");
 	}
 
+	public void Unload()
+	{
+		_contentManager?.Unload();
+	}
+
 	public void Dispose()
 	{
-		_content?.Dispose();
+		_contentManager?.Dispose();
 	}
 
 	private class AssetLoaderInternalContentManager : ContentManager
 	{
 		public AssetLoaderInternalContentManager(IServiceProvider serviceProvider)
-			: base(serviceProvider) { }
+			: base(serviceProvider, string.Empty) { }
 
 		public AssetLoaderInternalContentManager(IServiceProvider serviceProvider, string rootDirectory)
 			: base(serviceProvider, rootDirectory) { }
