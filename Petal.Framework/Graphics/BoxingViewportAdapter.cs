@@ -42,6 +42,8 @@ public class BoxingViewportAdapter : ScalingViewportAdapter
         Bleed = bleed.Value;
         Window = window;
         Window.ClientSizeChanged += OnClientSizeChanged;
+        
+        OnClientSizeChanged(this, EventArgs.Empty);
     }
 
     public override void Dispose()

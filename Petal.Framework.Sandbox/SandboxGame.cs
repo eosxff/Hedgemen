@@ -1,4 +1,6 @@
-﻿namespace Petal.Framework.Sandbox;
+﻿using Petal.Framework.Graphics;
+
+namespace Petal.Framework.Sandbox;
 
 using System;
 using System.IO;
@@ -45,139 +47,67 @@ public class SandboxGame : PetalGame
 		get;
 	} = new ();
 
+	private Renderer _renderer;
+	private ViewportAdapter _viewportAdapter;
+	private Texture2D _image;
+	private RenderTarget2D _renderTarget;
+
 	protected override void Initialize()
 	{
 		base.Initialize();
 
+		_renderer = new DefaultRenderer();
+		_viewportAdapter = new ScalingViewportAdapter(GraphicsDevice, new Vector2Int(640, 360));
+		
 		Window.AllowUserResizing = true;
+		Window.ClientSizeChanged += WindowOnClientSizeChanged;
+		_image = Assets.LoadAsset<Texture2D>(new FileInfo("peach.png").Open(FileMode.Open));
+		_renderTarget = new RenderTarget2D(GraphicsDevice, 960, 540);
+	}
+
+	private void WindowOnClientSizeChanged(object? sender, EventArgs e)
+	{
+		//_renderTarget.Dispose();
+		//_renderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+		//_viewportAdapter.Reset();
+	}
+
+	protected override void Draw(GameTime gameTime)
+	{
+		//_renderer.RenderState.TransformationMatrix = _viewportAdapter.GetScaleMatrix();
+		_renderer.RenderState.TransformationMatrix = Matrix.Identity;
 		
-		GameContent.Register("sandbox:favourite_pet", new Animal());
-		Console.WriteLine(GameContent.Get<Animal>("sandbox:favourite_pet").Item?.AnimalName);
-		GameContent.Replace("sandbox:favourite_pet", new Dog());
-		Console.WriteLine(GameContent.Get<Animal>("sandbox:favourite_pet").Item?.AnimalName);
-		GameContent.Replace("sandbox:favourite_pet", new Cat());
-		Console.WriteLine(GameContent.Get<Animal>("sandbox:favourite_pet").Item?.AnimalName);
-
-		GameContent.Register("sandbox:best_number_ever", 128);
-		GameContent.Register("sandbox:best_object_ever", new object());
+		GraphicsDevice.SetRenderTarget(_renderTarget);
 		
-		// image these textures actually existed in the content bank!
-		var skin = new Skin
-		{
-			Button = new Skin.ButtonData
-			{
-				InputTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_down"),
-				HoverTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_hover"),
-				RegularTexture = GameContent.Get<Texture2D>("sandbox:textures/ui_button_regular")
-			}
-		};
-
-		var contentRef = GameContent.Get<Texture2D>("sandbox:textures/ui_button_down");
-
-		Console.WriteLine($"Found: {contentRef.Item != null}");
-
-		/*if (contentRef.Item is int bestNumberEver)
-		{
-			Console.WriteLine("Best Number Ever: " + bestNumberEver);
-		}
-
-		var contentItem = GameContent.Get<object>("sandbox:best_object_ever");
-
-		if (contentItem.Item is not null)
-		{
-			Console.WriteLine("Best Object Ever: " + contentItem.Item);
-		}*/
-
-		var scene = new Scene(new Stage
-		{
-			Tag = "root",
-			Name = "sandbox:ui/root_node",
-			VirtualResolution = new Vector2Int(640, 360),
-		}, null)
-		{
-			BackgroundColor = Color.Black,
-			Skin = skin
-		};
-
-		var texture = Assets.LoadAsset<Texture2D>(new FileInfo("peach.png").Open(FileMode.Open));
+		_renderer.Begin();
 		
-		var image = scene.Root.Add(new Image
+		_renderer.Draw(new RenderData
 		{
-			Bounds = new Rectangle(0, 0, 64, 64),
-			Texture = texture,
-			Name = "sandbox:image_1",
-			Color = Color.White,
-			Anchor = Anchor.Center
-		});
-
-		image.OnFocusGained += node =>
-		{
-			if (node is Image imageNode)
-			{
-				imageNode.Color = Color.Red;
-			}
-		};
-		
-		image.OnFocusLost += node =>
-		{
-			if (node is Image imageNode)
-			{
-				imageNode.Color = Color.White;
-			}
-		};
-
-		//image.OnMouseHover += node => Console.WriteLine("MouseHover");
-		/*image.OnMouseDown += node => Console.WriteLine("MouseDown");
-		image.OnMousePressed += node =>
-		{
-			Console.WriteLine("Click!");
-			node.MarkedForDeletion = true;
-		};
-		image.OnMouseReleased += node => Console.WriteLine("MouseReleased");*/
-		
-		var image2 = image.Add(new Image
-		{
-			Bounds = new Rectangle(0, 0, 32, 32),
-			Texture = texture,
-			Name = "sandbox:image_2",
-			Color = Color.Green,
-			Anchor = Anchor.Center
+			DstRect = new Rectangle(0, 0, 640, 360),
+			Texture = _image
 		});
 		
-		var image3 = image2.Add(new Image
+		_renderer.End();
+		
+		GraphicsDevice.SetRenderTarget(null);
+		_viewportAdapter.Reset();
+		
+		_renderer.Begin();
+		
+		_renderer.Draw(new RenderData
 		{
-			Bounds = new Rectangle(8, 8, 16, 16),
-			Texture = texture,
-			Name = "sandbox:image_3",
-			Color = Color.Blue,
-			Anchor = Anchor.BottomLeft
+			SrcRect = new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height),
+			DstRect = new Rectangle(0, 0, 640, 360),
+			Texture = _renderTarget
 		});
+		_viewportAdapter.Reset();
 
-		var image4 = scene.Root.Add(new Image
-		{
-			Bounds = new Rectangle(0, 0, scene.Root.VirtualResolution.X, scene.Root.VirtualResolution.Y),
-			Anchor = Anchor.TopLeft,
-			Color = Color.White,
-			Name = "sandbox:image_4",
-			Texture = texture
-		});
+		_renderer.End();
+	}
 
-		image4.OnMousePressed += node =>
-		{
-			node.IsMarkedForDeletion = true;
-		};
-
-		scene.BeforeUpdate += (sender, args) =>
-		{
-			if (ShouldResetAnchor())
-			{
-				image.Anchor = (Anchor)(_rng.Next(0, 9));
-				image2.Anchor = (Anchor)(_rng.Next(0, 9));
-				image3.Anchor = (Anchor)(_rng.Next(0, 9));
-			}
-		};
-
-		ChangeScenes(scene);
+	protected override void Update(GameTime gameTime)
+	{
+		
 	}
 
 	protected override GameSettings GetInitialGameSettings()

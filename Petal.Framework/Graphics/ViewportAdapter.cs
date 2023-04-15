@@ -5,17 +5,25 @@ using Petal.Framework.Util;
 
 namespace Petal.Framework.Graphics;
 
-public class ViewportAdapter : IDisposable
+public abstract class ViewportAdapter : IDisposable
 {
+	public event EventHandler OnVirtualResolutionChanged;
+	
 	public GraphicsDevice GraphicsDevice
 	{
 		get;
 	}
+	
+	private Vector2Int _virtualResolution;
 
 	public Vector2Int VirtualResolution
 	{
-		get;
-		protected set;
+		get => _virtualResolution;
+		set
+		{
+			_virtualResolution = value;
+			OnVirtualResolutionChanged?.Invoke(this, EventArgs.Empty);
+		}
 	}
 
 	public Vector2Int ViewportResolution
@@ -30,7 +38,7 @@ public class ViewportAdapter : IDisposable
 	public Point Center
 		=> BoundingRectangle.Center;
 
-	public ViewportAdapter(GraphicsDevice graphicsDevice)
+	protected ViewportAdapter(GraphicsDevice graphicsDevice)
 	{
 		GraphicsDevice = graphicsDevice;
 		VirtualResolution = new Vector2Int(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);

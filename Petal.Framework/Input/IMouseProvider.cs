@@ -2,9 +2,11 @@
 
 namespace Petal.Framework.Input;
 
+public delegate Vector2 CursorPositionTransformation(Vector2 position);
+
 public interface IMouseProvider
 {
-	public void Update(GameTime gameTime, Matrix scaleMatrix);
+	public void Update(GameTime gameTime, Matrix scaleMatrix, CursorPositionTransformation? cursorDelegate = null);
 		
 	public Vector2 MousePosition { get; }
 	public Vector2 MousePositionDiff { get; }

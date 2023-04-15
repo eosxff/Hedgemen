@@ -10,7 +10,7 @@ namespace Petal.Framework.Scenery;
 
 public class Scene : IDisposable
 {
-	private readonly RenderTarget2D? _renderTarget = null;
+	private RenderTarget2D? _renderTarget = null;
 	
 	public Renderer Renderer
 	{
@@ -38,10 +38,18 @@ public class Scene : IDisposable
 		get;
 	} = new ();
 
+	private ViewportAdapter _viewportAdapter;
+	
 	public ViewportAdapter ViewportAdapter
 	{
-		get;
-		private set;
+		get => _viewportAdapter;
+		set
+		{
+			_viewportAdapter = value;
+			_viewportAdapter.Reset();
+			OnViewportAdapterChanged?.Invoke(this, EventArgs.Empty);
+			Console.WriteLine(_viewportAdapter);
+		}
 	}
 
 	private Skin _skin = new();
@@ -69,6 +77,8 @@ public class Scene : IDisposable
 
 	public event EventHandler OnSkinChanged;
 
+	public event EventHandler OnViewportAdapterChanged;
+
 	private readonly Dictionary<NamespacedString, Node> _nodesInScene = new();
 
 	public Node? FindNode(NamespacedString name)
@@ -91,14 +101,8 @@ public class Scene : IDisposable
 		Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
 		Root.UpdateResolutionScalar();
 
-		_renderTarget = new RenderTarget2D(
-			graphicsDevice,
-			graphicsDevice.PresentationParameters.BackBufferWidth,
-			graphicsDevice.PresentationParameters.BackBufferHeight,
-			false,
-			graphicsDevice.PresentationParameters.BackBufferFormat,
-			DepthFormat.Depth24);
-		
+		_renderTarget = CreateRenderTarget();
+
 		Root.OnVirtualResolutionChanged += stage =>
 		{
 			if (stage.Scene == null)
@@ -108,21 +112,14 @@ public class Scene : IDisposable
 			stage.Scene.Root.UpdateResolutionScalar();
 		};
 
-		ViewportAdapter = new BoxingViewportAdapter(
+		ViewportAdapter = new ScalingViewportAdapter(
 			Renderer.RenderState.Graphics.GraphicsDevice,
-			PetalGame.Petal.Window,
-			new Vector2Int(640, 360),
-			new Vector2Int(0, 0));
-
-		/*ViewportAdapter = new ScalingViewportAdapter(
-			Renderer.RenderState.Graphics.GraphicsDevice,
-			new Vector2Int(640, 360));*/
+			new Vector2Int(640, 360));
 	}
 
 	public void Update(GameTime time)
 	{
-		//Input.Update(time, Root.VirtualResolutionScaleMatrix);
-		Input.Update(time, ViewportAdapter.GetScaleMatrix());
+		Input.Update(time, ViewportAdapter.GetScaleMatrix(), TransformCursorPosition); // todo needs to work with viewport adapters
 
 		BeforeUpdate?.Invoke(this, EventArgs.Empty);
 		
@@ -134,21 +131,46 @@ public class Scene : IDisposable
 		AfterUpdate?.Invoke(this, EventArgs.Empty);
 	}
 
+	private Vector2 TransformCursorPosition(Vector2 position)
+	{
+		var point = ViewportAdapter.PointToScreen((int)position.X, (int)position.Y);
+		return new Vector2(point.X, point.Y);
+	}
+
 	public void Draw(GameTime time)
 	{
-		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
-
-		//graphicsDevice.SetRenderTarget(_renderTarget);
-		
-		graphicsDevice.Clear(BackgroundColor);
-
 		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
 		
+		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
+
+		_renderTarget = CreateRenderTarget();
+		
+		graphicsDevice.SetRenderTarget(_renderTarget);
+		graphicsDevice.Clear(BackgroundColor);
+
 		BeforeDraw?.Invoke(this, EventArgs.Empty);
 		Root.Draw(time);
 		AfterDraw?.Invoke(this, EventArgs.Empty);
 		
-		//graphicsDevice.SetRenderTarget(null);
+		graphicsDevice.SetRenderTarget(null);
+		
+		ViewportAdapter.Reset();
+
+		Renderer.Begin();
+		Renderer.Draw(new RenderData
+		{
+			Texture = _renderTarget,
+			SrcRect = new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height),
+			DstRect = new Rectangle(
+				0,
+				0,
+				ViewportAdapter.VirtualResolution.X,
+				ViewportAdapter.VirtualResolution.Y)
+		});
+		
+		ViewportAdapter.Reset();
+
+		Renderer.End();
 	}
 
 	public void Exit()
@@ -179,11 +201,23 @@ public class Scene : IDisposable
 
 	private void OnWindowClientSizeChanged(object? sender, EventArgs args)
 	{
-		//Root.UpdateResolutionScalar();
-		//Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
-
+		_renderTarget.Dispose();
+		_renderTarget = CreateRenderTarget();
+		
 		ViewportAdapter.Reset();
-		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
+	}
+
+	private RenderTarget2D CreateRenderTarget()
+	{
+		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
+		
+		return new RenderTarget2D(
+			graphicsDevice,
+			graphicsDevice.Viewport.Width,
+			graphicsDevice.Viewport.Height,
+			false,
+			graphicsDevice.PresentationParameters.BackBufferFormat,
+			DepthFormat.Depth24);
 	}
 
 	internal void InternalAddNode(Node node)
@@ -202,5 +236,6 @@ public class Scene : IDisposable
 	{
 		_renderTarget?.Dispose();
 		Renderer?.Dispose();
+		ViewportAdapter?.Dispose();
 	}
 }

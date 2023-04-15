@@ -40,8 +40,13 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 			_typedChars.Append(c);
 		};
 	}
-	
+
 	public void Update(GameTime time, Matrix scaleMatrix)
+	{
+		Update(time, scaleMatrix, null);
+	}
+	
+	public void Update(GameTime time, Matrix scaleMatrix, CursorPositionTransformation? cursorDelegate)
 	{
 		if(_shouldClearTypedChars)
 		{
@@ -57,7 +62,15 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 
 		var mouseState = Mouse.GetState();
 		_cursorPosition = new Vector2(mouseState.X, mouseState.Y);
-		_cursorPosition = Vector2.Transform(_cursorPosition, Matrix.Invert(scaleMatrix));
+
+		if (cursorDelegate == null)
+		{
+			_cursorPosition = Vector2.Transform(_cursorPosition, Matrix.Invert(scaleMatrix));
+		}
+		else
+		{
+			_cursorPosition = cursorDelegate(_cursorPosition);
+		}
 	}
 
 	public bool IsRecordingTypedChars
