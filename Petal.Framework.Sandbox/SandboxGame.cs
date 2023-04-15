@@ -7,8 +7,6 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Framework;
-using Scenery;
-using Scenery.Nodes;
 using Windowing;
 
 public class SandboxGame : PetalGame

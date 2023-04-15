@@ -39,7 +39,7 @@ public class Hedgemen : PetalGame
 		var resource1 = ContentRegistry.Register(
 			"hedgemen:ui/button_down_texture",
 			Assets.LoadAsset<Texture2D>("button_down.png"));
-		
+
 		ContentRegistry.Register(
 			"hedgemen:ui/button_hover_texture",
 			Assets.LoadAsset<Texture2D>("button_hover.png"));
@@ -78,8 +78,9 @@ public class Hedgemen : PetalGame
 			//ViewportAdapter = new ScalingViewportAdapter(GraphicsDevice, new Vector2Int(640, 360))
 			ViewportAdapter = new BoxingViewportAdapter(
 				GraphicsDevice,
-				PetalGame.Petal.Window,
+				Petal.Window,
 				new Vector2Int(640, 360))
+			//ViewportAdapter = new DefaultViewportAdapter(GraphicsDevice, Window)
 		};
 
 		var image = scene.Root.Add(new Button(skin)
@@ -104,6 +105,4 @@ public class Hedgemen : PetalGame
 			IsMouseVisible = true
 		};
 	}
-	
-	
 }

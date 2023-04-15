@@ -98,28 +98,17 @@ public class Scene : IDisposable
 
 		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
 
-		Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
-		Root.UpdateResolutionScalar();
-
-		_renderTarget = CreateRenderTarget();
-
-		Root.OnVirtualResolutionChanged += stage =>
-		{
-			if (stage.Scene == null)
-				return;
-			
-			stage.Scene.Renderer.RenderState.TransformationMatrix = Root.VirtualResolutionScaleMatrix;
-			stage.Scene.Root.UpdateResolutionScalar();
-		};
-
-		ViewportAdapter = new ScalingViewportAdapter(
-			Renderer.RenderState.Graphics.GraphicsDevice,
-			new Vector2Int(640, 360));
+		ViewportAdapter = new DefaultViewportAdapter(
+			Renderer.RenderState.Graphics.GraphicsDevice, PetalGame.Petal.Window);
+		
+		ViewportAdapter.Reset();
+		
+		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
 	}
 
 	public void Update(GameTime time)
 	{
-		Input.Update(time, ViewportAdapter.GetScaleMatrix(), TransformCursorPosition); // todo needs to work with viewport adapters
+		Input.Update(time, ViewportAdapter.GetScaleMatrix(), TransformCursorPosition);
 
 		BeforeUpdate?.Invoke(this, EventArgs.Empty);
 		
@@ -156,21 +145,24 @@ public class Scene : IDisposable
 		
 		ViewportAdapter.Reset();
 
-		Renderer.Begin();
-		Renderer.Draw(new RenderData
+		if (_renderTarget != null)
 		{
-			Texture = _renderTarget,
-			SrcRect = new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height),
-			DstRect = new Rectangle(
-				0,
-				0,
-				ViewportAdapter.VirtualResolution.X,
-				ViewportAdapter.VirtualResolution.Y)
-		});
+			Renderer.Begin();
+			Renderer.Draw(new RenderData
+			{
+				Texture = _renderTarget,
+				SrcRect = new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height),
+				DstRect = new Rectangle(
+					0,
+					0,
+					ViewportAdapter.VirtualResolution.X,
+					ViewportAdapter.VirtualResolution.Y)
+			});
 		
-		ViewportAdapter.Reset();
+			ViewportAdapter.Reset();
 
-		Renderer.End();
+			Renderer.End();
+		}
 	}
 
 	public void Exit()
@@ -194,14 +186,14 @@ public class Scene : IDisposable
 		var petal = PetalGame.Petal;
 		
 		petal.Window.ClientSizeChanged += OnWindowClientSizeChanged;
-		Root.UpdateResolutionScalar();
+		ViewportAdapter.Reset();
 		
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
 	}
 
 	private void OnWindowClientSizeChanged(object? sender, EventArgs args)
 	{
-		_renderTarget.Dispose();
+		_renderTarget?.Dispose();
 		_renderTarget = CreateRenderTarget();
 		
 		ViewportAdapter.Reset();

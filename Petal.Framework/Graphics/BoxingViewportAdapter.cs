@@ -38,7 +38,7 @@ public class BoxingViewportAdapter : ScalingViewportAdapter
     {
         bleed ??= Vector2Int.Zero;
 
-        VirtualResolution = virtualResolution;
+        SetVirtualResolution(virtualResolution);
         Bleed = bleed.Value;
         Window = window;
         Window.ClientSizeChanged += OnClientSizeChanged;
@@ -46,10 +46,15 @@ public class BoxingViewportAdapter : ScalingViewportAdapter
         OnClientSizeChanged(this, EventArgs.Empty);
     }
 
+    ~BoxingViewportAdapter()
+    {
+        Dispose();
+    }
+
     public override void Dispose()
     {
-        Window.ClientSizeChanged -= OnClientSizeChanged;
         base.Dispose();
+        Window.ClientSizeChanged -= OnClientSizeChanged;
     }
 
     public override void Reset()

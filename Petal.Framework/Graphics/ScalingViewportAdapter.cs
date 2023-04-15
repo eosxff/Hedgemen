@@ -8,7 +8,7 @@ public class ScalingViewportAdapter : ViewportAdapter
     public ScalingViewportAdapter(GraphicsDevice graphicsDevice, Vector2Int virtualResolution)
         : base(graphicsDevice)
     {
-        VirtualResolution = virtualResolution;
+        SetVirtualResolution(virtualResolution);
     }
 
     public override Matrix GetScaleMatrix()

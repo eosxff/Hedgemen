@@ -7,24 +7,15 @@ namespace Petal.Framework.Graphics;
 
 public abstract class ViewportAdapter : IDisposable
 {
-	public event EventHandler OnVirtualResolutionChanged;
-	
 	public GraphicsDevice GraphicsDevice
 	{
 		get;
 	}
-	
+
 	private Vector2Int _virtualResolution;
 
-	public Vector2Int VirtualResolution
-	{
-		get => _virtualResolution;
-		set
-		{
-			_virtualResolution = value;
-			OnVirtualResolutionChanged?.Invoke(this, EventArgs.Empty);
-		}
-	}
+	public virtual Vector2Int VirtualResolution
+		=> _virtualResolution;
 
 	public Vector2Int ViewportResolution
 	{
@@ -41,13 +32,22 @@ public abstract class ViewportAdapter : IDisposable
 	protected ViewportAdapter(GraphicsDevice graphicsDevice)
 	{
 		GraphicsDevice = graphicsDevice;
-		VirtualResolution = new Vector2Int(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
 		ViewportResolution = new Vector2Int(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
+		
+		_virtualResolution = new Vector2Int(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
 	}
 
 	~ViewportAdapter()
 	{
 		Dispose();
+	}
+
+	/// <summary>
+	/// Used in situations where virtual resolution is dynamic or being set for the first time
+	/// </summary>
+	protected void SetVirtualResolution(Vector2Int resolution)
+	{
+		_virtualResolution = resolution;
 	}
 	
 	public virtual Matrix GetScaleMatrix()
