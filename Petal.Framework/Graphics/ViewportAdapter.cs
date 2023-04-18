@@ -32,9 +32,13 @@ public abstract class ViewportAdapter : IDisposable
 	protected ViewportAdapter(GraphicsDevice graphicsDevice)
 	{
 		GraphicsDevice = graphicsDevice;
-		ViewportResolution = new Vector2Int(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
+
+		var graphicsDeviceViewportSize = new Vector2Int(
+			graphicsDevice.Viewport.Width,
+			graphicsDevice.Viewport.Height);
 		
-		_virtualResolution = new Vector2Int(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
+		ViewportResolution = graphicsDeviceViewportSize;
+		SetVirtualResolution(graphicsDeviceViewportSize);
 	}
 
 	~ViewportAdapter()
@@ -43,7 +47,7 @@ public abstract class ViewportAdapter : IDisposable
 	}
 
 	/// <summary>
-	/// Used in situations where virtual resolution is dynamic or being set for the first time
+	/// Used in situations where virtual resolution is dynamic or being set for the first time.
 	/// </summary>
 	protected void SetVirtualResolution(Vector2Int resolution)
 	{
@@ -73,6 +77,5 @@ public abstract class ViewportAdapter : IDisposable
 	public virtual void Dispose()
 	{
 		GC.SuppressFinalize(this);
-		GraphicsDevice?.Dispose();
 	}
 }

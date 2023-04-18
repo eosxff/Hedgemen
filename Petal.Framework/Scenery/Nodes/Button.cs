@@ -24,6 +24,31 @@ public class Button : Node
 		Skin = skin;
 	}
 
+	protected override void OnSceneSet()
+	{
+		if (Scene is null)
+			return;
+
+		Scene.OnSkinChanged += SceneOnSkinChanged;
+	}
+
+	protected internal override void Destroy()
+	{
+		if (Scene is not null)
+			Scene.OnSkinChanged -= SceneOnSkinChanged;
+		base.Destroy();
+	}
+
+	private void SceneOnSkinChanged(object? sender, EventArgs args)
+	{
+		if (args is not Scene.SkinChangedEventArgs e)
+			return;
+				
+		Skin.Button.HoverTexture.ReloadItem(Skin.Registry);
+		Skin.Button.InputTexture.ReloadItem(Skin.Registry);
+		Skin.Button.RegularTexture.ReloadItem(Skin.Registry);
+	}
+
 	protected override void OnDraw(GameTime time)
 	{
 		if (Scene == null || Skin == null)

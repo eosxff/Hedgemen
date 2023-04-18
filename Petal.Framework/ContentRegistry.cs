@@ -86,6 +86,12 @@ public class ContentRegistry
 		};
 	}
 
+	public bool TryGet(NamespacedString identifier, out ContentValue content)
+	{
+		var result = _registry.TryGetValue(identifier, out content);
+		return result;
+	}
+
 	public ContentReference<TContent> Get<TContent>(NamespacedString identifier)
 		=> new (identifier, this);
 
@@ -189,7 +195,7 @@ public sealed class ContentReference<TContent>
 
 	private static TContent GetItemFromRegistry(NamespacedString identifier, ContentRegistry registry)
 	{
-		var content = registry.Get(identifier);
+		registry.TryGet(identifier, out var content);
 
 		if (content.Item is TContent tContent)
 		{

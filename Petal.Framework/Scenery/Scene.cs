@@ -10,12 +10,27 @@ namespace Petal.Framework.Scenery;
 
 public class Scene : IDisposable
 {
-	private RenderTarget2D? _renderTarget = null;
+	public class SkinChangedEventArgs : EventArgs
+	{
+		public Skin OldSkin
+		{
+			get;
+			init;
+		}
+
+		public Skin NewSkin
+		{
+			get;
+			init;
+		}
+	}
+
+	private RenderTarget2D? _renderTarget;
 	
 	public Renderer Renderer
 	{
 		get;
-	} = null;
+	}
 	
 	public Color BackgroundColor
 	{
@@ -48,7 +63,6 @@ public class Scene : IDisposable
 			_viewportAdapter = value;
 			_viewportAdapter.Reset();
 			OnViewportAdapterChanged?.Invoke(this, EventArgs.Empty);
-			Console.WriteLine(_viewportAdapter);
 		}
 	}
 
@@ -59,8 +73,14 @@ public class Scene : IDisposable
 		get => _skin;
 		set
 		{
+			var args = new SkinChangedEventArgs
+			{
+				OldSkin = _skin,
+				NewSkin = value
+			};
+			
 			_skin = value;
-			OnSkinChanged?.Invoke(this, EventArgs.Empty); // maybe add event args?
+			OnSkinChanged?.Invoke(this, args);
 		}
 	}
 
@@ -96,12 +116,11 @@ public class Scene : IDisposable
 
 		Renderer = new DefaultRenderer();
 
-		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
-
 		ViewportAdapter = new DefaultViewportAdapter(
 			Renderer.RenderState.Graphics.GraphicsDevice, PetalGame.Petal.Window);
 		
 		ViewportAdapter.Reset();
+		ResetRenderTarget();
 		
 		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
 	}
@@ -132,8 +151,6 @@ public class Scene : IDisposable
 		
 		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
 
-		_renderTarget = CreateRenderTarget();
-		
 		graphicsDevice.SetRenderTarget(_renderTarget);
 		graphicsDevice.Clear(BackgroundColor);
 
@@ -160,7 +177,6 @@ public class Scene : IDisposable
 			});
 		
 			ViewportAdapter.Reset();
-
 			Renderer.End();
 		}
 	}
@@ -183,9 +199,7 @@ public class Scene : IDisposable
 
 	public void Initialize()
 	{
-		var petal = PetalGame.Petal;
-		
-		petal.Window.ClientSizeChanged += OnWindowClientSizeChanged;
+		PetalGame.Petal.Window.ClientSizeChanged += OnWindowClientSizeChanged;
 		ViewportAdapter.Reset();
 		
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
@@ -193,17 +207,16 @@ public class Scene : IDisposable
 
 	private void OnWindowClientSizeChanged(object? sender, EventArgs args)
 	{
-		_renderTarget?.Dispose();
-		_renderTarget = CreateRenderTarget();
-		
+		ResetRenderTarget();
 		ViewportAdapter.Reset();
 	}
 
-	private RenderTarget2D CreateRenderTarget()
+	private void ResetRenderTarget()
 	{
 		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
 		
-		return new RenderTarget2D(
+		_renderTarget?.Dispose();
+		_renderTarget = new RenderTarget2D(
 			graphicsDevice,
 			graphicsDevice.Viewport.Width,
 			graphicsDevice.Viewport.Height,
@@ -215,7 +228,6 @@ public class Scene : IDisposable
 	internal void InternalAddNode(Node node)
 	{
 		_nodesInScene.Add(node.Name, node);
-		node.Scene = this;
 	}
 
 	internal void InternalRemoveNode(Node node)
@@ -229,5 +241,7 @@ public class Scene : IDisposable
 		_renderTarget?.Dispose();
 		Renderer?.Dispose();
 		ViewportAdapter?.Dispose();
+
+		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
 	}
 }

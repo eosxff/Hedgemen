@@ -30,6 +30,8 @@ public class Hedgemen : PetalGame
 	private Texture2D _whiteSquare;
 	private Texture2D _peach;
 
+	private Skin _skin;
+
 	protected override void Initialize()
 	{
 		base.Initialize();
@@ -55,24 +57,26 @@ public class Hedgemen : PetalGame
 			"hedgemen:white_square",
 			_whiteSquare);
 
-		var skin = new Skin
+		_skin = new Skin
 		{
 			Button = new Skin.ButtonData
 			{
 				InputTexture = ContentRegistry.Get<Texture2D>("hedgemen:ui/button_down_texture"),
 				HoverTexture = ContentRegistry.Get<Texture2D>("hedgemen:ui/button_hover_texture"),
 				RegularTexture = ContentRegistry.Get<Texture2D>("hedgemen:ui/button_regular_texture"),
-			}
+			},
+			
+			Registry = ContentRegistry
 		};
 		
-		skin.Button.RegularTexture.ReloadItem(ContentRegistry);
+		_skin.Button.RegularTexture.ReloadItem(ContentRegistry);
 		
 		Console.WriteLine(ContentRegistry.Get("hedgemen:ui/button_down_texture"));
 
 		var scene = new Scene(new Stage
 		{
 			
-		}, skin)
+		}, _skin)
 		{
 			BackgroundColor = Color.CornflowerBlue,
 			//ViewportAdapter = new ScalingViewportAdapter(GraphicsDevice, new Vector2Int(640, 360))
@@ -83,14 +87,45 @@ public class Hedgemen : PetalGame
 			//ViewportAdapter = new DefaultViewportAdapter(GraphicsDevice, Window)
 		};
 
-		var image = scene.Root.Add(new Button(skin)
+		var image = scene.Root.Add(new Button(_skin)
 		{
 			Bounds = new Rectangle(0, 0, 150, 50),
 			//Bounds = new Rectangle(0, 0, 640, 360),
 			Color = Color.White,
 		});
 
+		image.OnFocusGained += (sender, args) =>
+		{
+			
+		};
+		
 		ChangeScenes(scene);
+	}
+
+	private Scene NewScene()
+	{
+		var scene = new Scene(new Stage
+		{
+			
+		}, _skin)
+		{
+			BackgroundColor = Color.CornflowerBlue,
+			//ViewportAdapter = new ScalingViewportAdapter(GraphicsDevice, new Vector2Int(640, 360))
+			ViewportAdapter = new BoxingViewportAdapter(
+				GraphicsDevice,
+				Petal.Window,
+				new Vector2Int(640, 360))
+			//ViewportAdapter = new DefaultViewportAdapter(GraphicsDevice, Window)
+		};
+
+		var image = scene.Root.Add(new Button(_skin)
+		{
+			Bounds = new Rectangle(0, 0, 150, 50),
+			//Bounds = new Rectangle(0, 0, 640, 360),
+			Color = Color.White,
+		});
+
+		return scene;
 	}
 
 	protected override GameSettings GetInitialGameSettings()

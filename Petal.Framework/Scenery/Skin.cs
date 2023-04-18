@@ -1,14 +1,19 @@
-﻿using System.Reflection;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 
 namespace Petal.Framework.Scenery;
 
 public sealed class Skin
 {
+	public ContentRegistry Registry
+	{
+		get;
+		init;
+	}
+	
 	public ButtonData Button
 	{
 		get;
-		set;
+		init;
 	}
 
 	public sealed class ButtonData

@@ -11,28 +11,26 @@ public delegate void NodeEvent<in TNode>(TNode node) where TNode : Node;
 
 public abstract class Node
 {
-	public event NodeEvent<Node> OnBeforeDraw;
-	public event NodeEvent<Node> OnAfterDraw;
+	public event EventHandler? OnBeforeDraw;
+	public event EventHandler? OnAfterDraw;
 
-	public event NodeEvent<Node> OnBeforeUpdate;
-	public event NodeEvent<Node> OnAfterUpdate;
+	public event EventHandler? OnBeforeUpdate;
+	public event EventHandler? OnAfterUpdate;
 
-	public event NodeEvent<Node> OnDestroy;
+	public event EventHandler? OnDestroy;
 
-	public event NodeEvent<Node> OnChildAdded;
-	public event NodeEvent<Node> OnAddedToParent;
-	
-	public event NodeEvent<Node> OnChildRemoved;
-	public event NodeEvent<Node> OnRemovedFromParent;
+	public event EventHandler? OnChildRemoved;
+	public event EventHandler? OnRemovedFromParent;
 
-	public event NodeEvent<Node> OnFocusGained;
-	public event NodeEvent<Node> OnFocusLost;
+	public event EventHandler? OnFocusGained;
+	public event EventHandler? OnFocusLost;
 
-	public event NodeEvent<Node> OnMouseHover;
-	public event NodeEvent<Node> OnMouseDown;
-	public event NodeEvent<Node> OnMousePressed;
-	public event NodeEvent<Node> OnMouseReleased;
+	public event EventHandler? OnMouseHover;
+	public event EventHandler? OnMouseDown;
+	public event EventHandler? OnMousePressed;
+	public event EventHandler? OnMouseReleased;
 
+	public event EventHandler? OnParentChanged;
 
 	private readonly List<Node> _children = new();
 
@@ -87,17 +85,29 @@ public abstract class Node
 		}
 	}
 
+	private Node? _parent;
+
 	public Node? Parent
 	{
-		get;
-		private set;
-	} = null;
+		get => _parent;
+		private set
+		{
+			_parent = value;
+			OnParentChanged?.Invoke(this, EventArgs.Empty);
+		}
+	}
 
+	private Scene? _scene;
+	
 	public Scene? Scene
 	{
-		get;
-		internal set;
-	} = null;
+		get => _scene;
+		internal set
+		{
+			_scene = value;
+			OnSceneSet();
+		}
+	}
 
 	private Rectangle _bounds = Rectangle.Empty;
 	private Rectangle _absoluteBounds;
@@ -130,7 +140,7 @@ public abstract class Node
 			UpdateChildrenBounds();
 		}
 		
-		OnBeforeUpdate?.Invoke(this);
+		OnBeforeUpdate?.Invoke(this, EventArgs.Empty);
 		
 		OnUpdate(time, selection);
 
@@ -149,29 +159,29 @@ public abstract class Node
 			UpdateNodeState(selection, isMouseDown, isMousePressed, isMouseReleased);
 
 			if(State == NodeState.Hover)
-				OnMouseHover?.Invoke(this);
+				OnMouseHover?.Invoke(this, EventArgs.Empty);
 			
 			if(State == NodeState.Input && isMouseReleased)
-				OnMouseReleased?.Invoke(this);
+				OnMouseReleased?.Invoke(this, EventArgs.Empty);
 			
 			if(State == NodeState.Input && isMousePressed)
-				OnMousePressed?.Invoke(this);
+				OnMousePressed?.Invoke(this, EventArgs.Empty);
 			
 			if(State == NodeState.Input && isMouseDown)
-				OnMouseDown?.Invoke(this);
+				OnMouseDown?.Invoke(this, EventArgs.Empty);
 
 			switch (isTarget)
 			{
 				case true when selection.PreviousTarget != this:
-					OnFocusGained?.Invoke(this);
+					OnFocusGained?.Invoke(this, EventArgs.Empty);
 					break;
 				case false when selection.PreviousTarget == this:
-					OnFocusLost?.Invoke(this);
+					OnFocusLost?.Invoke(this, EventArgs.Empty);
 					break;
 			}
 		}
 		
-		OnAfterUpdate?.Invoke(this);
+		OnAfterUpdate?.Invoke(this, EventArgs.Empty);
 	}
 
 	protected virtual void OnUpdate(GameTime time, NodeSelection selection) { }
@@ -186,7 +196,7 @@ public abstract class Node
 		if (!IsVisible)
 			return;
 		
-		OnBeforeDraw?.Invoke(this);
+		OnBeforeDraw?.Invoke(this, EventArgs.Empty);
 		
 		OnDraw(time);
 
@@ -195,7 +205,7 @@ public abstract class Node
 			child.Draw(time);
 		}
 		
-		OnAfterDraw?.Invoke(this);
+		OnAfterDraw?.Invoke(this, EventArgs.Empty);
 	}
 
 	protected virtual void OnDraw(GameTime time) { }
@@ -204,13 +214,28 @@ public abstract class Node
 	{
 		_children.Add(child);
 		child.Parent = this;
+		child.Scene = Scene;
 		Scene?.InternalAddNode(child);
 		
-		child.OnAddedToParent?.Invoke(child);
-		
-		OnChildAdded?.Invoke(this);
+		child.OnAddedToParent();
+		OnChildAdded(child);
 		
 		return child;
+	}
+
+	protected virtual void OnAddedToParent()
+	{
+		
+	}
+
+	protected virtual void OnChildAdded(Node child)
+	{
+		
+	}
+
+	protected virtual void OnSceneSet()
+	{
+		
 	}
 
 	public void Add(params Node[] children)
@@ -225,9 +250,9 @@ public abstract class Node
 		child.Parent = null;
 		Scene?.InternalRemoveNode(child);
 		
-		child.OnRemovedFromParent?.Invoke(child);
+		child.OnRemovedFromParent?.Invoke(this, EventArgs.Empty);
 		
-		OnChildRemoved?.Invoke(this);
+		OnChildRemoved?.Invoke(this, EventArgs.Empty);
 	}
 
 	public virtual bool IsHovering(Vector2 position)
@@ -283,7 +308,7 @@ public abstract class Node
 
 		IsMarkedForDeletion = false;
 		
-		OnDestroy?.Invoke(this);
+		OnDestroy?.Invoke(this, EventArgs.Empty);
 	}
 
 	public bool IsAnyParentMarkedForDeletion
@@ -370,7 +395,7 @@ public abstract class Node
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private bool MarkAsDirty()
+	private void MarkAsDirty()
 		=> _isDirty = true;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
