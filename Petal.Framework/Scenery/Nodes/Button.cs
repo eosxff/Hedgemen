@@ -32,7 +32,7 @@ public class Button : Node
 		Scene.OnSkinChanged += SceneOnSkinChanged;
 	}
 
-	protected internal override void Destroy()
+	protected override void Destroy()
 	{
 		if (Scene is not null)
 			Scene.OnSkinChanged -= SceneOnSkinChanged;

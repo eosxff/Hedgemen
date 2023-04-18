@@ -193,7 +193,7 @@ public class Scene : IDisposable
 		foreach (var node in _nodesInScene.Values)
 		{
 			if (node.IsMarkedForDeletion)
-				node.Destroy();
+				node.InternalDestroy();
 		}
 	}
 

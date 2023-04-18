@@ -296,7 +296,11 @@ public abstract class Node
 		set;
 	}
 
-	protected internal virtual void Destroy()
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal void InternalDestroy()
+		=> Destroy();
+
+	protected virtual void Destroy()
 	{
 		foreach (var child in Children.ToList())
 		{
