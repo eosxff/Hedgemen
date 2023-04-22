@@ -71,7 +71,7 @@ public abstract class Node
 	{
 		get;
 		private set;
-	} = NodeState.Default;
+	} = NodeState.Normal;
 
 	private Anchor _anchor = Anchor.TopLeft;
 	
@@ -435,7 +435,7 @@ public abstract class Node
 
 	private void UpdateNodeState(NodeSelection selection, bool isMouseDown, bool isMousePressed)
 	{
-		State = NodeState.Default;
+		State = NodeState.Normal;
 		
 		if (Scene == null)
 			return;

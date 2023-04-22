@@ -24,13 +24,13 @@ public sealed class Skin
 
 	public sealed class ButtonData
 	{
-		public ContentReference<Texture2D> RegularTexture;
+		public ContentReference<Texture2D> NormalTexture;
 		public ContentReference<Texture2D> HoverTexture;
 		public ContentReference<Texture2D> InputTexture;
 	}
 
 	public static Skin FromJson(string json)
-		=> ReadFromJson<Skin>(json, DataRecord.JsonDeserializeOptions);
+		=> ReadFromJson<DataRecord>(json, DataRecord.JsonDeserializeOptions).Create();
 
 	[Serializable]
 	public struct DataRecord : IDataRecord<Skin>
@@ -44,8 +44,8 @@ public sealed class Skin
 			};
 		
 		[JsonInclude]
-		[JsonPropertyName("button_data_regular_texture_name")]
-		public string ButtonDataRegularTextureName;
+		[JsonPropertyName("button_data_normal_texture_name")]
+		public string ButtonDataNormalTextureName;
 		
 		[JsonInclude]
 		[JsonPropertyName("button_data_hover_texture_name")]
@@ -61,7 +61,7 @@ public sealed class Skin
 			{
 				Button = new ButtonData
 				{
-					RegularTexture = new ContentReference<Texture2D>(ButtonDataRegularTextureName),
+					NormalTexture = new ContentReference<Texture2D>(ButtonDataNormalTextureName),
 					HoverTexture = new ContentReference<Texture2D>(ButtonDataHoverTextureName),
 					InputTexture = new ContentReference<Texture2D>(ButtonDataInputTextureName),
 				}
@@ -70,7 +70,7 @@ public sealed class Skin
 
 		public void Read(Skin obj)
 		{
-			ButtonDataRegularTextureName = obj.Button.RegularTexture.ContentIdentifier;
+			ButtonDataNormalTextureName = obj.Button.NormalTexture.ContentIdentifier;
 			ButtonDataHoverTextureName = obj.Button.HoverTexture.ContentIdentifier;
 			ButtonDataInputTextureName = obj.Button.InputTexture.ContentIdentifier;
 		}

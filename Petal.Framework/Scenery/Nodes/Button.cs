@@ -46,7 +46,7 @@ public class Button : Node
 				
 		Skin.Button.HoverTexture.ReloadItem(Skin.Registry);
 		Skin.Button.InputTexture.ReloadItem(Skin.Registry);
-		Skin.Button.RegularTexture.ReloadItem(Skin.Registry);
+		Skin.Button.NormalTexture.ReloadItem(Skin.Registry);
 	}
 
 	protected override void OnDraw(GameTime time)
@@ -79,8 +79,8 @@ public class Button : Node
 
 		switch (State)
 		{
-			case NodeState.Default:
-				return Skin.Button.RegularTexture;
+			case NodeState.Normal:
+				return Skin.Button.NormalTexture;
 			case NodeState.Input:
 				return Skin.Button.InputTexture;
 			case NodeState.Hover:

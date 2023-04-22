@@ -2,7 +2,7 @@
 
 public enum NodeState
 {
-	Default,
+	Normal,
 	Hover,
 	Input
 }
