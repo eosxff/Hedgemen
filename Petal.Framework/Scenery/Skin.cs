@@ -39,7 +39,8 @@ public sealed class Skin
 			=> new JsonSerializerOptions
 			{
 				IncludeFields = true,
-				WriteIndented = true
+				WriteIndented = true,
+				Converters = {  }
 			};
 		
 		[JsonInclude]

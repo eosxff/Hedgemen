@@ -15,7 +15,8 @@ public struct GameSettings
 		{
 			IgnoreReadOnlyProperties = true,
 			IgnoreReadOnlyFields = true,
-			WriteIndented = true
+			WriteIndented = true,
+			Converters = {  }
 		};
 
 	[JsonInclude]

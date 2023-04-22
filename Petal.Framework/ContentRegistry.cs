@@ -235,23 +235,3 @@ public sealed class ContentReference<TContent>
 		}
 	}
 }
-
-public sealed class ContentReferenceJsonConverter<TContent> : JsonConverter<ContentReference<TContent>>
-{
-	public override ContentReference<TContent> Read(
-		ref Utf8JsonReader reader,
-		Type typeToConvert,
-		JsonSerializerOptions options)
-	{
-		string? contentIdentifier = reader.GetString() ?? string.Empty;
-		return new ContentReference<TContent>(contentIdentifier);
-	}
-
-	public override void Write(
-		Utf8JsonWriter writer,
-		ContentReference<TContent> value,
-		JsonSerializerOptions options)
-	{
-		writer.WriteString(value.ContentIdentifier, DateTime.Now);
-	}
-}
