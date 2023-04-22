@@ -42,14 +42,14 @@ public class Hedgemen : PetalGame
 
 		Window.AllowUserResizing = true;
 
-		var resource1 = ContentRegistry.Register(
-			"hedgemen:ui/button_input_texture",
-			Assets.LoadAsset<Texture2D>("button_input.png"));
-
 		ContentRegistry.Register(
 			"hedgemen:ui/button_hover_texture",
 			Assets.LoadAsset<Texture2D>("button_hover.png"));
 		
+		ContentRegistry.Register(
+			"hedgemen:ui/button_input_texture",
+			Assets.LoadAsset<Texture2D>("button_input.png"));
+
 		ContentRegistry.Register(
 			"hedgemen:ui/button_normal_texture",
 			Assets.LoadAsset<Texture2D>("button_normal.png"));
@@ -60,24 +60,12 @@ public class Hedgemen : PetalGame
 		ContentRegistry.Register(
 			"hedgemen:white_square",
 			_whiteSquare);
-
-		/*_skin = new Skin
-		{
-			Button = new Skin.ButtonData
-			{
-				InputTexture = ContentRegistry.Get<Texture2D>("hedgemen:ui/button_down_texture"),
-				HoverTexture = ContentRegistry.Get<Texture2D>("hedgemen:ui/button_hover_texture"),
-				RegularTexture = ContentRegistry.Get<Texture2D>("hedgemen:ui/button_regular_texture"),
-			},
-			
-			Registry = ContentRegistry
-		};*/
-
-		_skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8));
+		
+		_skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), ContentRegistry);
 		Console.WriteLine(_skin.Button.NormalTexture.ContentIdentifier);
 		Console.WriteLine(_skin.Button.HoverTexture.ContentIdentifier);
 		Console.WriteLine(_skin.Button.InputTexture.ContentIdentifier);
-		
+
 		_skin.Button.NormalTexture.ReloadItem(ContentRegistry);
 
 		try

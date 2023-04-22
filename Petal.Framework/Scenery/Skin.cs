@@ -10,7 +10,7 @@ namespace Petal.Framework.Scenery;
 
 public sealed class Skin
 {
-	public ContentRegistry? Registry
+	public ContentRegistry? ContentRegistry
 	{
 		get;
 		set;
@@ -22,6 +22,22 @@ public sealed class Skin
 		init;
 	}
 
+	public Skin() : this(null)
+	{
+		
+	}
+
+	public Skin(ContentRegistry? contentRegistry)
+	{
+		ContentRegistry = contentRegistry;
+		Button = new ButtonData
+		{
+			HoverTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry),
+			InputTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry),
+			NormalTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry)
+		};
+	}
+
 	public sealed class ButtonData
 	{
 		public ContentReference<Texture2D> NormalTexture;
@@ -29,8 +45,24 @@ public sealed class Skin
 		public ContentReference<Texture2D> InputTexture;
 	}
 
-	public static Skin FromJson(string json)
-		=> ReadFromJson<DataRecord>(json, DataRecord.JsonDeserializeOptions).Create();
+	public void Refresh()
+	{
+		if (ContentRegistry is null)
+			return;
+		
+		Button.NormalTexture.ReloadItem(ContentRegistry);
+		Button.HoverTexture.ReloadItem(ContentRegistry);
+		Button.InputTexture.ReloadItem(ContentRegistry);
+	}
+
+	public static Skin FromJson(string json, ContentRegistry? registry)
+	{
+		var skin = ReadFromJson<DataRecord>(json, DataRecord.JsonDeserializeOptions).Create();
+		skin.ContentRegistry = registry;
+		skin.Refresh();
+		
+		return skin;
+	}
 
 	[Serializable]
 	public struct DataRecord : IDataRecord<Skin>

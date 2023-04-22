@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Petal.Framework.Util;
@@ -190,7 +189,7 @@ public sealed class ContentReference<TContent>
 		ContentIdentifier = identifier;
 	}
 
-	public ContentReference(NamespacedString identifier, ContentRegistry registry)
+	public ContentReference(NamespacedString identifier, ContentRegistry? registry)
 	{
 		ContentIdentifier = identifier;
 		Item = GetItemFromRegistry(identifier, registry);
@@ -203,8 +202,11 @@ public sealed class ContentReference<TContent>
 		Item = GetItemFromRegistry(ContentIdentifier, registry);
 	}
 
-	private static TContent GetItemFromRegistry(NamespacedString identifier, ContentRegistry registry)
+	private static TContent GetItemFromRegistry(NamespacedString identifier, ContentRegistry? registry)
 	{
+		if (registry is null)
+			return default;
+		
 		registry.TryGet(identifier, out var content);
 
 		if (content.Item is TContent tContent)

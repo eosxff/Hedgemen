@@ -44,9 +44,9 @@ public class Button : Node
 		if (args is not Scene.SkinChangedEventArgs e)
 			return;
 				
-		Skin.Button.HoverTexture.ReloadItem(Skin.Registry);
-		Skin.Button.InputTexture.ReloadItem(Skin.Registry);
-		Skin.Button.NormalTexture.ReloadItem(Skin.Registry);
+		Skin.Button.HoverTexture.ReloadItem(Skin.ContentRegistry);
+		Skin.Button.InputTexture.ReloadItem(Skin.ContentRegistry);
+		Skin.Button.NormalTexture.ReloadItem(Skin.ContentRegistry);
 	}
 
 	protected override void OnDraw(GameTime time)

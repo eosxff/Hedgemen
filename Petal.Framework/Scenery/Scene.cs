@@ -80,6 +80,7 @@ public class Scene : IDisposable
 			};
 			
 			_skin = value;
+			_skin.Refresh();
 			OnSkinChanged?.Invoke(this, args);
 		}
 	}
