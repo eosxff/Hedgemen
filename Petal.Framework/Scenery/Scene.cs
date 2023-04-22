@@ -238,10 +238,12 @@ public class Scene : IDisposable
 
 	public void Dispose()
 	{
+		GC.SuppressFinalize(this);
+		
+		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
+		
 		_renderTarget?.Dispose();
 		Renderer?.Dispose();
 		ViewportAdapter?.Dispose();
-
-		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
 	}
 }

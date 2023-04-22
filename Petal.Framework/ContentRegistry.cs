@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Petal.Framework.Util;
 
 namespace Petal.Framework;
 
@@ -30,9 +33,9 @@ public class ContentRegistry
 		}
 	}
 	
-	public event EventHandler OnContentRegisteredAsync;
-	public event EventHandler OnContentRegistered;
-	public event EventHandler OnContentReplaced;
+	public event EventHandler? OnContentRegisteredAsync;
+	public event EventHandler? OnContentRegistered;
+	public event EventHandler? OnContentReplaced;
 	
 	private readonly Dictionary<NamespacedString, ContentValue> _registry = new();
 
@@ -181,15 +184,22 @@ public sealed class ContentReference<TContent>
 		get;
 		private set;
 	}
-	
+
+	public ContentReference(NamespacedString identifier)
+	{
+		ContentIdentifier = identifier;
+	}
+
 	public ContentReference(NamespacedString identifier, ContentRegistry registry)
 	{
 		ContentIdentifier = identifier;
 		Item = GetItemFromRegistry(identifier, registry);
 	}
 
-	public void ReloadItem(ContentRegistry registry)
+	public void ReloadItem(ContentRegistry? registry)
 	{
+		if (registry == null)
+			return;
 		Item = GetItemFromRegistry(ContentIdentifier, registry);
 	}
 
@@ -207,4 +217,41 @@ public sealed class ContentReference<TContent>
 
 	public bool IsValid
 		=> Item != null;
+	
+	[Serializable]
+	public struct DataRecord : IDataRecord<ContentReference<TContent>>
+	{
+		[JsonPropertyName("content_id")]
+		public NamespacedString ContentIdentifier;
+
+		public ContentReference<TContent> Create()
+		{
+			return new ContentReference<TContent>(ContentIdentifier);
+		}
+
+		public void Read(ContentReference<TContent> obj)
+		{
+			ContentIdentifier = obj.ContentIdentifier;
+		}
+	}
+}
+
+public sealed class ContentReferenceJsonConverter<TContent> : JsonConverter<ContentReference<TContent>>
+{
+	public override ContentReference<TContent> Read(
+		ref Utf8JsonReader reader,
+		Type typeToConvert,
+		JsonSerializerOptions options)
+	{
+		string? contentIdentifier = reader.GetString() ?? string.Empty;
+		return new ContentReference<TContent>(contentIdentifier);
+	}
+
+	public override void Write(
+		Utf8JsonWriter writer,
+		ContentReference<TContent> value,
+		JsonSerializerOptions options)
+	{
+		writer.WriteString(value.ContentIdentifier, DateTime.Now);
+	}
 }

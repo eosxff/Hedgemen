@@ -156,7 +156,7 @@ public abstract class Node
 			bool isMousePressed = Scene.Input.MouseButtonClicked(MouseButtons.LeftButton);
 			bool isMouseReleased = Scene.Input.MouseButtonReleased(MouseButtons.LeftButton);
 			
-			UpdateNodeState(selection, isMouseDown, isMousePressed, isMouseReleased);
+			UpdateNodeState(selection, isMouseDown, isMousePressed);
 
 			if(State == NodeState.Hover)
 				OnMouseHover?.Invoke(this, EventArgs.Empty);
@@ -433,7 +433,7 @@ public abstract class Node
 		_absoluteBounds = CalculateBounds(relativeBounds);
 	}
 
-	private void UpdateNodeState(NodeSelection selection, bool isMouseDown, bool isMousePressed, bool isMouseReleased)
+	private void UpdateNodeState(NodeSelection selection, bool isMouseDown, bool isMousePressed)
 	{
 		State = NodeState.Default;
 		

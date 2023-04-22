@@ -6,10 +6,10 @@ public enum WindowMode
 {
 	[JsonPropertyName("windowed")]
 	Windowed,
-	[JsonPropertyName("borderlessWindowed")]
+	[JsonPropertyName("borderless_windowed")]
 	BorderlessWindowed,
 	[JsonPropertyName("fullscreen")]
 	Fullscreen,
-	[JsonPropertyName("borderlessFullscreen")]
+	[JsonPropertyName("borderless_fullscreen")]
 	BorderlessFullscreen
 }

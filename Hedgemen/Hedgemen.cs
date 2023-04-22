@@ -1,8 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Text;
+using System.Text.Json;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
 using Petal.Framework.Graphics;
+using Petal.Framework.IO;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Windowing;
@@ -79,53 +83,30 @@ public class Hedgemen : PetalGame
 		}, _skin)
 		{
 			BackgroundColor = Color.CornflowerBlue,
-			//ViewportAdapter = new ScalingViewportAdapter(GraphicsDevice, new Vector2Int(640, 360))
 			ViewportAdapter = new BoxingViewportAdapter(
 				GraphicsDevice,
 				Petal.Window,
 				new Vector2Int(640, 360))
-			//ViewportAdapter = new DefaultViewportAdapter(GraphicsDevice, Window)
 		};
 
-		var image = scene.Root.Add(new Button(_skin)
+		var button = scene.Root.Add(new Button(_skin)
 		{
 			Bounds = new Rectangle(0, 0, 150, 50),
-			//Bounds = new Rectangle(0, 0, 640, 360),
 			Color = Color.White,
 		});
 
-		image.OnFocusGained += (sender, args) =>
+		button.OnMousePressed += (sender, args) =>
 		{
+			var file = new FileInfo("test_file.json");
+			var record = new Skin.DataRecord();
+			record.Read(Scene.Skin);
 			
+			file.WriteString(JsonSerializer.Serialize(
+				record,
+				Skin.DataRecord.JsonDeserializeOptions), Encoding.UTF8, FileMode.OpenOrCreate);
 		};
 		
 		ChangeScenes(scene);
-	}
-
-	private Scene NewScene()
-	{
-		var scene = new Scene(new Stage
-		{
-			
-		}, _skin)
-		{
-			BackgroundColor = Color.CornflowerBlue,
-			//ViewportAdapter = new ScalingViewportAdapter(GraphicsDevice, new Vector2Int(640, 360))
-			ViewportAdapter = new BoxingViewportAdapter(
-				GraphicsDevice,
-				Petal.Window,
-				new Vector2Int(640, 360))
-			//ViewportAdapter = new DefaultViewportAdapter(GraphicsDevice, Window)
-		};
-
-		var image = scene.Root.Add(new Button(_skin)
-		{
-			Bounds = new Rectangle(0, 0, 150, 50),
-			//Bounds = new Rectangle(0, 0, 640, 360),
-			Color = Color.White,
-		});
-
-		return scene;
 	}
 
 	protected override GameSettings GetInitialGameSettings()
