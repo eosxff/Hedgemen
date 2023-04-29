@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Text.Json;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
@@ -128,35 +127,6 @@ public class Hedgemen : PetalGame
 		button4.Name = "hedgemen:cool_button";
 		
 		Console.WriteLine($"Button4: {scene.Root.Find(button4.Name)?.Name}");
-
-		scene.Root.OnChildRemoved += (sender, args) =>
-		{
-			Console.WriteLine($"Removed '{args.Child.Name}'");
-		};
-
-		button4.OnFocusGained += (sender, args) =>
-		{
-			var node = scene.Root.Find(button4.Name);
-
-			if (node is not null)
-			{
-				//node.IsMarkedForDeletion = true;
-			}
-		};
-		
-		Console.WriteLine(button4.Name);
-
-		button.OnMousePressed += (sender, args) =>
-		{
-			var file = new FileInfo("test_file.json");
-			var record = new Skin.DataRecord();
-			record.Read(Scene?.Skin);
-			
-			file.WriteString(JsonSerializer.Serialize(
-				record,
-				Skin.DataRecord.JsonDeserializeOptions), Encoding.UTF8, FileMode.OpenOrCreate);
-		};
-		
 		ChangeScenes(scene);
 	}
 

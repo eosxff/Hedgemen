@@ -63,7 +63,7 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 		var mouseState = Mouse.GetState();
 		_cursorPosition = new Vector2(mouseState.X, mouseState.Y);
 
-		if (cursorDelegate == null)
+		if (cursorDelegate is null)
 		{
 			_cursorPosition = Vector2.Transform(_cursorPosition, Matrix.Invert(scaleMatrix));
 		}

@@ -345,7 +345,7 @@ public abstract class Node
 			
 			var node = child.GetHoveredNode(position);
 
-			if (node != null)
+			if (node is not null)
 				return node;
 		}
 
@@ -386,7 +386,7 @@ public abstract class Node
 		{
 			var parent = Parent;
 
-			while (parent != null)
+			while (parent is not null)
 			{
 				if (parent.IsMarkedForDeletion)
 				{
@@ -408,12 +408,12 @@ public abstract class Node
 	
 	protected virtual Rectangle CalculateBounds(Rectangle bounds)
 	{
-		if (Scene == null)
+		if (Scene is null)
 			return bounds;
 		
 		var parentBounds = Scene.Root.AbsoluteBounds;
 
-		if(Parent != null)
+		if(Parent is not null)
 			parentBounds = Parent.AbsoluteBounds;
 
 		var absBounds = bounds;
@@ -502,7 +502,7 @@ public abstract class Node
 	{
 		State = NodeState.Normal;
 		
-		if (Scene == null)
+		if (Scene is null)
 			return;
 
 		bool isTarget = selection.Target == this;

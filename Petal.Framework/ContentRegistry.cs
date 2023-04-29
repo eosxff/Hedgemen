@@ -177,7 +177,7 @@ public sealed class ContentReference<TContent>
 
 	public void ReloadItem(ContentRegistry? registry)
 	{
-		if (registry == null)
+		if (registry is null)
 			return;
 		Item = GetItemFromRegistry(ContentIdentifier, registry);
 	}
@@ -198,7 +198,7 @@ public sealed class ContentReference<TContent>
 	}
 
 	public bool HasItem
-		=> Item != null;
+		=> Item is not null;
 	
 	[Serializable]
 	public struct DataRecord : IDataRecord<ContentReference<TContent>>

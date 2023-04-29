@@ -37,7 +37,7 @@ public class Image : Node
 
 	protected override void OnDraw(GameTime time)
 	{
-		if (Scene == null || Texture == null)
+		if (Scene is null || Texture is null)
 			return;
 		
 		Scene.Renderer.Begin();

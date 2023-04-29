@@ -30,7 +30,7 @@ public sealed class DefaultRenderer : Renderer
 
     public override void Draw(RenderData data)
     {
-        if (data.Texture == null)
+        if (data.Texture is null)
             return;
 
         _renderer.Draw(
@@ -46,7 +46,7 @@ public sealed class DefaultRenderer : Renderer
 
     public override void Draw(RenderStringData data)
     {
-        if (data.Font == null)
+        if (data.Font is null)
             return;
 		
         _renderer.DrawString(

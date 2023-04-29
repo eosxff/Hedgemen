@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
+using Petal.Framework.Util;
 
 namespace Petal.Framework.Scenery.Nodes;
 
@@ -17,7 +18,7 @@ public class Stage : Node
 
 	public void SearchForTargetNode(NodeSelection selection)
 	{
-		if (Scene == null)
+		if (Scene is null)
 			return;
 
 		var mousePosition = Scene.Input.MousePosition;
@@ -29,7 +30,7 @@ public class Stage : Node
 				var child = Children[i];
 				var target = child.GetHoveredNode(mousePosition);
 
-				if (target == null)
+				if (target is null)
 					continue;
 				
 				selection.Target = target;
@@ -114,12 +115,10 @@ public class Stage : Node
 	{
 		lock (_nodes)
 		{
-			if (!_nodes.ContainsKey(oldName))
+			if (!_nodes.TryGetValue(oldName, out var node))
 				return;
 			
-			var node = _nodes[oldName];
-			_nodes.Remove(oldName);
-			_nodes.Add(node.Name, node); // node.Name should already be updated
+			_nodes.ChangeKey(oldName, node.Name);
 		}
 	}
 }

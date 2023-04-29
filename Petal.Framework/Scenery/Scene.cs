@@ -155,7 +155,7 @@ public class Scene : IDisposable
 		
 		ViewportAdapter.Reset();
 
-		if (_renderTarget != null)
+		if (_renderTarget is not null)
 		{
 			Renderer.Begin();
 			Renderer.Draw(new RenderData
