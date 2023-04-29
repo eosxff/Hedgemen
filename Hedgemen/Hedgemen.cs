@@ -40,8 +40,6 @@ public class Hedgemen : PetalGame
 	{
 		base.Initialize();
 
-		Window.AllowUserResizing = true;
-
 		ContentRegistry.Register(
 			"hedgemen:ui/button_hover_texture",
 			Assets.LoadAsset<Texture2D>("button_hover.png"));
@@ -79,10 +77,7 @@ public class Hedgemen : PetalGame
 
 		Console.WriteLine(ContentRegistry.Get("hedgemen:ui/button_input_texture"));
 
-		var scene = new Scene(new Stage
-		{
-			
-		}, _skin)
+		var scene = new Scene(new Stage(), _skin)
 		{
 			BackgroundColor = Color.CornflowerBlue,
 			ViewportAdapter = new BoxingViewportAdapter(
@@ -90,18 +85,72 @@ public class Hedgemen : PetalGame
 				Petal.Window,
 				new Vector2Int(640, 360))
 		};
+		
+		scene.Root.OnChildAdded += (sender, args) =>
+		{
+			Console.WriteLine($"Added: {args.Child.Name}");
+		};
+
+		var buttonSize = new Vector2Int(48, 96);
 
 		var button = scene.Root.Add(new Button(_skin)
 		{
-			Bounds = new Rectangle(0, 0, 150, 50),
+			Bounds = new Rectangle(16, -16, buttonSize.X, buttonSize.Y),
 			Color = Color.White,
+			Anchor = Anchor.BottomLeft,
+			Name = "hedgemen:button"
 		});
+		
+		var button2 = scene.Root.Add(new Button(_skin)
+		{
+			Bounds = new Rectangle(button.Bounds.X + button.Bounds.Width + 8, -16, buttonSize.X, buttonSize.Y),
+			Color = Color.White,
+			Anchor = Anchor.BottomLeft,
+			Name = "hedgemen:button"
+		});
+		
+		var button3 = scene.Root.Add(new Button(_skin)
+		{
+			Bounds = new Rectangle(button2.Bounds.X + button2.Bounds.Width + 8, -16, buttonSize.X, buttonSize.Y),
+			Color = Color.White,
+			Anchor = Anchor.BottomLeft,
+			Name = "hedgemen:button"
+		});
+		
+		var button4 = scene.Root.Add(new Button(_skin)
+		{
+			Bounds = new Rectangle(button3.Bounds.X + button3.Bounds.Width + 8, -16, buttonSize.X, buttonSize.Y),
+			Color = Color.White,
+			Anchor = Anchor.BottomLeft,
+			Name = "hedgemen:button"
+		});
+
+		button4.Name = "hedgemen:cool_button";
+		
+		Console.WriteLine($"Button4: {scene.Root.Find(button4.Name)?.Name}");
+
+		scene.Root.OnChildRemoved += (sender, args) =>
+		{
+			Console.WriteLine($"Removed '{args.Child.Name}'");
+		};
+
+		button4.OnFocusGained += (sender, args) =>
+		{
+			var node = scene.Root.Find(button4.Name);
+
+			if (node is not null)
+			{
+				//node.IsMarkedForDeletion = true;
+			}
+		};
+		
+		Console.WriteLine(button4.Name);
 
 		button.OnMousePressed += (sender, args) =>
 		{
 			var file = new FileInfo("test_file.json");
 			var record = new Skin.DataRecord();
-			record.Read(Scene.Skin);
+			record.Read(Scene?.Skin);
 			
 			file.WriteString(JsonSerializer.Serialize(
 				record,
@@ -120,7 +169,8 @@ public class Hedgemen : PetalGame
 			WindowWidth = 960,
 			WindowHeight = 540,
 			WindowMode = WindowMode.Windowed,
-			IsMouseVisible = true
+			IsMouseVisible = true,
+			IsWindowUserResizable = true
 		};
 	}
 }

@@ -39,11 +39,9 @@ public class Button : Node
 		base.Destroy();
 	}
 
-	private void SceneOnSkinChanged(object? sender, EventArgs args)
+	private void SceneOnSkinChanged(object? sender, Scene.SkinChangedEventArgs args)
 	{
-		if (args is not Scene.SkinChangedEventArgs e)
-			return;
-				
+		Skin = args.NewSkin;
 		Skin.Button.HoverTexture.ReloadItem(Skin.ContentRegistry);
 		Skin.Button.InputTexture.ReloadItem(Skin.ContentRegistry);
 		Skin.Button.NormalTexture.ReloadItem(Skin.ContentRegistry);
@@ -51,12 +49,12 @@ public class Button : Node
 
 	protected override void OnDraw(GameTime time)
 	{
-		if (Scene == null || Skin == null)
+		if (Scene is null || Skin is null)
 			return;
 
 		var textureRef = GetButtonTextureFromState();
 
-		if (!textureRef.IsValid)
+		if (!textureRef.HasItem)
 			return;
 		
 		Scene.Renderer.Begin();
@@ -74,7 +72,7 @@ public class Button : Node
 
 	private ContentReference<Texture2D> GetButtonTextureFromState()
 	{
-		if (Skin == null)
+		if (Skin is null)
 			return null;
 
 		switch (State)

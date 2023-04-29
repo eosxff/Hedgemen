@@ -67,6 +67,14 @@ public struct GameSettings
 		set;
 	} = true;
 
+	[JsonInclude]
+	[JsonPropertyName("is_window_user_resizable")]
+	public bool IsWindowUserResizable
+	{
+		get;
+		set;
+	} = false;
+
 	public GameSettings()
 	{
 		

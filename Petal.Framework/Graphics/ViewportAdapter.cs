@@ -41,11 +41,6 @@ public abstract class ViewportAdapter : IDisposable
 		SetVirtualResolution(graphicsDeviceViewportSize);
 	}
 
-	~ViewportAdapter()
-	{
-		Dispose();
-	}
-
 	/// <summary>
 	/// Used in situations where virtual resolution is dynamic or being set for the first time.
 	/// </summary>
@@ -76,6 +71,6 @@ public abstract class ViewportAdapter : IDisposable
 
 	public virtual void Dispose()
 	{
-		GC.SuppressFinalize(this);
+		
 	}
 }

@@ -98,6 +98,7 @@ public class PetalGame : Game
 		IsFixedTimeStep = !settings.Vsync;
 		TargetElapsedTime = TimeSpan.FromMilliseconds(1000d / settings.PreferredFramerate);
 		WindowMode = settings.WindowMode;
+		Window.AllowUserResizing = settings.IsWindowUserResizable;
 		
 		Graphics.ApplyChanges();
 	}
@@ -112,7 +113,8 @@ public class PetalGame : Game
 			// don't use milliseconds (precision loss)
 			PreferredFramerate = (int)(1000d / (TargetElapsedTime.Ticks / 10000d)),
 			Vsync = IsFixedTimeStep,
-			IsMouseVisible = IsMouseVisible
+			IsMouseVisible = IsMouseVisible,
+			IsWindowUserResizable = Window.AllowUserResizing
 		};
 
 		return settings;

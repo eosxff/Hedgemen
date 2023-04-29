@@ -27,7 +27,7 @@ public class DefaultViewportAdapter : ViewportAdapter
     
     public override void Dispose()
     {
-        base.Dispose();
+        GC.SuppressFinalize(this);
         Window.ClientSizeChanged -= OnClientSizeChanged;
     }
 

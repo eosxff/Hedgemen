@@ -7,10 +7,41 @@ using Petal.Framework.Input;
 
 namespace Petal.Framework.Scenery;
 
-public delegate void NodeEvent<in TNode>(TNode node) where TNode : Node;
-
 public abstract class Node
 {
+	public sealed class ChildAddedEventArgs : EventArgs
+	{
+		public Node Child
+		{
+			get;
+			init;
+		}
+	}
+
+	public sealed class ChildRemovedEventArgs : EventArgs
+	{
+		public Node Child
+		{
+			get;
+			init;
+		}
+	}
+
+	public sealed class ParentChangedEventArgs : EventArgs
+	{
+		public Node? OldParent
+		{
+			get;
+			init;
+		}
+
+		public Node? NewParent
+		{
+			get;
+			init;
+		}
+	}
+	
 	public event EventHandler? OnBeforeDraw;
 	public event EventHandler? OnAfterDraw;
 
@@ -18,9 +49,6 @@ public abstract class Node
 	public event EventHandler? OnAfterUpdate;
 
 	public event EventHandler? OnDestroy;
-
-	public event EventHandler? OnChildRemoved;
-	public event EventHandler? OnRemovedFromParent;
 
 	public event EventHandler? OnFocusGained;
 	public event EventHandler? OnFocusLost;
@@ -30,12 +58,29 @@ public abstract class Node
 	public event EventHandler? OnMousePressed;
 	public event EventHandler? OnMouseReleased;
 
-	public event EventHandler? OnParentChanged;
+	public event EventHandler<ParentChangedEventArgs>? OnParentChanged;
+
+	public event EventHandler<ChildAddedEventArgs>? OnChildAdded;
+	public event EventHandler<ChildRemovedEventArgs>? OnChildRemoved;
 
 	private readonly List<Node> _children = new();
 
 	public IReadOnlyList<Node> Children
 		=> _children;
+
+	public int NestedChildrenCount
+		=> GetNestedChildrenCount();
+
+	public int GetNestedChildrenCount(int count = 0)
+	{
+		foreach (var child in Children)
+		{
+			count = child.GetNestedChildrenCount(count);
+		}
+
+		count += Children.Count;
+		return count;
+	}
 
 	public string Tag
 	{
@@ -43,11 +88,19 @@ public abstract class Node
 		set;
 	} = string.Empty;
 
+	private NamespacedString _name;
+	
 	public NamespacedString Name
 	{
-		get;
-		set;
-	} = NamespacedString.Default;
+		get => _name;
+		set
+		{
+			var oldName = _name;
+			_name = value;
+
+			Scene?.Root.InternalUpdateNodeEntry(oldName);
+		}
+	}
 
 	public bool IsVisible
 	{
@@ -92,8 +145,14 @@ public abstract class Node
 		get => _parent;
 		private set
 		{
+			var args = new ParentChangedEventArgs
+			{
+				OldParent = _parent,
+				NewParent = value
+			};
+			
 			_parent = value;
-			OnParentChanged?.Invoke(this, EventArgs.Empty);
+			OnParentChanged?.Invoke(this, args);
 		}
 	}
 
@@ -129,6 +188,11 @@ public abstract class Node
 		=> new(0, 0, Bounds.Width, Bounds.Height);
 
 	private bool _isDirty = true;
+
+	protected Node()
+	{
+		Name = GenerateNodeName(this);
+	}
 
 	public void Update(GameTime time, NodeSelection selection)
 	{
@@ -215,22 +279,14 @@ public abstract class Node
 		_children.Add(child);
 		child.Parent = this;
 		child.Scene = Scene;
-		Scene?.InternalAddNode(child);
+		Scene?.Root.InternalAddNode(child);
 		
-		child.OnAddedToParent();
-		OnChildAdded(child);
+		OnChildAdded?.Invoke(this, new ChildAddedEventArgs
+		{
+			Child = child
+		});
 		
 		return child;
-	}
-
-	protected virtual void OnAddedToParent()
-	{
-		
-	}
-
-	protected virtual void OnChildAdded(Node child)
-	{
-		
 	}
 
 	protected virtual void OnSceneSet()
@@ -246,13 +302,22 @@ public abstract class Node
 
 	public void Remove(Node child)
 	{
+		var parentChangedArgs = new ParentChangedEventArgs
+		{
+			OldParent = Parent,
+			NewParent = null
+		};
+		
 		_children.Remove(child);
 		child.Parent = null;
-		Scene?.InternalRemoveNode(child);
+		Scene?.Root.InternalRemoveNode(child);
 		
-		child.OnRemovedFromParent?.Invoke(this, EventArgs.Empty);
+		child.OnParentChanged?.Invoke(this, parentChangedArgs);
 		
-		OnChildRemoved?.Invoke(this, EventArgs.Empty);
+		OnChildRemoved?.Invoke(this, new ChildRemovedEventArgs
+		{
+			Child = child
+		});
 	}
 
 	public virtual bool IsHovering(Vector2 position)
@@ -308,7 +373,7 @@ public abstract class Node
 		}
 		
 		Parent?.Remove(this);
-		Scene?.InternalRemoveNode(this);
+		Scene?.Root.InternalRemoveNode(this);
 
 		IsMarkedForDeletion = false;
 		
@@ -340,7 +405,7 @@ public abstract class Node
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => IsMarkedForDeletion || IsAnyParentMarkedForDeletion;
 	}
-
+	
 	protected virtual Rectangle CalculateBounds(Rectangle bounds)
 	{
 		if (Scene == null)
@@ -352,7 +417,7 @@ public abstract class Node
 			parentBounds = Parent.AbsoluteBounds;
 
 		var absBounds = bounds;
-
+		
 		switch (Anchor)
 		{
 			case Anchor.TopLeft:
@@ -452,4 +517,7 @@ public abstract class Node
 			State = NodeState.Input;
 		}
 	}
+
+	public static NamespacedString GenerateNodeName(Node node) 
+		=> $"{NamespacedString.DefaultNamespace}:{node.GetType().Name.ToLowerInvariant()}@{node.GetHashCode()}";
 }

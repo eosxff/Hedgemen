@@ -90,8 +90,11 @@ public class ContentRegistry
 
 	public bool TryGet(NamespacedString identifier, out ContentValue content)
 	{
-		var result = _registry.TryGetValue(identifier, out content);
-		return result;
+		lock (_registry)
+		{
+			var result = _registry.TryGetValue(identifier, out content);
+			return result;
+		}
 	}
 
 	public ContentReference<TContent> Get<TContent>(NamespacedString identifier)
@@ -144,29 +147,6 @@ public readonly struct ContentValue
 		
 	}
 
-	public TContent CastItemTo<TContent>()
-	{
-		if (Item is TContent content)
-		{
-			return content;
-		}
-
-		return default;
-	}
-
-	public bool CastItemTo<TContent>(out TContent content)
-	{
-		content = default;
-
-		if (Item is TContent tItem)
-		{
-			content = tItem;
-			return true;
-		}
-
-		return false;
-	}
-
 	public override string ToString()
 		=> $"{{ContentIdentifier: {ContentIdentifier} Item: {Item}}}";
 }
@@ -217,7 +197,7 @@ public sealed class ContentReference<TContent>
 		return default;
 	}
 
-	public bool IsValid
+	public bool HasItem
 		=> Item != null;
 	
 	[Serializable]

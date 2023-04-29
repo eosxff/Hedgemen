@@ -85,28 +85,20 @@ public class Scene : IDisposable
 		}
 	}
 
-	public event EventHandler BeforeUpdate;
-	public event EventHandler AfterUpdate;
+	public event EventHandler? BeforeUpdate;
+	public event EventHandler? AfterUpdate;
 	
-	public event EventHandler BeforeDraw;
-	public event EventHandler AfterDraw;
+	public event EventHandler? BeforeDraw;
+	public event EventHandler? AfterDraw;
 
-	public event EventHandler AfterInitialize;
+	public event EventHandler? AfterInitialize;
 
-	public event EventHandler BeforeExit;
-	public event EventHandler AfterExit;
+	public event EventHandler? BeforeExit;
+	public event EventHandler? AfterExit;
 
-	public event EventHandler OnSkinChanged;
+	public event EventHandler<SkinChangedEventArgs>? OnSkinChanged;
 
-	public event EventHandler OnViewportAdapterChanged;
-
-	private readonly Dictionary<NamespacedString, Node> _nodesInScene = new();
-
-	public Node? FindNode(NamespacedString name)
-	{
-		_nodesInScene.TryGetValue(name, out var node);
-		return node;
-	}
+	public event EventHandler? OnViewportAdapterChanged;
 
 	public Scene(Stage root, Skin skin)
 	{
@@ -135,7 +127,7 @@ public class Scene : IDisposable
 		NodeSelector.Update();
 		Root.SearchForTargetNode(NodeSelector);
 		Root.Update(time, NodeSelector);
-		DestroyAllMarkedNodes();
+		Root.DestroyAllMarkedNodes();
 
 		AfterUpdate?.Invoke(this, EventArgs.Empty);
 	}
@@ -189,15 +181,6 @@ public class Scene : IDisposable
 		AfterExit?.Invoke(this, EventArgs.Empty);
 	}
 
-	private void DestroyAllMarkedNodes()
-	{
-		foreach (var node in _nodesInScene.Values)
-		{
-			if (node.IsMarkedForDeletion)
-				node.InternalDestroy();
-		}
-	}
-
 	public void Initialize()
 	{
 		PetalGame.Petal.Window.ClientSizeChanged += OnWindowClientSizeChanged;
@@ -224,17 +207,6 @@ public class Scene : IDisposable
 			false,
 			graphicsDevice.PresentationParameters.BackBufferFormat,
 			DepthFormat.Depth24);
-	}
-
-	internal void InternalAddNode(Node node)
-	{
-		_nodesInScene.Add(node.Name, node);
-	}
-
-	internal void InternalRemoveNode(Node node)
-	{
-		_nodesInScene.Remove(node.Name);
-		node.Scene = null;
 	}
 
 	public void Dispose()

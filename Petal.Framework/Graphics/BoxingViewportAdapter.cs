@@ -53,7 +53,7 @@ public class BoxingViewportAdapter : ScalingViewportAdapter
 
     public override void Dispose()
     {
-        base.Dispose();
+        GC.SuppressFinalize(this);
         Window.ClientSizeChanged -= OnClientSizeChanged;
     }
 
@@ -73,31 +73,35 @@ public class BoxingViewportAdapter : ScalingViewportAdapter
     {
         var clientBounds = Window.ClientBounds;
 
-        var worldScaleX = (float)clientBounds.Width / VirtualResolution.X;
-        var worldScaleY = (float)clientBounds.Height / VirtualResolution.Y;
+        var worldScale = new Vector2(
+            (float)clientBounds.Width / VirtualResolution.X,
+            (float)clientBounds.Height / VirtualResolution.Y);
 
-        var safeScaleX = (float)clientBounds.Width / (VirtualResolution.X - Bleed.X);
-        var safeScaleY = (float)clientBounds.Height / (VirtualResolution.Y - Bleed.Y);
+        var safeScale = new Vector2(
+            (float)clientBounds.Width / (VirtualResolution.X - Bleed.X),
+            (float)clientBounds.Height / (VirtualResolution.Y - Bleed.Y));
 
-        var worldScale = MathHelper.Max(worldScaleX, worldScaleY);
-        var safeScale = MathHelper.Min(safeScaleX, safeScaleY);
-        var scale = MathHelper.Min(worldScale, safeScale);
+        var worldScale1d = MathHelper.Max(worldScale.X, worldScale.Y);
+        var safeScale1d = MathHelper.Min(safeScale.X, safeScale.Y);
+        var scale = MathHelper.Min(worldScale1d, safeScale1d);
 
-        var width = (int)(scale * VirtualResolution.X + 0.5f);
-        var height = (int)(scale * VirtualResolution.Y + 0.5f);
+        var dimensions = new Vector2Int(
+            (int)(scale * VirtualResolution.X + 0.5f),
+            (int)(scale * VirtualResolution.Y + 0.5f));
 
-        if (height >= clientBounds.Height && width < clientBounds.Width)
+        if (dimensions.Y >= clientBounds.Height && dimensions.X < clientBounds.Width)
             BoxingMode = BoxingMode.PillarBox;
         else
         {
-            if (width >= clientBounds.Height && height <= clientBounds.Height)
+            if (dimensions.X >= clientBounds.Height && dimensions.Y <= clientBounds.Height)
                 BoxingMode = BoxingMode.LetterBox;
             else
                 BoxingMode = BoxingMode.None;
         }
 
-        var x = clientBounds.Width / 2 - width / 2;
-        var y = clientBounds.Height / 2 - height / 2;
-        GraphicsDevice.Viewport = new Viewport(x, y, width, height);
+        var x = clientBounds.Width / 2 - dimensions.X / 2;
+        var y = clientBounds.Height / 2 - dimensions.Y / 2;
+        
+        GraphicsDevice.Viewport = new Viewport(x, y, dimensions.X, dimensions.Y);
     }
 }
