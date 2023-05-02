@@ -7,10 +7,12 @@ internal class StubContentManager : ContentManager
 {
 	public StubContentManager(IServiceProvider serviceProvider) : base(serviceProvider)
 	{
+		Dispose();
 	}
 
 	public StubContentManager(IServiceProvider serviceProvider, string rootDirectory) : base(serviceProvider, rootDirectory)
 	{
+		Dispose();
 	}
 
 	public override T Load<T>(string assetName)

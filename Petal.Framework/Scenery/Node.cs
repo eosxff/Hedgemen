@@ -405,62 +405,77 @@ public abstract class Node
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => IsMarkedForDeletion || IsAnyParentMarkedForDeletion;
 	}
-	
+
 	protected virtual Rectangle CalculateBounds(Rectangle bounds)
 	{
 		if (Scene is null)
 			return bounds;
-		
-		var parentBounds = Scene.Root.AbsoluteBounds;
 
-		if(Parent is not null)
-			parentBounds = Parent.AbsoluteBounds;
+		var parentBounds = Parent?.AbsoluteBounds ?? Scene.Root.AbsoluteBounds;
+		var calculatedBounds = new Rectangle(0, 0, bounds.Width, bounds.Height);
 
-		var absBounds = bounds;
-		
 		switch (Anchor)
 		{
 			case Anchor.TopLeft:
-				absBounds.X += parentBounds.Left;
-				absBounds.Y += parentBounds.Top;
+				//calculatedBounds.X += parentBounds.Left;
+				//calculatedBounds.Y += parentBounds.Top;
+				calculatedBounds.X = bounds.X + parentBounds.Left;
+				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
 			case Anchor.Top:
-				absBounds.X += parentBounds.Center.X - (bounds.Width / 2);
-				absBounds.Y += parentBounds.Top;
+				//calculatedBounds.X += parentBounds.Center.X - (bounds.Width / 2);
+				//calculatedBounds.Y += parentBounds.Top;
+				calculatedBounds.X = bounds.X + parentBounds.Center.X - (bounds.Width / 2);
+				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
 			case Anchor.TopRight:
-				absBounds.X += parentBounds.Right - (bounds.Width);
-				absBounds.Y += parentBounds.Top;
+				//calculatedBounds.X += parentBounds.Right - (bounds.Width);
+				//calculatedBounds.Y += parentBounds.Top;
+				calculatedBounds.X = parentBounds.Right - (bounds.Width) - bounds.X;
+				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
 			case Anchor.CenterLeft:
-				absBounds.X += parentBounds.Left;
-				absBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
+				//calculatedBounds.X += parentBounds.Left;
+				//calculatedBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
+				calculatedBounds.X = bounds.X + parentBounds.Left;
+				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - (bounds.Height / 2);
 				break;
 			case Anchor.Center: 
-				absBounds.X += parentBounds.Center.X - (bounds.Width / 2);
-				absBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
+				//calculatedBounds.X += parentBounds.Center.X - (bounds.Width / 2);
+				//calculatedBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
+				calculatedBounds.X = bounds.X + parentBounds.Center.X - (bounds.Width / 2);
+				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - (bounds.Height / 2);
 				break;
 			case Anchor.CenterRight:
-				absBounds.X += parentBounds.Right - (bounds.Width);
-				absBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
+				//calculatedBounds.X += parentBounds.Right - (bounds.Width);
+				//calculatedBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
+				calculatedBounds.X = parentBounds.Right - (bounds.Width) - bounds.X;
+				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - (bounds.Height / 2);
 				break;
 			case Anchor.BottomLeft:
-				absBounds.X += parentBounds.Left;
-				absBounds.Y += parentBounds.Bottom - (bounds.Height);
+				//calculatedBounds.X += parentBounds.Left;
+				//calculatedBounds.Y += parentBounds.Bottom - (bounds.Height);
+				calculatedBounds.X = bounds.X + parentBounds.Left;
+				calculatedBounds.Y = parentBounds.Bottom - (bounds.Height) - bounds.Y;
 				break;
 			case Anchor.Bottom:
-				absBounds.X += parentBounds.Center.X - (bounds.Width / 2);
-				absBounds.Y += parentBounds.Bottom - (bounds.Height);
+				//calculatedBounds.X += parentBounds.Center.X - (bounds.Width / 2);
+				//calculatedBounds.Y += parentBounds.Bottom - (bounds.Height);
+				calculatedBounds.X = bounds.X + parentBounds.Center.X - (bounds.Width / 2);
+				calculatedBounds.Y = parentBounds.Bottom - (bounds.Height) - bounds.Y;
 				break;
 			case Anchor.BottomRight:
-				absBounds.X += parentBounds.Right - (bounds.Width);
-				absBounds.Y += parentBounds.Bottom - (bounds.Height);
+				//calculatedBounds.X += parentBounds.Right - (bounds.Width);
+				//calculatedBounds.Y += parentBounds.Bottom - (bounds.Height);
+				calculatedBounds.X = parentBounds.Right - (bounds.Width) - bounds.X;
+				calculatedBounds.Y = parentBounds.Bottom - (bounds.Height) - bounds.Y;
 				break;
 			default:
 				throw new ArgumentOutOfRangeException(Anchor.ToString());
 		}
 		
-		return absBounds;
+		Console.WriteLine(calculatedBounds);
+		return calculatedBounds;
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

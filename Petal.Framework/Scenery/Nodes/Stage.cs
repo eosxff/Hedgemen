@@ -8,8 +8,7 @@ namespace Petal.Framework.Scenery.Nodes;
 
 public class Stage : Node
 {
-	// we are currently making this thread safe, maybe it shouldn't be?
-	private Dictionary<NamespacedString, Node> _nodes = new();
+	private Dictionary<NamespacedString, Node> _nodes = new(); // should this be thread safe?
 
 	public Stage()
 	{

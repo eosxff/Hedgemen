@@ -10,6 +10,7 @@
     <ItemGroup>
       <Folder Include="Exceptions" />
       <Folder Include="IO" />
+      <Folder Include="Modding" />
     </ItemGroup>
 
     <ItemGroup>
