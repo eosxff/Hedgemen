@@ -417,56 +417,38 @@ public abstract class Node
 		switch (Anchor)
 		{
 			case Anchor.TopLeft:
-				//calculatedBounds.X += parentBounds.Left;
-				//calculatedBounds.Y += parentBounds.Top;
 				calculatedBounds.X = bounds.X + parentBounds.Left;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
 			case Anchor.Top:
-				//calculatedBounds.X += parentBounds.Center.X - (bounds.Width / 2);
-				//calculatedBounds.Y += parentBounds.Top;
 				calculatedBounds.X = bounds.X + parentBounds.Center.X - (bounds.Width / 2);
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
 			case Anchor.TopRight:
-				//calculatedBounds.X += parentBounds.Right - (bounds.Width);
-				//calculatedBounds.Y += parentBounds.Top;
 				calculatedBounds.X = parentBounds.Right - (bounds.Width) - bounds.X;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
 			case Anchor.CenterLeft:
-				//calculatedBounds.X += parentBounds.Left;
-				//calculatedBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
 				calculatedBounds.X = bounds.X + parentBounds.Left;
 				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - (bounds.Height / 2);
 				break;
-			case Anchor.Center: 
-				//calculatedBounds.X += parentBounds.Center.X - (bounds.Width / 2);
-				//calculatedBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
+			case Anchor.Center:
 				calculatedBounds.X = bounds.X + parentBounds.Center.X - (bounds.Width / 2);
 				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - (bounds.Height / 2);
 				break;
 			case Anchor.CenterRight:
-				//calculatedBounds.X += parentBounds.Right - (bounds.Width);
-				//calculatedBounds.Y += parentBounds.Center.Y - (bounds.Height / 2);
 				calculatedBounds.X = parentBounds.Right - (bounds.Width) - bounds.X;
 				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - (bounds.Height / 2);
 				break;
 			case Anchor.BottomLeft:
-				//calculatedBounds.X += parentBounds.Left;
-				//calculatedBounds.Y += parentBounds.Bottom - (bounds.Height);
 				calculatedBounds.X = bounds.X + parentBounds.Left;
 				calculatedBounds.Y = parentBounds.Bottom - (bounds.Height) - bounds.Y;
 				break;
 			case Anchor.Bottom:
-				//calculatedBounds.X += parentBounds.Center.X - (bounds.Width / 2);
-				//calculatedBounds.Y += parentBounds.Bottom - (bounds.Height);
 				calculatedBounds.X = bounds.X + parentBounds.Center.X - (bounds.Width / 2);
 				calculatedBounds.Y = parentBounds.Bottom - (bounds.Height) - bounds.Y;
 				break;
 			case Anchor.BottomRight:
-				//calculatedBounds.X += parentBounds.Right - (bounds.Width);
-				//calculatedBounds.Y += parentBounds.Bottom - (bounds.Height);
 				calculatedBounds.X = parentBounds.Right - (bounds.Width) - bounds.X;
 				calculatedBounds.Y = parentBounds.Bottom - (bounds.Height) - bounds.Y;
 				break;
@@ -474,7 +456,6 @@ public abstract class Node
 				throw new ArgumentOutOfRangeException(Anchor.ToString());
 		}
 		
-		Console.WriteLine(calculatedBounds);
 		return calculatedBounds;
 	}
 
