@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Hgm.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Petal.Framework;
+using Petal.Framework.EntityComponent;
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
 using Petal.Framework.Scenery;
@@ -57,12 +61,12 @@ public class Hedgemen : PetalGame
 		ContentRegistry.Register(
 			"hedgemen:white_square",
 			_whiteSquare);
-		
+
 		_skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), ContentRegistry);
 		Console.WriteLine(_skin.Button.NormalTexture.ContentIdentifier);
 		Console.WriteLine(_skin.Button.HoverTexture.ContentIdentifier);
 		Console.WriteLine(_skin.Button.InputTexture.ContentIdentifier);
-
+		
 		_skin.Button.NormalTexture.ReloadItem(ContentRegistry);
 
 		try
@@ -90,43 +94,52 @@ public class Hedgemen : PetalGame
 			Console.WriteLine($"Added: {args.Child.Name}");
 		};
 
-		var buttonSize = new Vector2Int(48, 96);
+		var buttonSize = new Vector2Int(32, 32);
+		var anchors = Enum.GetValues<Anchor>();
 
-		var button = scene.Root.Add(new Button(_skin)
+		for (int i = 0; i < anchors.Length; ++i)
 		{
-			Bounds = new Rectangle(16, -16, buttonSize.X, buttonSize.Y),
-			Color = Color.White,
-			Anchor = Anchor.BottomLeft,
-			Name = "hedgemen:button"
-		});
-		
-		var button2 = scene.Root.Add(new Button(_skin)
-		{
-			Bounds = new Rectangle(button.Bounds.X + button.Bounds.Width + 8, -16, buttonSize.X, buttonSize.Y),
-			Color = Color.White,
-			Anchor = Anchor.BottomLeft,
-			Name = "hedgemen:button"
-		});
-		
-		var button3 = scene.Root.Add(new Button(_skin)
-		{
-			Bounds = new Rectangle(button2.Bounds.X + button2.Bounds.Width + 8, -16, buttonSize.X, buttonSize.Y),
-			Color = Color.White,
-			Anchor = Anchor.BottomLeft,
-			Name = "hedgemen:button"
-		});
-		
-		var button4 = scene.Root.Add(new Button(_skin)
-		{
-			Bounds = new Rectangle(button3.Bounds.X + button3.Bounds.Width + 8, -16, buttonSize.X, buttonSize.Y),
-			Color = Color.White,
-			Anchor = Anchor.BottomLeft,
-			Name = "hedgemen:button"
-		});
+			var button = scene.Root.Add(new Button(_skin)
+			{
+				Bounds = new Rectangle(8, 8, buttonSize.X, buttonSize.Y),
+				Color = Color.White,
+				Anchor = anchors[i],
+				Name = $"hedgemen:button-{i}"
+			});
+		}
 
-		button4.Name = "hedgemen:cool_button";
-		
-		Console.WriteLine($"Button4: {scene.Root.Find(button4.Name)?.Name}");
+		var entities = new List<Entity>(5);
+
+		for (int i = 0; i < entities.Capacity; ++i)
+		{
+			var entity = new Entity();
+			entity.AddComponent(new CharacterSheet());
+			entities.Add(entity);
+		}
+
+		scene.AfterUpdate += (sender, args) =>
+		{
+			if(scene.Input.IsKeyPressed(Keys.Escape))
+				Exit();
+			
+			for (int i = 0; i < entities.Count; ++i)
+			{
+				var entity = entities[i];
+				
+				entity.PropagateEvent(new StatChangeEvent
+				{
+					Sender = entity,
+					StatName = "strength",
+					Amount = 15
+				});
+
+				if (entity.GetComponent<CharacterSheet>(out var sheet))
+				{
+					//Console.WriteLine(sheet.Strength);
+				}
+			}
+		};
+
 		ChangeScenes(scene);
 	}
 

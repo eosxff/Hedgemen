@@ -8,7 +8,7 @@ namespace Petal.Framework;
 
 public class ContentRegistry
 {
-	public class ContentRegisteredAsyncArgs : EventArgs
+	public class ContentRegisteredArgs : EventArgs
 	{
 		public ContentValue RegisteredContent
 		{
@@ -32,8 +32,8 @@ public class ContentRegistry
 		}
 	}
 	
-	public event EventHandler? OnContentRegisteredAsync;
 	public event EventHandler? OnContentRegistered;
+	public event EventHandler? OnContentRegisteredAsync;
 	public event EventHandler? OnContentReplaced;
 	
 	private readonly Dictionary<NamespacedString, ContentValue> _registry = new();
@@ -56,7 +56,10 @@ public class ContentRegistry
 			_registry.TryAdd(identifier, content);
 		}
 		
-		OnContentRegistered?.Invoke(this, EventArgs.Empty);
+		OnContentRegistered?.Invoke(this, new ContentRegisteredArgs
+		{
+			RegisteredContent = content
+		});
 
 		return content;
 	}
@@ -65,7 +68,7 @@ public class ContentRegistry
 	{
 		var content = await Task.Run(() => Register(identifier, item));
 		
-		OnContentRegisteredAsync?.Invoke(this, new ContentRegisteredAsyncArgs
+		OnContentRegisteredAsync?.Invoke(this, new ContentRegisteredArgs
 		{
 			RegisteredContent = content
 		});

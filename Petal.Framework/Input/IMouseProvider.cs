@@ -13,17 +13,17 @@ public interface IMouseProvider
 		 
 	public void UpdateMousePosition(Vector2 pos);
 
-	public bool MouseButtonClick(MouseButtons button);
-	public bool AnyMouseButtonClick(params MouseButtons[] buttons);
+	public bool IsMouseButtonFired(MouseButtons button);
+	public bool IsAnyMouseButtonFired(params MouseButtons[] buttons);
 		
-	public bool MouseButtonClicked(MouseButtons button);
-	public bool AnyMouseButtonClicked(params MouseButtons[] buttons);
+	public bool IsMouseButtonClicked(MouseButtons button);
+	public bool IsAnyMouseButtonClicked(params MouseButtons[] buttons);
 		 
-	public bool MouseButtonUp(MouseButtons button);
-	public bool AnyMouseButtonUp(params MouseButtons[] buttons);
+	public bool IsMouseButtonUp(MouseButtons button);
+	public bool IsAnyMouseButtonUp(params MouseButtons[] buttons);
 
-	public bool MouseButtonReleased(MouseButtons button);
-	public bool AnyMouseButtonReleased(params MouseButtons[] buttons);
+	public bool IsMouseButtonReleased(MouseButtons button);
+	public bool IsAnyMouseButtonReleased(params MouseButtons[] buttons);
 		
 	public int MouseWheel { get; }
 	public int MouseWheelChange { get; }

@@ -1,28 +1,34 @@
-﻿using System;
+﻿namespace Petal.Framework.EntityComponent;
 
-namespace Petal.Framework.EntityComponent;
-
-public abstract class Component
+public abstract class Component : IComponent<Entity, EntityEvent>
 {
-    protected Component()
+    public Entity? Self
+    {
+        get;
+        private set;
+    }
+
+    public ComponentStatus Status
+    {
+        get;
+        set;
+    } = ComponentStatus.Active;
+
+    public virtual void PropagateEvent(EntityEvent e)
     {
         
     }
-    
-    public abstract ComponentInfoQuery QueryComponentInfo();
-}
 
-public struct ComponentInfoQuery
-{
-    public NamespacedString ContentIdentifier
+    public void Destroy()
     {
-        get;
-        init;
+        Self = null;
+        OnDestroy();
     }
 
-    public Type ComponentType
+    protected virtual void OnDestroy()
     {
-        get;
-        init;
+        
     }
+
+    public abstract ComponentInfo GetComponentInfo();
 }

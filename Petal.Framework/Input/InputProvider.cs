@@ -87,34 +87,34 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 		return chars;
 	}
 
-	public bool KeyDown(Keys key)
+	public bool IsKeyDown(Keys key)
 	{
 		return _currentKeys.IsKeyDown(key);
 	}
 
-	public bool KeyPressed(Keys key)
+	public bool IsKeyPressed(Keys key)
 	{
 		return _previousKeys.IsKeyDown(key) && !_currentKeys.IsKeyDown(key);
 	}
 
-	public bool KeyReleased(Keys key)
+	public bool IsKeyReleased(Keys key)
 	{
 		return _currentKeys.IsKeyUp(key);
 	}
 
-	public bool AnyKeysDown(params Keys[] keys)
+	public bool IsAnyKeyDown(params Keys[] keys)
 	{
-		return keys.Any(KeyDown);
+		return keys.Any(IsKeyDown);
 	}
 
-	public bool AnyKeysPressed(params Keys[] keys)
+	public bool IsAnyKeyPressed(params Keys[] keys)
 	{
-		return keys.Any(KeyPressed);
+		return keys.Any(IsKeyPressed);
 	}
 
-	public bool AnyKeysReleased(params Keys[] keys)
+	public bool IsAnyKeyReleased(params Keys[] keys)
 	{
-		return keys.Any(KeyReleased);
+		return keys.Any(IsKeyReleased);
 	}
 
 	public Vector2 MousePosition => _cursorPosition;
@@ -126,48 +126,48 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 		_cursorPosition = pos;
 	}
 
-	public bool MouseButtonClick(MouseButtons button)
+	public bool IsMouseButtonFired(MouseButtons button)
 	{
 		return MouseStateFired(_currentButtons, button, ButtonState.Pressed);
 	}
 
-	public bool AnyMouseButtonClick(params MouseButtons[] buttons)
+	public bool IsAnyMouseButtonFired(params MouseButtons[] buttons)
 	{
 		return buttons.Any(e => MouseStateFired(_currentButtons, e, ButtonState.Pressed));
 	}
 
-	public bool MouseButtonClicked(MouseButtons button)
+	public bool IsMouseButtonClicked(MouseButtons button)
 	{
 		return MouseStateFired(_previousButtons, button, ButtonState.Pressed) &&
 				!MouseStateFired(_currentButtons, button, ButtonState.Pressed);
 	}
 
-	public bool AnyMouseButtonClicked(params MouseButtons[] buttons)
+	public bool IsAnyMouseButtonClicked(params MouseButtons[] buttons)
 	{
 		return buttons.Any(e => 
 			MouseStateFired(_previousButtons, e, ButtonState.Pressed) && 
 			!MouseStateFired(_currentButtons, e, ButtonState.Pressed));
 	}
 
-	public bool MouseButtonUp(MouseButtons button)
+	public bool IsMouseButtonUp(MouseButtons button)
 	{
 		return MouseStateFired(_currentButtons, button, ButtonState.Released);
 	}
 
-	public bool AnyMouseButtonUp(params MouseButtons[] buttons)
+	public bool IsAnyMouseButtonUp(params MouseButtons[] buttons)
 	{
 		return buttons.Any(e => 
 			MouseStateFired(_previousButtons, e, ButtonState.Released) && 
 			!MouseStateFired(_currentButtons, e, ButtonState.Released));
 	}
 
-	public bool MouseButtonReleased(MouseButtons button)
+	public bool IsMouseButtonReleased(MouseButtons button)
 	{
 		return MouseStateFired(_currentButtons, button, ButtonState.Released) && 
 		       MouseStateFired(_previousButtons, button, ButtonState.Pressed);
 	}
 
-	public bool AnyMouseButtonReleased(params MouseButtons[] buttons)
+	public bool IsAnyMouseButtonReleased(params MouseButtons[] buttons)
 	{
 		return buttons.Any(e => 
 			MouseStateFired(_currentButtons, e, ButtonState.Released) && 

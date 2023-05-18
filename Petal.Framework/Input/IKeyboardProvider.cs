@@ -9,11 +9,11 @@ public interface IKeyboardProvider
 
 	public string GetTypedChars();
 		
-	public bool KeyDown(Keys key);
-	public bool KeyPressed(Keys key);
-	public bool KeyReleased(Keys key);
+	public bool IsKeyDown(Keys key);
+	public bool IsKeyPressed(Keys key);
+	public bool IsKeyReleased(Keys key);
 		
-	public bool AnyKeysDown(params Keys[] keys);
-	public bool AnyKeysPressed(params Keys[] keys);
-	public bool AnyKeysReleased(params Keys[] keys);
+	public bool IsAnyKeyDown(params Keys[] keys);
+	public bool IsAnyKeyPressed(params Keys[] keys);
+	public bool IsAnyKeyReleased(params Keys[] keys);
 }

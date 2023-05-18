@@ -216,9 +216,9 @@ public abstract class Node
 		if (IsInteractable)
 		{
 			bool isTarget = selection.Target == this;
-			bool isMouseDown = Scene.Input.MouseButtonClick(MouseButtons.LeftButton);
-			bool isMousePressed = Scene.Input.MouseButtonClicked(MouseButtons.LeftButton);
-			bool isMouseReleased = Scene.Input.MouseButtonReleased(MouseButtons.LeftButton);
+			bool isMouseDown = Scene.Input.IsMouseButtonFired(MouseButtons.LeftButton);
+			bool isMousePressed = Scene.Input.IsMouseButtonClicked(MouseButtons.LeftButton);
+			bool isMouseReleased = Scene.Input.IsMouseButtonReleased(MouseButtons.LeftButton);
 			
 			UpdateNodeState(selection, isMouseDown, isMousePressed);
 
