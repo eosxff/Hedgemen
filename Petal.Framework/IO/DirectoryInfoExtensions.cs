@@ -6,23 +6,24 @@ using Microsoft.VisualBasic.FileIO;
 namespace Petal.Framework.IO;
 
 public delegate bool FileListFilter(FileInfo fileHandle);
+
 public delegate bool DirectoryListFilter(DirectoryInfo directory);
-	
+
 public static class DirectoryInfoExtensions
 {
 	public static void Clear(this DirectoryInfo self)
 	{
 		if (!self.Exists)
 			return;
-		
+
 		self.GetFiles().ToList().ForEach(e => e.Delete());
 		self.GetDirectories().ToList().ForEach(e => e.Delete(true));
 	}
 
-	public static FileInfo FindFile(
-		this DirectoryInfo self,
-		string fileName)
-		=> new FileInfo($"{self.FullName}/{fileName}");
+	public static FileInfo FindFile(this DirectoryInfo self, string fileName)
+	{
+		return new FileInfo($"{self.FullName}/{fileName}");
+	}
 
 	public static FileInfo[] FindFiles(
 		this DirectoryInfo self,
@@ -30,16 +31,16 @@ public static class DirectoryInfoExtensions
 	{
 		var files = new List<FileInfo>(fileNames.Length);
 
-		foreach (string fileName in fileNames)
+		foreach (var fileName in fileNames)
 			files.Add(FindFile(self, fileName));
 
 		return files.ToArray();
 	}
 
-	public static DirectoryInfo FindDirectory(
-		this DirectoryInfo self,
-		string directoryName)
-		=> new DirectoryInfo($"{self.FullName}/{directoryName}/");
+	public static DirectoryInfo FindDirectory(this DirectoryInfo self, string directoryName)
+	{
+		return new DirectoryInfo($"{self.FullName}/{directoryName}/");
+	}
 
 	public static DirectoryInfo[] FindDirectories(
 		this DirectoryInfo self,
@@ -47,7 +48,7 @@ public static class DirectoryInfoExtensions
 	{
 		var directories = new List<DirectoryInfo>(directoryNames.Length);
 
-		foreach (string directoryName in directoryNames)
+		foreach (var directoryName in directoryNames)
 			directories.Add(FindDirectory(self, directoryName));
 
 		return directories.ToArray();
@@ -102,14 +103,14 @@ public static class DirectoryInfoExtensions
 
 		return files.ToArray();
 	}
-		
+
 	public static void CopyTo(
 		this DirectoryInfo self,
 		DirectoryInfo dest)
 	{
 		FileSystem.CopyDirectory(self.FullName, dest.FullName);
 	}
-		
+
 	private static void InternalListFilesRecursively(
 		FileListFilter filter,
 		DirectoryInfo directory,

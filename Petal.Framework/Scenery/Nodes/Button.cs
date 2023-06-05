@@ -7,18 +7,10 @@ namespace Petal.Framework.Scenery.Nodes;
 
 public class Button : Node
 {
-	public Color Color
-	{
-		get;
-		set;
-	} = Color.White;
-	
-	public Skin Skin
-	{
-		get;
-		set;
-	}
-	
+	public Color Color { get; set; } = Color.White;
+
+	public Skin Skin { get; set; }
+
 	public Button(Skin skin)
 	{
 		Skin = skin;
@@ -56,9 +48,9 @@ public class Button : Node
 
 		if (!textureRef.HasItem)
 			return;
-		
+
 		Scene.Renderer.Begin();
-		
+
 		// todo ninepatching
 		Scene.Renderer.Draw(new RenderData
 		{
@@ -66,7 +58,7 @@ public class Button : Node
 			DstRect = AbsoluteBounds,
 			Texture = textureRef.Item
 		});
-		
+
 		Scene.Renderer.End();
 	}
 

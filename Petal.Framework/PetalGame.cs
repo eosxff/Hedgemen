@@ -11,7 +11,7 @@ namespace Petal.Framework;
 public class PetalGame : Game
 {
 	private static PetalGame _instance;
-	
+
 	public static PetalGame Petal
 	{
 		get
@@ -19,23 +19,16 @@ public class PetalGame : Game
 			ArgumentNullException.ThrowIfNull(_instance);
 			return _instance;
 		}
-		
+
 		private set => _instance = value;
 	}
-	
+
 	private WindowMode _windowMode;
 	private Scene? _scene;
-	
-	public GraphicsDeviceManager Graphics
-	{
-		get;
-	}
-	
-	public AssetLoader Assets
-	{
-		get;
-		private set;
-	}
+
+	public GraphicsDeviceManager Graphics { get; }
+
+	public AssetLoader Assets { get; private set; }
 
 	public Scene? Scene
 		=> _scene;
@@ -77,7 +70,7 @@ public class PetalGame : Game
 				default:
 					throw new ArgumentOutOfRangeException(_windowMode.ToString());
 			}
-			
+
 			Graphics.ApplyChanges();
 		}
 	}
@@ -99,7 +92,7 @@ public class PetalGame : Game
 		TargetElapsedTime = TimeSpan.FromMilliseconds(1000d / settings.PreferredFramerate);
 		WindowMode = settings.WindowMode;
 		Window.AllowUserResizing = settings.IsWindowUserResizable;
-		
+
 		Graphics.ApplyChanges();
 	}
 

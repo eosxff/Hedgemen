@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Microsoft.Xna.Framework; // ;)
+namespace Microsoft.Xna.Framework;
+// ;)
 
 [Serializable]
 public struct Vector2Int
@@ -33,77 +34,111 @@ public struct Vector2Int
 	}
 
 	public override bool Equals(object obj)
-		=> obj is Vector2Int vector && Equals(vector);
+	{
+		return obj is Vector2Int vector && Equals(vector);
+	}
 
 	public override int GetHashCode()
-		=> X.GetHashCode() + Y.GetHashCode();
+	{
+		return X.GetHashCode() + Y.GetHashCode();
+	}
 
 	public int Length()
-		=> (int) Math.Sqrt(X * X + Y * Y);
+	{
+		return (int)Math.Sqrt(X * X + Y * Y);
+	}
 
 	public int LengthSquared()
-		=> X * X + Y * Y;
+	{
+		return X * X + Y * Y;
+	}
 
 	public override string ToString()
-		=> $"{{X: {X} Y: {Y}}}";
+	{
+		return $"{{X: {X} Y: {Y}}}";
+	}
 
 	public static Vector2Int Add(Vector2Int a, Vector2Int b)
-		=> new()
+	{
+		return new Vector2Int
 		{
 			X = a.X + b.X,
 			Y = a.Y + b.Y
 		};
-	
+	}
+
 	public static Vector2Int Subtract(Vector2Int a, Vector2Int b)
-		=> new()
+	{
+		return new Vector2Int
 		{
 			X = a.X - b.X,
 			Y = a.Y - b.Y
 		};
-	
+	}
+
 	public static Vector2Int Multiply(Vector2Int a, Vector2Int b)
-		=> new()
+	{
+		return new Vector2Int
 		{
 			X = a.X * b.X,
 			Y = a.Y * b.Y
 		};
-	
+	}
+
 	public static Vector2Int Divide(Vector2Int a, Vector2Int b)
-		=> new()
+	{
+		return new Vector2Int
 		{
 			X = a.X / b.X,
 			Y = a.Y / b.Y
 		};
+	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Add(Vector2Int a, Vector2Int b, out Vector2Int result)
-		=> result = Add(a, b);
+	{
+		result = Add(a, b);
+	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Subtract(Vector2Int a, Vector2Int b, out Vector2Int result)
-		=> result = Subtract(a, b);
-	
+	{
+		result = Subtract(a, b);
+	}
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Multiply(Vector2Int a, Vector2Int b, out Vector2Int result)
-		=> result = Multiply(a, b);
+	{
+		result = Multiply(a, b);
+	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Divide(Vector2Int a, Vector2Int b, out Vector2Int result)
-		=> result = Divide(a, b);
+	{
+		result = Divide(a, b);
+	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Vector2Int operator +(Vector2Int a, Vector2Int b)
-		=> Add(a, b);
-	
+	{
+		return Add(a, b);
+	}
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Vector2Int operator -(Vector2Int a, Vector2Int b)
-		=> Subtract(a, b);
-	
+	{
+		return Subtract(a, b);
+	}
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Vector2Int operator *(Vector2Int a, Vector2Int b)
-		=> Multiply(a, b);
-	
+	{
+		return Multiply(a, b);
+	}
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Vector2Int operator /(Vector2Int a, Vector2Int b)
-		=> Divide(a, b);
+	{
+		return Divide(a, b);
+	}
 }

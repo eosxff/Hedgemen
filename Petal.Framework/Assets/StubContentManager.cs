@@ -10,7 +10,8 @@ internal class StubContentManager : ContentManager
 		Dispose();
 	}
 
-	public StubContentManager(IServiceProvider serviceProvider, string rootDirectory) : base(serviceProvider, rootDirectory)
+	public StubContentManager(IServiceProvider serviceProvider, string rootDirectory) : base(serviceProvider,
+		rootDirectory)
 	{
 		Dispose();
 	}

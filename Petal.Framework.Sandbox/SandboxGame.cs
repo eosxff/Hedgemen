@@ -28,22 +28,15 @@ public class SandboxGame : PetalGame
 		public override string AnimalName
 			=> "Cat";
 	}
-	
-	public static SandboxGame? Instance
-	{
-		get;
-		private set;
-	}
+
+	public static SandboxGame? Instance { get; private set; }
 
 	public SandboxGame()
 	{
 		Instance = this;
 	}
 
-	public ContentRegistry GameContent
-	{
-		get;
-	} = new ();
+	public ContentRegistry GameContent { get; } = new();
 
 	private Renderer _renderer;
 	private ViewportAdapter _viewportAdapter;
@@ -56,7 +49,7 @@ public class SandboxGame : PetalGame
 
 		_renderer = new DefaultRenderer();
 		_viewportAdapter = new ScalingViewportAdapter(GraphicsDevice, new Vector2Int(640, 360));
-		
+
 		Window.AllowUserResizing = true;
 		Window.ClientSizeChanged += WindowOnClientSizeChanged;
 		_image = Assets.LoadAsset<Texture2D>(new FileInfo("peach.png").Open(FileMode.Open));
@@ -74,24 +67,24 @@ public class SandboxGame : PetalGame
 	{
 		//_renderer.RenderState.TransformationMatrix = _viewportAdapter.GetScaleMatrix();
 		_renderer.RenderState.TransformationMatrix = Matrix.Identity;
-		
+
 		GraphicsDevice.SetRenderTarget(_renderTarget);
-		
+
 		_renderer.Begin();
-		
+
 		_renderer.Draw(new RenderData
 		{
 			DstRect = new Rectangle(0, 0, 640, 360),
 			Texture = _image
 		});
-		
+
 		_renderer.End();
-		
+
 		GraphicsDevice.SetRenderTarget(null);
 		_viewportAdapter.Reset();
-		
+
 		_renderer.Begin();
-		
+
 		_renderer.Draw(new RenderData
 		{
 			SrcRect = new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height),
@@ -105,7 +98,6 @@ public class SandboxGame : PetalGame
 
 	protected override void Update(GameTime gameTime)
 	{
-		
 	}
 
 	protected override GameSettings GetInitialGameSettings()
@@ -123,11 +115,12 @@ public class SandboxGame : PetalGame
 
 	private int _frames = 0;
 	private Random _rng = new();
+
 	private bool ShouldResetAnchor()
 	{
 		return false;
 		_frames++;
-		if(_frames % 60 == 0)
+		if (_frames % 60 == 0)
 			Console.WriteLine($"Frames: {_frames}");
 		return _frames % 60 == 0;
 	}

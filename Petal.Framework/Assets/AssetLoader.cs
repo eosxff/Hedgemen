@@ -10,6 +10,7 @@ namespace Petal.Framework.Assets;
 public sealed class AssetLoader : IDisposable
 {
 	public delegate void OnAssetLoaded(object asset);
+
 	public delegate void OnAssetUnknownType(Type type);
 
 	public event OnAssetLoaded? AssetLoaded;
@@ -41,9 +42,9 @@ public sealed class AssetLoader : IDisposable
 			object asset = SoundEffect.FromStream(stream);
 			AssetLoaded?.Invoke(asset);
 			stream.Close();
-			return (T) asset;
+			return (T)asset;
 		}
-		
+
 		AssetUnknownType?.Invoke(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with '{nameof(stream)}'.");
 	}
@@ -58,7 +59,7 @@ public sealed class AssetLoader : IDisposable
 			AssetLoaded?.Invoke(asset);
 			return (T)asset;
 		}
-		
+
 		AssetUnknownType?.Invoke(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
 		                            $"'{nameof(name)}: {name} | '{nameof(uri)}: {uri}'.");
@@ -72,9 +73,9 @@ public sealed class AssetLoader : IDisposable
 		{
 			object asset = new Effect(_graphicsDevice, assetBytes);
 			AssetLoaded?.Invoke(asset);
-			return (T) asset;
+			return (T)asset;
 		}
-		
+
 		AssetUnknownType?.Invoke(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
 		                            $"'{nameof(assetBytes)}: {assetBytes}'.");
@@ -98,7 +99,7 @@ public sealed class AssetLoader : IDisposable
 			AssetLoaded?.Invoke(asset);
 			return (T)asset;
 		}
-		
+
 		AssetUnknownType?.Invoke(assetType);
 		throw new ArgumentException($"Type '{assetType}' can not be loaded with " +
 		                            $"'{nameof(path)}: {path}'.");
@@ -117,19 +118,21 @@ public sealed class AssetLoader : IDisposable
 	private class AssetLoaderInternalContentManager : ContentManager
 	{
 		public AssetLoaderInternalContentManager(IServiceProvider serviceProvider)
-			: base(serviceProvider, string.Empty) { }
+			: base(serviceProvider, string.Empty)
+		{
+		}
 
 		public AssetLoaderInternalContentManager(IServiceProvider serviceProvider, string rootDirectory)
-			: base(serviceProvider, rootDirectory) { }
-		
+			: base(serviceProvider, rootDirectory)
+		{
+		}
+
 		protected override void Dispose(bool disposing)
 		{
-			
 		}
 
 		public override void Unload()
 		{
-			
 		}
 	}
 }

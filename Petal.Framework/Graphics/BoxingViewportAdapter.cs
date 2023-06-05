@@ -6,102 +6,94 @@ namespace Petal.Framework.Graphics;
 
 public enum BoxingMode
 {
-    PillarBox,
-    LetterBox,
-    None
+	PillarBox,
+	LetterBox,
+	None
 }
 
 public class BoxingViewportAdapter : ScalingViewportAdapter
 {
-    public GameWindow Window
-    {
-        get;
-    }
+	public GameWindow Window { get; }
 
-    public Vector2Int Bleed
-    {
-        get;
-    }
+	public Vector2Int Bleed { get; }
 
-    public BoxingMode BoxingMode
-    {
-        get;
-        private set;
-    }
-    
-    public BoxingViewportAdapter(
-        GraphicsDevice graphicsDevice,
-        GameWindow window,
-        Vector2Int virtualResolution,
-        Vector2Int? bleed = null) 
-        : base(graphicsDevice, virtualResolution)
-    {
-        bleed ??= Vector2Int.Zero;
+	public BoxingMode BoxingMode { get; private set; }
 
-        SetVirtualResolution(virtualResolution);
-        Bleed = bleed.Value;
-        Window = window;
-        Window.ClientSizeChanged += OnClientSizeChanged;
-        
-        OnClientSizeChanged(this, EventArgs.Empty);
-    }
+	public BoxingViewportAdapter(
+		GraphicsDevice graphicsDevice,
+		GameWindow window,
+		Vector2Int virtualResolution,
+		Vector2Int? bleed = null)
+		: base(graphicsDevice, virtualResolution)
+	{
+		bleed ??= Vector2Int.Zero;
 
-    ~BoxingViewportAdapter()
-    {
-        Dispose();
-    }
+		SetVirtualResolution(virtualResolution);
+		Bleed = bleed.Value;
+		Window = window;
+		Window.ClientSizeChanged += OnClientSizeChanged;
 
-    public override void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        Window.ClientSizeChanged -= OnClientSizeChanged;
-    }
+		OnClientSizeChanged(this, EventArgs.Empty);
+	}
 
-    public override void Reset()
-    {
-        base.Reset();
-        OnClientSizeChanged(this, EventArgs.Empty);
-    }
+	~BoxingViewportAdapter()
+	{
+		Dispose();
+	}
 
-    public override Point PointToScreen(int x, int y)
-    {
-        var viewport = GraphicsDevice.Viewport;
-        return base.PointToScreen(x - viewport.X, y - viewport.Y);
-    }
+	public override void Dispose()
+	{
+		GC.SuppressFinalize(this);
+		Window.ClientSizeChanged -= OnClientSizeChanged;
+	}
 
-    private void OnClientSizeChanged(object sender, EventArgs eventArgs)
-    {
-        var clientBounds = Window.ClientBounds;
+	public override void Reset()
+	{
+		base.Reset();
+		OnClientSizeChanged(this, EventArgs.Empty);
+	}
 
-        var worldScale = new Vector2(
-            (float)clientBounds.Width / VirtualResolution.X,
-            (float)clientBounds.Height / VirtualResolution.Y);
+	public override Point PointToScreen(int x, int y)
+	{
+		var viewport = GraphicsDevice.Viewport;
+		return base.PointToScreen(x - viewport.X, y - viewport.Y);
+	}
 
-        var safeScale = new Vector2(
-            (float)clientBounds.Width / (VirtualResolution.X - Bleed.X),
-            (float)clientBounds.Height / (VirtualResolution.Y - Bleed.Y));
+	private void OnClientSizeChanged(object sender, EventArgs eventArgs)
+	{
+		var clientBounds = Window.ClientBounds;
 
-        var worldScale1d = MathHelper.Max(worldScale.X, worldScale.Y);
-        var safeScale1d = MathHelper.Min(safeScale.X, safeScale.Y);
-        var scale = MathHelper.Min(worldScale1d, safeScale1d);
+		var worldScale = new Vector2(
+			(float)clientBounds.Width / VirtualResolution.X,
+			(float)clientBounds.Height / VirtualResolution.Y);
 
-        var dimensions = new Vector2Int(
-            (int)(scale * VirtualResolution.X + 0.5f),
-            (int)(scale * VirtualResolution.Y + 0.5f));
+		var safeScale = new Vector2(
+			(float)clientBounds.Width / (VirtualResolution.X - Bleed.X),
+			(float)clientBounds.Height / (VirtualResolution.Y - Bleed.Y));
 
-        if (dimensions.Y >= clientBounds.Height && dimensions.X < clientBounds.Width)
-            BoxingMode = BoxingMode.PillarBox;
-        else
-        {
-            if (dimensions.X >= clientBounds.Height && dimensions.Y <= clientBounds.Height)
-                BoxingMode = BoxingMode.LetterBox;
-            else
-                BoxingMode = BoxingMode.None;
-        }
+		var worldScale1d = MathHelper.Max(worldScale.X, worldScale.Y);
+		var safeScale1d = MathHelper.Min(safeScale.X, safeScale.Y);
+		var scale = MathHelper.Min(worldScale1d, safeScale1d);
 
-        var x = clientBounds.Width / 2 - dimensions.X / 2;
-        var y = clientBounds.Height / 2 - dimensions.Y / 2;
-        
-        GraphicsDevice.Viewport = new Viewport(x, y, dimensions.X, dimensions.Y);
-    }
+		var dimensions = new Vector2Int(
+			(int)(scale * VirtualResolution.X + 0.5f),
+			(int)(scale * VirtualResolution.Y + 0.5f));
+
+		if (dimensions.Y >= clientBounds.Height && dimensions.X < clientBounds.Width)
+		{
+			BoxingMode = BoxingMode.PillarBox;
+		}
+		else
+		{
+			if (dimensions.X >= clientBounds.Height && dimensions.Y <= clientBounds.Height)
+				BoxingMode = BoxingMode.LetterBox;
+			else
+				BoxingMode = BoxingMode.None;
+		}
+
+		var x = clientBounds.Width / 2 - dimensions.X / 2;
+		var y = clientBounds.Height / 2 - dimensions.Y / 2;
+
+		GraphicsDevice.Viewport = new Viewport(x, y, dimensions.X, dimensions.Y);
+	}
 }

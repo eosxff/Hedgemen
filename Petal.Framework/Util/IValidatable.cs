@@ -2,5 +2,5 @@
 
 public interface IValidatable
 {
-    public bool Validate();
+	public bool Validate();
 }

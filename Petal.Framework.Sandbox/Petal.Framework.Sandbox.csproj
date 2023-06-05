@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj" />
+        <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -18,11 +18,11 @@
             <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
         </ContentWithTargetPath>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <Reference Include="FNA">
-        <HintPath>..\Petal.Framework\lib\FNA.dll</HintPath>
-      </Reference>
+        <Reference Include="FNA">
+            <HintPath>..\Petal.Framework\lib\FNA.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>

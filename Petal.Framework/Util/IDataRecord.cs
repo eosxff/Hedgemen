@@ -2,6 +2,6 @@
 
 public interface IDataRecord<T>
 {
-    public T Create();
-    public void Read(T obj);
+	public T Create();
+	public void Read(T obj);
 }

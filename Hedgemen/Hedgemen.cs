@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
-using Hgm.Components;
+using Hgm.ComponentsNew;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Petal.Framework;
-using Petal.Framework.EntityComponent;
+using Petal.Framework.EntityComponent.Persistence;
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
 using Petal.Framework.Scenery;
@@ -39,14 +40,24 @@ public class Hedgemen : PetalGame
 
 	private Skin _skin;
 
+	private Dictionary<string, Assembly> _registeredAssemblies = new(4);
+
 	protected override void Initialize()
 	{
 		base.Initialize();
 
+		SerializedRecord.DefaultRegisteredAssemblies = () => _registeredAssemblies;
+
+		RegisterAssemblies(
+			typeof(object),
+			typeof(Hedgemen),
+			typeof(PetalGame),
+			typeof(Game));
+
 		ContentRegistry.Register(
 			"hedgemen:ui/button_hover_texture",
 			Assets.LoadAsset<Texture2D>("button_hover.png"));
-		
+
 		ContentRegistry.Register(
 			"hedgemen:ui/button_input_texture",
 			Assets.LoadAsset<Texture2D>("button_input.png"));
@@ -57,7 +68,7 @@ public class Hedgemen : PetalGame
 
 		_whiteSquare = Assets.LoadAsset<Texture2D>("white_square.png");
 		_peach = Assets.LoadAsset<Texture2D>("peach.png");
-		
+
 		ContentRegistry.Register(
 			"hedgemen:white_square",
 			_whiteSquare);
@@ -66,7 +77,7 @@ public class Hedgemen : PetalGame
 		Console.WriteLine(_skin.Button.NormalTexture.ContentIdentifier);
 		Console.WriteLine(_skin.Button.HoverTexture.ContentIdentifier);
 		Console.WriteLine(_skin.Button.InputTexture.ContentIdentifier);
-		
+
 		_skin.Button.NormalTexture.ReloadItem(ContentRegistry);
 
 		try
@@ -88,16 +99,13 @@ public class Hedgemen : PetalGame
 				Petal.Window,
 				new Vector2Int(640, 360))
 		};
-		
-		scene.Root.OnChildAdded += (sender, args) =>
-		{
-			Console.WriteLine($"Added: {args.Child.Name}");
-		};
+
+		scene.Root.OnChildAdded += (sender, args) => { Console.WriteLine($"Added: {args.Child.Name}"); };
 
 		var buttonSize = new Vector2Int(32, 32);
 		var anchors = Enum.GetValues<Anchor>();
 
-		for (int i = 0; i < anchors.Length; ++i)
+		for (var i = 0; i < anchors.Length; ++i)
 		{
 			var button = scene.Root.Add(new Button(_skin)
 			{
@@ -108,39 +116,64 @@ public class Hedgemen : PetalGame
 			});
 		}
 
-		var entities = new List<Entity>(5);
-
-		for (int i = 0; i < entities.Capacity; ++i)
-		{
-			var entity = new Entity();
-			entity.AddComponent(new CharacterSheet());
-			entities.Add(entity);
-		}
-
 		scene.AfterUpdate += (sender, args) =>
 		{
-			if(scene.Input.IsKeyPressed(Keys.Escape))
+			if (scene.Input.IsKeyPressed(Keys.Escape))
 				Exit();
-			
-			for (int i = 0; i < entities.Count; ++i)
-			{
-				var entity = entities[i];
-				
-				entity.PropagateEvent(new StatChangeEvent
-				{
-					Sender = entity,
-					StatName = "strength",
-					Amount = 15
-				});
-
-				if (entity.GetComponent<CharacterSheet>(out var sheet))
-				{
-					//Console.WriteLine(sheet.Strength);
-				}
-			}
+			else if(scene.Input.IsKeyPressed(Keys.Space))
+				Console.Clear();
 		};
 
 		ChangeScenes(scene);
+		Test();
+	}
+
+	public bool RegisterAssembly(Type type)
+	{
+		var assembly = type.Assembly;
+		var assemblyFullName = assembly.FullName;
+
+		if (assemblyFullName is null)
+		{
+			Console.WriteLine($"Assembly.FullName for type {type} is null. Can not register assembly.");
+			return false;
+		}
+
+		if (_registeredAssemblies.ContainsKey(assemblyFullName))
+		{
+			Console.WriteLine($"{assemblyFullName} is already registered.");
+			return false;
+		}
+
+		_registeredAssemblies.Add(assemblyFullName, assembly);
+		return true;
+	}
+
+	public bool RegisterAssembly<T>()
+	{
+		return RegisterAssembly(typeof(T));
+	}
+
+	public void RegisterAssemblies(params Type[] types)
+	{
+		for (var i = 0; i < types.Length; ++i)
+		{
+			var type = types[i];
+			RegisterAssembly(type);
+		}
+	}
+
+	private void Test()
+	{
+		var sheet = new CharacterSheet();
+		sheet.RegisterEvents();
+		
+		sheet.PropagateEvent(new ChangeStatEvent
+		{
+			Sender = null,
+			ChangeAmount = 10,
+			StatName = "strength"
+		});
 	}
 
 	protected override GameSettings GetInitialGameSettings()

@@ -11,49 +11,25 @@ public class Scene : IDisposable
 {
 	public class SkinChangedEventArgs : EventArgs
 	{
-		public Skin OldSkin
-		{
-			get;
-			init;
-		}
+		public Skin OldSkin { get; init; }
 
-		public Skin NewSkin
-		{
-			get;
-			init;
-		}
+		public Skin NewSkin { get; init; }
 	}
 
 	private RenderTarget2D? _renderTarget;
-	
-	public Renderer Renderer
-	{
-		get;
-	}
-	
-	public Color BackgroundColor
-	{
-		get;
-		set;
-	} = Color.CornflowerBlue;
 
-	public Stage Root
-	{
-		get;
-	}
+	public Renderer Renderer { get; }
 
-	public InputProvider Input
-	{
-		get;
-	}
+	public Color BackgroundColor { get; set; } = Color.CornflowerBlue;
 
-	public NodeSelection NodeSelector
-	{
-		get;
-	} = new ();
+	public Stage Root { get; }
+
+	public InputProvider Input { get; }
+
+	public NodeSelection NodeSelector { get; } = new();
 
 	private ViewportAdapter _viewportAdapter;
-	
+
 	public ViewportAdapter ViewportAdapter
 	{
 		get => _viewportAdapter;
@@ -77,7 +53,7 @@ public class Scene : IDisposable
 				OldSkin = _skin,
 				NewSkin = value
 			};
-			
+
 			_skin = value;
 			_skin.Refresh();
 			OnSkinChanged?.Invoke(this, args);
@@ -86,7 +62,7 @@ public class Scene : IDisposable
 
 	public event EventHandler? BeforeUpdate;
 	public event EventHandler? AfterUpdate;
-	
+
 	public event EventHandler? BeforeDraw;
 	public event EventHandler? AfterDraw;
 
@@ -110,10 +86,10 @@ public class Scene : IDisposable
 
 		ViewportAdapter = new DefaultViewportAdapter(
 			Renderer.RenderState.Graphics.GraphicsDevice, PetalGame.Petal.Window);
-		
+
 		ViewportAdapter.Reset();
 		ResetRenderTarget();
-		
+
 		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
 	}
 
@@ -122,7 +98,7 @@ public class Scene : IDisposable
 		Input.Update(time, ViewportAdapter.GetScaleMatrix(), TransformCursorPosition);
 
 		BeforeUpdate?.Invoke(this, EventArgs.Empty);
-		
+
 		NodeSelector.Update();
 		Root.SearchForTargetNode(NodeSelector);
 		Root.Update(time, NodeSelector);
@@ -140,7 +116,7 @@ public class Scene : IDisposable
 	public void Draw(GameTime time)
 	{
 		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
-		
+
 		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
 
 		graphicsDevice.SetRenderTarget(_renderTarget);
@@ -149,9 +125,9 @@ public class Scene : IDisposable
 		BeforeDraw?.Invoke(this, EventArgs.Empty);
 		Root.Draw(time);
 		AfterDraw?.Invoke(this, EventArgs.Empty);
-		
+
 		graphicsDevice.SetRenderTarget(null);
-		
+
 		ViewportAdapter.Reset();
 
 		if (_renderTarget is not null)
@@ -167,7 +143,7 @@ public class Scene : IDisposable
 					ViewportAdapter.VirtualResolution.X,
 					ViewportAdapter.VirtualResolution.Y)
 			});
-		
+
 			ViewportAdapter.Reset();
 			Renderer.End();
 		}
@@ -184,7 +160,7 @@ public class Scene : IDisposable
 	{
 		PetalGame.Petal.Window.ClientSizeChanged += OnWindowClientSizeChanged;
 		ViewportAdapter.Reset();
-		
+
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
 	}
 
@@ -197,7 +173,7 @@ public class Scene : IDisposable
 	private void ResetRenderTarget()
 	{
 		var graphicsDevice = Renderer.RenderState.Graphics.GraphicsDevice;
-		
+
 		_renderTarget?.Dispose();
 		_renderTarget = new RenderTarget2D(
 			graphicsDevice,
@@ -211,9 +187,9 @@ public class Scene : IDisposable
 	public void Dispose()
 	{
 		GC.SuppressFinalize(this);
-		
+
 		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
-		
+
 		_renderTarget?.Dispose();
 		Renderer?.Dispose();
 		ViewportAdapter?.Dispose();

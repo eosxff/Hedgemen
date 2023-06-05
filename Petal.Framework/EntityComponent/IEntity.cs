@@ -1,11 +1,14 @@
-﻿namespace Petal.Framework.EntityComponent;
+﻿using Petal.Framework.EntityComponent.Persistence;
 
-public interface IEntity<in TEvent> where TEvent : IEvent
+namespace Petal.Framework.EntityComponent;
+
+public interface IEntity<in TEvent> : ISerializableObject where TEvent : IEvent
 {
-    public EntityStatus Status
-    {
-        get;
-    }
-    
-    public PropagateEventResult PropagateEvent(TEvent e);
+	public EntityStatus Status
+	{
+		get;
+	}
+
+	public PropagateEventResult PropagateEvent(TEvent e);
+	public void Destroy();
 }

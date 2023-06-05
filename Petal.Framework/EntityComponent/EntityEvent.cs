@@ -2,12 +2,14 @@
 
 public abstract class EntityEvent : IEvent
 {
-    public Entity Sender
-    {
-        get;
-        init;
-    }
-    
-    public virtual bool Validate()
-        => Sender is not null;
+	public Entity Sender
+	{
+		get;
+		init;
+	}
+
+	public virtual bool Validate()
+	{
+		return Sender is not null;
+	}
 }

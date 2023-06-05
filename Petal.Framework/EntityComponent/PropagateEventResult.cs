@@ -2,7 +2,7 @@
 
 public enum PropagateEventResult
 {
-    Success,
-    InvalidEvent,
-    InactiveEntity
+	Success,
+	InvalidEvent,
+	InactiveEntity
 }
