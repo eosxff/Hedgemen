@@ -11,19 +11,35 @@ public abstract class Node
 {
 	public sealed class ChildAddedEventArgs : EventArgs
 	{
-		public Node Child { get; init; }
+		public Node Child
+		{
+			get;
+			init;
+		}
 	}
 
 	public sealed class ChildRemovedEventArgs : EventArgs
 	{
-		public Node Child { get; init; }
+		public Node Child
+		{
+			get;
+			init;
+		}
 	}
 
 	public sealed class ParentChangedEventArgs : EventArgs
 	{
-		public Node? OldParent { get; init; }
+		public Node? OldParent
+		{
+			get;
+			init;
+		}
 
-		public Node? NewParent { get; init; }
+		public Node? NewParent
+		{
+			get;
+			init;
+		}
 	}
 
 	public event EventHandler? OnBeforeDraw;

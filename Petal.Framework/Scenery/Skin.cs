@@ -9,9 +9,17 @@ namespace Petal.Framework.Scenery;
 
 public sealed class Skin
 {
-	public ContentRegistry? ContentRegistry { get; set; }
+	public ContentRegistry? ContentRegistry
+	{
+		get;
+		set;
+	}
 
-	public ButtonData Button { get; init; }
+	public ButtonData Button
+	{
+		get;
+		init;
+	}
 
 	public Skin() : this(null)
 	{

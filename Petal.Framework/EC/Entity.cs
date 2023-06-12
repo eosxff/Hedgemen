@@ -66,7 +66,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 			var eventSet = new EventSet
 			{
 				EventType = registeredEvent,
-				Count = 0
+				Count = 1
 			};
 			
 			bool found = _componentEvents.TryGetValue(eventSet, out var componentEvent);
@@ -75,6 +75,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 			{
 				case true:
 					componentEvent.Count++;
+					Console.WriteLine(componentEvent.Count);
 					break;
 				case false:
 					_componentEvents.Add(eventSet);
@@ -92,7 +93,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 			var eventSet = new EventSet
 			{
 				EventType = registeredEvent,
-				Count = 0
+				Count = 1
 			};
 			
 			bool found = _componentEvents.TryGetValue(eventSet, out var componentEvent);
@@ -100,8 +101,6 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 			switch (found)
 			{
 				case true:
-					componentEvent.Count++;
-
 					if (--componentEvent.Count <= 0)
 						_componentEvents.Remove(eventSet);
 					

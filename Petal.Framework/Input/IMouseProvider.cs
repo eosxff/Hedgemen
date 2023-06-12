@@ -8,8 +8,15 @@ public interface IMouseProvider
 {
 	public void Update(GameTime gameTime, Matrix scaleMatrix, CursorPositionTransformation? cursorDelegate = null);
 
-	public Vector2 MousePosition { get; }
-	public Vector2 MousePositionDiff { get; }
+	public Vector2 MousePosition
+	{
+		get;
+	}
+
+	public Vector2 MousePositionDiff
+	{
+		get;
+	}
 
 	public void UpdateMousePosition(Vector2 pos);
 

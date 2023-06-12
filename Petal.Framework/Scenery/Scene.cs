@@ -11,22 +11,46 @@ public class Scene : IDisposable
 {
 	public class SkinChangedEventArgs : EventArgs
 	{
-		public Skin OldSkin { get; init; }
+		public Skin OldSkin
+		{
+			get;
+			init;
+		}
 
-		public Skin NewSkin { get; init; }
+		public Skin NewSkin
+		{
+			get;
+			init;
+		}
 	}
 
 	private RenderTarget2D? _renderTarget;
 
-	public Renderer Renderer { get; }
+	public Renderer Renderer
+	{
+		get;
+	}
 
-	public Color BackgroundColor { get; set; } = Color.CornflowerBlue;
+	public Color BackgroundColor
+	{
+		get;
+		set;
+	} = Color.CornflowerBlue;
 
-	public Stage Root { get; }
+	public Stage Root
+	{
+		get;
+	}
 
-	public InputProvider Input { get; }
+	public InputProvider Input
+	{
+		get;
+	}
 
-	public NodeSelection NodeSelector { get; } = new();
+	public NodeSelection NodeSelector
+	{
+		get;
+	} = new();
 
 	private ViewportAdapter _viewportAdapter;
 
