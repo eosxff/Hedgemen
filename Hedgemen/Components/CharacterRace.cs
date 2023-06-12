@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ﻿using Petal.Framework.EntityComponent;
 using Petal.Framework.EntityComponent.Persistence;
 
@@ -34,5 +35,33 @@ public class CharacterRace : Component
 	public override void ReadObjectState(SerializedRecord record)
 	{
 		RaceName = record.GetField<string>("hedgemen:race_name", "human");
+=======
+﻿using Petal.Framework.EC;
+using Petal.Framework.Persistence;
+
+namespace Hgm.Components;
+
+public class CharacterRace : EntityComponent
+{
+	public required string Name
+	{
+		get;
+		set;
+	}
+	
+	public override void RegisterEvents()
+	{
+		
+	}
+
+	public override SerializedData WriteObjectState()
+	{
+		return base.WriteObjectState();
+	}
+
+	public override void ReadObjectState(SerializedData data)
+	{
+		base.ReadObjectState(data);
+>>>>>>> Stashed changes
 	}
 }

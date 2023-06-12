@@ -26,4 +26,16 @@ public static class DictionaryExtensions
 
 		return true;
 	}
+<<<<<<< Updated upstream
+=======
+
+	public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> self, TKey key)
+	{
+		if (!self.ContainsKey(key))
+			return false;
+
+		self.Remove(key);
+		return true;
+	}
+>>>>>>> Stashed changes
 }

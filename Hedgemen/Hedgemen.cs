@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -8,7 +7,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Petal.Framework;
+<<<<<<< Updated upstream
 using Petal.Framework.EntityComponent.Persistence;
+=======
+using Petal.Framework.EC;
+>>>>>>> Stashed changes
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
 using Petal.Framework.Scenery;
@@ -128,6 +131,7 @@ public class Hedgemen : PetalGame
 		Test();
 	}
 
+<<<<<<< Updated upstream
 	public bool RegisterAssembly(Type type)
 	{
 		var assembly = type.Assembly;
@@ -174,6 +178,43 @@ public class Hedgemen : PetalGame
 			ChangeAmount = 10,
 			StatName = "strength"
 		});
+=======
+	private void Test()
+	{
+		var entity = new Entity();
+		entity.AddComponent(new CharacterSheet());
+
+		Console.WriteLine($"Event count: {entity._componentEvents.Count}");
+
+		for (int i = 0; i < 1; ++i)
+		{
+			if (entity.WillRespondToEvent<ChangeStatEvent>())
+			{
+				entity.PropagateEvent(new ChangeStatEvent
+				{
+					Sender = entity,
+					ChangeAmount = 1015,
+					StatName = "strength"
+				});
+			}
+			
+			entity.PropagateEventIfResponsive(new ChangeStatEvent
+			{
+				Sender = entity,
+				ChangeAmount = 10,
+				StatName = "constitution"
+			});
+		}
+
+		var data = entity.WriteObjectState();//new SerializedData(entity);
+		//data.AddSerializedObject("any:entity", entity);
+
+		var entityClone = data.GetSerializedObject<Entity>();
+		Console.WriteLine($"Sheet: {entityClone?.GetComponent<CharacterSheet>()}");
+
+		entity.RemoveComponent<CharacterSheet>();
+		Console.WriteLine($"Event count: {entity._componentEvents.Count}");
+>>>>>>> Stashed changes
 	}
 
 	protected override GameSettings GetInitialGameSettings()

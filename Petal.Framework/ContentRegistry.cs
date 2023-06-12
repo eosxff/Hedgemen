@@ -167,7 +167,12 @@ public sealed class ContentReference<TContent>
 
 		registry.TryGet(identifier, out var content);
 
+<<<<<<< Updated upstream
 		if (content.Item is TContent tContent) return tContent;
+=======
+		if (content.Item is TContent tContent)
+			return tContent;
+>>>>>>> Stashed changes
 
 		return default;
 	}
