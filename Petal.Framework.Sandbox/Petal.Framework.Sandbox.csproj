@@ -8,12 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-<<<<<<< Updated upstream
+
         <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj"/>
-=======
+
         <ProjectReference Include="..\Hedgemen\Hedgemen.csproj" />
         <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj" />
->>>>>>> Stashed changes
+
     </ItemGroup>
 
     <ItemGroup>

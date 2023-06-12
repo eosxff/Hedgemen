@@ -26,8 +26,8 @@ public static class DictionaryExtensions
 
 		return true;
 	}
-<<<<<<< Updated upstream
-=======
+
+
 
 	public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> self, TKey key)
 	{
@@ -37,5 +37,5 @@ public static class DictionaryExtensions
 		self.Remove(key);
 		return true;
 	}
->>>>>>> Stashed changes
+
 }

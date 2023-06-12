@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using Hgm.ComponentsNew;
+using Hgm.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Petal.Framework;
-<<<<<<< Updated upstream
+
 using Petal.Framework.EntityComponent.Persistence;
-=======
+
 using Petal.Framework.EC;
->>>>>>> Stashed changes
+
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
 using Petal.Framework.Scenery;
@@ -22,21 +23,14 @@ namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
-	public static Hedgemen Instance
-	{
-		get;
-		private set;
-	}
+	public static Hedgemen Instance { get; private set; }
 
 	public Hedgemen()
 	{
 		Instance = this;
 	}
 
-	public ContentRegistry ContentRegistry
-	{
-		get;
-	} = new();
+	public ContentRegistry ContentRegistry { get; } = new();
 
 	private Texture2D _whiteSquare;
 	private Texture2D _peach;
@@ -123,7 +117,7 @@ public class Hedgemen : PetalGame
 		{
 			if (scene.Input.IsKeyPressed(Keys.Escape))
 				Exit();
-			else if(scene.Input.IsKeyPressed(Keys.Space))
+			else if (scene.Input.IsKeyPressed(Keys.Space))
 				Console.Clear();
 		};
 
@@ -131,7 +125,7 @@ public class Hedgemen : PetalGame
 		Test();
 	}
 
-<<<<<<< Updated upstream
+
 	public bool RegisterAssembly(Type type)
 	{
 		var assembly = type.Assembly;
@@ -169,18 +163,6 @@ public class Hedgemen : PetalGame
 
 	private void Test()
 	{
-		var sheet = new CharacterSheet();
-		sheet.RegisterEvents();
-		
-		sheet.PropagateEvent(new ChangeStatEvent
-		{
-			Sender = null,
-			ChangeAmount = 10,
-			StatName = "strength"
-		});
-=======
-	private void Test()
-	{
 		var entity = new Entity();
 		entity.AddComponent(new CharacterSheet());
 
@@ -214,7 +196,7 @@ public class Hedgemen : PetalGame
 
 		entity.RemoveComponent<CharacterSheet>();
 		Console.WriteLine($"Event count: {entity._componentEvents.Count}");
->>>>>>> Stashed changes
+
 	}
 
 	protected override GameSettings GetInitialGameSettings()
