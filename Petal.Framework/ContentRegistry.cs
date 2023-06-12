@@ -10,14 +10,26 @@ public class ContentRegistry
 {
 	public class ContentRegisteredArgs : EventArgs
 	{
-		public ContentValue RegisteredContent { get; init; }
+		public ContentValue RegisteredContent
+		{
+			get;
+			init;
+		}
 	}
 
 	public class ContentReplacedArgs : EventArgs
 	{
-		public ContentValue ReplacedContent { get; init; }
+		public ContentValue ReplacedContent
+		{
+			get;
+			init;
+		}
 
-		public ContentValue RegisteredContent { get; init; }
+		public ContentValue RegisteredContent
+		{
+			get;
+			init;
+		}
 	}
 
 	public event EventHandler? OnContentRegistered;
@@ -122,9 +134,17 @@ public class ContentRegistry
 
 public readonly struct ContentValue
 {
-	public NamespacedString ContentIdentifier { get; init; } = NamespacedString.Default;
+	public NamespacedString ContentIdentifier
+	{
+		get;
+		init;
+	} = NamespacedString.Default;
 
-	public object Item { get; init; } = new();
+	public object Item
+	{
+		get;
+		init;
+	} = new();
 
 	public ContentValue()
 	{
@@ -138,9 +158,16 @@ public readonly struct ContentValue
 
 public sealed class ContentReference<TContent>
 {
-	public NamespacedString ContentIdentifier { get; }
+	public NamespacedString ContentIdentifier
+	{
+		get;
+	}
 
-	public TContent? Item { get; private set; }
+	public TContent? Item
+	{
+		get;
+		private set;
+	}
 
 	public ContentReference(NamespacedString identifier)
 	{
@@ -179,7 +206,8 @@ public sealed class ContentReference<TContent>
 	[Serializable]
 	public struct DataRecord : IDataRecord<ContentReference<TContent>>
 	{
-		[JsonPropertyName("content_id")] public NamespacedString ContentIdentifier;
+		[JsonPropertyName("content_id")]
+		public NamespacedString ContentIdentifier;
 
 		public ContentReference<TContent> Create()
 		{

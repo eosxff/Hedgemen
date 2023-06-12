@@ -10,7 +10,7 @@ namespace Petal.Framework.EC;
 public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializableObject
 {
 	private IDictionary<Type, EntityComponent> _components = new Dictionary<Type, EntityComponent>();
-	public HashSet<EventSet> _componentEvents = new(); // todo private
+	private HashSet<EventSet> _componentEvents = new();
 
 	public IReadOnlyCollection<EntityComponent> Components
 		=> _components.Values as Dictionary<Type, EntityComponent>.ValueCollection;
@@ -140,7 +140,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool RemoveComponent(EntityComponent component)
-		=> RemoveComponent(component.GetType());
+		=> RemoveComponent(component, true);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool RemoveComponent<T>() where T : EntityComponent
@@ -148,28 +148,33 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 	public bool RemoveComponent(Type componentType)
 	{
-		bool foundComponent = _components.TryGetValue(componentType, out var component);
+		bool found = _components.TryGetValue(componentType, out var component);
 
-		switch (foundComponent)
-		{
-			case true:
-				RemoveRegisteredEventsFromComponent(component);
-				bool removed = _components.TryRemove(componentType);
-				component.Destroy();
-				return removed;
-			case false:
-				return false;
-		}
+		if (!found)
+			return false;
+
+		return RemoveComponent(component, true);
+	}
+
+	private bool RemoveComponent(EntityComponent component, bool unregisterEvents)
+	{
+		if(unregisterEvents)
+			RemoveRegisteredEventsFromComponent(component);
+
+		bool removed = _components.TryRemove(component.GetType());
+		component.Destroy();
+		return removed;
 	}
 
 	public void RemoveAllComponents()
 	{
 		foreach (var component in Components)
 		{
-			RemoveComponent(component);
+			RemoveComponent(component, false);
 		}
 		
 		_components.Clear();
+		_componentEvents.Clear();
 	}
 
 	public void Destroy()
@@ -204,12 +209,12 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 				var found = element.GetSerializedObject<EntityComponent>(out var component);
 
 				if (found)
-					_components.Add(component.GetType(), component);
+					AddComponent(component);
 			}
 		}
 	}
 
-	public class EventSet // todo private
+	private class EventSet
 	{
 		public required Type EventType
 		{

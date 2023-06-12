@@ -105,7 +105,6 @@ public sealed class SerializedData
 				RepopulateAssemblies();
 
 			found = Assemblies.TryGetValue(assemblyFullName, out assembly);
-			Console.WriteLine(found);
 
 			if (found)
 			{
