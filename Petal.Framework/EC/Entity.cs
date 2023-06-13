@@ -25,7 +25,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 	public void PropagateEventIfResponsive(EntityEvent e)
 	{
-		if(WillRespondToEvent(e.GetType()))
+		if (WillRespondToEvent(e.GetType()))
 			PropagateEvent(e);
 	}
 
@@ -40,18 +40,20 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool WillRespondToEvent<T>() where T : EntityEvent
-		=> WillRespondToEvent(typeof(T));
+	{
+		return WillRespondToEvent(typeof(T));
+	}
 
 	public void AddComponent(EntityComponent component)
 	{
 		if (component is null)
 			return;
-		
+
 		var componentType = component.GetType();
 
 		if (_components.ContainsKey(componentType))
 			return;
-		
+
 		_components.Add(componentType, component);
 		component.AddToEntity(this);
 		AddRegisteredEventsFromComponent(component);
@@ -68,7 +70,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 				EventType = registeredEvent,
 				Count = 1
 			};
-			
+
 			bool found = _componentEvents.TryGetValue(eventSet, out var componentEvent);
 
 			switch (found)
@@ -87,7 +89,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 	private void RemoveRegisteredEventsFromComponent(EntityComponent component)
 	{
 		var registeredEvents = component.GetRegisteredEvents();
-		
+
 		foreach (var registeredEvent in registeredEvents)
 		{
 			var eventSet = new EventSet
@@ -95,7 +97,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 				EventType = registeredEvent,
 				Count = 1
 			};
-			
+
 			bool found = _componentEvents.TryGetValue(eventSet, out var componentEvent);
 
 			switch (found)
@@ -103,7 +105,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 				case true:
 					if (--componentEvent.Count <= 0)
 						_componentEvents.Remove(eventSet);
-					
+
 					break;
 				case false:
 					break;
@@ -113,18 +115,20 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void AddComponent<T>() where T : EntityComponent, new()
-		=> AddComponent(new T());
+	{
+		AddComponent(new T());
+	}
 
 	public bool GetComponent<T>([MaybeNullWhen(false)] out T component) where T : EntityComponent
 	{
 		component = default;
-		
+
 		bool found = _components.TryGetValue(typeof(T), out var comp);
 
 		if (!found)
 			return false;
 
-		if(comp is T compAsT)
+		if (comp is T compAsT)
 			component = compAsT;
 
 		return true;
@@ -139,11 +143,15 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool RemoveComponent(EntityComponent component)
-		=> RemoveComponent(component, true);
+	{
+		return RemoveComponent(component, true);
+	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool RemoveComponent<T>() where T : EntityComponent
-		=> RemoveComponent(typeof(T));
+	{
+		return RemoveComponent(typeof(T));
+	}
 
 	public bool RemoveComponent(Type componentType)
 	{
@@ -157,7 +165,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 	private bool RemoveComponent(EntityComponent component, bool unregisterEvents)
 	{
-		if(unregisterEvents)
+		if (unregisterEvents)
 			RemoveRegisteredEventsFromComponent(component);
 
 		bool removed = _components.TryRemove(component.GetType());
@@ -171,7 +179,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 		{
 			RemoveComponent(component, false);
 		}
-		
+
 		_components.Clear();
 		_componentEvents.Clear();
 	}
@@ -193,7 +201,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 		}
 
 		data.AddField(NamespacedString.FromDefaultNamespace("components"), components);
-		
+
 		return data;
 	}
 
@@ -205,7 +213,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 		{
 			foreach (var element in dataList)
 			{
-				var found = element.GetSerializedObject<EntityComponent>(out var component);
+				bool found = element.GetSerializedObject<EntityComponent>(out var component);
 
 				if (found)
 					AddComponent(component);
@@ -215,17 +223,9 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 	private class EventSet
 	{
-		public required Type EventType
-		{
-			get;
-			init;
-		}
+		public required Type EventType { get; init; }
 
-		public required int Count
-		{
-			get;
-			set;
-		}
+		public required int Count { get; set; }
 
 		public override bool Equals(object obj)
 		{
@@ -239,6 +239,8 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 		}
 
 		public override int GetHashCode()
-			=> EventType.GetHashCode();
+		{
+			return EventType.GetHashCode();
+		}
 	}
 }

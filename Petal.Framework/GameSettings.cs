@@ -20,59 +20,31 @@ public struct GameSettings
 
 	[JsonInclude]
 	[JsonPropertyName("window_width")]
-	public int WindowWidth
-	{
-		get;
-		set;
-	} = 960;
+	public int WindowWidth { get; set; } = 960;
 
 	[JsonInclude]
 	[JsonPropertyName("window_height")]
-	public int WindowHeight
-	{
-		get;
-		set;
-	} = 540;
+	public int WindowHeight { get; set; } = 540;
 
 	[JsonInclude]
 	[JsonPropertyName("window_mode")]
-	public WindowMode WindowMode
-	{
-		get;
-		set;
-	} = WindowMode.Windowed;
+	public WindowMode WindowMode { get; set; } = WindowMode.Windowed;
 
 	[JsonInclude]
 	[JsonPropertyName("preferred_framerate")]
-	public int PreferredFramerate
-	{
-		get;
-		set;
-	} = 60;
+	public int PreferredFramerate { get; set; } = 60;
 
 	[JsonInclude]
 	[JsonPropertyName("vsync_enabled")]
-	public bool Vsync
-	{
-		get;
-		set;
-	} = true;
+	public bool Vsync { get; set; } = true;
 
 	[JsonInclude]
 	[JsonPropertyName("is_mouse_visible")]
-	public bool IsMouseVisible
-	{
-		get;
-		set;
-	} = true;
+	public bool IsMouseVisible { get; set; } = true;
 
 	[JsonInclude]
 	[JsonPropertyName("is_window_user_resizable")]
-	public bool IsWindowUserResizable
-	{
-		get;
-		set;
-	} = false;
+	public bool IsWindowUserResizable { get; set; } = false;
 
 	public GameSettings()
 	{

@@ -2,9 +2,5 @@
 
 public abstract class EntityEvent : IEvent
 {
-	public required Entity Sender
-	{
-		get;
-		init;
-	}
+	public required Entity Sender { get; init; }
 }

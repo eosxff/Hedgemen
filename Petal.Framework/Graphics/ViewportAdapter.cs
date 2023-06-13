@@ -35,7 +35,7 @@ public abstract class ViewportAdapter : IDisposable
 	}
 
 	/// <summary>
-	/// Used in situations where virtual resolution is dynamic or being set for the first time.
+	///     Used in situations where virtual resolution is dynamic or being set for the first time.
 	/// </summary>
 	protected void SetVirtualResolution(Vector2Int resolution)
 	{

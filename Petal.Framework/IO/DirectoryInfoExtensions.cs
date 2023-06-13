@@ -31,7 +31,7 @@ public static class DirectoryInfoExtensions
 	{
 		var files = new List<FileInfo>(fileNames.Length);
 
-		foreach (var fileName in fileNames)
+		foreach (string fileName in fileNames)
 			files.Add(FindFile(self, fileName));
 
 		return files.ToArray();
@@ -48,7 +48,7 @@ public static class DirectoryInfoExtensions
 	{
 		var directories = new List<DirectoryInfo>(directoryNames.Length);
 
-		foreach (var directoryName in directoryNames)
+		foreach (string directoryName in directoryNames)
 			directories.Add(FindDirectory(self, directoryName));
 
 		return directories.ToArray();

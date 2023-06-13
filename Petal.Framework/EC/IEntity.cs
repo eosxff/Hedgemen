@@ -8,10 +8,7 @@ public interface IEntity<TComponent, in TEvent>
 	where TEvent : IEvent
 	where TComponent : IComponent<TEvent>
 {
-	public IReadOnlyCollection<TComponent> Components
-	{
-		get;
-	}
+	public IReadOnlyCollection<TComponent> Components { get; }
 
 	public void PropagateEvent(TEvent e);
 	public void PropagateEventIfResponsive(TEvent e);

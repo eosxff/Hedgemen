@@ -30,8 +30,8 @@ public class DefaultViewportAdapter : ViewportAdapter
 
 	private void OnClientSizeChanged(object sender, EventArgs eventArgs)
 	{
-		var width = Window.ClientBounds.Width;
-		var height = Window.ClientBounds.Height;
+		int width = Window.ClientBounds.Width;
+		int height = Window.ClientBounds.Height;
 
 		GraphicsDevice.Viewport = new Viewport(0, 0, width, height);
 	}

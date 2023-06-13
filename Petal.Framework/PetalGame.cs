@@ -26,16 +26,9 @@ public class PetalGame : Game
 	private WindowMode _windowMode;
 	private Scene? _scene;
 
-	public GraphicsDeviceManager Graphics
-	{
-		get;
-	}
+	public GraphicsDeviceManager Graphics { get; }
 
-	public AssetLoader Assets
-	{
-		get;
-		private set;
-	}
+	public AssetLoader Assets { get; private set; }
 
 	public Scene? Scene
 		=> _scene;

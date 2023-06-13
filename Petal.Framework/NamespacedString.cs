@@ -16,10 +16,14 @@ public struct NamespacedString
 		=> new(DefaultNamespace, DefaultName);
 
 	public static NamespacedString FromDefaultNamespace(string name)
-		=> new(DefaultNamespace, name);
+	{
+		return new NamespacedString(DefaultNamespace, name);
+	}
 
 	public static NamespacedString FromDefaultName(string @namespace)
-		=> new(@namespace, DefaultName);
+	{
+		return new NamespacedString(@namespace, DefaultName);
+	}
 
 	private string _namespace;
 	private string _name;
@@ -27,7 +31,7 @@ public struct NamespacedString
 	[JsonConstructor]
 	public NamespacedString(string fullyQualifiedString)
 	{
-		var fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
+		string[] fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
 
 		if (!IsValidQualifiedString(fullyQualifiedString))
 			throw new ArgumentException($"String {fullyQualifiedString} is not a valid namespaced string!");
@@ -67,14 +71,15 @@ public struct NamespacedString
 	}
 
 	[JsonPropertyName("name")]
-	public string FullName => _namespace + ':' + _name;
+	public string FullName
+		=> _namespace + ':' + _name;
 
 	private static bool IsValidQualifiedString(string fullyQualifiedString)
 	{
-		var fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
+		string[] fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
 
-		var correctNumberOfSplits = fullyQualifiedStringSplit.Length == 2;
-		var noSpaces = !fullyQualifiedString.Contains(' ');
+		bool correctNumberOfSplits = fullyQualifiedStringSplit.Length == 2;
+		bool noSpaces = !fullyQualifiedString.Contains(' ');
 
 		return correctNumberOfSplits && noSpaces;
 	}

@@ -23,11 +23,7 @@ public sealed class SerializedData
 
 	[JsonInclude]
 	[JsonExtensionData]
-	public Dictionary<string, JsonElement> Fields
-	{
-		get;
-		private set;
-	} = new();
+	public Dictionary<string, JsonElement> Fields { get; private set; } = new();
 
 	public static SerializedData FromJson(string json)
 	{
@@ -45,7 +41,7 @@ public sealed class SerializedData
 
 	public T? GetField<T>(NamespacedString name)
 	{
-		var found = GetField<T>(name, out var field);
+		bool found = GetField<T>(name, out var field);
 		return field;
 	}
 
@@ -64,16 +60,16 @@ public sealed class SerializedData
 
 	public T? GetSerializedObject<T>() where T : ISerializableObject
 	{
-		var found = GetSerializedObject<T>(this, out var field);
+		bool found = GetSerializedObject<T>(this, out var field);
 		return field;
 	}
-	
+
 	public bool GetSerializedObject<T>([MaybeNullWhen(false)] out T field) where T : ISerializableObject
 	{
 		field = default;
 		return GetSerializedObject(this, out field);
 	}
-	
+
 	public bool GetSerializedObject<T>(NamespacedString name, [MaybeNullWhen(false)] out T field)
 		where T : ISerializableObject
 	{
@@ -99,7 +95,7 @@ public sealed class SerializedData
 			    new NamespacedString(NamespacedString.DefaultNamespace, "object_type_fullname"),
 			    out string typeFullName))
 		{
-			var found = Assemblies.TryGetValue(assemblyFullName, out var assembly);
+			bool found = Assemblies.TryGetValue(assemblyFullName, out var assembly);
 
 			if (!found)
 				RepopulateAssemblies();
@@ -108,7 +104,7 @@ public sealed class SerializedData
 
 			if (found)
 			{
-				var obj = assembly.CreateInstance(typeFullName);
+				object obj = assembly.CreateInstance(typeFullName);
 
 				if (obj is T tObj)
 				{
@@ -127,15 +123,15 @@ public sealed class SerializedData
 		Assemblies.Clear();
 
 		var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-		
-		foreach(var assembly in assemblies)
+
+		foreach (var assembly in assemblies)
 			Assemblies.Add(assembly.FullName!, assembly);
 	}
 
 	public T? GetSerializedObject<T>(NamespacedString name)
 		where T : ISerializableObject
 	{
-		var found = GetSerializedObject<T>(name, out var field);
+		bool found = GetSerializedObject<T>(name, out var field);
 		return field;
 	}
 
@@ -160,7 +156,7 @@ public sealed class SerializedData
 			AddSerializedObject(name, serializableObject);
 			return;
 		}
-		
+
 		var serializedField = JsonSerializer.SerializeToElement(field, DefaultJsonOptions);
 		Fields.TryAdd(name, serializedField);
 	}

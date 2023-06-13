@@ -17,21 +17,14 @@ namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
-	public static Hedgemen Instance
-	{
-		get;
-		private set;
-	}
+	public static Hedgemen Instance { get; private set; }
 
 	public Hedgemen()
 	{
 		Instance = this;
 	}
 
-	public ContentRegistry ContentRegistry
-	{
-		get;
-	} = new();
+	public ContentRegistry ContentRegistry { get; } = new();
 
 	private Texture2D _whiteSquare;
 	private Texture2D _peach;
@@ -93,7 +86,7 @@ public class Hedgemen : PetalGame
 		var buttonSize = new Vector2Int(32, 32);
 		var anchors = Enum.GetValues<Anchor>();
 
-		for (var i = 0; i < anchors.Length; ++i)
+		for (int i = 0; i < anchors.Length; ++i)
 		{
 			var button = scene.Root.Add(new Button(_skin)
 			{
@@ -136,7 +129,7 @@ public class Hedgemen : PetalGame
 					StatName = "strength"
 				});
 			}
-			
+
 			entity.PropagateEventIfResponsive(new ChangeStatEvent
 			{
 				Sender = entity,
@@ -147,7 +140,7 @@ public class Hedgemen : PetalGame
 
 		var data = entity.WriteObjectState();
 		var entityClone = data.GetSerializedObject<Entity>();
-		
+
 		entityClone.RemoveComponent<CharacterSheet>();
 		Console.WriteLine($"Responds to event: {entityClone.WillRespondToEvent<ChangeStatEvent>()}");
 

@@ -11,35 +11,19 @@ public abstract class Node
 {
 	public sealed class ChildAddedEventArgs : EventArgs
 	{
-		public Node Child
-		{
-			get;
-			init;
-		}
+		public Node Child { get; init; }
 	}
 
 	public sealed class ChildRemovedEventArgs : EventArgs
 	{
-		public Node Child
-		{
-			get;
-			init;
-		}
+		public Node Child { get; init; }
 	}
 
 	public sealed class ParentChangedEventArgs : EventArgs
 	{
-		public Node? OldParent
-		{
-			get;
-			init;
-		}
+		public Node? OldParent { get; init; }
 
-		public Node? NewParent
-		{
-			get;
-			init;
-		}
+		public Node? NewParent { get; init; }
 	}
 
 	public event EventHandler? OnBeforeDraw;
@@ -73,7 +57,7 @@ public abstract class Node
 
 	public int GetNestedChildrenCount(int count = 0)
 	{
-		foreach (var child in Children) 
+		foreach (var child in Children)
 			count = child.GetNestedChildrenCount(count);
 
 		count += Children.Count;
@@ -190,10 +174,10 @@ public abstract class Node
 
 		if (IsInteractable)
 		{
-			var isTarget = selection.Target == this;
-			var isMouseDown = Scene.Input.IsMouseButtonFired(MouseButtons.LeftButton);
-			var isMousePressed = Scene.Input.IsMouseButtonClicked(MouseButtons.LeftButton);
-			var isMouseReleased = Scene.Input.IsMouseButtonReleased(MouseButtons.LeftButton);
+			bool isTarget = selection.Target == this;
+			bool isMouseDown = Scene.Input.IsMouseButtonFired(MouseButtons.LeftButton);
+			bool isMousePressed = Scene.Input.IsMouseButtonClicked(MouseButtons.LeftButton);
+			bool isMouseReleased = Scene.Input.IsMouseButtonReleased(MouseButtons.LeftButton);
 
 			UpdateNodeState(selection, isMouseDown, isMousePressed);
 
@@ -313,7 +297,7 @@ public abstract class Node
 
 	public Node? GetHoveredNode(Vector2 position)
 	{
-		for (var i = Children.Count - 1; i >= 0; --i)
+		for (int i = Children.Count - 1; i >= 0; --i)
 		{
 			var child = Children[i];
 
@@ -471,7 +455,7 @@ public abstract class Node
 		if (Scene is null)
 			return;
 
-		var isTarget = selection.Target == this;
+		bool isTarget = selection.Target == this;
 
 		if (isTarget)
 			State = NodeState.Hover;

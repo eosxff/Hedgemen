@@ -4,7 +4,7 @@ using Petal.Framework.Persistence;
 
 namespace Petal.Framework.EC;
 
-public interface IComponent<in TEvent> : 
+public interface IComponent<in TEvent> :
 	ISerializableObject
 	where TEvent : IEvent
 {

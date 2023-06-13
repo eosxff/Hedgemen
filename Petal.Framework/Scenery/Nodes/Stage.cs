@@ -23,7 +23,7 @@ public class Stage : Node
 		var mousePosition = Scene.Input.MousePosition;
 
 		if (Children.Count > 0)
-			for (var i = Children.Count - 1; i >= 0; --i)
+			for (int i = Children.Count - 1; i >= 0; --i)
 			{
 				var child = Children[i];
 				var target = child.GetHoveredNode(mousePosition);
@@ -87,7 +87,7 @@ public class Stage : Node
 			return node.Name;
 
 		var name = node.Name;
-		var duplicateCount = 1;
+		int duplicateCount = 1;
 
 		do
 		{

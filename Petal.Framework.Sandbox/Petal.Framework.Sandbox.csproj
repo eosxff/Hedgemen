@@ -11,8 +11,8 @@
 
         <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj"/>
 
-        <ProjectReference Include="..\Hedgemen\Hedgemen.csproj" />
-        <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj" />
+        <ProjectReference Include="..\Hedgemen\Hedgemen.csproj"/>
+        <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj"/>
 
     </ItemGroup>
 

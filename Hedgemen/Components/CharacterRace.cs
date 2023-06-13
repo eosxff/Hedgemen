@@ -4,15 +4,11 @@ using Petal.Framework.Persistence;
 namespace Hgm.Components;
 
 /// <summary>
-/// also a dummy class
+///     also a dummy class
 /// </summary>
 public class CharacterRace : EntityComponent
 {
-	public string RaceName
-	{
-		get;
-		set;
-	} = "human";
+	public string RaceName { get; set; } = "human";
 
 	public override SerializedData WriteObjectState()
 	{

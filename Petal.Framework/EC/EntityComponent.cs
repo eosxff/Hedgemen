@@ -12,12 +12,8 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 	private delegate void EventHandleWrapped(EntityEvent e);
 
 	private Dictionary<Type, EventHandleWrapped> _registeredEvents = new();
-	
-	public Entity Self
-	{
-		get;
-		private set;
-	}
+
+	public Entity Self { get; private set; }
 
 	public IReadOnlyCollection<Type> GetRegisteredEvents()
 	{
@@ -42,11 +38,15 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 	}
 
 	public bool WillRespondToEvent(Type eventType)
-		=> _registeredEvents.ContainsKey(eventType);
+	{
+		return _registeredEvents.ContainsKey(eventType);
+	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool WillRespondToEvent<T>() where T : EntityEvent
-		=> WillRespondToEvent(typeof(T));
+	{
+		return WillRespondToEvent(typeof(T));
+	}
 
 	public void Destroy()
 	{
@@ -56,7 +56,7 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 
 	protected virtual void OnDestroy()
 	{
-		
+
 	}
 
 	internal void AddToEntity(Entity entity)
@@ -68,12 +68,12 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 
 	protected virtual void Initialize()
 	{
-		
+
 	}
-	
+
 	public virtual void RegisterEvents() // todo make protected/internal
 	{
-		
+
 	}
 
 	protected void RegisterEvent<TEvent>(EventHandle<TEvent> handle) where TEvent : EntityEvent
@@ -82,10 +82,12 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 	}
 
 	public virtual SerializedData WriteObjectState()
-		=> new(this);
+	{
+		return new SerializedData(this);
+	}
 
 	public virtual void ReadObjectState(SerializedData data)
 	{
-		
+
 	}
 }

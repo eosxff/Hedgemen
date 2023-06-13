@@ -40,6 +40,7 @@ public struct RenderData
 
 	public RenderData()
 	{
+
 	}
 }
 
@@ -65,5 +66,6 @@ public struct RenderStringData
 
 	public RenderStringData()
 	{
+
 	}
 }

@@ -7,17 +7,9 @@ namespace Petal.Framework.Scenery.Nodes;
 
 public class Button : Node
 {
-	public Color Color
-	{
-		get;
-		set;
-	} = Color.White;
+	public Color Color { get; set; } = Color.White;
 
-	public Skin Skin
-	{
-		get;
-		set;
-	}
+	public Skin Skin { get; set; }
 
 	public Button(Skin skin)
 	{

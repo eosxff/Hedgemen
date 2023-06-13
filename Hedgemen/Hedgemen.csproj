@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj" />
+        <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

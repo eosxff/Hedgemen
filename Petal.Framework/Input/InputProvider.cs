@@ -73,7 +73,7 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 
 	public string GetTypedChars()
 	{
-		var chars = _typedChars.ToString();
+		string chars = _typedChars.ToString();
 		_shouldClearTypedChars = true;
 		IsRecordingTypedChars = false;
 		return chars;
@@ -109,9 +109,11 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 		return keys.Any(IsKeyReleased);
 	}
 
-	public Vector2 MousePosition => _cursorPosition;
+	public Vector2 MousePosition
+		=> _cursorPosition;
 
-	public Vector2 MousePositionDiff => new(0, 0); // todo
+	public Vector2 MousePositionDiff
+		=> new(0, 0); // todo
 
 	public void UpdateMousePosition(Vector2 pos)
 	{
@@ -166,9 +168,11 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 			MouseStateFired(_previousButtons, e, ButtonState.Pressed));
 	}
 
-	public int MouseWheel => _currentButtons.ScrollWheelValue;
+	public int MouseWheel
+		=> _currentButtons.ScrollWheelValue;
 
-	public int MouseWheelChange => Math.Abs(_currentButtons.ScrollWheelValue - _previousButtons.ScrollWheelValue);
+	public int MouseWheelChange
+		=> Math.Abs(_currentButtons.ScrollWheelValue - _previousButtons.ScrollWheelValue);
 
 	private bool MouseStateFired(MouseState mouseState, MouseButtons button, ButtonState state)
 	{

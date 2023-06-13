@@ -71,9 +71,9 @@ public class BoxingViewportAdapter : ScalingViewportAdapter
 			(float)clientBounds.Width / (VirtualResolution.X - Bleed.X),
 			(float)clientBounds.Height / (VirtualResolution.Y - Bleed.Y));
 
-		var worldScale1d = MathHelper.Max(worldScale.X, worldScale.Y);
-		var safeScale1d = MathHelper.Min(safeScale.X, safeScale.Y);
-		var scale = MathHelper.Min(worldScale1d, safeScale1d);
+		float worldScale1d = MathHelper.Max(worldScale.X, worldScale.Y);
+		float safeScale1d = MathHelper.Min(safeScale.X, safeScale.Y);
+		float scale = MathHelper.Min(worldScale1d, safeScale1d);
 
 		var dimensions = new Vector2Int(
 			(int)(scale * VirtualResolution.X + 0.5f),
@@ -91,8 +91,8 @@ public class BoxingViewportAdapter : ScalingViewportAdapter
 				BoxingMode = BoxingMode.None;
 		}
 
-		var x = clientBounds.Width / 2 - dimensions.X / 2;
-		var y = clientBounds.Height / 2 - dimensions.Y / 2;
+		int x = clientBounds.Width / 2 - dimensions.X / 2;
+		int y = clientBounds.Height / 2 - dimensions.Y / 2;
 
 		GraphicsDevice.Viewport = new Viewport(x, y, dimensions.X, dimensions.Y);
 	}
