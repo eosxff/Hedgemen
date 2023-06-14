@@ -7,11 +7,23 @@ namespace Petal.Framework.Scenery.Nodes;
 
 public class Image : Node
 {
-	public static Rectangle DefaultBounds { get; set; } = new(0, 0, 32, 32);
+	public static Rectangle DefaultBounds
+	{
+		get;
+		set;
+	} = new(0, 0, 32, 32);
 
-	public Color Color { get; set; } = Color.White;
+	public Color Color
+	{
+		get;
+		set;
+	} = Color.White;
 
-	public Texture2D Texture { get; set; }
+	public Texture2D Texture
+	{
+		get;
+		set;
+	}
 
 	protected override Rectangle GetDefaultBounds()
 	{

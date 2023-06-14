@@ -8,9 +8,15 @@ public interface IMouseProvider
 {
 	public void Update(GameTime gameTime, Matrix scaleMatrix, CursorPositionTransformation? cursorDelegate = null);
 
-	public Vector2 MousePosition { get; }
+	public Vector2 MousePosition
+	{
+		get;
+	}
 
-	public Vector2 MousePositionDiff { get; }
+	public Vector2 MousePositionDiff
+	{
+		get;
+	}
 
 	public void UpdateMousePosition(Vector2 pos);
 
@@ -26,6 +32,12 @@ public interface IMouseProvider
 	public bool IsMouseButtonReleased(MouseButtons button);
 	public bool IsAnyMouseButtonReleased(params MouseButtons[] buttons);
 
-	public int MouseWheel { get; }
-	public int MouseWheelChange { get; }
+	public int MouseWheel
+	{
+		get;
+	}
+	public int MouseWheelChange
+	{
+		get;
+	}
 }

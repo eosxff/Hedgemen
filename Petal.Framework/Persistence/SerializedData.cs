@@ -21,9 +21,12 @@ public sealed class SerializedData
 			IncludeFields = true
 		};
 
-	[JsonInclude]
-	[JsonExtensionData]
-	public Dictionary<string, JsonElement> Fields { get; private set; } = new();
+	[JsonInclude, JsonExtensionData]
+	public Dictionary<string, JsonElement> Fields
+	{
+		get;
+		private set;
+	} = new();
 
 	public static SerializedData FromJson(string json)
 	{

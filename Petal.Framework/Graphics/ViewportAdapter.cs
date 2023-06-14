@@ -7,14 +7,21 @@ namespace Petal.Framework.Graphics;
 
 public abstract class ViewportAdapter : IDisposable
 {
-	public GraphicsDevice GraphicsDevice { get; }
+	public GraphicsDevice GraphicsDevice
+	{
+		get;
+	}
 
 	private Vector2Int _virtualResolution;
 
 	public virtual Vector2Int VirtualResolution
 		=> _virtualResolution;
 
-	public Vector2Int ViewportResolution { get; protected set; }
+	public Vector2Int ViewportResolution
+	{
+		get;
+		protected set;
+	}
 
 	public Rectangle BoundingRectangle
 		=> new(0, 0, VirtualResolution.X, VirtualResolution.Y);

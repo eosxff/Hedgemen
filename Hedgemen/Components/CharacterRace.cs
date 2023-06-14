@@ -8,7 +8,11 @@ namespace Hgm.Components;
 /// </summary>
 public class CharacterRace : EntityComponent
 {
-	public string RaceName { get; set; } = "human";
+	public string RaceName
+	{
+		get;
+		set;
+	} = "human";
 
 	public override SerializedData WriteObjectState()
 	{

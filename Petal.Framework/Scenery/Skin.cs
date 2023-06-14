@@ -9,9 +9,17 @@ namespace Petal.Framework.Scenery;
 
 public sealed class Skin
 {
-	public ContentRegistry? ContentRegistry { get; set; }
+	public ContentRegistry? ContentRegistry
+	{
+		get;
+		set;
+	}
 
-	public ButtonData Button { get; init; }
+	public ButtonData Button
+	{
+		get;
+		init;
+	}
 
 	public Skin() : this(null)
 	{
@@ -65,16 +73,13 @@ public sealed class Skin
 				Converters = { }
 			};
 
-		[JsonInclude]
-		[JsonPropertyName("button_data_normal_texture_name")]
+		[JsonInclude, JsonPropertyName("button_data_normal_texture_name")]
 		public string ButtonDataNormalTextureName;
 
-		[JsonInclude]
-		[JsonPropertyName("button_data_hover_texture_name")]
+		[JsonInclude, JsonPropertyName("button_data_hover_texture_name")]
 		public string ButtonDataHoverTextureName;
 
-		[JsonInclude]
-		[JsonPropertyName("button_data_input_texture_name")]
+		[JsonInclude, JsonPropertyName("button_data_input_texture_name")]
 		public string ButtonDataInputTextureName;
 
 		public Skin Create()

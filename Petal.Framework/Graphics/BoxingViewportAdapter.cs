@@ -13,11 +13,21 @@ public enum BoxingMode
 
 public class BoxingViewportAdapter : ScalingViewportAdapter
 {
-	public GameWindow Window { get; }
+	public GameWindow Window
+	{
+		get;
+	}
 
-	public Vector2Int Bleed { get; }
+	public Vector2Int Bleed
+	{
+		get;
+	}
 
-	public BoxingMode BoxingMode { get; private set; }
+	public BoxingMode BoxingMode
+	{
+		get;
+		private set;
+	}
 
 	public BoxingViewportAdapter(
 		GraphicsDevice graphicsDevice,

@@ -29,14 +29,21 @@ public class SandboxGame : PetalGame
 			=> "Cat";
 	}
 
-	public static SandboxGame? Instance { get; private set; }
+	public static SandboxGame? Instance
+	{
+		get;
+		private set;
+	}
 
 	public SandboxGame()
 	{
 		Instance = this;
 	}
 
-	public ContentRegistry GameContent { get; } = new();
+	public ContentRegistry GameContent
+	{
+		get;
+	} = new();
 
 	private Renderer _renderer;
 	private ViewportAdapter _viewportAdapter;

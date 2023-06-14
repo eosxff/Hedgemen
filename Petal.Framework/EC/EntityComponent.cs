@@ -13,7 +13,11 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 
 	private Dictionary<Type, EventHandleWrapped> _registeredEvents = new();
 
-	public Entity Self { get; private set; }
+	public Entity Self
+	{
+		get;
+		private set;
+	}
 
 	public IReadOnlyCollection<Type> GetRegisteredEvents()
 	{

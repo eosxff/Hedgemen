@@ -5,25 +5,65 @@ namespace Petal.Framework.Graphics;
 
 public class RendererState
 {
-	public GraphicsDeviceManager Graphics { get; set; }
+	public GraphicsDeviceManager Graphics
+	{
+		get;
+		set;
+	}
 
-	public RenderTarget2D? RenderTarget { get; internal set; } = null;
+	public RenderTarget2D? RenderTarget
+	{
+		get;
+		internal set;
+	} = null;
 
-	public Rectangle Scissor { get; set; }
+	public Rectangle Scissor
+	{
+		get;
+		set;
+	}
 
-	public SpriteSortMode SortMode { get; set; }
+	public SpriteSortMode SortMode
+	{
+		get;
+		set;
+	}
 
-	public BlendState BlendState { get; set; }
+	public BlendState BlendState
+	{
+		get;
+		set;
+	}
 
-	public SamplerState SamplerState { get; set; }
+	public SamplerState SamplerState
+	{
+		get;
+		set;
+	}
 
-	public DepthStencilState DepthStencilState { get; set; }
+	public DepthStencilState DepthStencilState
+	{
+		get;
+		set;
+	}
 
-	public Effect DefaultEffect { get; set; }
+	public Effect DefaultEffect
+	{
+		get;
+		set;
+	}
 
-	public Matrix TransformationMatrix { get; set; }
+	public Matrix TransformationMatrix
+	{
+		get;
+		set;
+	}
 
-	public RasterizerState RasterizerState { get; set; }
+	public RasterizerState RasterizerState
+	{
+		get;
+		set;
+	}
 
 	public RendererState()
 	{

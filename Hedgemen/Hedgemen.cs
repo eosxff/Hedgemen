@@ -17,19 +17,26 @@ namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
-	public static Hedgemen Instance { get; private set; }
-
-	public Hedgemen()
+	public static Hedgemen Instance
 	{
-		Instance = this;
+		get;
+		private set;
 	}
 
-	public ContentRegistry ContentRegistry { get; } = new();
+	public ContentRegistry ContentRegistry
+	{
+		get;
+	} = new();
 
 	private Texture2D _whiteSquare;
 	private Texture2D _peach;
 
 	private Skin _skin;
+
+	public Hedgemen()
+	{
+		Instance = this;
+	}
 
 	protected override void Initialize()
 	{
@@ -141,6 +148,7 @@ public class Hedgemen : PetalGame
 		var data = entity.WriteObjectState();
 		var entityClone = data.GetSerializedObject<Entity>();
 
+		Console.WriteLine($"Responds to event: {entityClone.WillRespondToEvent<ChangeStatEvent>()}");
 		entityClone.RemoveComponent<CharacterSheet>();
 		Console.WriteLine($"Responds to event: {entityClone.WillRespondToEvent<ChangeStatEvent>()}");
 

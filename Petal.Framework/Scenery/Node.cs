@@ -11,19 +11,35 @@ public abstract class Node
 {
 	public sealed class ChildAddedEventArgs : EventArgs
 	{
-		public Node Child { get; init; }
+		public Node Child
+		{
+			get;
+			init;
+		}
 	}
 
 	public sealed class ChildRemovedEventArgs : EventArgs
 	{
-		public Node Child { get; init; }
+		public Node Child
+		{
+			get;
+			init;
+		}
 	}
 
 	public sealed class ParentChangedEventArgs : EventArgs
 	{
-		public Node? OldParent { get; init; }
+		public Node? OldParent
+		{
+			get;
+			init;
+		}
 
-		public Node? NewParent { get; init; }
+		public Node? NewParent
+		{
+			get;
+			init;
+		}
 	}
 
 	public event EventHandler? OnBeforeDraw;
@@ -64,7 +80,11 @@ public abstract class Node
 		return count;
 	}
 
-	public string Tag { get; set; } = string.Empty;
+	public string Tag
+	{
+		get;
+		set;
+	} = string.Empty;
 
 	private NamespacedString _name;
 
@@ -80,13 +100,29 @@ public abstract class Node
 		}
 	}
 
-	public bool IsVisible { get; set; } = true;
+	public bool IsVisible
+	{
+		get;
+		set;
+	} = true;
 
-	public bool IsActive { get; set; } = true;
+	public bool IsActive
+	{
+		get;
+		set;
+	} = true;
 
-	public bool IsInteractable { get; set; } = true;
+	public bool IsInteractable
+	{
+		get;
+		set;
+	} = true;
 
-	public NodeState State { get; private set; } = NodeState.Normal;
+	public NodeState State
+	{
+		get;
+		private set;
+	} = NodeState.Normal;
 
 	private Anchor _anchor = Anchor.TopLeft;
 
@@ -316,7 +352,11 @@ public abstract class Node
 		return null;
 	}
 
-	public virtual bool IsMarkedForDeletion { get; set; }
+	public virtual bool IsMarkedForDeletion
+	{
+		get;
+		set;
+	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal void InternalDestroy()

@@ -6,7 +6,10 @@ namespace Petal.Framework.Graphics;
 
 public class DefaultViewportAdapter : ViewportAdapter
 {
-	public GameWindow Window { get; }
+	public GameWindow Window
+	{
+		get;
+	}
 
 	public DefaultViewportAdapter(GraphicsDevice graphicsDevice, GameWindow window) : base(graphicsDevice)
 	{

@@ -69,7 +69,11 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 			_cursorPosition = cursorDelegate(_cursorPosition);
 	}
 
-	public bool IsRecordingTypedChars { get; set; } = false;
+	public bool IsRecordingTypedChars
+	{
+		get;
+		set;
+	} = false;
 
 	public string GetTypedChars()
 	{

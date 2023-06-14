@@ -10,7 +10,7 @@ namespace Petal.Framework.EC;
 public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializableObject
 {
 	private IDictionary<Type, EntityComponent> _components = new Dictionary<Type, EntityComponent>();
-	private HashSet<EventSet> _componentEvents = new();
+	private IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
 
 	public IReadOnlyCollection<EntityComponent> Components
 		=> _components.Values as Dictionary<Type, EntityComponent>.ValueCollection;
@@ -31,11 +31,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 	public bool WillRespondToEvent(Type eventType)
 	{
-		return _componentEvents.Contains(new EventSet
-		{
-			EventType = eventType,
-			Count = 0
-		});
+		return _componentEvents.ContainsKey(eventType);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -65,22 +61,15 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			var eventSet = new EventSet
-			{
-				EventType = registeredEvent,
-				Count = 1
-			};
-
-			bool found = _componentEvents.TryGetValue(eventSet, out var componentEvent);
+			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
 
 			switch (found)
 			{
 				case true:
-					componentEvent.Count++;
-					Console.WriteLine(componentEvent.Count);
+					_componentEvents[registeredEvent] = eventCount + 1;
 					break;
 				case false:
-					_componentEvents.Add(eventSet);
+					_componentEvents.Add(registeredEvent, 1);
 					break;
 			}
 		}
@@ -92,19 +81,15 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			var eventSet = new EventSet
-			{
-				EventType = registeredEvent,
-				Count = 1
-			};
-
-			bool found = _componentEvents.TryGetValue(eventSet, out var componentEvent);
+			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
 
 			switch (found)
 			{
 				case true:
-					if (--componentEvent.Count <= 0)
-						_componentEvents.Remove(eventSet);
+					if (eventCount - 1 <= 0)
+						_componentEvents.Remove(registeredEvent);
+					else
+						_componentEvents[registeredEvent] = eventCount - 1;
 
 					break;
 				case false:
@@ -218,29 +203,6 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 				if (found)
 					AddComponent(component);
 			}
-		}
-	}
-
-	private class EventSet
-	{
-		public required Type EventType { get; init; }
-
-		public required int Count { get; set; }
-
-		public override bool Equals(object obj)
-		{
-			if (obj is EventSet eventSet)
-				return EventType == eventSet.EventType;
-
-			if (obj is Type type)
-				return EventType == type;
-
-			return false;
-		}
-
-		public override int GetHashCode()
-		{
-			return EventType.GetHashCode();
 		}
 	}
 }
