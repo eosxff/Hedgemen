@@ -248,9 +248,7 @@ public abstract class Node
 	}
 
 	protected virtual Rectangle GetDefaultBounds()
-	{
-		return Rectangle.Empty;
-	}
+		=> Rectangle.Empty;
 
 	public void Draw(GameTime time)
 	{
@@ -318,9 +316,7 @@ public abstract class Node
 	}
 
 	public virtual bool IsHovering(Vector2 position)
-	{
-		return AbsoluteBounds.Contains((int)position.X, (int)position.Y);
-	}
+		=> AbsoluteBounds.Contains((int)position.X, (int)position.Y);
 
 	public virtual bool IsHoveringRecursive(Vector2 position)
 	{
@@ -360,9 +356,7 @@ public abstract class Node
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal void InternalDestroy()
-	{
-		Destroy();
-	}
+		=> Destroy();
 
 	protected virtual void Destroy()
 	{
@@ -454,15 +448,11 @@ public abstract class Node
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void MarkAsDirty()
-	{
-		_isDirty = true;
-	}
+		=> _isDirty = true;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void MarkAsClean()
-	{
-		_isDirty = false;
-	}
+		=> _isDirty = false;
 
 	private void UpdateBounds()
 	{
@@ -505,7 +495,5 @@ public abstract class Node
 	}
 
 	public static NamespacedString GenerateNodeName(Node node)
-	{
-		return $"{NamespacedString.DefaultNamespace}:{node.GetType().Name.ToLowerInvariant()}@{node.GetHashCode()}";
-	}
+		=> $"{NamespacedString.DefaultNamespace}:{node.GetType().Name.ToLowerInvariant()}@{node.GetHashCode()}";
 }

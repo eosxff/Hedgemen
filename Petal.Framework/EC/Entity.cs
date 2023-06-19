@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Petal.Framework.Persistence;
 using Petal.Framework.Util;
 
@@ -21,6 +22,11 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 		{
 			component.PropagateEvent(e);
 		}
+	}
+
+	public async Task PropagateEventAsync(EntityEvent e)
+	{
+		await Task.Run(() => PropagateEvent(e));
 	}
 
 	public void PropagateEventIfResponsive(EntityEvent e)
@@ -66,8 +72,9 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 			switch (found)
 			{
 				case true:
-					_componentEvents[registeredEvent] = eventCount + 1;
+					_componentEvents[registeredEvent]++;
 					break;
+				
 				case false:
 					_componentEvents.Add(registeredEvent, 1);
 					break;
@@ -89,9 +96,9 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 					if (eventCount - 1 <= 0)
 						_componentEvents.Remove(registeredEvent);
 					else
-						_componentEvents[registeredEvent] = eventCount - 1;
-
+						_componentEvents[registeredEvent]--;
 					break;
+				
 				case false:
 					break;
 			}

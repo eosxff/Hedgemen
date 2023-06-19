@@ -42,6 +42,11 @@ public class Hedgemen : PetalGame
 	{
 		base.Initialize();
 
+		ContentRegistry.OnContentRegistered += (sender, args) =>
+		{
+			Console.WriteLine($"Registered '{args.RegisteredContent.ContentIdentifier}' to content registry.");
+		};
+		
 		ContentRegistry.Register(
 			"hedgemen:ui/button_hover_texture",
 			Assets.LoadAsset<Texture2D>("button_hover.png"));
@@ -88,7 +93,10 @@ public class Hedgemen : PetalGame
 				new Vector2Int(640, 360))
 		};
 
-		scene.Root.OnChildAdded += (sender, args) => { Console.WriteLine($"Added: {args.Child.Name}"); };
+		scene.Root.OnChildAdded += (sender, args) =>
+		{
+			Console.WriteLine($"Added: {args.Child.Name}");
+		};
 
 		var buttonSize = new Vector2Int(32, 32);
 		var anchors = Enum.GetValues<Anchor>();
@@ -142,6 +150,21 @@ public class Hedgemen : PetalGame
 				Sender = entity,
 				ChangeAmount = 10,
 				StatName = "constitution"
+			});
+		}
+
+		if (entity.WillRespondToEvent<ChangeStatEvent>())
+		{
+			var task = entity.PropagateEventAsync(new ChangeStatEvent
+			{
+				Sender = entity,
+				ChangeAmount = 1015,
+				StatName = "strength"
+			});
+
+			task.ContinueWith(_ =>
+			{
+				Console.WriteLine($"New entity strength: {entity.GetComponent<CharacterSheet>().Strength}");
 			});
 		}
 

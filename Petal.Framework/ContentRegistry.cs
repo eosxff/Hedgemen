@@ -32,9 +32,9 @@ public class ContentRegistry
 		}
 	}
 
-	public event EventHandler? OnContentRegistered;
-	public event EventHandler? OnContentRegisteredAsync;
-	public event EventHandler? OnContentReplaced;
+	public event EventHandler<ContentRegisteredArgs> OnContentRegistered;
+	public event EventHandler<ContentRegisteredArgs> OnContentRegisteredAsync;
+	public event EventHandler<ContentReplacedArgs> OnContentReplaced;
 
 	private readonly Dictionary<NamespacedString, ContentValue> _registry = new();
 
