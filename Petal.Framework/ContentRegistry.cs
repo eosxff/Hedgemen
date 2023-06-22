@@ -38,10 +38,6 @@ public class ContentRegistry
 
 	private readonly Dictionary<NamespacedString, ContentValue> _registry = new();
 
-	public ContentRegistry()
-	{
-	}
-
 	public ContentValue Register(NamespacedString identifier, object item)
 	{
 		var content = new ContentValue
@@ -184,6 +180,7 @@ public sealed class ContentReference<TContent>
 	{
 		if (registry is null)
 			return;
+		
 		Item = GetItemFromRegistry(ContentIdentifier, registry);
 	}
 
@@ -206,7 +203,8 @@ public sealed class ContentReference<TContent>
 	[Serializable]
 	public struct DataRecord : IDataRecord<ContentReference<TContent>>
 	{
-		[JsonPropertyName("content_id")] public NamespacedString ContentIdentifier;
+		[JsonPropertyName("content_id")]
+		public NamespacedString ContentIdentifier;
 
 		public ContentReference<TContent> Create()
 		{
