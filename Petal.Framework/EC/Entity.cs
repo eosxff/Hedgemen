@@ -8,7 +8,7 @@ using Petal.Framework.Util;
 
 namespace Petal.Framework.EC;
 
-public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializableObject
+public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 {
 	private IDictionary<Type, EntityComponent> _components = new Dictionary<Type, EntityComponent>();
 	private IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
@@ -127,7 +127,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>, ISerializabl
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)] // will this even inline?
-	public T GetComponent<T>() where T : EntityComponent
+	public T? GetComponent<T>() where T : EntityComponent
 	{
 		bool found = GetComponent<T>(out var component);
 		return component;

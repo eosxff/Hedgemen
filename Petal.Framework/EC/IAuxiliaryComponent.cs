@@ -1,6 +1,8 @@
-﻿namespace Petal.Framework.EC;
+﻿using Petal.Framework.Persistence;
 
-public interface IAuxiliaryComponent<in TEvent> where TEvent : IEvent
+namespace Petal.Framework.EC;
+
+public interface IAuxiliaryComponent<in TEvent> : ISerializableObject where TEvent : IEvent
 {
 	public void PropagateEvent(TEvent e);
 }

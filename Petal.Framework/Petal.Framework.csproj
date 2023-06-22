@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="IO"/>
-        <Folder Include="Modding"/>
+        <Folder Include="IO" />
+        <Folder Include="Modding" />
     </ItemGroup>
 
     <ItemGroup>

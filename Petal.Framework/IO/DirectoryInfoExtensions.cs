@@ -82,6 +82,7 @@ public static class DirectoryInfoExtensions
 			case true:
 				InternalListFilesRecursively(filter, self, files);
 				break;
+			
 			case false:
 				foreach (var file in self.GetFiles())
 					if (filter(file))

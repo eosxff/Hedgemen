@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Petal.Framework.Persistence;
 
 namespace Petal.Framework.EC;
 
-public interface IEntity<TComponent, in TEvent>
+public interface IEntity<TComponent, in TEvent> : ISerializableObject
 	where TEvent : IEvent
 	where TComponent : IComponent<TEvent>
 {

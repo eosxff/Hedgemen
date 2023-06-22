@@ -67,6 +67,12 @@ public struct GameSettings
 		set;
 	} = false;
 
+	public bool IsDebug
+	{
+		get;
+		set;
+	} = false;
+
 	public GameSettings()
 	{
 	}

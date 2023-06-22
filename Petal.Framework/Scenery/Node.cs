@@ -11,7 +11,7 @@ public abstract class Node
 {
 	public sealed class ChildAddedEventArgs : EventArgs
 	{
-		public Node Child
+		public required Node Child
 		{
 			get;
 			init;
@@ -234,6 +234,7 @@ public abstract class Node
 				case true when selection.PreviousTarget != this:
 					OnFocusGained?.Invoke(this, EventArgs.Empty);
 					break;
+				
 				case false when selection.PreviousTarget == this:
 					OnFocusLost?.Invoke(this, EventArgs.Empty);
 					break;
@@ -378,7 +379,8 @@ public abstract class Node
 
 			while (parent is not null)
 			{
-				if (parent.IsMarkedForDeletion) return true;
+				if (parent.IsMarkedForDeletion)
+					return true;
 
 				parent = parent.Parent;
 			}
@@ -407,39 +409,48 @@ public abstract class Node
 				calculatedBounds.X = bounds.X + parentBounds.Left;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
+			
 			case Anchor.Top:
 				calculatedBounds.X = bounds.X + parentBounds.Center.X - bounds.Width / 2;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
+			
 			case Anchor.TopRight:
 				calculatedBounds.X = parentBounds.Right - bounds.Width - bounds.X;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
+			
 			case Anchor.CenterLeft:
 				calculatedBounds.X = bounds.X + parentBounds.Left;
 				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - bounds.Height / 2;
 				break;
+			
 			case Anchor.Center:
 				calculatedBounds.X = bounds.X + parentBounds.Center.X - bounds.Width / 2;
 				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - bounds.Height / 2;
 				break;
+			
 			case Anchor.CenterRight:
 				calculatedBounds.X = parentBounds.Right - bounds.Width - bounds.X;
 				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - bounds.Height / 2;
 				break;
+			
 			case Anchor.BottomLeft:
 				calculatedBounds.X = bounds.X + parentBounds.Left;
 				calculatedBounds.Y = parentBounds.Bottom - bounds.Height - bounds.Y;
 				break;
+			
 			case Anchor.Bottom:
 				calculatedBounds.X = bounds.X + parentBounds.Center.X - bounds.Width / 2;
 				calculatedBounds.Y = parentBounds.Bottom - bounds.Height - bounds.Y;
 				break;
+			
 			case Anchor.BottomRight:
 				calculatedBounds.X = parentBounds.Right - bounds.Width - bounds.X;
 				calculatedBounds.Y = parentBounds.Bottom - bounds.Height - bounds.Y;
 				break;
 			default:
+				
 				throw new ArgumentOutOfRangeException(Anchor.ToString());
 		}
 

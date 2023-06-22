@@ -79,10 +79,13 @@ public class Button : Node
 		{
 			case NodeState.Normal:
 				return Skin.Button.NormalTexture;
+			
 			case NodeState.Input:
 				return Skin.Button.InputTexture;
+			
 			case NodeState.Hover:
 				return Skin.Button.HoverTexture;
+			
 			default:
 				throw new ArgumentOutOfRangeException();
 		}

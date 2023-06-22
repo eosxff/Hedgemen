@@ -1,110 +1,205 @@
-﻿using Petal.Framework.Graphics;
+﻿using System;
+using System.IO;
+using System.Text;
+using Hgm;
+using Hgm.Components;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Petal.Framework.EC;
+using Petal.Framework.Graphics;
+using Petal.Framework.IO;
+using Petal.Framework.Scenery;
+using Petal.Framework.Scenery.Nodes;
+using Petal.Framework.Windowing;
 
 namespace Petal.Framework.Sandbox;
 
-using System;
-using System.IO;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Framework;
-using Windowing;
 
 public class SandboxGame : PetalGame
 {
-	private class Animal
-	{
-		public virtual string AnimalName
-			=> "Animal";
-	}
-
-	private class Dog : Animal
-	{
-		public override string AnimalName
-			=> "Dog";
-	}
-
-	private class Cat : Animal
-	{
-		public override string AnimalName
-			=> "Cat";
-	}
-
-	public static SandboxGame? Instance
+	public static SandboxGame Instance
 	{
 		get;
 		private set;
 	}
 
-	public SandboxGame()
-	{
-		Instance = this;
-	}
-
-	public ContentRegistry GameContent
+	public ContentRegistry ContentRegistry
 	{
 		get;
 	} = new();
 
-	private Renderer _renderer;
-	private ViewportAdapter _viewportAdapter;
-	private Texture2D _image;
-	private RenderTarget2D _renderTarget;
+	private Texture2D _whiteSquare;
+	private Texture2D _peach;
+
+	private Skin _skin;
+
+	public SandboxGame()
+	{
+		Instance = this;
+		OnDebugChanged += DebugChangedCallback;
+	}
 
 	protected override void Initialize()
 	{
 		base.Initialize();
 
-		_renderer = new DefaultRenderer();
-		_viewportAdapter = new ScalingViewportAdapter(GraphicsDevice, new Vector2Int(640, 360));
-
-		Window.AllowUserResizing = true;
-		Window.ClientSizeChanged += WindowOnClientSizeChanged;
-		_image = Assets.LoadAsset<Texture2D>(new FileInfo("peach.png").Open(FileMode.Open));
-		_renderTarget = new RenderTarget2D(GraphicsDevice, 960, 540);
-	}
-
-	private void WindowOnClientSizeChanged(object? sender, EventArgs e)
-	{
-		//_renderTarget.Dispose();
-		//_renderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-		//_viewportAdapter.Reset();
-	}
-
-	protected override void Draw(GameTime gameTime)
-	{
-		//_renderer.RenderState.TransformationMatrix = _viewportAdapter.GetScaleMatrix();
-		_renderer.RenderState.TransformationMatrix = Matrix.Identity;
-
-		GraphicsDevice.SetRenderTarget(_renderTarget);
-
-		_renderer.Begin();
-
-		_renderer.Draw(new RenderData
+		ContentRegistry.OnContentRegistered += (sender, args) =>
 		{
-			DstRect = new Rectangle(0, 0, 640, 360),
-			Texture = _image
+			Logger.Debug($"Registered '{args.RegisteredContent.ContentIdentifier}' to content registry.");
+		};
+		
+		ContentRegistry.Register(
+			"sandbox:ui/button_hover_texture",
+			Assets.LoadAsset<Texture2D>("button_hover.png"));
+
+		ContentRegistry.Register(
+			"sandbox:ui/button_input_texture",
+			Assets.LoadAsset<Texture2D>("button_input.png"));
+
+		ContentRegistry.Register(
+			"sandbox:ui/button_normal_texture",
+			Assets.LoadAsset<Texture2D>("button_normal.png"));
+
+		_whiteSquare = Assets.LoadAsset<Texture2D>("white_square.png");
+		_peach = Assets.LoadAsset<Texture2D>("peach.png");
+
+		ContentRegistry.Register(
+			"sandbox:white_square",
+			_whiteSquare);
+
+		_skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), ContentRegistry);
+		Logger.Debug($"Skin successfully created.");
+
+		_skin.Button.NormalTexture.ReloadItem(ContentRegistry);
+
+		var testContentRegistryGet = new NamespacedString("sandbox:ui/button_normal_texture");
+		
+		try
+		{
+			ContentRegistry.Get<Skin>(testContentRegistryGet);
+			Logger.Debug($"Content successfully grabbed from registry: {testContentRegistryGet}");
+		}
+		catch (Exception e)
+		{
+			Logger.Error($"Content unsuccessfully grabbed from registry: {testContentRegistryGet}");
+		}
+
+		var scene = new Scene(new Stage(), _skin)
+		{
+			BackgroundColor = Color.CornflowerBlue,
+			ViewportAdapter = new BoxingViewportAdapter(
+				GraphicsDevice,
+				Petal.Window,
+				new Vector2Int(640, 360))
+		};
+
+		scene.Root.OnChildAdded += (sender, args) =>
+		{
+			if (sender is Node node)
+			{
+				Logger.Debug($"Node {args.Child.Name} has been added to {node.Name}");
+			}
+		};
+
+		var buttonSize = new Vector2Int(32, 32);
+		var anchors = Enum.GetValues<Anchor>();
+
+		for (int i = 0; i < anchors.Length; ++i)
+		{
+			var button = scene.Root.Add(new Button(_skin)
+			{
+				Bounds = new Rectangle(8, 8, buttonSize.X, buttonSize.Y),
+				Color = Color.White,
+				Anchor = anchors[i],
+				Name = $"sandbox:button-{i}"
+			});
+		}
+
+		scene.AfterUpdate += (sender, args) =>
+		{
+			if (scene.Input.IsKeyPressed(Keys.Escape))
+				Exit();
+			else if (scene.Input.IsKeyPressed(Keys.Space))
+				Console.Clear();
+		};
+
+		ChangeScenes(scene);
+		Test();
+	}
+	
+	private void DebugChangedCallback(object? sender, DebugChangedArgs args)
+	{
+		if (sender is PetalGame game)
+		{
+			Logger.Debug($"Logger now set to {game.Logger.LogLevel.ToString()}.");
+		}
+	}
+
+	private void Test()
+	{
+		var entity = new Entity();
+		entity.AddComponent(new CharacterSheet());
+		entity.AddComponent(new CharacterRace
+		{
+			RaceName = "high elf"
 		});
 
-		_renderer.End();
-
-		GraphicsDevice.SetRenderTarget(null);
-		_viewportAdapter.Reset();
-
-		_renderer.Begin();
-
-		_renderer.Draw(new RenderData
+		for (int i = 0; i < 1; ++i)
 		{
-			SrcRect = new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height),
-			DstRect = new Rectangle(0, 0, 640, 360),
-			Texture = _renderTarget
-		});
-		_viewportAdapter.Reset();
+			if (entity.WillRespondToEvent<ChangeStatEvent>())
+			{
+				entity.PropagateEvent(new ChangeStatEvent
+				{
+					Sender = entity,
+					ChangeAmount = 1015,
+					StatName = "strength"
+				});
+			}
 
-		_renderer.End();
-	}
+			entity.PropagateEventIfResponsive(new ChangeStatEvent
+			{
+				Sender = entity,
+				ChangeAmount = 10,
+				StatName = "constitution"
+			});
+		}
 
-	protected override void Update(GameTime gameTime)
-	{
+		if (entity.WillRespondToEvent<ChangeStatEvent>())
+		{
+			var task = entity.PropagateEventAsync(new ChangeStatEvent
+			{
+				Sender = entity,
+				ChangeAmount = 1015,
+				StatName = "strength"
+			});
+
+			task.ContinueWith(_ =>
+			{
+				lock (entity)
+				{
+					Logger.Debug($"New entity strength: {entity.GetComponent<CharacterSheet>().Strength}");
+				}
+			});
+		}
+
+		var data = entity.WriteObjectState();
+		var entityClone = data.GetSerializedObject<Entity>();
+
+		Logger.Debug($"Test entity responds to {nameof(ChangeStatEvent)}: " +
+		             $"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");
+		
+		entityClone.RemoveComponent<CharacterSheet>();
+		
+		Logger.Debug(
+			$"Test does entity respond to {nameof(ChangeStatEvent)} after removing all referenced components: " + 
+			$"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");
+		
+		Logger.Error($"Testing if error applies in {(IsDebug ? "Debug" : Logger.LogLevel.ToString())}");
+		Logger.Critical($"Testing if critical applies in {(IsDebug ? "Debug" : Logger.LogLevel.ToString())}");
+
+		entity.RemoveComponent<CharacterSheet>();
 	}
 
 	protected override GameSettings GetInitialGameSettings()
@@ -116,24 +211,9 @@ public class SandboxGame : PetalGame
 			WindowWidth = 960,
 			WindowHeight = 540,
 			WindowMode = WindowMode.Windowed,
-			IsMouseVisible = true
+			IsMouseVisible = true,
+			IsWindowUserResizable = true,
+			IsDebug = true
 		};
-	}
-
-	private int _frames = 0;
-	private Random _rng = new();
-
-	private bool ShouldResetAnchor()
-	{
-		return false;
-		_frames++;
-		if (_frames % 60 == 0)
-			Console.WriteLine($"Frames: {_frames}");
-		return _frames % 60 == 0;
-	}
-
-	protected override void OnExiting(object sender, EventArgs args)
-	{
-		base.OnExiting(sender, args);
 	}
 }

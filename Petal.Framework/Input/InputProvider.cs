@@ -32,6 +32,7 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 			{
 				case '\b':
 					return;
+				
 				case (char)0xD:
 					_typedChars.Append('\n');
 					break;

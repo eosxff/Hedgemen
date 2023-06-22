@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 
 namespace Microsoft.Xna.Framework;
-// ;)
 
 [Serializable]
 public struct Vector2Int
@@ -40,7 +39,7 @@ public struct Vector2Int
 
 	public override int GetHashCode()
 	{
-		return X.GetHashCode() + Y.GetHashCode();
+		return HashCode.Combine(X, Y);
 	}
 
 	public int Length()
@@ -140,5 +139,17 @@ public struct Vector2Int
 	public static Vector2Int operator /(Vector2Int a, Vector2Int b)
 	{
 		return Divide(a, b);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool operator ==(Vector2Int a, Vector2Int b)
+	{
+		return a.Equals(b);
+	}
+	
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool operator !=(Vector2Int a, Vector2Int b)
+	{
+		return !a.Equals(b);
 	}
 }

@@ -28,9 +28,10 @@ public sealed class SerializedData
 		private set;
 	} = new();
 
-	public static SerializedData FromJson(string json)
+	public static SerializedData FromJson(string json, JsonSerializerOptions? options = null)
 	{
-		return JsonSerializer.Deserialize<SerializedData>(json, DefaultJsonOptions);
+		options ??= DefaultJsonOptions;
+		return JsonSerializer.Deserialize<SerializedData>(json, options);
 	}
 
 	public SerializedData()
@@ -92,10 +93,10 @@ public sealed class SerializedData
 		field = default;
 
 		if (data.GetField(
-			    new NamespacedString(NamespacedString.DefaultNamespace, "object_assembly_fullname"),
+			    NamespacedString.FromDefaultNamespace("object_assembly_fullname"),
 			    out string assemblyFullName) &&
 		    data.GetField(
-			    new NamespacedString(NamespacedString.DefaultNamespace, "object_type_fullname"),
+			    NamespacedString.FromDefaultNamespace("object_type_fullname"),
 			    out string typeFullName))
 		{
 			bool found = Assemblies.TryGetValue(assemblyFullName, out var assembly);
