@@ -171,6 +171,11 @@ public class PetalGame : Game
 		return settings;
 	}
 
+	protected virtual void Setup()
+	{
+		
+	}
+
 	protected override void OnExiting(object sender, EventArgs args)
 	{
 		base.OnExiting(sender, args);

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Hgm.Components;
+using Hgm.Vanilla.Modding;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Petal.Framework;
-using Petal.Framework.EC;
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
+using Petal.Framework.Modding;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util.Logging;
@@ -35,10 +34,39 @@ public class Hedgemen : PetalGame
 		OnDebugChanged += DebugChangedCallback;
 	}
 
+	public HedgemenModLoader ModLoader
+	{
+		get;
+		private set;
+	}
+
+	protected override void Setup()
+	{
+		var context = ModLoader.Setup();
+		context.EmbeddedMods.Add(new HedgemenVanilla());
+		
+		Logger.Debug($"Starting {nameof(HedgemenModLoader)}.");
+
+		var logLevel = ModLoader.Start(context) ? LogLevel.Debug : LogLevel.Error;
+		
+		Logger.Add(
+			logLevel == LogLevel.Debug ?
+				$"Successfully started {nameof(HedgemenModLoader)}" :
+				$"Unsuccessfully started {nameof(HedgemenModLoader)}.",
+			logLevel);
+	}
+
 	protected override void Initialize()
 	{
 		base.Initialize();
 
+		ModLoader = new HedgemenModLoader();
+
+		Logger.Debug("I");
+		Logger.Warn("Love");
+		Logger.Error("These");
+		Logger.Critical("Colours");
+		
 		ContentRegistry.Register(
 			"hedgemen:ui/skin/button_hover_texture",
 			Assets.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
@@ -60,8 +88,9 @@ public class Hedgemen : PetalGame
 			BackgroundColor = Color.Green,
 			ViewportAdapter = new BoxingViewportAdapter(GraphicsDevice, Window, new Vector2Int(640, 360))
 		};
-
+		
 		ChangeScenes(scene);
+		Setup();
 	}
 
 	private void DebugChangedCallback(object? sender, DebugChangedArgs args)

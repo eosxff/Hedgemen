@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Petal.Framework.EC;
 using Petal.Framework.Graphics;
+using Petal.Framework.Input;
 using Petal.Framework.IO;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
@@ -117,16 +118,34 @@ public class SandboxGame : PetalGame
 			});
 		}
 
-		scene.AfterUpdate += (sender, args) =>
-		{
-			if (scene.Input.IsKeyPressed(Keys.Escape))
-				Exit();
-			else if (scene.Input.IsKeyPressed(Keys.Space))
-				Console.Clear();
-		};
+		scene.AfterUpdate += SceneAfterUpdate;
 
 		ChangeScenes(scene);
 		Test();
+	}
+
+	private void SceneAfterUpdate(object? sender, EventArgs args)
+	{
+		if (sender is not Scene scene)
+			return;
+		
+		if (scene.Input.IsKeyPressed(Keys.Escape))
+			Exit();
+		else if (scene.Input.IsKeyPressed(Keys.Space))
+			Console.Clear();
+			
+		if(scene.Input.IsMouseButtonClicked(MouseButtons.RightButton))
+			Logger.Debug("right button has been clicked!");
+
+		if (scene.Input.IsKeyPressed(Keys.Back))
+		{
+			string logFile = "log.txt";
+			
+			Logger.Debug($"Writing log file to {logFile}.");
+
+			var file = new FileInfo(logFile);
+			file.WriteString(Logger.ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
+		}
 	}
 	
 	private void DebugChangedCallback(object? sender, DebugChangedArgs args)

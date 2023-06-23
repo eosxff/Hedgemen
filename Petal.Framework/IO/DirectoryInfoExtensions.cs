@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualBasic.FileIO;
@@ -58,6 +59,9 @@ public static class DirectoryInfoExtensions
 		this DirectoryInfo self,
 		DirectoryListFilter filter)
 	{
+		if (!self.Exists)
+			return Array.Empty<DirectoryInfo>();
+		
 		var directoriesArray = self.GetDirectories();
 		var directoriesList = new List<DirectoryInfo>();
 
@@ -75,6 +79,9 @@ public static class DirectoryInfoExtensions
 		FileListFilter filter,
 		bool recursive = true)
 	{
+		if (!self.Exists)
+			return Array.Empty<FileInfo>();
+		
 		var files = new List<FileInfo>();
 
 		switch (recursive)
