@@ -31,17 +31,12 @@ public class ContentRegistry
 			init;
 		}
 	}
-	
-	public event EventHandler? OnContentRegistered;
-	public event EventHandler? OnContentRegisteredAsync;
-	public event EventHandler? OnContentReplaced;
-	
-	private readonly Dictionary<NamespacedString, ContentValue> _registry = new();
 
-	public ContentRegistry()
-	{
-		
-	}
+	public event EventHandler<ContentRegisteredArgs> OnContentRegistered;
+	public event EventHandler<ContentRegisteredArgs> OnContentRegisteredAsync;
+	public event EventHandler<ContentReplacedArgs> OnContentReplaced;
+
+	private readonly Dictionary<NamespacedString, ContentValue> _registry = new();
 
 	public ContentValue Register(NamespacedString identifier, object item)
 	{
@@ -51,11 +46,11 @@ public class ContentRegistry
 			Item = item
 		};
 
-		lock(_registry)
+		lock (_registry)
 		{
 			_registry.TryAdd(identifier, content);
 		}
-		
+
 		OnContentRegistered?.Invoke(this, new ContentRegisteredArgs
 		{
 			RegisteredContent = content
@@ -67,12 +62,12 @@ public class ContentRegistry
 	public async Task<ContentValue> RegisterAsync(NamespacedString identifier, object item)
 	{
 		var content = await Task.Run(() => Register(identifier, item));
-		
+
 		OnContentRegisteredAsync?.Invoke(this, new ContentRegisteredArgs
 		{
 			RegisteredContent = content
 		});
-		
+
 		return content;
 	}
 
@@ -95,17 +90,19 @@ public class ContentRegistry
 	{
 		lock (_registry)
 		{
-			var result = _registry.TryGetValue(identifier, out content);
+			bool result = _registry.TryGetValue(identifier, out content);
 			return result;
 		}
 	}
 
 	public ContentReference<TContent> Get<TContent>(NamespacedString identifier)
-		=> new (identifier, this);
+	{
+		return new ContentReference<TContent>(identifier, this);
+	}
 
 	public bool Replace(NamespacedString identifier, object item)
 	{
-		lock(_registry)
+		lock (_registry)
 		{
 			if (!_registry.ContainsKey(identifier))
 				return false;
@@ -117,9 +114,9 @@ public class ContentRegistry
 				ContentIdentifier = identifier,
 				Item = item
 			};
-			
+
 			_registry[identifier] = register;
-			
+
 			OnContentReplaced?.Invoke(this, new ContentReplacedArgs
 			{
 				ReplacedContent = replacedRegister,
@@ -143,15 +140,16 @@ public readonly struct ContentValue
 	{
 		get;
 		init;
-	} = new ();
+	} = new();
 
 	public ContentValue()
 	{
-		
 	}
 
 	public override string ToString()
-		=> $"{{ContentIdentifier: {ContentIdentifier} Item: {Item}}}";
+	{
+		return $"{{ContentIdentifier: {ContentIdentifier} Item: {Item}}}";
+	}
 }
 
 public sealed class ContentReference<TContent>
@@ -160,7 +158,7 @@ public sealed class ContentReference<TContent>
 	{
 		get;
 	}
-	
+
 	public TContent? Item
 	{
 		get;
@@ -182,6 +180,7 @@ public sealed class ContentReference<TContent>
 	{
 		if (registry is null)
 			return;
+		
 		Item = GetItemFromRegistry(ContentIdentifier, registry);
 	}
 
@@ -189,20 +188,18 @@ public sealed class ContentReference<TContent>
 	{
 		if (registry is null)
 			return default;
-		
+
 		registry.TryGet(identifier, out var content);
 
 		if (content.Item is TContent tContent)
-		{
 			return tContent;
-		}
 
 		return default;
 	}
 
 	public bool HasItem
 		=> Item is not null;
-	
+
 	[Serializable]
 	public struct DataRecord : IDataRecord<ContentReference<TContent>>
 	{

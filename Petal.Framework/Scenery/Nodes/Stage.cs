@@ -23,7 +23,6 @@ public class Stage : Node
 		var mousePosition = Scene.Input.MousePosition;
 
 		if (Children.Count > 0)
-		{
 			for (int i = Children.Count - 1; i >= 0; --i)
 			{
 				var child = Children[i];
@@ -31,10 +30,9 @@ public class Stage : Node
 
 				if (target is null)
 					continue;
-				
+
 				selection.Target = target;
 			}
-		}
 
 		if (IsInteractable && IsHovering(mousePosition))
 			selection.Target = this;
@@ -57,22 +55,20 @@ public class Stage : Node
 
 	public Node? Find(NamespacedString name)
 	{
-		lock(_nodes)
+		lock (_nodes)
 		{
 			_nodes.TryGetValue(name, out var node);
 			return node;
 		}
 	}
-	
+
 	public void DestroyAllMarkedNodes()
 	{
 		lock (_nodes)
 		{
 			foreach (var node in _nodes.Values)
-			{
 				if (node.IsMarkedForDeletion)
 					node.InternalDestroy();
-			}
 		}
 	}
 
@@ -89,10 +85,10 @@ public class Stage : Node
 	{
 		if (!_nodes.ContainsKey(node.Name))
 			return node.Name;
-		
+
 		var name = node.Name;
-		var duplicateCount = 1;
-			
+		int duplicateCount = 1;
+
 		do
 		{
 			name.Name = $"{node.Name.Name}-{duplicateCount}";
@@ -104,7 +100,7 @@ public class Stage : Node
 
 	internal bool InternalRemoveNode(Node node)
 	{
-		lock(_nodes)
+		lock (_nodes)
 		{
 			return _nodes.Remove(node.Name);
 		}
@@ -116,7 +112,7 @@ public class Stage : Node
 		{
 			if (!_nodes.TryGetValue(oldName, out var node))
 				return;
-			
+
 			_nodes.ChangeKey(oldName, node.Name);
 		}
 	}

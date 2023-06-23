@@ -27,16 +27,17 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 		{
 			if (!IsRecordingTypedChars)
 				return;
-			
+
 			switch (c)
 			{
 				case '\b':
 					return;
+				
 				case (char)0xD:
 					_typedChars.Append('\n');
 					break;
 			}
-			
+
 			_typedChars.Append(c);
 		};
 	}
@@ -45,10 +46,10 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 	{
 		Update(time, scaleMatrix, null);
 	}
-	
+
 	public void Update(GameTime time, Matrix scaleMatrix, CursorPositionTransformation? cursorDelegate)
 	{
-		if(_shouldClearTypedChars)
+		if (_shouldClearTypedChars)
 		{
 			_typedChars.Clear();
 			_shouldClearTypedChars = false;
@@ -64,13 +65,9 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 		_cursorPosition = new Vector2(mouseState.X, mouseState.Y);
 
 		if (cursorDelegate is null)
-		{
 			_cursorPosition = Vector2.Transform(_cursorPosition, Matrix.Invert(scaleMatrix));
-		}
 		else
-		{
 			_cursorPosition = cursorDelegate(_cursorPosition);
-		}
 	}
 
 	public bool IsRecordingTypedChars
@@ -78,7 +75,7 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 		get;
 		set;
 	} = false;
-	
+
 	public string GetTypedChars()
 	{
 		string chars = _typedChars.ToString();
@@ -117,10 +114,12 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 		return keys.Any(IsKeyReleased);
 	}
 
-	public Vector2 MousePosition => _cursorPosition;
-	
-	public Vector2 MousePositionDiff => new (0, 0); // todo
-	
+	public Vector2 MousePosition
+		=> _cursorPosition;
+
+	public Vector2 MousePositionDiff
+		=> new(0, 0); // todo
+
 	public void UpdateMousePosition(Vector2 pos)
 	{
 		_cursorPosition = pos;
@@ -139,13 +138,13 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 	public bool IsMouseButtonClicked(MouseButtons button)
 	{
 		return MouseStateFired(_previousButtons, button, ButtonState.Pressed) &&
-				!MouseStateFired(_currentButtons, button, ButtonState.Pressed);
+		       !MouseStateFired(_currentButtons, button, ButtonState.Pressed);
 	}
 
 	public bool IsAnyMouseButtonClicked(params MouseButtons[] buttons)
 	{
-		return buttons.Any(e => 
-			MouseStateFired(_previousButtons, e, ButtonState.Pressed) && 
+		return buttons.Any(e =>
+			MouseStateFired(_previousButtons, e, ButtonState.Pressed) &&
 			!MouseStateFired(_currentButtons, e, ButtonState.Pressed));
 	}
 
@@ -156,27 +155,29 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 
 	public bool IsAnyMouseButtonUp(params MouseButtons[] buttons)
 	{
-		return buttons.Any(e => 
-			MouseStateFired(_previousButtons, e, ButtonState.Released) && 
+		return buttons.Any(e =>
+			MouseStateFired(_previousButtons, e, ButtonState.Released) &&
 			!MouseStateFired(_currentButtons, e, ButtonState.Released));
 	}
 
 	public bool IsMouseButtonReleased(MouseButtons button)
 	{
-		return MouseStateFired(_currentButtons, button, ButtonState.Released) && 
+		return MouseStateFired(_currentButtons, button, ButtonState.Released) &&
 		       MouseStateFired(_previousButtons, button, ButtonState.Pressed);
 	}
 
 	public bool IsAnyMouseButtonReleased(params MouseButtons[] buttons)
 	{
-		return buttons.Any(e => 
-			MouseStateFired(_currentButtons, e, ButtonState.Released) && 
+		return buttons.Any(e =>
+			MouseStateFired(_currentButtons, e, ButtonState.Released) &&
 			MouseStateFired(_previousButtons, e, ButtonState.Pressed));
 	}
 
-	public int MouseWheel => _currentButtons.ScrollWheelValue;
+	public int MouseWheel
+		=> _currentButtons.ScrollWheelValue;
 
-	public int MouseWheelChange => Math.Abs(_currentButtons.ScrollWheelValue - _previousButtons.ScrollWheelValue);
+	public int MouseWheelChange
+		=> Math.Abs(_currentButtons.ScrollWheelValue - _previousButtons.ScrollWheelValue);
 
 	private bool MouseStateFired(MouseState mouseState, MouseButtons button, ButtonState state)
 	{

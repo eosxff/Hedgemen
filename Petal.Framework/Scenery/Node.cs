@@ -11,7 +11,7 @@ public abstract class Node
 {
 	public sealed class ChildAddedEventArgs : EventArgs
 	{
-		public Node Child
+		public required Node Child
 		{
 			get;
 			init;
@@ -41,7 +41,7 @@ public abstract class Node
 			init;
 		}
 	}
-	
+
 	public event EventHandler? OnBeforeDraw;
 	public event EventHandler? OnAfterDraw;
 
@@ -74,9 +74,7 @@ public abstract class Node
 	public int GetNestedChildrenCount(int count = 0)
 	{
 		foreach (var child in Children)
-		{
 			count = child.GetNestedChildrenCount(count);
-		}
 
 		count += Children.Count;
 		return count;
@@ -89,7 +87,7 @@ public abstract class Node
 	} = string.Empty;
 
 	private NamespacedString _name;
-	
+
 	public NamespacedString Name
 	{
 		get => _name;
@@ -127,7 +125,7 @@ public abstract class Node
 	} = NodeState.Normal;
 
 	private Anchor _anchor = Anchor.TopLeft;
-	
+
 	public Anchor Anchor
 	{
 		get => _anchor;
@@ -150,14 +148,14 @@ public abstract class Node
 				OldParent = _parent,
 				NewParent = value
 			};
-			
+
 			_parent = value;
 			OnParentChanged?.Invoke(this, args);
 		}
 	}
 
 	private Scene? _scene;
-	
+
 	public Scene? Scene
 	{
 		get => _scene;
@@ -170,7 +168,7 @@ public abstract class Node
 
 	private Rectangle _bounds = Rectangle.Empty;
 	private Rectangle _absoluteBounds;
-	
+
 	public Rectangle Bounds
 	{
 		get => _bounds;
@@ -197,21 +195,18 @@ public abstract class Node
 	public void Update(GameTime time, NodeSelection selection)
 	{
 		ArgumentNullException.ThrowIfNull(Scene, nameof(Scene));
-		
+
 		if (_isDirty)
 		{
 			UpdateBounds();
 			UpdateChildrenBounds();
 		}
-		
+
 		OnBeforeUpdate?.Invoke(this, EventArgs.Empty);
-		
+
 		OnUpdate(time, selection);
 
-		foreach (var child in Children)
-		{
-			child.Update(time, selection);
-		}
+		foreach (var child in Children) child.Update(time, selection);
 
 		if (IsInteractable)
 		{
@@ -219,19 +214,19 @@ public abstract class Node
 			bool isMouseDown = Scene.Input.IsMouseButtonFired(MouseButtons.LeftButton);
 			bool isMousePressed = Scene.Input.IsMouseButtonClicked(MouseButtons.LeftButton);
 			bool isMouseReleased = Scene.Input.IsMouseButtonReleased(MouseButtons.LeftButton);
-			
+
 			UpdateNodeState(selection, isMouseDown, isMousePressed);
 
-			if(State == NodeState.Hover)
+			if (State == NodeState.Hover)
 				OnMouseHover?.Invoke(this, EventArgs.Empty);
-			
-			if(State == NodeState.Input && isMouseReleased)
+
+			if (State == NodeState.Input && isMouseReleased)
 				OnMouseReleased?.Invoke(this, EventArgs.Empty);
-			
-			if(State == NodeState.Input && isMousePressed)
+
+			if (State == NodeState.Input && isMousePressed)
 				OnMousePressed?.Invoke(this, EventArgs.Empty);
-			
-			if(State == NodeState.Input && isMouseDown)
+
+			if (State == NodeState.Input && isMouseDown)
 				OnMouseDown?.Invoke(this, EventArgs.Empty);
 
 			switch (isTarget)
@@ -239,16 +234,19 @@ public abstract class Node
 				case true when selection.PreviousTarget != this:
 					OnFocusGained?.Invoke(this, EventArgs.Empty);
 					break;
+				
 				case false when selection.PreviousTarget == this:
 					OnFocusLost?.Invoke(this, EventArgs.Empty);
 					break;
 			}
 		}
-		
+
 		OnAfterUpdate?.Invoke(this, EventArgs.Empty);
 	}
 
-	protected virtual void OnUpdate(GameTime time, NodeSelection selection) { }
+	protected virtual void OnUpdate(GameTime time, NodeSelection selection)
+	{
+	}
 
 	protected virtual Rectangle GetDefaultBounds()
 		=> Rectangle.Empty;
@@ -256,42 +254,40 @@ public abstract class Node
 	public void Draw(GameTime time)
 	{
 		ArgumentNullException.ThrowIfNull(Scene, $"{nameof(Scene)} cannot be null when being drawn!");
-		
+
 		if (!IsVisible)
 			return;
-		
+
 		OnBeforeDraw?.Invoke(this, EventArgs.Empty);
-		
+
 		OnDraw(time);
 
-		foreach (var child in Children)
-		{
-			child.Draw(time);
-		}
-		
+		foreach (var child in Children) child.Draw(time);
+
 		OnAfterDraw?.Invoke(this, EventArgs.Empty);
 	}
 
-	protected virtual void OnDraw(GameTime time) { }
-	
+	protected virtual void OnDraw(GameTime time)
+	{
+	}
+
 	public TNode Add<TNode>(TNode child) where TNode : Node
 	{
 		_children.Add(child);
 		child.Parent = this;
 		child.Scene = Scene;
 		Scene?.Root.InternalAddNode(child);
-		
+
 		OnChildAdded?.Invoke(this, new ChildAddedEventArgs
 		{
 			Child = child
 		});
-		
+
 		return child;
 	}
 
 	protected virtual void OnSceneSet()
 	{
-		
 	}
 
 	public void Add(params Node[] children)
@@ -307,13 +303,13 @@ public abstract class Node
 			OldParent = Parent,
 			NewParent = null
 		};
-		
+
 		_children.Remove(child);
 		child.Parent = null;
 		Scene?.Root.InternalRemoveNode(child);
-		
+
 		child.OnParentChanged?.Invoke(this, parentChangedArgs);
-		
+
 		OnChildRemoved?.Invoke(this, new ChildRemovedEventArgs
 		{
 			Child = child
@@ -321,15 +317,13 @@ public abstract class Node
 	}
 
 	public virtual bool IsHovering(Vector2 position)
-		=> AbsoluteBounds.Contains((int) position.X, (int) position.Y);
+		=> AbsoluteBounds.Contains((int)position.X, (int)position.Y);
 
 	public virtual bool IsHoveringRecursive(Vector2 position)
 	{
 		foreach (var child in Children)
-		{
 			if (child.IsHoveringRecursive(position))
 				return true;
-		}
 
 		return IsHovering(position);
 	}
@@ -342,14 +336,14 @@ public abstract class Node
 
 			if (!child.IsActive)
 				continue;
-			
+
 			var node = child.GetHoveredNode(position);
 
 			if (node is not null)
 				return node;
 		}
 
-		if(IsActive)
+		if (IsActive)
 			return IsHovering(position) ? this : null;
 
 		return null;
@@ -367,16 +361,13 @@ public abstract class Node
 
 	protected virtual void Destroy()
 	{
-		foreach (var child in Children.ToList())
-		{
-			child.Destroy();
-		}
-		
+		foreach (var child in Children.ToList()) child.Destroy();
+
 		Parent?.Remove(this);
 		Scene?.Root.InternalRemoveNode(this);
 
 		IsMarkedForDeletion = false;
-		
+
 		OnDestroy?.Invoke(this, EventArgs.Empty);
 	}
 
@@ -389,17 +380,15 @@ public abstract class Node
 			while (parent is not null)
 			{
 				if (parent.IsMarkedForDeletion)
-				{
 					return true;
-				}
-				
+
 				parent = parent.Parent;
 			}
 
 			return false;
 		}
 	}
-	
+
 	public bool IsAnyMarkedForDeletion
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -420,42 +409,51 @@ public abstract class Node
 				calculatedBounds.X = bounds.X + parentBounds.Left;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
+			
 			case Anchor.Top:
-				calculatedBounds.X = bounds.X + parentBounds.Center.X - (bounds.Width / 2);
+				calculatedBounds.X = bounds.X + parentBounds.Center.X - bounds.Width / 2;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
+			
 			case Anchor.TopRight:
-				calculatedBounds.X = parentBounds.Right - (bounds.Width) - bounds.X;
+				calculatedBounds.X = parentBounds.Right - bounds.Width - bounds.X;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
+			
 			case Anchor.CenterLeft:
 				calculatedBounds.X = bounds.X + parentBounds.Left;
-				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - (bounds.Height / 2);
+				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - bounds.Height / 2;
 				break;
+			
 			case Anchor.Center:
-				calculatedBounds.X = bounds.X + parentBounds.Center.X - (bounds.Width / 2);
-				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - (bounds.Height / 2);
+				calculatedBounds.X = bounds.X + parentBounds.Center.X - bounds.Width / 2;
+				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - bounds.Height / 2;
 				break;
+			
 			case Anchor.CenterRight:
-				calculatedBounds.X = parentBounds.Right - (bounds.Width) - bounds.X;
-				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - (bounds.Height / 2);
+				calculatedBounds.X = parentBounds.Right - bounds.Width - bounds.X;
+				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - bounds.Height / 2;
 				break;
+			
 			case Anchor.BottomLeft:
 				calculatedBounds.X = bounds.X + parentBounds.Left;
-				calculatedBounds.Y = parentBounds.Bottom - (bounds.Height) - bounds.Y;
+				calculatedBounds.Y = parentBounds.Bottom - bounds.Height - bounds.Y;
 				break;
+			
 			case Anchor.Bottom:
-				calculatedBounds.X = bounds.X + parentBounds.Center.X - (bounds.Width / 2);
-				calculatedBounds.Y = parentBounds.Bottom - (bounds.Height) - bounds.Y;
+				calculatedBounds.X = bounds.X + parentBounds.Center.X - bounds.Width / 2;
+				calculatedBounds.Y = parentBounds.Bottom - bounds.Height - bounds.Y;
 				break;
+			
 			case Anchor.BottomRight:
-				calculatedBounds.X = parentBounds.Right - (bounds.Width) - bounds.X;
-				calculatedBounds.Y = parentBounds.Bottom - (bounds.Height) - bounds.Y;
+				calculatedBounds.X = parentBounds.Right - bounds.Width - bounds.X;
+				calculatedBounds.Y = parentBounds.Bottom - bounds.Height - bounds.Y;
 				break;
 			default:
+				
 				throw new ArgumentOutOfRangeException(Anchor.ToString());
 		}
-		
+
 		return calculatedBounds;
 	}
 
@@ -472,17 +470,14 @@ public abstract class Node
 		CalculateAbsoluteBounds(_bounds);
 		MarkAsClean();
 	}
-	
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void UpdateChildrenBounds()
 	{
 		CalculateAbsoluteBounds(_bounds);
 		MarkAsClean();
-		
-		foreach (var child in Children)
-		{
-			child.UpdateChildrenBounds();
-		}
+
+		foreach (var child in Children) child.UpdateChildrenBounds();
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -490,30 +485,26 @@ public abstract class Node
 	{
 		if (relativeBounds == Rectangle.Empty)
 			relativeBounds = GetDefaultBounds();
-		
+
 		_absoluteBounds = CalculateBounds(relativeBounds);
 	}
 
 	private void UpdateNodeState(NodeSelection selection, bool isMouseDown, bool isMousePressed)
 	{
 		State = NodeState.Normal;
-		
+
 		if (Scene is null)
 			return;
 
 		bool isTarget = selection.Target == this;
 
 		if (isTarget)
-		{
 			State = NodeState.Hover;
-		}
 
 		if ((isMouseDown || isMousePressed) && isTarget)
-		{
 			State = NodeState.Input;
-		}
 	}
 
-	public static NamespacedString GenerateNodeName(Node node) 
+	public static NamespacedString GenerateNodeName(Node node)
 		=> $"{NamespacedString.DefaultNamespace}:{node.GetType().Name.ToLowerInvariant()}@{node.GetHashCode()}";
 }

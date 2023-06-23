@@ -76,7 +76,7 @@ public struct RenderData
 
 	public RenderData()
 	{
-		
+
 	}
 }
 
@@ -135,9 +135,9 @@ public struct RenderStringData
 		get;
 		init;
 	} = 0.0f;
-	
+
 	public RenderStringData()
 	{
-		
+
 	}
 }

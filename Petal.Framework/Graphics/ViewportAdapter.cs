@@ -36,24 +36,28 @@ public abstract class ViewportAdapter : IDisposable
 		var graphicsDeviceViewportSize = new Vector2Int(
 			graphicsDevice.Viewport.Width,
 			graphicsDevice.Viewport.Height);
-		
+
 		ViewportResolution = graphicsDeviceViewportSize;
 		SetVirtualResolution(graphicsDeviceViewportSize);
 	}
 
 	/// <summary>
-	/// Used in situations where virtual resolution is dynamic or being set for the first time.
+	///     Used in situations where virtual resolution is dynamic or being set for the first time.
 	/// </summary>
 	protected void SetVirtualResolution(Vector2Int resolution)
 	{
 		_virtualResolution = resolution;
 	}
-	
+
 	public virtual Matrix GetScaleMatrix()
-		=> Matrix.Identity;
+	{
+		return Matrix.Identity;
+	}
 
 	public Point PointToScreen(Point point)
-		=> PointToScreen(point.X, point.Y);
+	{
+		return PointToScreen(point.X, point.Y);
+	}
 
 	public virtual Point PointToScreen(int x, int y)
 	{
@@ -71,6 +75,5 @@ public abstract class ViewportAdapter : IDisposable
 
 	public virtual void Dispose()
 	{
-		
 	}
 }

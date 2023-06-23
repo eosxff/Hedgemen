@@ -10,7 +10,7 @@ public class NodeSelection
 		PreviousTarget = Target;
 		Target = null;
 	}
-	
+
 	public void Reset()
 	{
 		Target = null;

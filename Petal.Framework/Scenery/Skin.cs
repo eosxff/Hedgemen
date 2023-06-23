@@ -3,7 +3,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Util;
-
 using static Petal.Framework.Util.PetalUtilities;
 
 namespace Petal.Framework.Scenery;
@@ -15,7 +14,7 @@ public sealed class Skin
 		get;
 		set;
 	}
-	
+
 	public ButtonData Button
 	{
 		get;
@@ -24,7 +23,6 @@ public sealed class Skin
 
 	public Skin() : this(null)
 	{
-		
 	}
 
 	public Skin(ContentRegistry? contentRegistry)
@@ -49,7 +47,7 @@ public sealed class Skin
 	{
 		if (ContentRegistry is null)
 			return;
-		
+
 		Button.NormalTexture.ReloadItem(ContentRegistry);
 		Button.HoverTexture.ReloadItem(ContentRegistry);
 		Button.InputTexture.ReloadItem(ContentRegistry);
@@ -60,7 +58,7 @@ public sealed class Skin
 		var skin = ReadFromJson<DataRecord>(json, DataRecord.JsonDeserializeOptions).Create();
 		skin.ContentRegistry = registry;
 		skin.Refresh();
-		
+
 		return skin;
 	}
 
@@ -68,23 +66,20 @@ public sealed class Skin
 	public struct DataRecord : IDataRecord<Skin>
 	{
 		public static JsonSerializerOptions JsonDeserializeOptions
-			=> new JsonSerializerOptions
+			=> new()
 			{
 				IncludeFields = true,
 				WriteIndented = true,
-				Converters = {  }
+				Converters = { }
 			};
-		
-		[JsonInclude]
-		[JsonPropertyName("button_data_normal_texture_name")]
+
+		[JsonInclude, JsonPropertyName("button_data_normal_texture_name")]
 		public string ButtonDataNormalTextureName;
-		
-		[JsonInclude]
-		[JsonPropertyName("button_data_hover_texture_name")]
+
+		[JsonInclude, JsonPropertyName("button_data_hover_texture_name")]
 		public string ButtonDataHoverTextureName;
-		
-		[JsonInclude]
-		[JsonPropertyName("button_data_input_texture_name")]
+
+		[JsonInclude, JsonPropertyName("button_data_input_texture_name")]
 		public string ButtonDataInputTextureName;
 
 		public Skin Create()
@@ -95,7 +90,7 @@ public sealed class Skin
 				{
 					NormalTexture = new ContentReference<Texture2D>(ButtonDataNormalTextureName),
 					HoverTexture = new ContentReference<Texture2D>(ButtonDataHoverTextureName),
-					InputTexture = new ContentReference<Texture2D>(ButtonDataInputTextureName),
+					InputTexture = new ContentReference<Texture2D>(ButtonDataInputTextureName)
 				}
 			};
 		}

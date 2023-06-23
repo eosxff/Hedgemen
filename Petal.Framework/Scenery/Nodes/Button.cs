@@ -12,13 +12,13 @@ public class Button : Node
 		get;
 		set;
 	} = Color.White;
-	
+
 	public Skin Skin
 	{
 		get;
 		set;
 	}
-	
+
 	public Button(Skin skin)
 	{
 		Skin = skin;
@@ -56,9 +56,9 @@ public class Button : Node
 
 		if (!textureRef.HasItem)
 			return;
-		
+
 		Scene.Renderer.Begin();
-		
+
 		// todo ninepatching
 		Scene.Renderer.Draw(new RenderData
 		{
@@ -66,7 +66,7 @@ public class Button : Node
 			DstRect = AbsoluteBounds,
 			Texture = textureRef.Item
 		});
-		
+
 		Scene.Renderer.End();
 	}
 
@@ -79,10 +79,13 @@ public class Button : Node
 		{
 			case NodeState.Normal:
 				return Skin.Button.NormalTexture;
+			
 			case NodeState.Input:
 				return Skin.Button.InputTexture;
+			
 			case NodeState.Hover:
 				return Skin.Button.HoverTexture;
+			
 			default:
 				throw new ArgumentOutOfRangeException();
 		}

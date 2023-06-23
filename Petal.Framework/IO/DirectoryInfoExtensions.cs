@@ -6,23 +6,24 @@ using Microsoft.VisualBasic.FileIO;
 namespace Petal.Framework.IO;
 
 public delegate bool FileListFilter(FileInfo fileHandle);
+
 public delegate bool DirectoryListFilter(DirectoryInfo directory);
-	
+
 public static class DirectoryInfoExtensions
 {
 	public static void Clear(this DirectoryInfo self)
 	{
 		if (!self.Exists)
 			return;
-		
+
 		self.GetFiles().ToList().ForEach(e => e.Delete());
 		self.GetDirectories().ToList().ForEach(e => e.Delete(true));
 	}
 
-	public static FileInfo FindFile(
-		this DirectoryInfo self,
-		string fileName)
-		=> new FileInfo($"{self.FullName}/{fileName}");
+	public static FileInfo FindFile(this DirectoryInfo self, string fileName)
+	{
+		return new FileInfo($"{self.FullName}/{fileName}");
+	}
 
 	public static FileInfo[] FindFiles(
 		this DirectoryInfo self,
@@ -36,10 +37,10 @@ public static class DirectoryInfoExtensions
 		return files.ToArray();
 	}
 
-	public static DirectoryInfo FindDirectory(
-		this DirectoryInfo self,
-		string directoryName)
-		=> new DirectoryInfo($"{self.FullName}/{directoryName}/");
+	public static DirectoryInfo FindDirectory(this DirectoryInfo self, string directoryName)
+	{
+		return new DirectoryInfo($"{self.FullName}/{directoryName}/");
+	}
 
 	public static DirectoryInfo[] FindDirectories(
 		this DirectoryInfo self,
@@ -81,6 +82,7 @@ public static class DirectoryInfoExtensions
 			case true:
 				InternalListFilesRecursively(filter, self, files);
 				break;
+			
 			case false:
 				foreach (var file in self.GetFiles())
 					if (filter(file))
@@ -102,14 +104,14 @@ public static class DirectoryInfoExtensions
 
 		return files.ToArray();
 	}
-		
+
 	public static void CopyTo(
 		this DirectoryInfo self,
 		DirectoryInfo dest)
 	{
 		FileSystem.CopyDirectory(self.FullName, dest.FullName);
 	}
-		
+
 	private static void InternalListFilesRecursively(
 		FileListFilter filter,
 		DirectoryInfo directory,

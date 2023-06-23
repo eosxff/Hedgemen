@@ -16,8 +16,12 @@ public static class XnaExtensions
 	}
 
 	public static bool HasSize(this Rectangle self)
-		=> self is { Width: > 0, Height: > 0 };
+	{
+		return self.Width > 0 && self.Height > 0;
+	}
 
 	public static Point ToPoint(this Vector2 self)
-		=> new((int)self.X, (int)self.Y);
+	{
+		return new Point((int)self.X, (int)self.Y);
+	}
 }

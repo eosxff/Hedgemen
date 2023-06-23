@@ -11,14 +11,14 @@ public class Image : Node
 	{
 		get;
 		set;
-	} = new (0, 0, 32, 32);
-	
+	} = new(0, 0, 32, 32);
+
 	public Color Color
 	{
 		get;
 		set;
 	} = Color.White;
-	
+
 	public Texture2D Texture
 	{
 		get;
@@ -32,23 +32,22 @@ public class Image : Node
 
 	protected override void OnUpdate(GameTime time, NodeSelection selection)
 	{
-		
 	}
 
 	protected override void OnDraw(GameTime time)
 	{
 		if (Scene is null || Texture is null)
 			return;
-		
+
 		Scene.Renderer.Begin();
-		
+
 		Scene.Renderer.Draw(new RenderData
 		{
 			Texture = Texture,
 			DstRect = AbsoluteBounds,
 			Color = Color
 		});
-		
+
 		Scene.Renderer.End();
 	}
 }
