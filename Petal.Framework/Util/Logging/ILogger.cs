@@ -20,10 +20,24 @@ public struct LogLevelChangedArgs
 public interface ILogger
 {
 	public event EventHandler<LogLevelChangedArgs> OnLogLevelChanged;
-	
-	public LogLevel LogLevel { get; set; }
-	public string Format { get; set; }
-	public string DateTimeFormat { get; set; }
+
+	public LogLevel LogLevel
+	{
+		get;
+		set;
+	}
+
+	public string Format
+	{
+		get;
+		set;
+	}
+
+	public string DateTimeFormat
+	{
+		get;
+		set;
+	}
 
 	public void Add(string message, LogLevel logLevel);
 	public void Debug(string message);
