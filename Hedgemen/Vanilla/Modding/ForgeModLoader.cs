@@ -36,7 +36,8 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 		{
 			EmbeddedMods = new List<IMod>(),
 			ModsDirectory = new DirectoryInfo("mods"),
-			ManifestFileName = "manifest.json"
+			ManifestFileName = "manifest.json",
+			EmbedOnlyMode = Hedgemen.EmbedOnlyMode
 		};
 
 		return context;
@@ -45,8 +46,12 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 	public bool Start(ModLoaderSetupContext context)
 	{
 		var logger = Hedgemen.Instance.Logger;
+		var modDirectoryQuery = new List<DirectoryInfo>();
 
-		var modDirectoryQuery = QueryModsFromModDirectory(context);
+		if (!context.EmbedOnlyMode)
+			modDirectoryQuery = QueryModsFromModDirectory(context);
+		else
+			Logger.Warn("Embed only mode is on. Only loading embedded mods.");
 
 		logger.Debug($"Number of mods recognized in folder '{context.ModsDirectory}': {modDirectoryQuery.Count}");
 
@@ -113,7 +118,7 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 			else
 				Logger.Critical($"Failed to load embedded mod '{embeddedMod}' This should not happen.");
 		}
-
+		
 		foreach (var directory in directories)
 		{
 			var loadSuccessful = LoadModFromDirectory(context, directory, out var mod);
@@ -126,7 +131,7 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 				list.Add(mod);
 			}
 		}
-		
+
 		return list;
 	}
 

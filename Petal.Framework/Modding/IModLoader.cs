@@ -22,6 +22,12 @@ public sealed class ModLoaderSetupContext
 		get;
 		init;
 	}
+
+	public required bool EmbedOnlyMode
+	{
+		get;
+		init;
+	}
 }
 
 public interface IModLoader<TMod> where TMod : IMod

@@ -20,6 +20,19 @@ public class Hedgemen : PetalGame
 {
 	public static Version Version
 		=> new(0, 0, 1);
+
+	public static bool EmbedOnlyMode
+	{
+		get
+		{
+#if EMBEDONLYMODE
+			return true;
+#else
+			return false;
+#endif
+		}
+		
+	}
 	
 	public static Hedgemen Instance
 	{
