@@ -77,6 +77,9 @@ public class Hedgemen : PetalGame
 		
 		Logger.Debug($"Can we access example:mod from Forge: " +
 		             $"{ModLoader.GetMod("example:mod", out ForgeMod example)}");
+		
+		Logger.Debug($"Can we access no_code:mod from Forge: " +
+		             $"{ModLoader.GetMod("no_code:mod", out ForgeMod noCode)}");
 	}
 
 	protected override void Initialize()
