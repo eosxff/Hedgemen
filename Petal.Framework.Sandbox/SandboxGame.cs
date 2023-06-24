@@ -82,6 +82,7 @@ public class SandboxGame : PetalGame
 			ContentRegistry.Get<Skin>(testContentRegistryGet);
 			Logger.Debug($"Content successfully grabbed from registry: {testContentRegistryGet}");
 		}
+		
 		catch (Exception e)
 		{
 			Logger.Error($"Content unsuccessfully grabbed from registry: {testContentRegistryGet}");

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using Hgm.Vanilla;
 using Hgm.Vanilla.Modding;
 using Microsoft.Xna.Framework;
@@ -8,7 +9,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
-using Petal.Framework.Modding;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util.Logging;
@@ -51,7 +51,7 @@ public class Hedgemen : PetalGame
 		OnDebugChanged += DebugChangedCallback;
 	}
 
-	public ForgeModLoader ModLoader
+	public ForgeModLoader Forge
 	{
 		get;
 		private set;
@@ -59,12 +59,12 @@ public class Hedgemen : PetalGame
 
 	protected override void Setup()
 	{
-		var context = ModLoader.Setup();
+		var context = Forge.Setup();
 		context.EmbeddedMods.Add(new HedgemenVanilla());
 		
 		Logger.Debug($"Starting {nameof(ForgeModLoader)}.");
 
-		var logLevel = ModLoader.Start(context) ? LogLevel.Debug : LogLevel.Error;
+		var logLevel = Forge.Start(context) ? LogLevel.Debug : LogLevel.Error;
 		
 		Logger.Add(
 			logLevel == LogLevel.Debug ?
@@ -73,20 +73,20 @@ public class Hedgemen : PetalGame
 			logLevel);
 		
 		Logger.Debug($"Can we access hedgemen:mod from Forge: " +
-		             $"{ModLoader.GetMod("hedgemen:mod", out HedgemenVanilla vanilla)}");
+		             $"{Forge.GetMod("hedgemen:mod", out HedgemenVanilla vanilla)}");
 		
 		Logger.Debug($"Can we access example:mod from Forge: " +
-		             $"{ModLoader.GetMod("example:mod", out ForgeMod example)}");
+		             $"{Forge.GetMod("example:mod", out ForgeMod example)}");
 		
 		Logger.Debug($"Can we access no_code:mod from Forge: " +
-		             $"{ModLoader.GetMod("no_code:mod", out ForgeMod noCode)}");
+		             $"{Forge.GetMod("no_code:mod", out ForgeMod noCode)}");
 	}
 
 	protected override void Initialize()
 	{
 		base.Initialize();
 
-		ModLoader = new ForgeModLoader(Logger);
+		Forge = new ForgeModLoader(Logger);
 
 		Logger.Debug("I");
 		Logger.Warn("Love");
@@ -129,7 +129,8 @@ public class Hedgemen : PetalGame
 
 	protected override GameSettings GetInitialGameSettings()
 	{
-		return new GameSettings
+		var file = new FileInfo("petal.json");
+		var fallbackSettings = new GameSettings
 		{
 			PreferredFramerate = 60,
 			Vsync = false,
@@ -140,5 +141,28 @@ public class Hedgemen : PetalGame
 			IsWindowUserResizable = true,
 			IsDebug = true
 		};
+
+		if (!file.Exists)
+			return fallbackSettings;
+
+		string json = file.ReadStringSilently(Encoding.UTF8);
+
+		if (string.IsNullOrEmpty(json))
+		{
+			Logger.Warn("Using fallback game settings.");
+			return fallbackSettings;
+		}
+			
+
+		try
+		{
+			return GameSettings.FromJson(json);
+		}
+		
+		catch (Exception e)
+		{
+			Logger.Warn("Using fallback game settings.");
+			return fallbackSettings;
+		}
 	}
 }
