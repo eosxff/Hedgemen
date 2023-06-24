@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using Petal.Framework;
@@ -51,7 +52,27 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 
 		var loadedMods = LoadModsFromEmbedAndDirectory(context, modDirectoryQuery);
 
+		foreach (var mod in loadedMods)
+		{
+			_mods.Add(mod.Manifest.NamespacedID, mod);
+			Logger.Debug($"{mod.Manifest.Name} is now accessible from Forge.");
+		}
+		
 		return true;
+	}
+
+	public bool GetMod<T>(NamespacedString id, out T mod) where T : ForgeMod
+	{
+		mod = default;
+		
+		bool found = _mods.TryGetValue(id, out var forgeMod);
+
+		if (found && forgeMod is T tMod)
+		{
+			mod = tMod;
+		}
+
+		return found;
 	}
 
 	private List<DirectoryInfo> QueryModsFromModDirectory(ModLoaderSetupContext context)
@@ -84,22 +105,36 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 		foreach (var embeddedMod in context.EmbeddedMods)
 		{
 			if (embeddedMod is ForgeMod hedgemenMod)
+			{
+				SetModManifestAndDirectory(hedgemenMod, hedgemenMod.GetEmbeddedManifest(), new DirectoryInfo("."));
 				list.Add(hedgemenMod);
+				Logger.Debug($"Loaded Embedded mod '{embeddedMod}'.");
+			}
 			else
-				Logger.Critical($"Failed to load embedded mod: {embeddedMod}. This should not happen.");
+				Logger.Critical($"Failed to load embedded mod '{embeddedMod}' This should not happen.");
 		}
 
 		foreach (var directory in directories)
 		{
-			var loadSuccessful = LoadModFromDirectory(context, directory, out ForgeMod mod);
+			var loadSuccessful = LoadModFromDirectory(context, directory, out var mod);
 
 			if (!loadSuccessful)
 				Logger.Error($"Could not load mod from '{directory.Name}'.");
 			else
-				Logger.Debug($"Successfully loaded '{mod.Manifest.NamespacedID}' of type '{mod.GetType()}'.");
+			{
+				Logger.Debug($"Loaded '{mod.Manifest.NamespacedID}' of type '{mod.GetType()}'.");
+				list.Add(mod);
+			}
 		}
 		
 		return list;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void SetModManifestAndDirectory(ForgeMod mod, ForgeModManifest manifest, DirectoryInfo directory)
+	{
+		mod.Manifest = manifest;
+		mod.Directory = directory;
 	}
 	
 	private bool LoadModFromDirectory(ModLoaderSetupContext context, DirectoryInfo directory, out ForgeMod mod)
@@ -171,11 +206,8 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 				return false;
 			}
 		}
-			
-		mod.Manifest = manifest;
-		mod.Directory = directory;
-		_mods.Add(new NamespacedString(manifest.NamespacedID), mod);
-
+		
+		SetModManifestAndDirectory(mod, manifest, directory);
 		return true;
 	}
 }

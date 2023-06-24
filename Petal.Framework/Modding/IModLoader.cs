@@ -28,4 +28,6 @@ public interface IModLoader<TMod> where TMod : IMod
 {
 	public ModLoaderSetupContext Setup();
 	public bool Start(ModLoaderSetupContext context);
+
+	public bool GetMod<T>(NamespacedString id, out T mod) where T : TMod;
 }

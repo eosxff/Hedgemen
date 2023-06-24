@@ -58,6 +58,9 @@ public class Hedgemen : PetalGame
 				$"Successfully started {nameof(ForgeModLoader)}" :
 				$"Unsuccessfully started {nameof(ForgeModLoader)}.",
 			logLevel);
+		
+		Logger.Debug($"Can we access hedgemen:mod from Forge: " +
+		             $"{ModLoader.GetMod("hedgemen:mod", out ForgeMod mod)}");
 	}
 
 	protected override void Initialize()
