@@ -117,67 +117,64 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 		var manifestJson = manifestFile.ReadString(Encoding.UTF8);
 		var manifest = JsonSerializer.Deserialize<ForgeModManifest?>(manifestJson);
 
-		if (manifest is not null)
-		{
-			if (string.IsNullOrEmpty(manifest.ModFileDll))
-			{
-				mod = new DefaultForgeMod();
-			}
-			else
-			{
-				var dllFile = directory.FindFile(manifest.ModFileDll);
-
-				if (dllFile.Exists)
-				{
-					var assembly = Assembly.LoadFile(dllFile.FullName);
-
-					foreach (string dependencyFileName in manifest.Dependencies.Dlls)
-					{
-						var dllDependencyFile = directory.FindFile(dependencyFileName);
-
-						if (dllDependencyFile.Exists)
-						{
-							Assembly.LoadFile(dllDependencyFile.FullName);
-						}
-						else
-						{
-							Logger.Error($"File {dependencyFileName} does not exist.");
-							return false;
-						}
-					}
-
-					var modMainType = assembly.GetType(manifest.ModMain);
-
-					if (modMainType is null)
-					{
-						Logger.Error($"Mod entry point '{manifest.ModMain}' could not be found.");
-						return false;
-					}
-
-					mod = (ForgeMod)Activator.CreateInstance(modMainType, true);
-
-					if (mod is null)
-					{
-						Logger.Error($"Could not create instance from '{modMainType}'");
-						return false;
-					}
-				}
-				else
-				{
-					Logger.Error($"File '{dllFile.FullName}' does not exist.");
-					return false;
-				}
-			}
-			
-			mod.Manifest = manifest;
-			mod.Directory = directory;
-			_mods.Add(new NamespacedString(manifest.NamespacedID), mod);
-		}
-		else
+		if (manifest is null)
 		{
 			Logger.Error($"Manifest could not be created from:\n{manifestJson}");
 			return false;
 		}
+		
+		if (string.IsNullOrEmpty(manifest.ModFileDll))
+		{
+			mod = new DefaultForgeMod();
+		}
+		
+		else
+		{
+			var dllFile = directory.FindFile(manifest.ModFileDll);
+
+			if (!dllFile.Exists)
+			{
+				Logger.Error($"File '{dllFile.FullName}' does not exist.");
+				return false;
+			}
+			
+			var assembly = Assembly.LoadFile(dllFile.FullName);
+
+			foreach (string dependencyFileName in manifest.Dependencies.Dlls)
+			{
+				var dllDependencyFile = directory.FindFile(dependencyFileName);
+
+				if (dllDependencyFile.Exists)
+				{
+					Assembly.LoadFile(dllDependencyFile.FullName);
+				}
+				else
+				{
+					Logger.Error($"File {dependencyFileName} does not exist.");
+					return false;
+				}
+			}
+
+			var modMainType = assembly.GetType(manifest.ModMain);
+
+			if (modMainType is null)
+			{
+				Logger.Error($"Mod entry point '{manifest.ModMain}' could not be found.");
+				return false;
+			}
+
+			mod = (ForgeMod)Activator.CreateInstance(modMainType, true);
+
+			if (mod is null)
+			{
+				Logger.Error($"Could not create instance from '{modMainType}'");
+				return false;
+			}
+		}
+			
+		mod.Manifest = manifest;
+		mod.Directory = directory;
+		_mods.Add(new NamespacedString(manifest.NamespacedID), mod);
 
 		return true;
 	}
