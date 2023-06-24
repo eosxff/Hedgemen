@@ -11,7 +11,7 @@ public sealed class ModLoaderSetupContext
 		init;
 	}
 
-	public required string ConfigFileName
+	public required string ManifestFileName
 	{
 		get;
 		init;

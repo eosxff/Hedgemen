@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Hgm.Vanilla;
 using Hgm.Vanilla.Modding;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,6 +18,9 @@ namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
+	public static Version Version
+		=> new(0, 0, 1);
+	
 	public static Hedgemen Instance
 	{
 		get;
@@ -34,7 +38,7 @@ public class Hedgemen : PetalGame
 		OnDebugChanged += DebugChangedCallback;
 	}
 
-	public HedgemenModLoader ModLoader
+	public ForgeModLoader ModLoader
 	{
 		get;
 		private set;
@@ -45,14 +49,14 @@ public class Hedgemen : PetalGame
 		var context = ModLoader.Setup();
 		context.EmbeddedMods.Add(new HedgemenVanilla());
 		
-		Logger.Debug($"Starting {nameof(HedgemenModLoader)}.");
+		Logger.Debug($"Starting {nameof(ForgeModLoader)}.");
 
 		var logLevel = ModLoader.Start(context) ? LogLevel.Debug : LogLevel.Error;
 		
 		Logger.Add(
 			logLevel == LogLevel.Debug ?
-				$"Successfully started {nameof(HedgemenModLoader)}" :
-				$"Unsuccessfully started {nameof(HedgemenModLoader)}.",
+				$"Successfully started {nameof(ForgeModLoader)}" :
+				$"Unsuccessfully started {nameof(ForgeModLoader)}.",
 			logLevel);
 	}
 
@@ -60,7 +64,7 @@ public class Hedgemen : PetalGame
 	{
 		base.Initialize();
 
-		ModLoader = new HedgemenModLoader();
+		ModLoader = new ForgeModLoader(Logger);
 
 		Logger.Debug("I");
 		Logger.Warn("Love");

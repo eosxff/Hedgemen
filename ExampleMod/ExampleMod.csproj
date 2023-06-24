@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <LangVersion>11</LangVersion>
+        <RootNamespace>Example</RootNamespace>
+        <NoWarn>8632</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Hedgemen\Hedgemen.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="FNA">
+        <HintPath>..\Petal.Framework\lib\FNA.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
