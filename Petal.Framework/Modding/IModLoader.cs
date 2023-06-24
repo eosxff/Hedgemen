@@ -30,9 +30,18 @@ public sealed class ModLoaderSetupContext
 	}
 }
 
-public interface IModLoader<TMod> where TMod : IMod
+public struct ModLoaderSetupArgs
 {
-	public ModLoaderSetupContext Setup();
+	public required bool EmbedOnlyMode
+	{
+		get;
+		init;
+	}
+}
+
+public interface IModLoader<in TMod> where TMod : IMod
+{
+	public ModLoaderSetupContext Setup(ModLoaderSetupArgs args);
 	public bool Start(ModLoaderSetupContext context);
 
 	public bool GetMod<T>(NamespacedString id, out T mod) where T : TMod;

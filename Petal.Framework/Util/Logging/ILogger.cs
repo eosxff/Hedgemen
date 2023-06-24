@@ -1,7 +1,26 @@
-﻿namespace Petal.Framework.Util.Logging;
+﻿using System;
+
+namespace Petal.Framework.Util.Logging;
+
+public struct LogLevelChangedArgs
+{
+	public required LogLevel Old
+	{
+		get;
+		init;
+	}
+
+	public required LogLevel New
+	{
+		get;
+		init;
+	}
+}
 
 public interface ILogger
 {
+	public event EventHandler<LogLevelChangedArgs> OnLogLevelChanged;
+	
 	public LogLevel LogLevel { get; set; }
 	public string Format { get; set; }
 	public string DateTimeFormat { get; set; }

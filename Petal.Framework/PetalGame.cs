@@ -9,7 +9,7 @@ using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework;
 
-public class PetalGame : Game
+public abstract class PetalGame : Game
 {
 	private static PetalGame _instance;
 
@@ -218,7 +218,7 @@ public class PetalGame : Game
 	protected virtual ILogger GetInitialLogger()
 		=> new PetalLogger
 		{
-			LogLevel = IsDebug ? LogLevel.Debug : LogLevel.Error
+			LogLevel = LogLevel.Off
 		};
 
 	protected override void Draw(GameTime gameTime)

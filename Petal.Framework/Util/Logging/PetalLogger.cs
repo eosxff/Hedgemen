@@ -7,49 +7,88 @@ namespace Petal.Framework.Util.Logging;
 public class PetalLogger : ILogger
 { 
 	private readonly StringBuilder _builder;
+	private LogLevel _logLevel = LogLevel.Off;
 
 	public PetalLogger()
 	{
 		_builder = new StringBuilder();
 	}
 
-	public LogLevel LogLevel { get; set; } = LogLevel.Debug;
+	public event EventHandler<LogLevelChangedArgs> OnLogLevelChanged;
 
-	public string Format { get; set; } = "[%T] %M [%c:%m:%l/%S]";
+	public LogLevel LogLevel
+	{
+		get => _logLevel;
+		set
+		{
+			if (_logLevel == value)
+				return;
 
-	public string DateTimeFormat { get; set; } = "HH:mm:ss";
+			var args = new LogLevelChangedArgs
+			{
+				Old = _logLevel,
+				New = value
+			};
+			
+			_logLevel = value;
+				
+			OnLogLevelChanged?.Invoke(this, args);
+		}
+	}
+
+	public string Format
+	{
+		get;
+		set;
+	} = "[%T] %M [%c:%m:%l/%S]";
+
+	public string DateTimeFormat
+	{
+		get;
+		set;
+	} = "HH:mm:ss";
 
 	public void Debug(string message)
 	{
-		if (!ValidLogLevel(LogLevel.Debug)) return;
+		if (!ValidLogLevel(LogLevel.Debug))
+			return;
+		
 		var stackFrame = new StackFrame(1, true);
 		Add(message, LogLevel.Debug, stackFrame);
 	}
 
 	public void Warn(string message)
 	{
-		if (!ValidLogLevel(LogLevel.Warn)) return;
+		if (!ValidLogLevel(LogLevel.Warn))
+			return;
+		
 		var stackFrame = new StackFrame(1, true);
 		Add(message, LogLevel.Warn, stackFrame);
 	}
 
 	public void Error(string message)
 	{
-		if (!ValidLogLevel(LogLevel.Error)) return;
+		if (!ValidLogLevel(LogLevel.Error))
+			return;
+		
 		var stackFrame = new StackFrame(1, true);
 		Add(message, LogLevel.Error, stackFrame);
 	}
 
 	public void Critical(string message)
 	{
-		if (!ValidLogLevel(LogLevel.Critical)) return;
+		if (!ValidLogLevel(LogLevel.Critical))
+			return;
+		
 		var stackFrame = new StackFrame(1, true);
 		Add(message, LogLevel.Critical, stackFrame);
 	}
 
 	public void Add(string message, LogLevel logLevel)
 	{
-		if (!ValidLogLevel(logLevel)) return;
+		if (!ValidLogLevel(logLevel))
+			return;
+		
 		var stackFrame = new StackFrame(1, true);
 		Add(message, logLevel, stackFrame);
 	}
@@ -58,6 +97,7 @@ public class PetalLogger : ILogger
 	{
 		var oldConsoleColor = Console.ForegroundColor;
 		var consoleColor = ConsoleColor.White;
+		
 		switch (logLevel)
 		{
 			case LogLevel.Debug: break;
