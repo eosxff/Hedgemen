@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Hgm.Components;
 using Hgm.Vanilla;
 using Hgm.Vanilla.Modding;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
+using Petal.Framework.EC;
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
@@ -85,6 +87,7 @@ public class Hedgemen : PetalGame
 	protected override void Initialize()
 	{
 		base.Initialize();
+		Logger.LogLevel = LogLevel.Debug;
 
 		Forge = new ForgeModLoader(Logger);
 
@@ -117,6 +120,28 @@ public class Hedgemen : PetalGame
 		
 		ChangeScenes(scene);
 		Setup();
+
+		if (IsDebug)
+		{
+			Test();
+		}
+	}
+
+	private void Test()
+	{
+		var mapCell = new MapCell();
+		mapCell.AddComponent<PerlinGeneration>();
+		
+		if(mapCell.WillRespondToEvent<SetHeightEvent>())
+		{
+			mapCell.PropagateEvent(new SetHeightEvent
+			{
+				Sender = mapCell,
+				Height = 0.95f
+			});
+			
+			Logger.Debug($"Cell height is now: {mapCell.GetComponent<PerlinGeneration>().Height}");
+		}
 	}
 
 	private void DebugChangedCallback(object? sender, DebugChangedArgs args)

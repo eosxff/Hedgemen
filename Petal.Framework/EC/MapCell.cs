@@ -1,94 +1,215 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Petal.Framework.Persistence;
+using Petal.Framework.Util;
 
 namespace Petal.Framework.EC;
 
 public class MapCell : IEntity<CellComponent, CellEvent>
 {
-
-	public SerializedData WriteObjectState()
-	{
-		throw new NotImplementedException();
-	}
-
-	public void ReadObjectState(SerializedData data)
-	{
-		throw new NotImplementedException();
-	}
+	private IDictionary<Type, CellComponent> _components = new Dictionary<Type, CellComponent>();
+	private IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
 
 	public IReadOnlyCollection<CellComponent> Components
-	{
-		get;
-	}
+		=> _components.Values as Dictionary<Type, CellComponent>.ValueCollection;
+
 	public void PropagateEvent(CellEvent e)
 	{
-		throw new NotImplementedException();
+		foreach (var component in Components)
+		{
+			component.PropagateEvent(e);
+		}
 	}
 
-	public Task PropagateEventAsync(CellEvent e)
+	public async Task PropagateEventAsync(CellEvent e)
 	{
-		throw new NotImplementedException();
+		await Task.Run(() => PropagateEvent(e));
 	}
 
 	public void PropagateEventIfResponsive(CellEvent e)
 	{
-		throw new NotImplementedException();
+		if (WillRespondToEvent(e.GetType()))
+			PropagateEvent(e);
 	}
 
 	public bool WillRespondToEvent(Type eventType)
 	{
-		throw new NotImplementedException();
+		return _componentEvents.ContainsKey(eventType);
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool WillRespondToEvent<T>() where T : CellEvent
 	{
-		throw new NotImplementedException();
+		return WillRespondToEvent(typeof(T));
 	}
 
 	public void AddComponent(CellComponent component)
 	{
-		throw new NotImplementedException();
+		if (component is null)
+			return;
+
+		var componentType = component.GetType();
+
+		if (_components.ContainsKey(componentType))
+			return;
+
+		_components.Add(componentType, component);
+		component.AddToMapCell(this);
+		AddRegisteredEventsFromComponent(component);
 	}
 
+	private void AddRegisteredEventsFromComponent(CellComponent component)
+	{
+		var registeredEvents = component.GetRegisteredEvents();
+
+		foreach (var registeredEvent in registeredEvents)
+		{
+			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
+
+			switch (found)
+			{
+				case true:
+					_componentEvents[registeredEvent]++;
+					break;
+				
+				case false:
+					_componentEvents.Add(registeredEvent, 1);
+					break;
+			}
+		}
+	}
+
+	private void RemoveRegisteredEventsFromComponent(CellComponent component)
+	{
+		var registeredEvents = component.GetRegisteredEvents();
+
+		foreach (var registeredEvent in registeredEvents)
+		{
+			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
+
+			switch (found)
+			{
+				case true:
+					if (eventCount - 1 <= 0)
+						_componentEvents.Remove(registeredEvent);
+					else
+						_componentEvents[registeredEvent]--;
+					break;
+				
+				case false:
+					break;
+			}
+		}
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void AddComponent<T>() where T : CellComponent, new()
 	{
-		throw new NotImplementedException();
+		AddComponent(new T());
 	}
 
-	public bool GetComponent<T>(out T component) where T : CellComponent
+	public bool GetComponent<T>([MaybeNullWhen(false)] out T component) where T : CellComponent
 	{
-		throw new NotImplementedException();
+		component = default;
+
+		bool found = _components.TryGetValue(typeof(T), out var comp);
+
+		if (!found)
+			return false;
+
+		if (comp is T compAsT)
+			component = compAsT;
+
+		return true;
 	}
 
-	public T GetComponent<T>() where T : CellComponent
+	[MethodImpl(MethodImplOptions.AggressiveInlining)] // will this even inline?
+	public T? GetComponent<T>() where T : CellComponent
 	{
-		throw new NotImplementedException();
+		bool found = GetComponent<T>(out var component);
+		return component;
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool RemoveComponent(CellComponent component)
 	{
-		throw new NotImplementedException();
+		return RemoveComponent(component, true);
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool RemoveComponent<T>() where T : CellComponent
 	{
-		throw new NotImplementedException();
+		return RemoveComponent(typeof(T));
 	}
 
 	public bool RemoveComponent(Type componentType)
 	{
-		throw new NotImplementedException();
+		bool found = _components.TryGetValue(componentType, out var component);
+
+		if (!found)
+			return false;
+
+		return RemoveComponent(component, true);
+	}
+
+	private bool RemoveComponent(CellComponent component, bool unregisterEvents)
+	{
+		if (unregisterEvents)
+			RemoveRegisteredEventsFromComponent(component);
+
+		bool removed = _components.TryRemove(component.GetType());
+		component.Destroy();
+		return removed;
 	}
 
 	public void RemoveAllComponents()
 	{
-		throw new NotImplementedException();
+		foreach (var component in Components)
+		{
+			RemoveComponent(component, false);
+		}
+
+		_components.Clear();
+		_componentEvents.Clear();
 	}
 
 	public void Destroy()
 	{
-		throw new NotImplementedException();
+		RemoveAllComponents();
+	}
+
+	public SerializedData WriteObjectState()
+	{
+		var data = new SerializedData(this);
+
+		var components = new List<SerializedData>(_components.Count);
+
+		foreach (var component in Components)
+		{
+			components.Add(component.WriteObjectState());
+		}
+
+		data.AddField(NamespacedString.FromDefaultNamespace("components"), components);
+
+		return data;
+	}
+
+	public void ReadObjectState(SerializedData data)
+	{
+		if (data.GetField(
+			    NamespacedString.FromDefaultNamespace("components"),
+			    out List<SerializedData> dataList))
+		{
+			foreach (var element in dataList)
+			{
+				bool found = element.GetSerializedObject<CellComponent>(out var component);
+
+				if (found)
+					AddComponent(component);
+			}
+		}
 	}
 }
