@@ -1,8 +1,8 @@
-﻿using Hgm.Vanilla.Modding;
+﻿using Petal.Framework.Modding;
 
 namespace Example;
 
-public class ExampleMod : ForgeMod
+public class ExampleMod : PetalMod
 {
 	
 }

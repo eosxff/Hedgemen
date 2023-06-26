@@ -5,18 +5,16 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
-using Petal.Framework;
 using Petal.Framework.IO;
-using Petal.Framework.Modding;
 using Petal.Framework.Util.Logging;
 
-namespace Hgm.Vanilla.Modding;
+namespace Petal.Framework.Modding;
 
-public class ForgeModLoader : IModLoader<ForgeMod>
+public class PetalModLoader : IModLoader<PetalMod>
 {
-	private readonly Dictionary<NamespacedString, ForgeMod> _mods = new();
+	private readonly Dictionary<NamespacedString, PetalMod> _mods = new();
 
-	public IReadOnlyDictionary<NamespacedString, ForgeMod> Mods
+	public IReadOnlyDictionary<NamespacedString, PetalMod> Mods
 		=> _mods;
 
 	public ILogger Logger
@@ -24,7 +22,7 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 		get;
 	}
 
-	public ForgeModLoader(ILogger logger)
+	public PetalModLoader(ILogger logger)
 	{
 		ArgumentNullException.ThrowIfNull(logger);
 		Logger = logger;
@@ -45,7 +43,7 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 
 	public bool Start(ModLoaderSetupContext context)
 	{
-		var logger = Hedgemen.Instance.Logger;
+		var logger = PetalGame.Petal.Logger;
 		var modDirectoryQuery = new List<DirectoryInfo>();
 
 		if (!context.EmbedOnlyMode)
@@ -60,19 +58,19 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 		foreach (var mod in loadedMods)
 		{
 			_mods.Add(mod.Manifest.NamespacedID, mod);
-			Logger.Debug($"{mod.Manifest.Name} is now accessible from Forge.");
+			Logger.Debug($"{mod.Manifest.Name} is now accessible from {nameof(PetalModLoader)}");
 		}
 
 		return true;
 	}
 
-	public bool GetMod<T>(NamespacedString id, out T mod) where T : ForgeMod
+	public bool GetMod<T>(NamespacedString id, out T mod) where T : PetalMod
 	{
 		mod = default;
 
-		bool found = _mods.TryGetValue(id, out var forgeMod);
+		bool found = _mods.TryGetValue(id, out var petalMod);
 
-		if (found && forgeMod is T tMod)
+		if (found && petalMod is T tMod)
 		{
 			mod = tMod;
 		}
@@ -103,13 +101,13 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 		return directories;
 	}
 
-	private List<ForgeMod> LoadModsFromEmbedAndDirectory(ModLoaderSetupContext context, List<DirectoryInfo> directories)
+	private List<PetalMod> LoadModsFromEmbedAndDirectory(ModLoaderSetupContext context, List<DirectoryInfo> directories)
 	{
-		var list = new List<ForgeMod>(context.EmbeddedMods.Count + directories.Count);
+		var list = new List<PetalMod>(context.EmbeddedMods.Count + directories.Count);
 
 		foreach (var embeddedMod in context.EmbeddedMods)
 		{
-			if (embeddedMod is ForgeMod hedgemenMod)
+			if (embeddedMod is PetalMod hedgemenMod)
 			{
 				SetModManifestAndDirectory(hedgemenMod, hedgemenMod.GetEmbeddedManifest(), new DirectoryInfo("."));
 				list.Add(hedgemenMod);
@@ -135,7 +133,7 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 		return list;
 	}
 
-	private bool LoadModFromDirectory(ModLoaderSetupContext context, DirectoryInfo directory, out ForgeMod mod)
+	private bool LoadModFromDirectory(ModLoaderSetupContext context, DirectoryInfo directory, out PetalMod mod)
 	{
 		mod = null;
 
@@ -148,7 +146,7 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 		}
 
 		var manifestJson = manifestFile.ReadString(Encoding.UTF8);
-		var manifest = JsonSerializer.Deserialize<ForgeModManifest?>(manifestJson);
+		var manifest = JsonSerializer.Deserialize<PetalModManifest?>(manifestJson);
 
 		if (manifest is null)
 		{
@@ -158,7 +156,7 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 
 		if (string.IsNullOrEmpty(manifest.ModFileDll))
 		{
-			mod = new DefaultForgeMod();
+			mod = new DefaultPetalMod();
 		}
 
 		else
@@ -196,7 +194,7 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 				return false;
 			}
 
-			mod = (ForgeMod)Activator.CreateInstance(modMainType, true);
+			mod = (PetalMod)Activator.CreateInstance(modMainType, true);
 
 			if (mod is null)
 			{
@@ -210,7 +208,7 @@ public class ForgeModLoader : IModLoader<ForgeMod>
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private void SetModManifestAndDirectory(ForgeMod mod, ForgeModManifest manifest, DirectoryInfo directory)
+	private void SetModManifestAndDirectory(PetalMod mod, PetalModManifest manifest, DirectoryInfo directory)
 	{
 		mod.Manifest = manifest;
 		mod.Directory = directory;

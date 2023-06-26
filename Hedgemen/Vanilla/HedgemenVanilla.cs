@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using Hgm.Vanilla.Modding;
+using Petal.Framework.Modding;
 
 namespace Hgm.Vanilla;
 
-public class HedgemenVanilla : ForgeMod
+public class HedgemenVanilla : PetalMod
 {
-	public override ForgeModManifest GetEmbeddedManifest()
+	public override PetalModManifest GetEmbeddedManifest()
 	{
-		return new ForgeModManifest
+		return new PetalModManifest
 		{
 			SchemaVersion = 1,
 			NamespacedID = "hedgemen:mod",
@@ -18,15 +18,14 @@ public class HedgemenVanilla : ForgeMod
 			{
 				"eosxff"
 			},
-			Contact = new HedgemenModManifestContactInfo
+			Contact = new PetalModManifestContactInfo
 			{
 				Homepage = "https://github.com/eosxff/Hedgemen",
 				Source = "https://github.com/eosxff/Hedgemen"
 			},
-			Dependencies = new HedgemenModManifestDependenciesInfo
+			Dependencies = new PetalModManifestDependenciesInfo
 			{
 				Dlls = new List<string>(),
-				Hedgemen = Hedgemen.Version.ToString(),
 				IncompatibleMods = new List<string>(),
 				Mods = new List<string>()
 			},

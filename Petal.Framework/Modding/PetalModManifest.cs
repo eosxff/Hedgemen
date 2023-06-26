@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Petal.Framework;
 
-namespace Hgm.Vanilla.Modding;
+namespace Petal.Framework.Modding;
 
 [Serializable]
-public sealed class ForgeModManifest
+public sealed class PetalModManifest
 {
 	public static JsonSerializerOptions JsonDeserializeOptions
 		=> new()
@@ -22,126 +21,119 @@ public sealed class ForgeModManifest
 	public int SchemaVersion
 	{
 		get;
-		set;
+		init;
 	} = 1;
 
 	[JsonPropertyName("namespaced_id")]
 	public string NamespacedID
 	{
 		get;
-		set;
+		init;
 	} = NamespacedString.Default.FullName;
 
 	[JsonPropertyName("name")]
 	public string Name
 	{
 		get;
-		set;
+		init;
 	} = "Unnamed";
 
 	[JsonPropertyName("version")]
 	public string Version
 	{
 		get;
-		set;
+		init;
 	} = "0.0.1";
 
 	[JsonPropertyName("description")]
 	public string Description
 	{
 		get;
-		set;
+		init;
 	} = "I haven't made a description yet!";
 
 	[JsonPropertyName("authors")]
 	public IReadOnlyList<string> Authors
 	{
 		get;
-		set;
+		init;
 	} = new List<string>();
 
 	[JsonPropertyName("contact")]
-	public HedgemenModManifestContactInfo Contact
+	public PetalModManifestContactInfo Contact
 	{
 		get;
-		set;
+		init;
 	} = new();
 
 	[JsonPropertyName("depends")]
-	public HedgemenModManifestDependenciesInfo Dependencies
+	public PetalModManifestDependenciesInfo Dependencies
 	{
 		get;
-		set;
+		init;
 	} = new();
 
 	[JsonPropertyName("mod_file_dll")]
 	public string ModFileDll
 	{
 		get;
-		set;
+		init;
 	} = string.Empty;
 	
 	[JsonPropertyName("mod_main")]
 	public string ModMain
 	{
 		get;
-		set;
+		init;
 	} = string.Empty;
 
 	[JsonPropertyName("is_overhaul")]
 	public bool IsOverhaul
 	{
 		get;
-		set;
+		init;
 	} = false;
 }
 
 [Serializable]
-public sealed class HedgemenModManifestContactInfo
+public sealed class PetalModManifestContactInfo
 {
 	[JsonPropertyName("homepage")]
 	public string Homepage
 	{
 		get;
-		set;
+		init;
 	} = "https://github.com/eosxff/Hedgemen";
 
 	[JsonPropertyName("source")]
 	public string Source
 	{
 		get;
-		set;
+		init;
 	} = "https://github.com/eosxff/Hedgemen";
 }
 
 [Serializable]
-public sealed class HedgemenModManifestDependenciesInfo
+public sealed class PetalModManifestDependenciesInfo
 {
 	[JsonPropertyName("mods")]
 	public IReadOnlyList<string> Mods
 	{
 		get;
-		set;
+		init;
 	} = new List<string>();
 
 	[JsonPropertyName("incompatible_mods")]
 	public IReadOnlyList<string> IncompatibleMods
 	{
 		get;
-		set;
+		init;
 	} = new List<string>();
 
 	[JsonPropertyName("referenced_dlls")]
 	public IReadOnlyList<string> Dlls
 	{
 		get;
-		set;
+		init;
 	} = new List<string>();
-
-	[JsonPropertyName("hedgemen")]
-	public string Hedgemen
-	{
-		get;
-		set;
-	} = Hgm.Hedgemen.Version.ToString();
 }

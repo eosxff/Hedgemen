@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using Hgm.Components;
 using Hgm.Vanilla;
-using Hgm.Vanilla.Modding;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
@@ -49,7 +48,7 @@ public class Hedgemen : PetalGame
 		OnDebugChanged += DebugChangedCallback;
 	}
 
-	public ForgeModLoader Forge
+	public PetalModLoader Petal
 	{
 		get;
 		private set;
@@ -57,31 +56,31 @@ public class Hedgemen : PetalGame
 
 	protected override void Setup()
 	{
-		var context = Forge.Setup(new ModLoaderSetupArgs
+		var context = Petal.Setup(new ModLoaderSetupArgs
 		{
 			EmbedOnlyMode = IsEmbedOnlyMode()
 		});
 		
 		context.EmbeddedMods.Add(new HedgemenVanilla());
 		
-		Logger.Debug($"Starting {nameof(ForgeModLoader)}.");
+		Logger.Debug($"Starting {nameof(PetalModLoader)}.");
 
-		var logLevel = Forge.Start(context) ? LogLevel.Debug : LogLevel.Error;
+		var logLevel = Petal.Start(context) ? LogLevel.Debug : LogLevel.Error;
 		
 		Logger.Add(
 			logLevel == LogLevel.Debug ?
-				$"Successfully started {nameof(ForgeModLoader)}" :
-				$"Unsuccessfully started {nameof(ForgeModLoader)}.",
+				$"Successfully started {nameof(PetalModLoader)}" :
+				$"Unsuccessfully started {nameof(PetalModLoader)}.",
 			logLevel);
 		
-		Logger.Debug($"Can we access hedgemen:mod from Forge: " +
-		             $"{Forge.GetMod("hedgemen:mod", out HedgemenVanilla vanilla)}");
+		Logger.Debug($"Can we access hedgemen:mod from {nameof(PetalModLoader)}: " +
+		             $"{Petal.GetMod("hedgemen:mod", out HedgemenVanilla vanilla)}");
 		
-		Logger.Debug($"Can we access example:mod from Forge: " +
-		             $"{Forge.GetMod("example:mod", out ForgeMod example)}");
+		Logger.Debug($"Can we access example:mod from {nameof(PetalModLoader)}: " +
+		             $"{Petal.GetMod("example:mod", out PetalMod example)}");
 		
-		Logger.Debug($"Can we access no_code:mod from Forge: " +
-		             $"{Forge.GetMod("no_code:mod", out ForgeMod noCode)}");
+		Logger.Debug($"Can we access no_code:mod from {nameof(PetalModLoader)}: " +
+		             $"{Petal.GetMod("no_code:mod", out PetalMod noCode)}");
 	}
 
 	protected override void Initialize()
@@ -89,7 +88,7 @@ public class Hedgemen : PetalGame
 		base.Initialize();
 		Logger.LogLevel = LogLevel.Debug;
 
-		Forge = new ForgeModLoader(Logger);
+		Petal = new PetalModLoader(Logger);
 
 		Logger.Debug("I");
 		Logger.Warn("Love");
