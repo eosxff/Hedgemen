@@ -31,7 +31,8 @@ public sealed class SerializedData
 	public static SerializedData FromJson(string json, JsonSerializerOptions? options = null)
 	{
 		options ??= DefaultJsonOptions;
-		return JsonSerializer.Deserialize<SerializedData>(json, options);
+		//return JsonSerializer.Deserialize<SerializedData>(json, options);
+		return JsonSerializer.Deserialize(json, SerializedDataSourceGenerationContext.Default.SerializedData);
 	}
 
 	public SerializedData()
@@ -191,4 +192,11 @@ public sealed class SerializedData
 			new NamespacedString(NamespacedString.DefaultNamespace, "object_assembly_fullname"),
 			obj.GetType().Assembly.FullName);
 	}
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(SerializedData))]
+internal partial class SerializedDataSourceGenerationContext : JsonSerializerContext
+{
+	
 }

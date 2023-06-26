@@ -55,7 +55,10 @@ public sealed class Skin
 
 	public static Skin FromJson(string json, ContentRegistry? registry)
 	{
-		var skin = ReadFromJson<DataRecord>(json, DataRecord.JsonDeserializeOptions).Create();
+		//var skin = ReadFromJson<DataRecord>(json, DataRecord.JsonDeserializeOptions).Create();
+		var skin = JsonSerializer.Deserialize<DataRecord>(json, SkinDataRecordSourceGenerationContext.Default.DataRecord)
+			.Create();
+		
 		skin.ContentRegistry = registry;
 		skin.Refresh();
 
@@ -65,6 +68,7 @@ public sealed class Skin
 	[Serializable]
 	public struct DataRecord : IDataRecord<Skin>
 	{
+		[JsonIgnore]
 		public static JsonSerializerOptions JsonDeserializeOptions
 			=> new()
 			{
@@ -102,4 +106,11 @@ public sealed class Skin
 			ButtonDataInputTextureName = obj.Button.InputTexture.ContentIdentifier;
 		}
 	}
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(Skin.DataRecord))]
+internal partial class SkinDataRecordSourceGenerationContext : JsonSerializerContext
+{
+	
 }

@@ -24,7 +24,7 @@ public class Hedgemen : PetalGame
 
 	private bool IsEmbedOnlyMode()
 	{
-#if EMBEDONLYMODE
+#if EMBED_ONLY_MODE
 		return true;
 #else
 		return false;
@@ -73,14 +73,16 @@ public class Hedgemen : PetalGame
 				$"Unsuccessfully started {nameof(PetalModLoader)}.",
 			logLevel);
 		
-		Logger.Debug($"Can we access hedgemen:mod from {nameof(PetalModLoader)}: " +
+		Logger.Debug($"We can access hedgemen:mod from {nameof(PetalModLoader)}: " +
 		             $"{Petal.GetMod("hedgemen:mod", out HedgemenVanilla vanilla)}");
 		
-		Logger.Debug($"Can we access example:mod from {nameof(PetalModLoader)}: " +
+		Logger.Debug($"We can access example:mod from {nameof(PetalModLoader)}: " +
 		             $"{Petal.GetMod("example:mod", out PetalMod example)}");
 		
-		Logger.Debug($"Can we access no_code:mod from {nameof(PetalModLoader)}: " +
+		Logger.Debug($"We can access no_code:mod from {nameof(PetalModLoader)}: " +
 		             $"{Petal.GetMod("no_code:mod", out PetalMod noCode)}");
+		
+		
 	}
 
 	protected override void Initialize()
