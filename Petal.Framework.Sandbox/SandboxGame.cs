@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Hgm;
 using Hgm.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

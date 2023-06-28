@@ -58,11 +58,11 @@ public class Hedgemen : PetalGame
 	{
 		var context = Petal.Setup(new ModLoaderSetupArgs
 		{
-			EmbedOnlyMode = IsEmbedOnlyMode()
+			EmbedOnlyMode = IsEmbedOnlyMode(),
+			Game = this,
+			EmbeddedMods = new IMod[] { new HedgemenVanilla() }
 		});
-		
-		context.EmbeddedMods.Add(new HedgemenVanilla());
-		
+
 		Logger.Debug($"Starting {nameof(PetalModLoader)}.");
 
 		var logLevel = Petal.Start(context) ? LogLevel.Debug : LogLevel.Error;
@@ -81,8 +81,6 @@ public class Hedgemen : PetalGame
 		
 		Logger.Debug($"We can access no_code:mod from {nameof(PetalModLoader)}: " +
 		             $"{Petal.GetMod("no_code:mod", out PetalMod noCode)}");
-		
-		
 	}
 
 	protected override void Initialize()

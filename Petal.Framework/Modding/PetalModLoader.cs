@@ -30,12 +30,17 @@ public class PetalModLoader : IModLoader<PetalMod>
 
 	public ModLoaderSetupContext Setup(ModLoaderSetupArgs args)
 	{
+		string modsDirectory = args.ModsDirectoryName ?? "mods";
+		string manifestFileName = args.ManifestFileName ?? "manifest.json";
+		
 		var context = new ModLoaderSetupContext
 		{
-			EmbeddedMods = new List<IMod>(),
-			ModsDirectory = new DirectoryInfo("mods"),
-			ManifestFileName = "manifest.json",
-			EmbedOnlyMode = args.EmbedOnlyMode
+			EmbeddedMods = args.EmbeddedMods,
+			ModsDirectory = new DirectoryInfo(modsDirectory),
+			ManifestFileName = manifestFileName,
+			EmbedOnlyMode = args.EmbedOnlyMode,
+			Game = args.Game,
+			ModLoader = this
 		};
 
 		return context;
@@ -58,7 +63,27 @@ public class PetalModLoader : IModLoader<PetalMod>
 		foreach (var mod in loadedMods)
 		{
 			_mods.Add(mod.Manifest.NamespacedID, mod);
-			Logger.Debug($"{mod.Manifest.Name} is now accessible from {nameof(PetalModLoader)}");
+			mod.OnLoadedToPetalModLoader();
+		}
+
+		logger.Debug($"Loaded {_mods.Count} mods.");
+		logger.Debug($"Initializing {_mods.Count} mods.");
+
+		ICollection<PetalMod> allMods = _mods.Values;
+
+		foreach (var mod in allMods)
+		{
+			mod.PrePetalModLoaderModSetupPhase(context);
+		}
+		
+		foreach (var mod in allMods)
+		{
+			mod.Setup(context);
+		}
+		
+		foreach (var mod in allMods)
+		{
+			mod.PostPetalModLoaderSetupPhase(context);
 		}
 
 		return true;

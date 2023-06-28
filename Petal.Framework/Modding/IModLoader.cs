@@ -17,13 +17,25 @@ public sealed class ModLoaderSetupContext
 		init;
 	}
 	
-	public required List<IMod> EmbeddedMods
+	public required IReadOnlyList<IMod> EmbeddedMods
 	{
 		get;
 		init;
 	}
 
 	public required bool EmbedOnlyMode
+	{
+		get;
+		init;
+	}
+
+	public required PetalGame Game
+	{
+		get;
+		init;
+	}
+
+	public required PetalModLoader ModLoader
 	{
 		get;
 		init;
@@ -32,7 +44,31 @@ public sealed class ModLoaderSetupContext
 
 public struct ModLoaderSetupArgs
 {
+	public required PetalGame Game
+	{
+		get;
+		init;
+	}
+
+	public required IReadOnlyList<IMod> EmbeddedMods
+	{
+		get;
+		init;
+	}
+
 	public required bool EmbedOnlyMode
+	{
+		get;
+		init;
+	}
+
+	public string? ModsDirectoryName
+	{
+		get;
+		init;
+	}
+
+	public string? ManifestFileName
 	{
 		get;
 		init;

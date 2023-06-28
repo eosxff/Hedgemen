@@ -28,10 +28,15 @@ public sealed class SerializedData
 		private set;
 	} = new();
 
-	public static SerializedData FromJson(string json, JsonSerializerOptions? options = null)
+	[RequiresUnreferencedCode("Use FromJson(string) instead if targeting ahead of time compilation.")]
+	public static SerializedData FromJson(string json, JsonSerializerOptions? options)
 	{
 		options ??= DefaultJsonOptions;
-		//return JsonSerializer.Deserialize<SerializedData>(json, options);
+		return JsonSerializer.Deserialize<SerializedData>(json, options);
+	}
+
+	public static SerializedData FromJson(string json)
+	{
 		return JsonSerializer.Deserialize(json, SerializedDataSourceGenerationContext.Default.SerializedData);
 	}
 

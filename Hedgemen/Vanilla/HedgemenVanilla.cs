@@ -1,10 +1,48 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Modding;
+using Petal.Framework.Scenery.Nodes;
 
 namespace Hgm.Vanilla;
 
 public class HedgemenVanilla : PetalMod
 {
+	private static Hedgemen Game
+		=> Hedgemen.Instance;
+
+	protected override void OnLoadedToPetalModLoader()
+	{
+		Game.Logger.Debug($"Loaded {nameof(HedgemenVanilla)}");
+	}
+
+	protected override void PrePetalModLoaderModSetupPhase(ModLoaderSetupContext context)
+	{
+		
+	}
+
+	protected override void Setup(ModLoaderSetupContext context)
+	{
+		Game.Logger.Debug($"Registering content for vanilla!");
+
+		Game.ContentRegistry.Register(
+			"hedgemen:main_menu_font", Game.Assets.LoadAsset<SpriteFont>("pixelade_regular_32"));
+	}
+
+	protected override void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)
+	{
+		var scene = Game.Scene;
+
+		scene?.Root.Add(new Text
+		{
+			Font = Game.ContentRegistry.Get<SpriteFont>("hedgemen:main_menu_font"),
+			Bounds = new Rectangle(50, 50, 64, 24),
+			Color = Color.White,
+			Message = "Hedgemen!",
+			Scale = 1.0f
+		});
+	}
+
 	public override PetalModManifest GetEmbeddedManifest()
 	{
 		return new PetalModManifest
@@ -35,5 +73,4 @@ public class HedgemenVanilla : PetalMod
 			IsOverhaul = false
 		};
 	}
-	
 }

@@ -110,7 +110,7 @@ public struct RenderStringData
 	{
 		get;
 		init;
-	} = 1.0f;
+	} = 0.0f;
 
 	public Vector2 Origin
 	{
