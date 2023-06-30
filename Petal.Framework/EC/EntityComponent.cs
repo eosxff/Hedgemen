@@ -85,12 +85,12 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 		_registeredEvents.Add(typeof(TEvent), args => handle((TEvent)args));
 	}
 
-	public virtual SerializedData WriteObjectState()
+	public virtual DataStorage WriteStorage()
 	{
-		return new SerializedData(this);
+		return new DataStorage(this);
 	}
 
-	public virtual void ReadObjectState(SerializedData data)
+	public virtual void ReadStorage(DataStorage storage)
 	{
 
 	}

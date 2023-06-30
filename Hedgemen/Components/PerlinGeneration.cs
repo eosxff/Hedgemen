@@ -4,7 +4,7 @@ using Petal.Framework.Persistence;
 namespace Hgm.Components;
 
 /// <summary>
-/// Dummy
+/// Dummy.
 /// </summary>
 public sealed class PerlinGeneration : CellComponent
 {
@@ -24,16 +24,16 @@ public sealed class PerlinGeneration : CellComponent
 		Height = e.Height;
 	}
 
-	public override SerializedData WriteObjectState()
+	public override DataStorage WriteStorage()
 	{
-		var data = base.WriteObjectState();
-		data.AddField("hedgemen:perlin_height", Height);
+		var data = base.WriteStorage();
+		data.SyncDataAdd("hgm:perlin_height", Height);
 
 		return data;
 	}
 
-	public override void ReadObjectState(SerializedData data)
+	public override void ReadStorage(DataStorage storage)
 	{
-		Height = data.GetField("hedgemen:perlin_height", 0.0f);
+		Height = storage.SyncDataGet("hgm:perlin_height", 0.0f);
 	}
 }

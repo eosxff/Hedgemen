@@ -181,31 +181,31 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		RemoveAllComponents();
 	}
 
-	public SerializedData WriteObjectState()
+	public DataStorage WriteStorage()
 	{
-		var data = new SerializedData(this);
+		var data = new DataStorage(this);
 
-		var components = new List<SerializedData>(_components.Count);
+		var components = new List<DataStorage>(_components.Count);
 
 		foreach (var component in Components)
 		{
-			components.Add(component.WriteObjectState());
+			components.Add(component.WriteStorage());
 		}
 
-		data.AddField(NamespacedString.FromDefaultNamespace("components"), components);
+		data.SyncDataAdd(NamespacedString.FromDefaultNamespace("components"), components);
 
 		return data;
 	}
 
-	public void ReadObjectState(SerializedData data)
+	public void ReadStorage(DataStorage storage)
 	{
-		if (data.GetField(
+		if (storage.SyncDataGet(
 			    NamespacedString.FromDefaultNamespace("components"),
-			    out List<SerializedData> dataList))
+			    out List<DataStorage> dataList))
 		{
 			foreach (var element in dataList)
 			{
-				bool found = element.GetSerializedObject<EntityComponent>(out var component);
+				bool found = element.SyncDataGet<EntityComponent>(out var component);
 
 				if (found)
 					AddComponent(component);

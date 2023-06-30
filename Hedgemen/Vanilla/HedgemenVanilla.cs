@@ -26,7 +26,7 @@ public class HedgemenVanilla : PetalMod
 		Game.Logger.Debug($"Registering content for vanilla!");
 
 		Game.ContentRegistry.Register(
-			"hedgemen:main_menu_font", Game.Assets.LoadAsset<SpriteFont>("pixelade_regular_32"));
+			"hgm:main_menu_font", Game.Assets.LoadAsset<SpriteFont>("pixelade_regular_32"));
 	}
 
 	protected override void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)
@@ -35,7 +35,7 @@ public class HedgemenVanilla : PetalMod
 
 		scene?.Root.Add(new Text
 		{
-			Font = Game.ContentRegistry.Get<SpriteFont>("hedgemen:main_menu_font"),
+			Font = Game.ContentRegistry.Get<SpriteFont>("hgm:main_menu_font"),
 			Bounds = new Rectangle(50, 50, 64, 24),
 			Color = Color.White,
 			Message = "Hedgemen!",
@@ -48,7 +48,7 @@ public class HedgemenVanilla : PetalMod
 		return new PetalModManifest
 		{
 			SchemaVersion = 1,
-			NamespacedID = "hedgemen:mod",
+			NamespacedID = "hgm:mod",
 			Name = "Hedgemen",
 			Version = Hedgemen.Version.ToString(),
 			Description = "Open world roguelike sidescroller. It's not even a game yet lol.",

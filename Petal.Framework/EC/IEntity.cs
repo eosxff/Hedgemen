@@ -6,7 +6,7 @@ using Petal.Framework.Persistence;
 
 namespace Petal.Framework.EC;
 
-public interface IEntity<TComponent, in TEvent> : ISerializableObject
+public interface IEntity<TComponent, in TEvent> : IDataStorageHandler
 	where TEvent : IEvent
 	where TComponent : IComponent<TEvent>
 {

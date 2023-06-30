@@ -1,5 +1,5 @@
 ﻿{
-  "button_data_normal_texture_name": "hedgemen:ui/button_normal_texture",
-  "button_data_hover_texture_name": "hedgemen:ui/button_hover_texture",
-  "button_data_input_texture_name": "hedgemen:ui/button_input_texture"
+  "button_data_normal_texture_name": "hgm:ui/button_normal_texture",
+  "button_data_hover_texture_name": "hgm:ui/button_hover_texture",
+  "button_data_input_texture_name": "hgm:ui/button_input_texture"
 }

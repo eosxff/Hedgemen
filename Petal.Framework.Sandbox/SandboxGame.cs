@@ -203,8 +203,8 @@ public class SandboxGame : PetalGame
 			});
 		}
 
-		var data = entity.WriteObjectState();
-		var entityClone = data.GetSerializedObject<Entity>();
+		var data = entity.WriteStorage();
+		var entityClone = data.SyncDataGet<Entity>();
 
 		Logger.Debug($"Test entity responds to {nameof(ChangeStatEvent)}: " +
 		             $"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");

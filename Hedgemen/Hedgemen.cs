@@ -73,8 +73,8 @@ public class Hedgemen : PetalGame
 				$"Unsuccessfully started {nameof(PetalModLoader)}.",
 			logLevel);
 		
-		Logger.Debug($"We can access hedgemen:mod from {nameof(PetalModLoader)}: " +
-		             $"{Petal.GetMod("hedgemen:mod", out HedgemenVanilla vanilla)}");
+		Logger.Debug($"We can access hgm:mod from {nameof(PetalModLoader)}: " +
+		             $"{Petal.GetMod("hgm:mod", out HedgemenVanilla vanilla)}");
 		
 		Logger.Debug($"We can access example:mod from {nameof(PetalModLoader)}: " +
 		             $"{Petal.GetMod("example:mod", out PetalMod example)}");
@@ -96,15 +96,15 @@ public class Hedgemen : PetalGame
 		Logger.Critical("Colours");
 		
 		ContentRegistry.Register(
-			"hedgemen:ui/skin/button_hover_texture",
+			"hgm:ui/skin/button_hover_texture",
 			Assets.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
 		
 		ContentRegistry.Register(
-			"hedgemen:ui/skin/button_normal_texture",
+			"hgm:ui/skin/button_normal_texture",
 			Assets.LoadAsset<Texture2D>(new FileInfo("button_normal.png").Open(FileMode.Open)));
 		
 		ContentRegistry.Register(
-			"hedgemen:ui/skin/button_input_texture",
+			"hgm:ui/skin/button_input_texture",
 			Assets.LoadAsset<Texture2D>(new FileInfo("button_input.png").Open(FileMode.Open)));
 
 		var scene = new Scene(

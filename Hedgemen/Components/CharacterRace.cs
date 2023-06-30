@@ -14,16 +14,16 @@ public class CharacterRace : EntityComponent
 		set;
 	} = "human";
 
-	public override SerializedData WriteObjectState()
+	public override DataStorage WriteStorage()
 	{
-		var record = base.WriteObjectState();
-		record.AddField("hedgemen:race_name", RaceName);
+		var record = base.WriteStorage();
+		record.SyncDataAdd("hgm:race_name", RaceName);
 
 		return record;
 	}
 
-	public override void ReadObjectState(SerializedData data)
+	public override void ReadStorage(DataStorage storage)
 	{
-		RaceName = data.GetField<string>("hedgemen:race_name", "human");
+		RaceName = storage.SyncDataGet<string>("hgm:race_name", "human");
 	}
 }

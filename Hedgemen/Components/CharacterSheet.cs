@@ -57,26 +57,26 @@ public class CharacterSheet : EntityComponent
 			Strength += args.ChangeAmount;
 	}
 
-	public override SerializedData WriteObjectState()
+	public override DataStorage WriteStorage()
 	{
-		var data = base.WriteObjectState();
-		data.AddField("hedgemen:strength", Strength);
-		data.AddField("hedgemen:dexterity", Dexterity);
-		data.AddField("hedgemen:constitution", Constitution);
-		data.AddField("hedgemen:intelligence", Intelligence);
-		data.AddField("hedgemen:wisdom", Wisdom);
-		data.AddField("hedgemen:charisma", Charisma);
+		var data = base.WriteStorage();
+		data.SyncDataAdd("hgm:strength", Strength);
+		data.SyncDataAdd("hgm:dexterity", Dexterity);
+		data.SyncDataAdd("hgm:constitution", Constitution);
+		data.SyncDataAdd("hgm:intelligence", Intelligence);
+		data.SyncDataAdd("hgm:wisdom", Wisdom);
+		data.SyncDataAdd("hgm:charisma", Charisma);
 
 		return data;
 	}
 
-	public override void ReadObjectState(SerializedData data)
+	public override void ReadStorage(DataStorage storage)
 	{
-		Strength = data.GetField<int>("hedgemen:strength");
-		Dexterity = data.GetField<int>("hedgemen:dexterity");
-		Constitution = data.GetField<int>("hedgemen:constitution");
-		Intelligence = data.GetField<int>("hedgemen:intelligence");
-		Wisdom = data.GetField<int>("hedgemen:wisdom");
-		Charisma = data.GetField<int>("hedgemen:charisma");
+		Strength = storage.SyncDataGet<int>("hgm:strength");
+		Dexterity = storage.SyncDataGet<int>("hgm:dexterity");
+		Constitution = storage.SyncDataGet<int>("hgm:constitution");
+		Intelligence = storage.SyncDataGet<int>("hgm:intelligence");
+		Wisdom = storage.SyncDataGet<int>("hgm:wisdom");
+		Charisma = storage.SyncDataGet<int>("hgm:charisma");
 	}
 }
