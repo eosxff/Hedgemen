@@ -27,13 +27,13 @@ public sealed class PerlinGeneration : CellComponent
 	public override DataStorage WriteStorage()
 	{
 		var data = base.WriteStorage();
-		data.SyncDataAdd("hgm:perlin_height", Height);
+		data.WriteData("hgm:perlin_height", Height);
 
 		return data;
 	}
 
 	public override void ReadStorage(DataStorage storage)
 	{
-		Height = storage.SyncDataGet("hgm:perlin_height", 0.0f);
+		Height = storage.ReadData("hgm:perlin_height", 0.0f);
 	}
 }

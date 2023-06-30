@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Petal.Framework.Util;
@@ -22,16 +23,18 @@ public sealed class DataStorage
 			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
 		};
 
+	[JsonInclude]
 	public string? TypeFullName
 	{
 		get;
-		private set;
+		set;
 	}
 
+	[JsonInclude]
 	public string? AssemblyFullName
 	{
 		get;
-		private set;
+		set;
 	}
 
 	public bool IsStorageHandler
@@ -62,16 +65,16 @@ public sealed class DataStorage
 
 	public DataStorage(object? obj)
 	{
-		SyncSetSelf(obj);
+		SetSelfData(obj);
 	}
 
-	public T? SyncDataGet<T>(NamespacedString name)
+	public T? ReadData<T>(NamespacedString name)
 	{
-		bool found = SyncDataGet<T>(name, out var field);
+		bool found = ReadData<T>(name, out var field);
 		return field;
 	}
 
-	public bool SyncDataGet<T>(NamespacedString name, [MaybeNullWhen(false)] out T field)
+	public bool ReadData<T>(NamespacedString name, [MaybeNullWhen(false)] out T field)
 	{
 		field = default;
 		var genericType = typeof(T);
@@ -85,7 +88,7 @@ public sealed class DataStorage
 		return false;
 	}
 
-	public T? SyncDataGet<T>() where T : IDataStorageHandler
+	public T? ReadData<T>() where T : IDataStorageHandler
 	{
 		if (!IsStorageHandler)
 		{
@@ -97,7 +100,7 @@ public sealed class DataStorage
 		return field;
 	}
 
-	public bool SyncDataGet<T>([MaybeNullWhen(false)] out T field) where T : IDataStorageHandler
+	public bool ReadData<T>([MaybeNullWhen(false)] out T field) where T : IDataStorageHandler
 	{
 		field = default;
 		return GetStorageHandler(this, out field);
@@ -124,7 +127,7 @@ public sealed class DataStorage
 		if (TypeFullName is null || AssemblyFullName is null)
 			return false;
 		
-		if(Assemblies.ContainsKey(AssemblyFullName))
+		if(!Assemblies.ContainsKey(AssemblyFullName))
 			RepopulateAssemblies();
 
 		bool found = Assemblies.TryGetValue(AssemblyFullName, out var assembly);
@@ -161,21 +164,21 @@ public sealed class DataStorage
 		return field;
 	}
 
-	public T SyncDataGet<T>(NamespacedString name, T defaultValue)
+	public T ReadData<T>(NamespacedString name, T defaultValue)
 	{
-		return SyncDataGet<T>(name, out var field) ? field : defaultValue;
+		return ReadData<T>(name, out var field) ? field : defaultValue;
 	}
 
-	public bool SyncDataGet<T>(NamespacedString name, [MaybeNullWhen(false)] out T field, T defaultValue)
+	public bool ReadData<T>(NamespacedString name, [MaybeNullWhen(false)] out T field, T defaultValue)
 	{
-		if (SyncDataGet(name, out field))
+		if (ReadData(name, out field))
 			return true;
 
 		field = defaultValue;
 		return false;
 	}
 
-	public void SyncDataAdd(NamespacedString name, object field)
+	public void WriteData(NamespacedString name, object field)
 	{
 		if (field is IDataStorageHandler serializableObject)
 		{
@@ -195,7 +198,7 @@ public sealed class DataStorage
 		Fields.TryAdd(name, fieldJsonElement);
 	}
 
-	public void SyncDataReplace(NamespacedString name, object field)
+	public void ReplaceData(NamespacedString name, object field)
 	{
 		if (!Fields.ContainsKey(name))
 			return;
@@ -204,17 +207,19 @@ public sealed class DataStorage
 		Fields.ChangeValue(name, fieldJsonElement);
 	}
 
-	public void SyncSetSelf(object? obj)
+	public void SetSelfData(object? obj)
 	{
 		if (obj is null)
 			return;
-		
-		SyncDataAdd(
-			new NamespacedString(NamespacedString.DefaultNamespace, "object_type_fullname"),
-			obj.GetType().FullName);
-		SyncDataAdd(
-			new NamespacedString(NamespacedString.DefaultNamespace, "object_assembly_fullname"),
-			obj.GetType().Assembly.FullName);
+
+		string? typeFullName = obj.GetType().FullName;
+		string? assemblyFullName = obj.GetType().Assembly.FullName;
+
+		if (typeFullName is null || assemblyFullName is null)
+			return;
+
+		TypeFullName = typeFullName;
+		AssemblyFullName = assemblyFullName;
 	}
 }
 

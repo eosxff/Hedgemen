@@ -75,7 +75,7 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 
 	}
 
-	public virtual void RegisterEvents() // todo make protected/internal
+	protected virtual void RegisterEvents()
 	{
 
 	}

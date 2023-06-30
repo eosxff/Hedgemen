@@ -204,7 +204,7 @@ public class SandboxGame : PetalGame
 		}
 
 		var data = entity.WriteStorage();
-		var entityClone = data.SyncDataGet<Entity>();
+		var entityClone = data.ReadData<Entity>();
 
 		Logger.Debug($"Test entity responds to {nameof(ChangeStatEvent)}: " +
 		             $"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");

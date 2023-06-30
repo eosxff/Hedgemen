@@ -46,7 +46,7 @@ public class CharacterSheet : EntityComponent
 
 	}
 
-	public override void RegisterEvents()
+	protected override void RegisterEvents()
 	{
 		RegisterEvent<ChangeStatEvent>(ChangeStat);
 	}
@@ -60,23 +60,23 @@ public class CharacterSheet : EntityComponent
 	public override DataStorage WriteStorage()
 	{
 		var data = base.WriteStorage();
-		data.SyncDataAdd("hgm:strength", Strength);
-		data.SyncDataAdd("hgm:dexterity", Dexterity);
-		data.SyncDataAdd("hgm:constitution", Constitution);
-		data.SyncDataAdd("hgm:intelligence", Intelligence);
-		data.SyncDataAdd("hgm:wisdom", Wisdom);
-		data.SyncDataAdd("hgm:charisma", Charisma);
+		data.WriteData("hgm:strength", Strength);
+		data.WriteData("hgm:dexterity", Dexterity);
+		data.WriteData("hgm:constitution", Constitution);
+		data.WriteData("hgm:intelligence", Intelligence);
+		data.WriteData("hgm:wisdom", Wisdom);
+		data.WriteData("hgm:charisma", Charisma);
 
 		return data;
 	}
 
 	public override void ReadStorage(DataStorage storage)
 	{
-		Strength = storage.SyncDataGet<int>("hgm:strength");
-		Dexterity = storage.SyncDataGet<int>("hgm:dexterity");
-		Constitution = storage.SyncDataGet<int>("hgm:constitution");
-		Intelligence = storage.SyncDataGet<int>("hgm:intelligence");
-		Wisdom = storage.SyncDataGet<int>("hgm:wisdom");
-		Charisma = storage.SyncDataGet<int>("hgm:charisma");
+		Strength = storage.ReadData<int>("hgm:strength");
+		Dexterity = storage.ReadData<int>("hgm:dexterity");
+		Constitution = storage.ReadData<int>("hgm:constitution");
+		Intelligence = storage.ReadData<int>("hgm:intelligence");
+		Wisdom = storage.ReadData<int>("hgm:wisdom");
+		Charisma = storage.ReadData<int>("hgm:charisma");
 	}
 }

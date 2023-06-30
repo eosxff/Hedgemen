@@ -192,20 +192,20 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 			components.Add(component.WriteStorage());
 		}
 
-		data.SyncDataAdd(NamespacedString.FromDefaultNamespace("components"), components);
+		data.WriteData(NamespacedString.FromDefaultNamespace("components"), components);
 
 		return data;
 	}
 
 	public void ReadStorage(DataStorage storage)
 	{
-		if (storage.SyncDataGet(
+		if (storage.ReadData(
 			    NamespacedString.FromDefaultNamespace("components"),
 			    out List<DataStorage> dataList))
 		{
 			foreach (var element in dataList)
 			{
-				bool found = element.SyncDataGet<EntityComponent>(out var component);
+				bool found = element.ReadData<EntityComponent>(out var component);
 
 				if (found)
 					AddComponent(component);
