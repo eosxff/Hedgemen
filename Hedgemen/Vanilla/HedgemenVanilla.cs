@@ -1,9 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
 using Hgm.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.EC;
+using Petal.Framework.IO;
 using Petal.Framework.Modding;
+using Petal.Framework.Persistence;
 using Petal.Framework.Scenery.Nodes;
 
 namespace Hgm.Vanilla;
@@ -37,7 +43,7 @@ public class HedgemenVanilla : PetalMod
 	{
 		var logger = Game.Logger;
 		
-		logger.Debug($"Just testing some garbage.");
+		/*logger.Debug($"Just testing some garbage.");
 		
 		var entity = new Entity();
 		entity.AddComponent(new CharacterSheet());
@@ -99,7 +105,28 @@ public class HedgemenVanilla : PetalMod
 		logger.Error($"Testing if error applies in {(Game.IsDebug ? "Debug" : logger.LogLevel.ToString())}");
 		logger.Critical($"Testing if critical applies in {(Game.IsDebug ? "Debug" : logger.LogLevel.ToString())}");
 
-		entity.RemoveComponent<CharacterSheet>();
+		entity.RemoveComponent<CharacterSheet>();*/
+		
+		var entity = new Entity();
+		entity.AddComponent(new CharacterSheet());
+		entity.AddComponent(new CharacterRace
+		{
+			RaceName = "high elf"
+		});
+
+		var file = new FileInfo("sentient_apple_pie.json");
+		var entityManifestJson = file.ReadString(Encoding.UTF8);
+		var entityManifest = EntityManifest.FromJson(entityManifestJson);
+
+		if (entityManifest is not null)
+		{
+			logger.Debug($"Entity manifest component count: {entityManifest.Components.Count}");
+			logger.Debug($"Entity component: {entityManifest.Components["hgm:character_sheet"].ReadData<int>("hgm:strength")}.");
+		}
+		else
+		{
+			logger.Warn($"File '{file.FullName}' failed to create valid {nameof(EntityManifest)}.");
+		}
 	}
 
 	protected override void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)
@@ -136,7 +163,7 @@ public class HedgemenVanilla : PetalMod
 			},
 			Dependencies = new PetalModManifestDependenciesInfo
 			{
-				Dlls = new List<string>(),
+				ReferencedDlls = new List<string>(),
 				IncompatibleMods = new List<string>(),
 				Mods = new List<string>()
 			},

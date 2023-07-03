@@ -131,9 +131,15 @@ public sealed class PetalModManifestDependenciesInfo
 	} = new List<string>();
 
 	[JsonPropertyName("referenced_dlls")]
-	public IReadOnlyList<string> Dlls
+	public IReadOnlyList<string> ReferencedDlls
 	{
 		get;
 		init;
 	} = new List<string>();
+}
+
+[JsonSerializable(typeof(PetalModManifest))]
+internal partial class PetalModManifestJsonSourceGeneration : JsonSerializerContext
+{
+	
 }

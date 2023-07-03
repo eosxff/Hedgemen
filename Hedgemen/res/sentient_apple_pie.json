@@ -1,0 +1,8 @@
+{
+    "content_id": "hgm:sentient_apple_pie",
+    "components": {
+        "hgm:character_sheet": {
+            "hgm:strength": 9000
+        }
+    }
+}

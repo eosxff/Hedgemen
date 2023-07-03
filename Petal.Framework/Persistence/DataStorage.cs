@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.Remoting;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Petal.Framework.Util;
@@ -56,7 +55,7 @@ public sealed class DataStorage
 
 	public static DataStorage FromJson(string json)
 	{
-		return JsonSerializer.Deserialize(json, DataStorageSourceGenerationContext.Default.DataStorage);
+		return JsonSerializer.Deserialize(json, DataStorageJsc.Default.DataStorage);
 	}
 
 	public DataStorage()
@@ -225,7 +224,7 @@ public sealed class DataStorage
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(DataStorage))]
-internal partial class DataStorageSourceGenerationContext : JsonSerializerContext
+internal partial class DataStorageJsc : JsonSerializerContext
 {
 	
 }

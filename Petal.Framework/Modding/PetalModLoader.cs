@@ -196,7 +196,7 @@ public class PetalModLoader : IModLoader<PetalMod>
 
 			var assembly = Assembly.LoadFile(dllFile.FullName);
 
-			foreach (string dependencyFileName in manifest.Dependencies.Dlls)
+			foreach (string dependencyFileName in manifest.Dependencies.ReferencedDlls)
 			{
 				var dllDependencyFile = directory.FindFile(dependencyFileName);
 
