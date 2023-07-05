@@ -16,7 +16,7 @@ public class EntityManifest
 		return jsonData.HasValue ? jsonData.Value.Create() : null;
 	}
 	
-	public NamespacedString ContentIdentifier
+	public NamespacedString ContentID
 	{
 		get;
 		set;
@@ -32,7 +32,7 @@ public class EntityManifest
 	public struct JsonData : IDataRecord<EntityManifest>
 	{
 		[JsonPropertyName("content_id"), JsonInclude]
-		public string ContentIdentifier
+		public string ContentID
 		{
 			get;
 			set;
@@ -59,7 +59,7 @@ public class EntityManifest
 			
 			var manifest = new EntityManifest
 			{
-				ContentIdentifier = new NamespacedString(ContentIdentifier),
+				ContentID = new NamespacedString(ContentID),
 				Components = dictionary
 			};
 			
@@ -69,7 +69,7 @@ public class EntityManifest
 		public void Read(EntityManifest obj)
 		{
 			Components = new Dictionary<string, JsonElement>(obj.Components.Count);
-			ContentIdentifier = obj.ContentIdentifier.FullName;
+			ContentID = obj.ContentID.FullName;
 
 			foreach (var component in obj.Components)
 			{

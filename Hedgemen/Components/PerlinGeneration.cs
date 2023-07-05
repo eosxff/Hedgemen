@@ -8,13 +8,15 @@ namespace Hgm.Components;
 /// </summary>
 public sealed class PerlinGeneration : CellComponent
 {
+	private float _height = 0.0f;
+	
 	public float Height
 	{
-		get;
-		set;
-	} = 0.0f;
+		get => _height;
+		set => _height = value;
+	}
 
-	public override void RegisterEvents()
+	protected override void RegisterEvents()
 	{
 		RegisterEvent<SetHeightEvent>(SetHeight);
 	}
@@ -34,6 +36,6 @@ public sealed class PerlinGeneration : CellComponent
 
 	public override void ReadStorage(DataStorage storage)
 	{
-		Height = storage.ReadData("hgm:perlin_height", 0.0f);
+		storage.ReadData("hgm:perlin_height", out _height, 0.0f);
 	}
 }

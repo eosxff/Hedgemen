@@ -2,4 +2,4 @@
 **/bin/
 **/obj/
 **/build/
-**.sln.DotSettings.user
+**.sln.DotSettings**

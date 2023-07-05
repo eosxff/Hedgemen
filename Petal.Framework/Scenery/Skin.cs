@@ -101,9 +101,9 @@ public sealed class Skin
 
 		public void Read(Skin obj)
 		{
-			ButtonDataNormalTextureName = obj.Button.NormalTexture.ContentIdentifier;
-			ButtonDataHoverTextureName = obj.Button.HoverTexture.ContentIdentifier;
-			ButtonDataInputTextureName = obj.Button.InputTexture.ContentIdentifier;
+			ButtonDataNormalTextureName = obj.Button.NormalTexture.ContentID;
+			ButtonDataHoverTextureName = obj.Button.HoverTexture.ContentID;
+			ButtonDataInputTextureName = obj.Button.InputTexture.ContentID;
 		}
 	}
 }

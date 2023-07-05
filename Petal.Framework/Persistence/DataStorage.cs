@@ -22,14 +22,14 @@ public sealed class DataStorage
 			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
 		};
 
-	[JsonInclude]
+	[JsonPropertyName("type_full_name"), JsonInclude]
 	public string? TypeFullName
 	{
 		get;
 		set;
 	}
 
-	[JsonInclude]
+	[JsonPropertyName("assembly_full_name"), JsonInclude]
 	public string? AssemblyFullName
 	{
 		get;
@@ -168,7 +168,7 @@ public sealed class DataStorage
 		return ReadData<T>(name, out var field) ? field : defaultValue;
 	}
 
-	public bool ReadData<T>(NamespacedString name, [MaybeNullWhen(false)] out T field, T defaultValue)
+	public bool ReadData<T>(NamespacedString name, out T field, T defaultValue)
 	{
 		if (ReadData(name, out field))
 			return true;

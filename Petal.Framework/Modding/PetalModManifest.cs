@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Petal.Framework.Persistence;
 
 namespace Petal.Framework.Modding;
 
@@ -103,14 +104,14 @@ public sealed class PetalModManifestContactInfo
 	{
 		get;
 		init;
-	} = "https://github.com/eosxff/Hedgemen";
+	} = PetalModLoader.PetalRepositoryLink;
 
 	[JsonPropertyName("source")]
 	public string Source
 	{
 		get;
 		init;
-	} = "https://github.com/eosxff/Hedgemen";
+	} = PetalModLoader.PetalRepositoryLink;
 }
 
 [Serializable]

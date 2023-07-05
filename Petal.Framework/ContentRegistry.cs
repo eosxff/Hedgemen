@@ -33,7 +33,6 @@ public class ContentRegistry
 	}
 
 	public event EventHandler<ContentRegisteredArgs> OnContentRegistered;
-	public event EventHandler<ContentRegisteredArgs> OnContentRegisteredAsync;
 	public event EventHandler<ContentReplacedArgs> OnContentReplaced;
 
 	private readonly Dictionary<NamespacedString, ContentValue> _registry = new();
@@ -42,7 +41,7 @@ public class ContentRegistry
 	{
 		var content = new ContentValue
 		{
-			ContentIdentifier = identifier,
+			ContentID = identifier,
 			Item = item
 		};
 
@@ -63,7 +62,7 @@ public class ContentRegistry
 	{
 		var content = await Task.Run(() => Register(identifier, item));
 
-		OnContentRegisteredAsync?.Invoke(this, new ContentRegisteredArgs
+		OnContentRegistered?.Invoke(this, new ContentRegisteredArgs
 		{
 			RegisteredContent = content
 		});
@@ -81,7 +80,7 @@ public class ContentRegistry
 
 		return new ContentValue
 		{
-			ContentIdentifier = NamespacedString.Default,
+			ContentID = NamespacedString.Default,
 			Item = null
 		};
 	}
@@ -107,20 +106,20 @@ public class ContentRegistry
 			if (!_registry.ContainsKey(identifier))
 				return false;
 
-			var replacedRegister = _registry[identifier];
+			var replacedContent = _registry[identifier];
 
-			var register = new ContentValue
+			var content = new ContentValue
 			{
-				ContentIdentifier = identifier,
+				ContentID = identifier,
 				Item = item
 			};
-
-			_registry[identifier] = register;
+			
+			_registry.ChangeValue(identifier, content);
 
 			OnContentReplaced?.Invoke(this, new ContentReplacedArgs
 			{
-				ReplacedContent = replacedRegister,
-				RegisteredContent = register
+				ReplacedContent = replacedContent,
+				RegisteredContent = content
 			});
 		}
 
@@ -130,7 +129,7 @@ public class ContentRegistry
 
 public readonly struct ContentValue
 {
-	public NamespacedString ContentIdentifier
+	public NamespacedString ContentID
 	{
 		get;
 		init;
@@ -148,13 +147,13 @@ public readonly struct ContentValue
 
 	public override string ToString()
 	{
-		return $"{{ContentIdentifier: {ContentIdentifier} Item: {Item}}}";
+		return $"{{ContentID: {ContentID} Item: {Item}}}";
 	}
 }
 
 public sealed class ContentReference<TContent>
 {
-	public NamespacedString ContentIdentifier
+	public NamespacedString ContentID
 	{
 		get;
 	}
@@ -167,12 +166,12 @@ public sealed class ContentReference<TContent>
 
 	public ContentReference(NamespacedString identifier)
 	{
-		ContentIdentifier = identifier;
+		ContentID = identifier;
 	}
 
 	public ContentReference(NamespacedString identifier, ContentRegistry? registry)
 	{
-		ContentIdentifier = identifier;
+		ContentID = identifier;
 		Item = GetItemFromRegistry(identifier, registry);
 	}
 
@@ -181,7 +180,7 @@ public sealed class ContentReference<TContent>
 		if (registry is null)
 			return;
 		
-		Item = GetItemFromRegistry(ContentIdentifier, registry);
+		Item = GetItemFromRegistry(ContentID, registry);
 	}
 
 	private static TContent GetItemFromRegistry(NamespacedString identifier, ContentRegistry? registry)
@@ -204,16 +203,16 @@ public sealed class ContentReference<TContent>
 	public struct DataRecord : IDataRecord<ContentReference<TContent>>
 	{
 		[JsonPropertyName("content_id")]
-		public NamespacedString ContentIdentifier;
+		public NamespacedString ContentID;
 
 		public ContentReference<TContent> Create()
 		{
-			return new ContentReference<TContent>(ContentIdentifier);
+			return new ContentReference<TContent>(ContentID);
 		}
 
 		public void Read(ContentReference<TContent> obj)
 		{
-			ContentIdentifier = obj.ContentIdentifier;
+			ContentID = obj.ContentID;
 		}
 	}
 }

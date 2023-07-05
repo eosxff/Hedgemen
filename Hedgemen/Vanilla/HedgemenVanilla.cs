@@ -121,7 +121,11 @@ public class HedgemenVanilla : PetalMod
 		if (entityManifest is not null)
 		{
 			logger.Debug($"Entity manifest component count: {entityManifest.Components.Count}");
-			logger.Debug($"Entity component: {entityManifest.Components["hgm:character_sheet"].ReadData<int>("hgm:strength")}.");
+			logger.Debug($"Entity component: " +
+			             $"{entityManifest.Components["hgm:character_sheet"].ReadData<int>("hgm:strength")}.");
+			logger.Debug($"Entity component: {
+				entityManifest.Components["hgm:character_race"]
+					.ReadData<string>("hgm:race_name")}.");
 		}
 		else
 		{

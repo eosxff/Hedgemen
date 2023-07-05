@@ -12,6 +12,8 @@ namespace Petal.Framework.Modding;
 
 public class PetalModLoader : IModLoader<PetalMod>
 {
+	internal const string PetalRepositoryLink = "https://github.com/eosxff/Hedgemen";
+	
 	private readonly Dictionary<NamespacedString, PetalMod> _mods = new();
 
 	public IReadOnlyDictionary<NamespacedString, PetalMod> Mods

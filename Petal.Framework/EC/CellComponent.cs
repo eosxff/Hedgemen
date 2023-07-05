@@ -7,7 +7,7 @@ namespace Petal.Framework.EC;
 
 public abstract class CellComponent : IComponent<CellEvent>
 {
-	public delegate void EventHandle<in TEvent>(TEvent e) where TEvent : CellEvent;
+	protected delegate void EventHandle<in TEvent>(TEvent e) where TEvent : CellEvent;
 
 	private delegate void EventHandleWrapped(CellEvent e);
 
@@ -75,7 +75,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 
 	}
 
-	public virtual void RegisterEvents() // todo make protected/internal
+	protected virtual void RegisterEvents()
 	{
 
 	}

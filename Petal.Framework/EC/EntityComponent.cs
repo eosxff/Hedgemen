@@ -7,7 +7,7 @@ namespace Petal.Framework.EC;
 
 public abstract class EntityComponent : IComponent<EntityEvent>
 {
-	public delegate void EventHandle<in TEvent>(TEvent e) where TEvent : EntityEvent;
+	protected delegate void EventHandle<in TEvent>(TEvent e) where TEvent : EntityEvent;
 
 	private delegate void EventHandleWrapped(EntityEvent e);
 

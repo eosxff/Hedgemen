@@ -47,7 +47,7 @@ public class SandboxGame : PetalGame
 
 		ContentRegistry.OnContentRegistered += (sender, args) =>
 		{
-			Logger.Debug($"Registered '{args.RegisteredContent.ContentIdentifier}' to content registry.");
+			Logger.Debug($"Registered '{args.RegisteredContent.ContentID}' to content registry.");
 		};
 		
 		ContentRegistry.Register(

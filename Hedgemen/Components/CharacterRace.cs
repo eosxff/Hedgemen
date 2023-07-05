@@ -4,7 +4,7 @@ using Petal.Framework.Persistence;
 namespace Hgm.Components;
 
 /// <summary>
-///     also a dummy class
+/// also a dummy class
 /// </summary>
 public class CharacterRace : EntityComponent
 {
@@ -24,6 +24,6 @@ public class CharacterRace : EntityComponent
 
 	public override void ReadStorage(DataStorage storage)
 	{
-		RaceName = storage.ReadData<string>("hgm:race_name", "human");
+		RaceName = storage.ReadData("hgm:race_name", "human");
 	}
 }
