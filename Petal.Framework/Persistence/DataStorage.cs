@@ -224,7 +224,7 @@ public sealed class DataStorage
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(DataStorage))]
-internal partial class DataStorageJsc : JsonSerializerContext
+public partial class DataStorageJsc : JsonSerializerContext
 {
 	
 }

@@ -35,7 +35,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ContentWithTargetPath Include="res/**">
+        <ContentWithTargetPath Include="../Hedgemen/res/**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
             <!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
             <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>

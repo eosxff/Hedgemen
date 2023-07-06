@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework;
 
@@ -31,11 +32,34 @@ public class ContentRegistry
 			init;
 		}
 	}
+	
+	public ILogger Logger
+	{
+		get;
+		private set;
+	}
 
-	public event EventHandler<ContentRegisteredArgs> OnContentRegistered;
-	public event EventHandler<ContentReplacedArgs> OnContentReplaced;
+	public event EventHandler? OnContentReloaded;
+	public event EventHandler<ContentRegisteredArgs>? OnContentRegistered;
+	public event EventHandler<ContentReplacedArgs>? OnContentReplaced;
 
 	private readonly Dictionary<NamespacedString, ContentValue> _registry = new();
+
+	public IReadOnlyDictionary<NamespacedString, ContentValue> RegisteredContent
+	{
+		get
+		{
+			lock (_registry)
+			{
+				return _registry;
+			}
+		}
+	}
+	
+	public ContentRegistry(ILogger logger)
+	{
+		Logger = logger;
+	}
 
 	public ContentValue Register(NamespacedString identifier, object item)
 	{
@@ -183,16 +207,24 @@ public sealed class ContentReference<TContent>
 		Item = GetItemFromRegistry(ContentID, registry);
 	}
 
-	private static TContent GetItemFromRegistry(NamespacedString identifier, ContentRegistry? registry)
+	private static TContent? GetItemFromRegistry(NamespacedString identifier, ContentRegistry? registry)
 	{
 		if (registry is null)
 			return default;
 
-		registry.TryGet(identifier, out var content);
+		bool found = registry.TryGet(identifier, out var content);
+
+		if (!found)
+		{
+			registry.Logger.Error($"Could not find {identifier} in content registry.");
+			return default;
+		}
 
 		if (content.Item is TContent tContent)
 			return tContent;
-
+		
+		registry.Logger.Error($"Can not cast desired type {typeof(TContent)} to {identifier} actual type of " +
+		                      $"{content.Item.GetType()}");
 		return default;
 	}
 

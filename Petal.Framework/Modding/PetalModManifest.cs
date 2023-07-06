@@ -140,7 +140,7 @@ public sealed class PetalModManifestDependenciesInfo
 }
 
 [JsonSerializable(typeof(PetalModManifest))]
-internal partial class PetalModManifestJsonSourceGeneration : JsonSerializerContext
+public partial class PetalModManifestJsc : JsonSerializerContext
 {
 	
 }

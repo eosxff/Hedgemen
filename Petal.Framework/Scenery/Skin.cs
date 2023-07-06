@@ -3,19 +3,30 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Util;
-using static Petal.Framework.Util.PetalUtilities;
 
 namespace Petal.Framework.Scenery;
 
 public sealed class Skin
 {
+	private ContentRegistry? _contentRegistry;
+	
 	public ContentRegistry? ContentRegistry
 	{
-		get;
-		set;
+		get => _contentRegistry;
+		private set
+		{
+			_contentRegistry = value;
+			Refresh();
+		}
 	}
 
 	public ButtonData Button
+	{
+		get;
+		init;
+	}
+
+	public FontData Font
 	{
 		get;
 		init;
@@ -27,12 +38,20 @@ public sealed class Skin
 
 	public Skin(ContentRegistry? contentRegistry)
 	{
-		ContentRegistry = contentRegistry;
+		_contentRegistry = contentRegistry;
+		
 		Button = new ButtonData
 		{
 			HoverTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry),
 			InputTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry),
 			NormalTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry)
+		};
+
+		Font = new FontData()
+		{
+			SmallFont = new ContentReference<SpriteFont>(NamespacedString.Default, contentRegistry),
+			MediumFont = new ContentReference<SpriteFont>(NamespacedString.Default, contentRegistry),
+			LargeFont = new ContentReference<SpriteFont>(NamespacedString.Default, contentRegistry)
 		};
 	}
 
@@ -43,6 +62,13 @@ public sealed class Skin
 		public ContentReference<Texture2D> InputTexture;
 	}
 
+	public sealed class FontData
+	{
+		public ContentReference<SpriteFont> SmallFont;
+		public ContentReference<SpriteFont> MediumFont;
+		public ContentReference<SpriteFont> LargeFont;
+	}
+
 	public void Refresh()
 	{
 		if (ContentRegistry is null)
@@ -51,16 +77,17 @@ public sealed class Skin
 		Button.NormalTexture.ReloadItem(ContentRegistry);
 		Button.HoverTexture.ReloadItem(ContentRegistry);
 		Button.InputTexture.ReloadItem(ContentRegistry);
+		
+		Font.SmallFont.ReloadItem(ContentRegistry);
+		Font.MediumFont.ReloadItem(ContentRegistry);
+		Font.LargeFont.ReloadItem(ContentRegistry);
 	}
 
 	public static Skin FromJson(string json, ContentRegistry? registry)
 	{
-		//var skin = ReadFromJson<DataRecord>(json, DataRecord.JsonDeserializeOptions).Create();
-		var skin = JsonSerializer.Deserialize<DataRecord>(json, SkinDataRecordSourceGenerationContext.Default.DataRecord)
-			.Create();
+		var skin = JsonSerializer.Deserialize(json, SkinDataRecordJsc.Default.DataRecord).Create();
 		
 		skin.ContentRegistry = registry;
-		skin.Refresh();
 
 		return skin;
 	}
@@ -85,6 +112,15 @@ public sealed class Skin
 
 		[JsonInclude, JsonPropertyName("button_data_input_texture_name")]
 		public string ButtonDataInputTextureName;
+		
+		[JsonInclude, JsonPropertyName("font_data_small_font_name")]
+		public string FontDataSmallFontName;
+		
+		[JsonInclude, JsonPropertyName("font_data_medium_font_name")]
+		public string FontDataMediumFontName;
+		
+		[JsonInclude, JsonPropertyName("font_data_large_font_name")]
+		public string FontDataLargeFontName;
 
 		public Skin Create()
 		{
@@ -95,22 +131,33 @@ public sealed class Skin
 					NormalTexture = new ContentReference<Texture2D>(ButtonDataNormalTextureName),
 					HoverTexture = new ContentReference<Texture2D>(ButtonDataHoverTextureName),
 					InputTexture = new ContentReference<Texture2D>(ButtonDataInputTextureName)
+				},
+				
+				Font = new FontData
+				{
+					SmallFont = new ContentReference<SpriteFont>(FontDataSmallFontName),
+					MediumFont = new ContentReference<SpriteFont>(FontDataMediumFontName),
+					LargeFont = new ContentReference<SpriteFont>(FontDataLargeFontName),
 				}
 			};
 		}
 
 		public void Read(Skin obj)
 		{
-			ButtonDataNormalTextureName = obj.Button.NormalTexture.ContentID;
-			ButtonDataHoverTextureName = obj.Button.HoverTexture.ContentID;
-			ButtonDataInputTextureName = obj.Button.InputTexture.ContentID;
+			ButtonDataNormalTextureName = obj.Button.NormalTexture.ContentID.FullName;
+			ButtonDataHoverTextureName = obj.Button.HoverTexture.ContentID.FullName;
+			ButtonDataInputTextureName = obj.Button.InputTexture.ContentID.FullName;
+
+			FontDataSmallFontName = obj.Font.SmallFont.ContentID.FullName;
+			FontDataMediumFontName = obj.Font.MediumFont.ContentID.FullName;
+			FontDataLargeFontName = obj.Font.LargeFont.ContentID.FullName;
 		}
 	}
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(Skin.DataRecord))]
-internal partial class SkinDataRecordSourceGenerationContext : JsonSerializerContext
+public partial class SkinDataRecordJsc : JsonSerializerContext
 {
 	
 }

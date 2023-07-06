@@ -15,6 +15,11 @@ public class Stage : Node
 		IsInteractable = false;
 	}
 
+	public void RequireBoundsRecalculation()
+	{
+		MarkAsDirty();
+	}
+
 	public void SearchForTargetNode(NodeSelection selection)
 	{
 		if (Scene is null)
@@ -23,6 +28,7 @@ public class Stage : Node
 		var mousePosition = Scene.Input.MousePosition;
 
 		if (Children.Count > 0)
+		{
 			for (int i = Children.Count - 1; i >= 0; --i)
 			{
 				var child = Children[i];
@@ -33,6 +39,7 @@ public class Stage : Node
 
 				selection.Target = target;
 			}
+		}
 
 		if (IsInteractable && IsHovering(mousePosition))
 			selection.Target = this;

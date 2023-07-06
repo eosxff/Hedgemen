@@ -28,7 +28,8 @@ public class SandboxGame : PetalGame
 	public ContentRegistry ContentRegistry
 	{
 		get;
-	} = new();
+		private set;
+	}
 
 	private Texture2D _whiteSquare;
 	private Texture2D _peach;
@@ -44,6 +45,7 @@ public class SandboxGame : PetalGame
 	protected override void Initialize()
 	{
 		base.Initialize();
+		ContentRegistry = new ContentRegistry(Logger);
 
 		ContentRegistry.OnContentRegistered += (sender, args) =>
 		{
@@ -51,16 +53,25 @@ public class SandboxGame : PetalGame
 		};
 		
 		ContentRegistry.Register(
-			"sandbox:ui/button_hover_texture",
-			Assets.LoadAsset<Texture2D>("button_hover.png"));
-
+			"hgm:ui/skin/button_hover_texture",
+			Assets.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
+		
 		ContentRegistry.Register(
-			"sandbox:ui/button_input_texture",
-			Assets.LoadAsset<Texture2D>("button_input.png"));
-
+			"hgm:ui/skin/button_normal_texture",
+			Assets.LoadAsset<Texture2D>(new FileInfo("button_normal.png").Open(FileMode.Open)));
+		
 		ContentRegistry.Register(
-			"sandbox:ui/button_normal_texture",
-			Assets.LoadAsset<Texture2D>("button_normal.png"));
+			"hgm:ui/skin/button_input_texture",
+			Assets.LoadAsset<Texture2D>(new FileInfo("button_input.png").Open(FileMode.Open)));
+		
+		ContentRegistry.Register(
+			"hgm:ui/small_font", Assets.LoadAsset<SpriteFont>("pixelade_regular"));
+		
+		ContentRegistry.Register(
+			"hgm:ui/medium_font", Assets.LoadAsset<SpriteFont>("pixelade_regular_32"));
+		
+		ContentRegistry.Register(
+			"hgm:ui/large_font", Assets.LoadAsset<SpriteFont>("pixelade_regular_64"));
 
 		_whiteSquare = Assets.LoadAsset<Texture2D>("white_square.png");
 		_peach = Assets.LoadAsset<Texture2D>("peach.png");

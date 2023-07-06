@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Petal.Framework.Graphics;
 
 namespace Petal.Framework.Scenery.Nodes;
@@ -18,12 +19,6 @@ public class Text : Node
 		get;
 		set;
 	} = 1.0f;
-	
-	public static Rectangle DefaultBounds
-	{
-		get;
-		set;
-	} = new(0, 0, 128, 32);
 
 	public Color Color
 	{
@@ -37,9 +32,18 @@ public class Text : Node
 		set;
 	}
 
+	public Text()
+	{
+		IsInteractable = false;
+	}
+
 	protected override Rectangle GetDefaultBounds()
 	{
-		return DefaultBounds;
+		if(Font is null || !Font.HasItem)
+			return Rectangle.Empty;
+
+		var messageSize = Font.Item.MeasureString(Message);
+		return new Rectangle(0, 0, (int)messageSize.X, (int)messageSize.Y);
 	}
 
 	protected override void OnUpdate(GameTime time, NodeSelection selection)
@@ -48,9 +52,9 @@ public class Text : Node
 
 	protected override void OnDraw(GameTime time)
 	{
-		if (Scene is null || Font.Item is null)
+		if (Scene is null || !Font.HasItem)
 			return;
-
+		
 		Scene.Renderer.Begin();
 		
 		Scene.Renderer.Draw(new RenderStringData

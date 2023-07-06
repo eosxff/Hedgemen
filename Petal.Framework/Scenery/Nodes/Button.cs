@@ -42,6 +42,7 @@ public class Button : Node
 	private void SceneOnSkinChanged(object? sender, Scene.SkinChangedEventArgs args)
 	{
 		Skin = args.NewSkin;
+		Skin.Refresh();
 		Skin.Button.HoverTexture.ReloadItem(Skin.ContentRegistry);
 		Skin.Button.InputTexture.ReloadItem(Skin.ContentRegistry);
 		Skin.Button.NormalTexture.ReloadItem(Skin.ContentRegistry);
@@ -53,10 +54,10 @@ public class Button : Node
 			return;
 
 		var textureRef = GetButtonTextureFromState();
-
+		
 		if (!textureRef.HasItem)
 			return;
-
+		
 		Scene.Renderer.Begin();
 
 		// todo ninepatching

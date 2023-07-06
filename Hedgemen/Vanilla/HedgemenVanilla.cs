@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,9 +8,11 @@ using Hgm.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.EC;
+using Petal.Framework.Graphics;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
 using Petal.Framework.Persistence;
+using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 
 namespace Hgm.Vanilla;
@@ -34,8 +37,44 @@ public class HedgemenVanilla : PetalMod
 		Game.Logger.Debug($"Registering content for vanilla!");
 
 		Game.ContentRegistry.Register(
-			"hgm:main_menu_font", Game.Assets.LoadAsset<SpriteFont>("pixelade_regular_32"));
+			"hgm:ui/skin/button_hover_texture",
+			Game.Assets.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
 		
+		Game.ContentRegistry.Register(
+			"hgm:ui/skin/button_normal_texture",
+			Game.Assets.LoadAsset<Texture2D>(new FileInfo("button_normal.png").Open(FileMode.Open)));
+		
+		Game.ContentRegistry.Register(
+			"hgm:ui/skin/button_input_texture",
+			Game.Assets.LoadAsset<Texture2D>(new FileInfo("button_input.png").Open(FileMode.Open)));
+		
+		Game.ContentRegistry.Register(
+			"hgm:ui/small_font", Game.Assets.LoadAsset<SpriteFont>("pixelade_regular"));
+		
+		Game.ContentRegistry.Register(
+			"hgm:ui/medium_font", Game.Assets.LoadAsset<SpriteFont>("pixelade_regular_32"));
+		
+		Game.ContentRegistry.Register(
+			"hgm:ui/large_font", Game.Assets.LoadAsset<SpriteFont>("pixelade_regular_64"));
+		
+		var skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), Game.ContentRegistry);
+		
+		var scene = new Scene(
+			new Stage(), skin)
+		{
+			BackgroundColor = Color.Green,
+			ViewportAdapter = new BoxingViewportAdapter(
+				Game.GraphicsDevice,
+				Game.Window, 
+				new Vector2Int(640, 360))
+		};
+
+		Game.Logger.Critical(
+			$"{scene.Skin.ContentRegistry.Get<Texture2D>("hgm:ui/skin/button_input_texture").HasItem}");
+		Game.Logger.Critical($"{scene.Skin.Button.InputTexture.HasItem}");
+
+		Game.ChangeScenes(scene);
+
 		Test();
 	}
 
@@ -113,6 +152,8 @@ public class HedgemenVanilla : PetalMod
 		{
 			RaceName = "high elf"
 		});
+		
+		
 
 		var file = new FileInfo("sentient_apple_pie.json");
 		var entityManifestJson = file.ReadString(Encoding.UTF8);
@@ -137,13 +178,30 @@ public class HedgemenVanilla : PetalMod
 	{
 		var scene = Game.Scene;
 
-		scene?.Root.Add(new Text
+		if (scene is null)
+			return;
+
+		scene.Root.Add(new Text
 		{
-			Font = Game.ContentRegistry.Get<SpriteFont>("hgm:main_menu_font"),
-			Bounds = new Rectangle(50, 50, 64, 24),
+			Font = scene.Skin.Font.LargeFont,
+			Bounds = new Rectangle(32, 32, 64, 24),
 			Color = Color.White,
 			Message = "Hedgemen!",
 			Scale = 1.0f
+		});
+
+		Game.Logger.Critical($"{scene.Skin.Button.HoverTexture.ContentID}");
+		var startButton = scene.Root.Add(new Button(scene.Skin)
+		{
+			Anchor = Anchor.CenterLeft,
+			Bounds = new Rectangle(32, -64, 128, 40)
+		});
+
+		startButton.Add(new Text
+		{
+			Anchor = Anchor.Center,
+			Font = scene.Skin.Font.MediumFont,
+			Message = "Singleplayer",
 		});
 	}
 

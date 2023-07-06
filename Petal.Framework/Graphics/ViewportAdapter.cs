@@ -17,10 +17,15 @@ public abstract class ViewportAdapter : IDisposable
 	public virtual Vector2Int VirtualResolution
 		=> _virtualResolution;
 
+	private Vector2Int _viewportResolution;
+	
 	public Vector2Int ViewportResolution
 	{
-		get;
-		protected set;
+		get => _viewportResolution;
+		protected set
+		{
+			_viewportResolution = value;
+		}
 	}
 
 	public Rectangle BoundingRectangle
@@ -29,6 +34,9 @@ public abstract class ViewportAdapter : IDisposable
 	public Point Center
 		=> BoundingRectangle.Center;
 
+	public virtual Vector2 GetScale()
+		=> new(ViewportResolution.X, ViewportResolution.Y);
+	
 	protected ViewportAdapter(GraphicsDevice graphicsDevice)
 	{
 		GraphicsDevice = graphicsDevice;
@@ -42,7 +50,7 @@ public abstract class ViewportAdapter : IDisposable
 	}
 
 	/// <summary>
-	///     Used in situations where virtual resolution is dynamic or being set for the first time.
+	/// Used in situations where virtual resolution is dynamic or being set for the first time.
 	/// </summary>
 	protected void SetVirtualResolution(Vector2Int resolution)
 	{

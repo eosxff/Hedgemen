@@ -115,6 +115,8 @@ public class Scene : IDisposable
 		ResetRenderTarget();
 
 		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
+		
+		ViewportAdapter.Reset();
 	}
 
 	public void Update(GameTime time)

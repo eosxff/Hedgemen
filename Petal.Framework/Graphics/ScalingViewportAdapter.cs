@@ -11,12 +11,16 @@ public class ScalingViewportAdapter : ViewportAdapter
 		SetVirtualResolution(virtualResolution);
 	}
 
-	public override Matrix GetScaleMatrix()
+	public override Vector2 GetScale()
 	{
-		var scale = new Vector2(
+		return new Vector2(
 			(float)ViewportResolution.X / VirtualResolution.X,
 			(float)ViewportResolution.Y / VirtualResolution.Y);
+	}
 
+	public override Matrix GetScaleMatrix()
+	{
+		var scale = GetScale();
 		return Matrix.CreateScale(scale.X, scale.Y, 1.0f);
 	}
 }

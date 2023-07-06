@@ -31,6 +31,9 @@ public struct NamespacedString
 	[JsonConstructor]
 	public NamespacedString(string fullyQualifiedString)
 	{
+		if (fullyQualifiedString is null)
+			throw new NullReferenceException(nameof(fullyQualifiedString));
+		
 		string[] fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
 
 		if (!IsValidQualifiedString(fullyQualifiedString))

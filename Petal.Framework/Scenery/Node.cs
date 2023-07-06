@@ -330,6 +330,9 @@ public abstract class Node
 
 	public Node? GetHoveredNode(Vector2 position)
 	{
+		if (!IsInteractable)
+			return null;
+		
 		for (int i = Children.Count - 1; i >= 0; --i)
 		{
 			var child = Children[i];
@@ -458,11 +461,11 @@ public abstract class Node
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private void MarkAsDirty()
+	protected void MarkAsDirty()
 		=> _isDirty = true;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private void MarkAsClean()
+	protected void MarkAsClean()
 		=> _isDirty = false;
 
 	private void UpdateBounds()
@@ -477,7 +480,8 @@ public abstract class Node
 		CalculateAbsoluteBounds(_bounds);
 		MarkAsClean();
 
-		foreach (var child in Children) child.UpdateChildrenBounds();
+		foreach (var child in Children)
+			child.UpdateChildrenBounds();
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

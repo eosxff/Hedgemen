@@ -40,7 +40,8 @@ public class Hedgemen : PetalGame
 	public ContentRegistry ContentRegistry
 	{
 		get;
-	} = new();
+		private set;
+	}
 
 	public Hedgemen()
 	{
@@ -86,6 +87,7 @@ public class Hedgemen : PetalGame
 	protected override void Initialize()
 	{
 		base.Initialize();
+		ContentRegistry = new ContentRegistry(Logger);
 		Logger.LogLevel = LogLevel.Debug;
 
 		Petal = new PetalModLoader(Logger);
@@ -95,29 +97,6 @@ public class Hedgemen : PetalGame
 		Logger.Error("These");
 		Logger.Critical("Colours");
 		
-		ContentRegistry.Register(
-			"hgm:ui/skin/button_hover_texture",
-			Assets.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
-		
-		ContentRegistry.Register(
-			"hgm:ui/skin/button_normal_texture",
-			Assets.LoadAsset<Texture2D>(new FileInfo("button_normal.png").Open(FileMode.Open)));
-		
-		ContentRegistry.Register(
-			"hgm:ui/skin/button_input_texture",
-			Assets.LoadAsset<Texture2D>(new FileInfo("button_input.png").Open(FileMode.Open)));
-
-		var scene = new Scene(
-			new Stage(),
-			Skin.FromJson(
-				new FileInfo("skin.json").ReadString(Encoding.UTF8),
-				ContentRegistry))
-		{
-			BackgroundColor = Color.Green,
-			ViewportAdapter = new BoxingViewportAdapter(GraphicsDevice, Window, new Vector2Int(640, 360))
-		};
-		
-		ChangeScenes(scene);
 		Setup();
 
 		if (IsDebug)
@@ -196,7 +175,7 @@ public class Hedgemen : PetalGame
 		
 		catch (Exception e)
 		{
-			Logger.Warn("Using fallback game settings.");
+			Logger.Warn("Using fallback game settings. Exception was raised.");
 			Logger.LogLevel = oldLogLevel;
 			return fallbackSettings;
 		}

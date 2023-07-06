@@ -27,6 +27,8 @@ public class EntityManifest
 		get;
 		set;
 	} = new Dictionary<NamespacedString, DataStorage>();
+	
+	
 
 	[Serializable]
 	public struct JsonData : IDataRecord<EntityManifest>
@@ -85,7 +87,7 @@ public class EntityManifest
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(EntityManifest.JsonData))]
-internal partial class EntityManifestJsc : JsonSerializerContext
+public partial class EntityManifestJsc : JsonSerializerContext
 {
 	
 }
