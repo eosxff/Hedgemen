@@ -43,7 +43,7 @@ public class Text : Node
 			return Rectangle.Empty;
 
 		var messageSize = Font.Item.MeasureString(Message);
-		return new Rectangle(0, 0, (int)messageSize.X, (int)messageSize.Y);
+		return new Rectangle(0, 0, (int)(messageSize.X * Scale), (int)(messageSize.Y * Scale));
 	}
 
 	protected override void OnUpdate(GameTime time, NodeSelection selection)

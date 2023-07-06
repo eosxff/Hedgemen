@@ -62,7 +62,7 @@ public class HedgemenVanilla : PetalMod
 		var scene = new Scene(
 			new Stage(), skin)
 		{
-			BackgroundColor = Color.Green,
+			BackgroundColor = new Color(232, 190, 198, 255),
 			ViewportAdapter = new BoxingViewportAdapter(
 				Game.GraphicsDevice,
 				Game.Window, 
@@ -187,14 +187,14 @@ public class HedgemenVanilla : PetalMod
 			Bounds = new Rectangle(32, 32, 64, 24),
 			Color = Color.White,
 			Message = "Hedgemen!",
-			Scale = 1.0f
+			Scale = 0.75f
 		});
 
 		Game.Logger.Critical($"{scene.Skin.Button.HoverTexture.ContentID}");
 		var startButton = scene.Root.Add(new Button(scene.Skin)
 		{
 			Anchor = Anchor.CenterLeft,
-			Bounds = new Rectangle(32, -64, 128, 40)
+			Bounds = new Rectangle(32, -56, 128, 40)
 		});
 
 		startButton.Add(new Text
@@ -202,6 +202,26 @@ public class HedgemenVanilla : PetalMod
 			Anchor = Anchor.Center,
 			Font = scene.Skin.Font.MediumFont,
 			Message = "Singleplayer",
+			Scale = 0.5f
+		});
+		
+		var exitButton = scene.Root.Add(new Button(scene.Skin)
+		{
+			Anchor = Anchor.CenterLeft,
+			Bounds = new Rectangle(32, -8, 128, 40)
+		});
+
+		exitButton.OnMousePressed += (sender, args) =>
+		{
+			Game.Exit();
+		};
+		
+		exitButton.Add(new Text
+		{
+			Anchor = Anchor.Center,
+			Font = scene.Skin.Font.MediumFont,
+			Message = "Exit",
+			Scale = 0.5f
 		});
 	}
 
