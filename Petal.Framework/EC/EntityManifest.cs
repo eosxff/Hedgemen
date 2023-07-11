@@ -33,7 +33,7 @@ public sealed class EntityManifest
 	{
 		[JsonPropertyName("content_id"), JsonInclude]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
-		public string ContentID
+		public NamespacedString ContentID
 		{
 			get;
 			set;

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Util;
 
-namespace Petal.Framework.Graphics;
+namespace Petal.Framework.Graphics.Adapters;
 
 public abstract class ViewportAdapter : IDisposable
 {

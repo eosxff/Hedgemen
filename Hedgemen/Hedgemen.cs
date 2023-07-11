@@ -1,18 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Text.Json;
-using Hgm.Components;
 using Hgm.Vanilla;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
-using Petal.Framework.EC;
-using Petal.Framework.Graphics;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
-using Petal.Framework.Scenery;
-using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util.Logging;
 using Petal.Framework.Windowing;
 
@@ -74,61 +66,21 @@ public class Hedgemen : PetalGame
 				$"Successfully started {nameof(PetalModLoader)}" :
 				$"Unsuccessfully started {nameof(PetalModLoader)}.",
 			logLevel);
-		
-		Logger.Debug($"We can access hgm:mod from {nameof(PetalModLoader)}: " +
-		             $"{ModLoader.GetMod("hgm:mod", out HedgemenVanilla vanilla)}");
-		
-		Logger.Debug($"We can access example:mod from {nameof(PetalModLoader)}: " +
-		             $"{ModLoader.GetMod("example:mod", out PetalMod example)}");
-		
-		Logger.Debug($"We can access no_code:mod from {nameof(PetalModLoader)}: " +
-		             $"{ModLoader.GetMod("no_code:mod", out PetalMod noCode)}");
-		
-		Logger.Debug(example.Manifest.Contact.Homepage);
-		Logger.Debug(example.Manifest);
-		Logger.Debug(example.Manifest.Dependencies.IncompatibleMods[0]);
 	}
 
 	protected override void Initialize()
 	{
 		base.Initialize();
 
-		var manifest = PetalModManifest.FromJson(new FileInfo("mods/example_mod/manifest.json").ReadString(Encoding.UTF8));
-		Logger.Critical($"{manifest?.Description}");
-		
+		var manifest = PetalModManifest.FromJson(
+			new FileInfo("mods/example_mod/manifest.json").ReadString(Encoding.UTF8));
+
 		ContentRegistry = new ContentRegistry(Logger);
 		Logger.LogLevel = LogLevel.Debug;
 
 		ModLoader = new PetalModLoader(Logger);
 
-		Logger.Debug("I");
-		Logger.Warn("Love");
-		Logger.Error("These");
-		Logger.Critical("Colours");
-		
 		Setup();
-
-		if (IsDebug)
-		{
-			Test();
-		}
-	}
-
-	private void Test()
-	{
-		var mapCell = new MapCell();
-		mapCell.AddComponent<PerlinGeneration>();
-		
-		if(mapCell.WillRespondToEvent<SetHeightEvent>())
-		{
-			mapCell.PropagateEvent(new SetHeightEvent
-			{
-				Sender = mapCell,
-				Height = 0.95f
-			});
-			
-			Logger.Debug($"Cell height is now: {mapCell.GetComponent<PerlinGeneration>().Height}");
-		}
 	}
 
 	private void DebugChangedCallback(object? sender, DebugChangedArgs args)

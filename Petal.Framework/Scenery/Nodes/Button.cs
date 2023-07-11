@@ -43,9 +43,6 @@ public class Button : Node
 	{
 		Skin = args.NewSkin;
 		Skin.Refresh();
-		Skin.Button.HoverTexture.ReloadItem(Skin.ContentRegistry);
-		Skin.Button.InputTexture.ReloadItem(Skin.ContentRegistry);
-		Skin.Button.NormalTexture.ReloadItem(Skin.ContentRegistry);
 	}
 
 	protected override void OnDraw(GameTime time)
@@ -60,13 +57,37 @@ public class Button : Node
 		
 		Scene.Renderer.Begin();
 
-		// todo ninepatching
-		Scene.Renderer.Draw(new RenderData
+		// todo testing purposes
+		var renderData = new RenderData
+		{
+			Color = Color,
+			DstRect = AbsoluteBounds,
+			Texture = textureRef.Item,
+			SrcRect = textureRef.Item.Bounds // ignore warning
+		};
+
+		var sourcePatch = new NinePatch(
+			renderData.SrcRect.GetValueOrDefault(),
+			18,
+			18,
+			4,
+			4);
+
+		var destinationPatch = new NinePatch(
+			renderData.DstRect,
+			18,
+			18,
+			4,
+			4);
+		
+		Scene.Renderer.DrawNinePatch(renderData, sourcePatch, destinationPatch);
+		
+		/*Scene.Renderer.Draw(new RenderData
 		{
 			Color = Color,
 			DstRect = AbsoluteBounds,
 			Texture = textureRef.Item
-		});
+		});*/
 
 		Scene.Renderer.End();
 	}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -20,17 +21,18 @@ public abstract class Renderer : IDisposable
 	public abstract void Begin();
 	public abstract void End();
 	public abstract void Draw(RenderData data);
+	public abstract void DrawNinePatch(RenderData data, NinePatch sourcePatch, NinePatch destinationPatch);
 	public abstract void Draw(RenderStringData data);
 	public abstract void Dispose();
 }
 
 public struct RenderData
 {
-	public Texture2D Texture
+	public required Texture2D Texture
 	{
 		get;
 		init;
-	} = null;
+	}
 
 	public Rectangle? SrcRect
 	{
@@ -38,11 +40,11 @@ public struct RenderData
 		init;
 	} = null;
 
-	public Rectangle DstRect
+	public required Rectangle DstRect
 	{
 		get;
 		init;
-	} = new(0, 0, 1, 1);
+	}
 
 	public Color Color
 	{
@@ -77,6 +79,19 @@ public struct RenderData
 	public RenderData()
 	{
 
+	}
+
+	[SetsRequiredMembers]
+	public RenderData(RenderData data)
+	{
+		Texture = data.Texture;
+		SrcRect = data.SrcRect;
+		DstRect = data.DstRect;
+		Color = data.Color;
+		Rotation = data.Rotation;
+		Origin = data.Origin;
+		SpriteEffects = data.SpriteEffects;
+		LayerDepth = data.LayerDepth;
 	}
 }
 

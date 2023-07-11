@@ -105,22 +105,28 @@ public sealed class Skin
 			};
 
 		[JsonInclude, JsonPropertyName("button_data_normal_texture_name")]
-		public string ButtonDataNormalTextureName;
+		[JsonConverter(typeof(NamespacedString.JsonConverter))]
+		public NamespacedString ButtonDataNormalTextureName;
 
 		[JsonInclude, JsonPropertyName("button_data_hover_texture_name")]
-		public string ButtonDataHoverTextureName;
+		[JsonConverter(typeof(NamespacedString.JsonConverter))]
+		public NamespacedString ButtonDataHoverTextureName;
 
 		[JsonInclude, JsonPropertyName("button_data_input_texture_name")]
-		public string ButtonDataInputTextureName;
+		[JsonConverter(typeof(NamespacedString.JsonConverter))]
+		public NamespacedString ButtonDataInputTextureName;
 		
 		[JsonInclude, JsonPropertyName("font_data_small_font_name")]
-		public string FontDataSmallFontName;
+		[JsonConverter(typeof(NamespacedString.JsonConverter))]
+		public NamespacedString FontDataSmallFontName;
 		
 		[JsonInclude, JsonPropertyName("font_data_medium_font_name")]
-		public string FontDataMediumFontName;
+		[JsonConverter(typeof(NamespacedString.JsonConverter))]
+		public NamespacedString FontDataMediumFontName;
 		
 		[JsonInclude, JsonPropertyName("font_data_large_font_name")]
-		public string FontDataLargeFontName;
+		[JsonConverter(typeof(NamespacedString.JsonConverter))]
+		public NamespacedString FontDataLargeFontName;
 
 		public Skin Create()
 		{
@@ -144,13 +150,13 @@ public sealed class Skin
 
 		public void Read(Skin obj)
 		{
-			ButtonDataNormalTextureName = obj.Button.NormalTexture.ContentID.FullName;
-			ButtonDataHoverTextureName = obj.Button.HoverTexture.ContentID.FullName;
-			ButtonDataInputTextureName = obj.Button.InputTexture.ContentID.FullName;
+			ButtonDataNormalTextureName = obj.Button.NormalTexture.ContentID;
+			ButtonDataHoverTextureName = obj.Button.HoverTexture.ContentID;
+			ButtonDataInputTextureName = obj.Button.InputTexture.ContentID;
 
-			FontDataSmallFontName = obj.Font.SmallFont.ContentID.FullName;
-			FontDataMediumFontName = obj.Font.MediumFont.ContentID.FullName;
-			FontDataLargeFontName = obj.Font.LargeFont.ContentID.FullName;
+			FontDataSmallFontName = obj.Font.SmallFont.ContentID;
+			FontDataMediumFontName = obj.Font.MediumFont.ContentID;
+			FontDataLargeFontName = obj.Font.LargeFont.ContentID;
 		}
 	}
 }

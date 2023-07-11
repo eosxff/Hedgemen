@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Petal.Framework.Graphics;
+namespace Petal.Framework.Graphics.Adapters;
 
 public class ScalingViewportAdapter : ViewportAdapter
 {

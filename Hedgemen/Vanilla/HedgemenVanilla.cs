@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Hgm.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
 using Petal.Framework.EC;
 using Petal.Framework.Graphics;
+using Petal.Framework.Graphics.Adapters;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
 using Petal.Framework.Persistence;
@@ -30,7 +32,12 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 	protected override void PrePetalModLoaderModSetupPhase(ModLoaderSetupContext context)
 	{
+		var logger = Game.Logger;
 		
+		logger.Debug("I");
+		logger.Warn("Love");
+		logger.Error("These");
+		logger.Critical("Colours");
 	}
 
 	protected override void Setup(ModLoaderSetupContext context)
@@ -38,9 +45,36 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		var logger = Game.Logger;
 		var contentRegistry = Game.ContentRegistry;
 		var assetLoader = Game.Assets;
-		
-		logger.Debug($"Registering content for vanilla!");
 
+		RegisterContent();
+		
+		var skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), contentRegistry);
+
+		var scene = new Scene(
+			new Stage(), skin)
+		{
+			BackgroundColor = new Color(232, 190, 198, 255),
+			ViewportAdapter = new BoxingViewportAdapter(
+				Game.GraphicsDevice,
+				Game.Window,
+				new Vector2Int(640, 360))
+		};
+
+		logger.Critical(
+			$"{scene.Skin.ContentRegistry.Get<Texture2D>("hgm:ui/skin/button_input_texture").HasItem}");
+		logger.Critical($"{scene.Skin.Button.InputTexture.HasItem}");
+
+		Game.ChangeScenes(scene);
+
+		Test();
+	}
+
+	private void RegisterContent()
+	{
+		var logger = Game.Logger;
+		var assetLoader = Game.Assets;
+		var contentRegistry = Game.ContentRegistry;
+		
 		contentRegistry.Register(
 			"hgm:ui/skin/button_hover_texture",
 			assetLoader.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
@@ -61,26 +95,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		
 		contentRegistry.Register(
 			"hgm:ui/large_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular_64"));
-		
-		var skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), contentRegistry);
-		
-		var scene = new Scene(
-			new Stage(), skin)
-		{
-			BackgroundColor = new Color(232, 190, 198, 255),
-			ViewportAdapter = new BoxingViewportAdapter(
-				Game.GraphicsDevice,
-				Game.Window, 
-				new Vector2Int(640, 360))
-		};
-
-		logger.Critical(
-			$"{scene.Skin.ContentRegistry.Get<Texture2D>("hgm:ui/skin/button_input_texture").HasItem}");
-		logger.Critical($"{scene.Skin.Button.InputTexture.HasItem}");
-
-		Game.ChangeScenes(scene);
-
-		Test();
 	}
 
 	private void Test()
@@ -213,7 +227,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		var exitButton = scene.Root.Add(new Button(scene.Skin)
 		{
 			Anchor = Anchor.CenterLeft,
-			Bounds = new Rectangle(32, -8, 128, 40)
+			Bounds = new Rectangle(32, 8, 128*2, 40*2)
 		});
 
 		exitButton.OnMousePressed += (sender, args) =>

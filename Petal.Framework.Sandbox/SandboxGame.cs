@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Petal.Framework.EC;
 using Petal.Framework.Graphics;
+using Petal.Framework.Graphics.Adapters;
 using Petal.Framework.Input;
 using Petal.Framework.IO;
 using Petal.Framework.Scenery;
