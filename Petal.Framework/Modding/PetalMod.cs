@@ -59,11 +59,4 @@ public abstract class PetalMod : IMod
 	{
 		
 	}
-
-	/// <summary>
-	/// Get the <see cref="PetalModManifest"/> for an embedded <see cref="PetalMod"/>. 
-	/// </summary>
-	/// <returns></returns>
-	public virtual PetalModManifest GetEmbeddedManifest()
-		=> new();
 }

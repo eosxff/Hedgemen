@@ -7,6 +7,7 @@ using System.Text.Json;
 using Hgm.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Petal.Framework;
 using Petal.Framework.EC;
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
@@ -17,7 +18,7 @@ using Petal.Framework.Scenery.Nodes;
 
 namespace Hgm.Vanilla;
 
-public class HedgemenVanilla : PetalMod
+public class HedgemenVanilla : PetalEmbeddedMod
 {
 	private static Hedgemen Game
 		=> Hedgemen.Instance;
@@ -34,30 +35,34 @@ public class HedgemenVanilla : PetalMod
 
 	protected override void Setup(ModLoaderSetupContext context)
 	{
-		Game.Logger.Debug($"Registering content for vanilla!");
+		var logger = Game.Logger;
+		var contentRegistry = Game.ContentRegistry;
+		var assetLoader = Game.Assets;
+		
+		logger.Debug($"Registering content for vanilla!");
 
-		Game.ContentRegistry.Register(
+		contentRegistry.Register(
 			"hgm:ui/skin/button_hover_texture",
-			Game.Assets.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
+			assetLoader.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
 		
-		Game.ContentRegistry.Register(
+		contentRegistry.Register(
 			"hgm:ui/skin/button_normal_texture",
-			Game.Assets.LoadAsset<Texture2D>(new FileInfo("button_normal.png").Open(FileMode.Open)));
+			assetLoader.LoadAsset<Texture2D>(new FileInfo("button_normal.png").Open(FileMode.Open)));
 		
-		Game.ContentRegistry.Register(
+		contentRegistry.Register(
 			"hgm:ui/skin/button_input_texture",
-			Game.Assets.LoadAsset<Texture2D>(new FileInfo("button_input.png").Open(FileMode.Open)));
+			assetLoader.LoadAsset<Texture2D>(new FileInfo("button_input.png").Open(FileMode.Open)));
 		
-		Game.ContentRegistry.Register(
-			"hgm:ui/small_font", Game.Assets.LoadAsset<SpriteFont>("pixelade_regular"));
+		contentRegistry.Register(
+			"hgm:ui/small_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular"));
 		
-		Game.ContentRegistry.Register(
-			"hgm:ui/medium_font", Game.Assets.LoadAsset<SpriteFont>("pixelade_regular_32"));
+		contentRegistry.Register(
+			"hgm:ui/medium_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular_32"));
 		
-		Game.ContentRegistry.Register(
-			"hgm:ui/large_font", Game.Assets.LoadAsset<SpriteFont>("pixelade_regular_64"));
+		contentRegistry.Register(
+			"hgm:ui/large_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular_64"));
 		
-		var skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), Game.ContentRegistry);
+		var skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), contentRegistry);
 		
 		var scene = new Scene(
 			new Stage(), skin)
@@ -69,9 +74,9 @@ public class HedgemenVanilla : PetalMod
 				new Vector2Int(640, 360))
 		};
 
-		Game.Logger.Critical(
+		logger.Critical(
 			$"{scene.Skin.ContentRegistry.Get<Texture2D>("hgm:ui/skin/button_input_texture").HasItem}");
-		Game.Logger.Critical($"{scene.Skin.Button.InputTexture.HasItem}");
+		logger.Critical($"{scene.Skin.Button.InputTexture.HasItem}");
 
 		Game.ChangeScenes(scene);
 
@@ -246,7 +251,7 @@ public class HedgemenVanilla : PetalMod
 			Dependencies = new PetalModManifestDependenciesInfo
 			{
 				ReferencedDlls = new List<string>(),
-				IncompatibleMods = new List<string>(),
+				IncompatibleMods = { },
 				Mods = new List<string>()
 			},
 			

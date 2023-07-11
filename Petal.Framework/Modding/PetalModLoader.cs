@@ -132,16 +132,16 @@ public class PetalModLoader : IModLoader<PetalMod>
 	{
 		var list = new List<PetalMod>(context.EmbeddedMods.Count + directories.Count);
 
-		foreach (var embeddedMod in context.EmbeddedMods)
+		foreach (var embeddedModsElement in context.EmbeddedMods)
 		{
-			if (embeddedMod is PetalMod hedgemenMod)
+			if (embeddedModsElement is PetalEmbeddedMod embeddedMod)
 			{
-				SetModManifestAndDirectory(hedgemenMod, hedgemenMod.GetEmbeddedManifest(), new DirectoryInfo("."));
-				list.Add(hedgemenMod);
-				Logger.Debug($"Loaded Embedded mod '{embeddedMod}'.");
+				SetModManifestAndDirectory(embeddedMod, embeddedMod.GetEmbeddedManifest(), new DirectoryInfo("."));
+				list.Add(embeddedMod);
+				Logger.Debug($"Loaded Embedded mod '{embeddedModsElement}'.");
 			}
 			else
-				Logger.Critical($"Failed to load embedded mod '{embeddedMod}' This should not happen.");
+				Logger.Critical($"Failed to load embedded mod '{embeddedModsElement}' This should not happen.");
 		}
 
 		foreach (var directory in directories)

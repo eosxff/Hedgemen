@@ -8,7 +8,7 @@ using Petal.Framework.Util;
 namespace Petal.Framework.EC;
 
 [Serializable]
-public class EntityManifest
+public sealed class EntityManifest
 {
 	public static EntityManifest? FromJson(string json)
 	{
@@ -27,13 +27,12 @@ public class EntityManifest
 		get;
 		set;
 	} = new Dictionary<NamespacedString, DataStorage>();
-	
-	
 
 	[Serializable]
 	public struct JsonData : IDataRecord<EntityManifest>
 	{
 		[JsonPropertyName("content_id"), JsonInclude]
+		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public string ContentID
 		{
 			get;

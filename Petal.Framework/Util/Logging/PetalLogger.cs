@@ -57,6 +57,15 @@ public class PetalLogger : ILogger
 		Add(message, LogLevel.Debug, stackFrame);
 	}
 
+	public void Debug(object obj)
+	{
+		if (!ValidLogLevel(LogLevel.Debug))
+			return;
+		
+		var stackFrame = new StackFrame(1, true);
+		Add(obj.ToString(), LogLevel.Debug, stackFrame);
+	}
+
 	public void Warn(string message)
 	{
 		if (!ValidLogLevel(LogLevel.Warn))
@@ -64,6 +73,15 @@ public class PetalLogger : ILogger
 		
 		var stackFrame = new StackFrame(1, true);
 		Add(message, LogLevel.Warn, stackFrame);
+	}
+
+	public void Warn(object obj)
+	{
+		if (!ValidLogLevel(LogLevel.Warn))
+			return;
+		
+		var stackFrame = new StackFrame(1, true);
+		Add(obj.ToString(), LogLevel.Warn, stackFrame);
 	}
 
 	public void Error(string message)
@@ -75,6 +93,15 @@ public class PetalLogger : ILogger
 		Add(message, LogLevel.Error, stackFrame);
 	}
 
+	public void Error(object obj)
+	{
+		if (!ValidLogLevel(LogLevel.Error))
+			return;
+		
+		var stackFrame = new StackFrame(1, true);
+		Add(obj.ToString(), LogLevel.Error, stackFrame);
+	}
+
 	public void Critical(string message)
 	{
 		if (!ValidLogLevel(LogLevel.Critical))
@@ -82,6 +109,15 @@ public class PetalLogger : ILogger
 		
 		var stackFrame = new StackFrame(1, true);
 		Add(message, LogLevel.Critical, stackFrame);
+	}
+
+	public void Critical(object obj)
+	{
+		if (!ValidLogLevel(LogLevel.Critical))
+			return;
+		
+		var stackFrame = new StackFrame(1, true);
+		Add(obj.ToString(), LogLevel.Critical, stackFrame);
 	}
 
 	public void Add(string message, LogLevel logLevel)
@@ -92,6 +128,18 @@ public class PetalLogger : ILogger
 		var stackFrame = new StackFrame(1, true);
 		Add(message, logLevel, stackFrame);
 	}
+	
+	public void Add(object obj, LogLevel logLevel)
+	{
+		if (!ValidLogLevel(logLevel))
+			return;
+		
+		var stackFrame = new StackFrame(1, true);
+		Add(obj.ToString(), logLevel, stackFrame);
+	}
+
+	private StackFrame GetStackFrame(int skipFrames)
+		=> new(skipFrames);
 
 	private void Add(string message, LogLevel logLevel, StackFrame stackFrame)
 	{

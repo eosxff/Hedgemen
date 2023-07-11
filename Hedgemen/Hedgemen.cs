@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using Hgm.Components;
 using Hgm.Vanilla;
 using Microsoft.Xna.Framework;
@@ -49,7 +50,7 @@ public class Hedgemen : PetalGame
 		OnDebugChanged += DebugChangedCallback;
 	}
 
-	public PetalModLoader Petal
+	public PetalModLoader ModLoader
 	{
 		get;
 		private set;
@@ -57,7 +58,7 @@ public class Hedgemen : PetalGame
 
 	protected override void Setup()
 	{
-		var context = Petal.Setup(new ModLoaderSetupArgs
+		var context = ModLoader.Setup(new ModLoaderSetupArgs
 		{
 			EmbedOnlyMode = IsEmbedOnlyMode(),
 			Game = this,
@@ -66,7 +67,7 @@ public class Hedgemen : PetalGame
 
 		Logger.Debug($"Starting {nameof(PetalModLoader)}.");
 
-		var logLevel = Petal.Start(context) ? LogLevel.Debug : LogLevel.Error;
+		var logLevel = ModLoader.Start(context) ? LogLevel.Debug : LogLevel.Error;
 		
 		Logger.Add(
 			logLevel == LogLevel.Debug ?
@@ -75,22 +76,30 @@ public class Hedgemen : PetalGame
 			logLevel);
 		
 		Logger.Debug($"We can access hgm:mod from {nameof(PetalModLoader)}: " +
-		             $"{Petal.GetMod("hgm:mod", out HedgemenVanilla vanilla)}");
+		             $"{ModLoader.GetMod("hgm:mod", out HedgemenVanilla vanilla)}");
 		
 		Logger.Debug($"We can access example:mod from {nameof(PetalModLoader)}: " +
-		             $"{Petal.GetMod("example:mod", out PetalMod example)}");
+		             $"{ModLoader.GetMod("example:mod", out PetalMod example)}");
 		
 		Logger.Debug($"We can access no_code:mod from {nameof(PetalModLoader)}: " +
-		             $"{Petal.GetMod("no_code:mod", out PetalMod noCode)}");
+		             $"{ModLoader.GetMod("no_code:mod", out PetalMod noCode)}");
+		
+		Logger.Debug(example.Manifest.Contact.Homepage);
+		Logger.Debug(example.Manifest);
+		Logger.Debug(example.Manifest.Dependencies.IncompatibleMods[0]);
 	}
 
 	protected override void Initialize()
 	{
 		base.Initialize();
+
+		var manifest = PetalModManifest.FromJson(new FileInfo("mods/example_mod/manifest.json").ReadString(Encoding.UTF8));
+		Logger.Critical($"{manifest?.Description}");
+		
 		ContentRegistry = new ContentRegistry(Logger);
 		Logger.LogLevel = LogLevel.Debug;
 
-		Petal = new PetalModLoader(Logger);
+		ModLoader = new PetalModLoader(Logger);
 
 		Logger.Debug("I");
 		Logger.Warn("Love");

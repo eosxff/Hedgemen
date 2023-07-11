@@ -10,7 +10,7 @@
     ],
 
     "contact": {
-        "homepage": "https://hedgemen.com",
+        "homepage": "https://hedgemen.com/fakeurl",
         "source": "https://github.com/definestructunion/Hedgemen"
     },
 
@@ -19,7 +19,8 @@
 
         ],
         "incompatible_mods": [
-            
+            "unexample:mod",
+            "noexample:mod"
         ],
         "referenced_dlls": [
             

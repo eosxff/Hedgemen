@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Petal.Framework.Persistence;
 
 namespace Petal.Framework.Modding;
 
 [Serializable]
 public sealed class PetalModManifest
 {
+	public static PetalModManifest? FromJson(string json)
+	{
+		var manifest = JsonSerializer.Deserialize<PetalModManifest>(json, JsonDeserializeOptions);
+		return manifest;
+	}
+	
 	public static JsonSerializerOptions JsonDeserializeOptions
 		=> new()
 		{
@@ -18,7 +23,7 @@ public sealed class PetalModManifest
 			Converters = { }
 		};
 	
-	[JsonInclude, JsonPropertyName("schema_version")]
+	[JsonPropertyName("schema_version")]
 	public int SchemaVersion
 	{
 		get;
@@ -26,11 +31,12 @@ public sealed class PetalModManifest
 	} = 1;
 
 	[JsonPropertyName("namespaced_id")]
-	public string NamespacedID
+	[JsonConverter(typeof(NamespacedString.JsonConverter))]
+	public NamespacedString NamespacedID
 	{
 		get;
 		init;
-	} = NamespacedString.Default.FullName;
+	} = NamespacedString.Default;
 
 	[JsonPropertyName("name")]
 	public string Name
@@ -94,6 +100,11 @@ public sealed class PetalModManifest
 		get;
 		init;
 	} = false;
+
+	public override string ToString()
+	{
+		return JsonSerializer.Serialize(this, JsonDeserializeOptions);
+	}
 }
 
 [Serializable]
@@ -123,13 +134,14 @@ public sealed class PetalModManifestDependenciesInfo
 		get;
 		init;
 	} = new List<string>();
-
-	[JsonPropertyName("incompatible_mods")]
-	public IReadOnlyList<string> IncompatibleMods
+	
+	[JsonPropertyName("incompatible_mods"), JsonInclude]
+	[JsonConverter(typeof(NamespacedString.ImmutableListJsonConverter))]
+	public IReadOnlyList<NamespacedString> IncompatibleMods
 	{
 		get;
-		init;
-	} = new List<string>();
+		set;
+	} = new List<NamespacedString>();
 
 	[JsonPropertyName("referenced_dlls")]
 	public IReadOnlyList<string> ReferencedDlls
@@ -139,6 +151,7 @@ public sealed class PetalModManifestDependenciesInfo
 	} = new List<string>();
 }
 
+[JsonSourceGenerationOptions(IncludeFields = true)]
 [JsonSerializable(typeof(PetalModManifest))]
 public partial class PetalModManifestJsc : JsonSerializerContext
 {
