@@ -58,6 +58,7 @@ public class Button : Node
 		Scene.Renderer.Begin();
 
 		// todo testing purposes
+		
 		var renderData = new RenderData
 		{
 			Color = Color,
@@ -66,19 +67,22 @@ public class Button : Node
 			SrcRect = textureRef.Item.Bounds // ignore warning
 		};
 
+		const int xPadding = 4, yPadding = 4;
+		const int leftPadding = xPadding, rightPadding = xPadding, topPadding = yPadding, bottomPadding = yPadding;
+
 		var sourcePatch = new NinePatch(
-			renderData.SrcRect.GetValueOrDefault(),
-			18,
-			18,
-			4,
-			4);
+			renderData.SrcRect.Value,
+			leftPadding,
+			rightPadding,
+			topPadding,
+			bottomPadding);
 
 		var destinationPatch = new NinePatch(
 			renderData.DstRect,
-			18,
-			18,
-			4,
-			4);
+			leftPadding,
+			rightPadding,
+			topPadding,
+			bottomPadding);
 		
 		Scene.Renderer.DrawNinePatch(renderData, sourcePatch, destinationPatch);
 		

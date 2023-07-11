@@ -52,6 +52,11 @@ public class Stage : Node
 		SearchForTargetNode(selection);
 	}
 
+	public void MarkNodeTreeAsDirty()
+	{
+		MarkAsDirty();
+	}
+
 	protected override Rectangle CalculateBounds(Rectangle bounds)
 	{
 		ArgumentNullException.ThrowIfNull(Scene);

@@ -8,29 +8,94 @@ namespace Petal.Framework.Scenery;
 
 public sealed class Skin
 {
+	public event EventHandler? OnSkinRefreshed;
+	
 	private ContentRegistry? _contentRegistry;
 	
 	public ContentRegistry? ContentRegistry
 	{
 		get => _contentRegistry;
-		private set
+		set
 		{
+			if (_contentRegistry is not null)
+			{
+				_contentRegistry.OnContentReplaced -= ContentRegistryShouldRefreshOnReplaced;
+				_contentRegistry.OnContentRemoved -= ContentRegistryShouldRefreshOnRemoved;
+			}
+			
 			_contentRegistry = value;
+
+			if (_contentRegistry is not null)
+			{
+				_contentRegistry.OnContentReplaced += ContentRegistryShouldRefreshOnReplaced;
+				_contentRegistry.OnContentRemoved += ContentRegistryShouldRefreshOnRemoved;
+			}
+			
 			Refresh();
 		}
 	}
 
+	private void ContentRegistryShouldRefreshOnReplaced(object? sender, ContentRegistry.ContentReplacedArgs args)
+	{
+		if (sender is not ContentRegistry registry)
+			return;
+
+		if (ContentIDMatchesAny(args.ReplacedContent.ContentID))
+		{
+			ShouldRefresh = true;
+		}
+	}
+	
+	private void ContentRegistryShouldRefreshOnRemoved(object? sender, ContentRegistry.ContentRemovedArgs args)
+	{
+		if (sender is not ContentRegistry registry)
+			return;
+
+		if (ContentIDMatchesAny(args.RemovedContent.ContentID))
+		{
+			ShouldRefresh = true;
+		}
+	}
+
+	private bool ContentIDMatchesAny(NamespacedString contentID)
+	{
+		return contentID == Button.HoverTexture.ContentID ||
+		       contentID == Button.InputTexture.ContentID ||
+		       contentID == Button.NormalTexture.ContentID ||
+		       contentID == Font.SmallFont.ContentID ||
+		       contentID == Font.MediumFont.ContentID ||
+		       contentID == Font.LargeFont.ContentID;
+	}
+
+	private ButtonData _button;
+
 	public ButtonData Button
 	{
-		get;
-		init;
+		get
+		{
+			HandleRefresh();
+			return _button;
+		}
+		init => _button = value;
 	}
+
+	private FontData _font;
 
 	public FontData Font
 	{
-		get;
-		init;
+		get
+		{
+			HandleRefresh();
+			return _font;
+		}
+		init => _font = value;
 	}
+
+	public bool ShouldRefresh
+	{
+		get;
+		set;
+	} = true;
 
 	public Skin() : this(null)
 	{
@@ -38,16 +103,16 @@ public sealed class Skin
 
 	public Skin(ContentRegistry? contentRegistry)
 	{
-		_contentRegistry = contentRegistry;
-		
-		Button = new ButtonData
+		ContentRegistry = contentRegistry;
+
+		_button = new ButtonData
 		{
 			HoverTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry),
 			InputTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry),
 			NormalTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry)
 		};
 
-		Font = new FontData()
+		_font = new FontData()
 		{
 			SmallFont = new ContentReference<SpriteFont>(NamespacedString.Default, contentRegistry),
 			MediumFont = new ContentReference<SpriteFont>(NamespacedString.Default, contentRegistry),
@@ -74,13 +139,24 @@ public sealed class Skin
 		if (ContentRegistry is null)
 			return;
 
-		Button.NormalTexture.ReloadItem(ContentRegistry);
-		Button.HoverTexture.ReloadItem(ContentRegistry);
-		Button.InputTexture.ReloadItem(ContentRegistry);
+		_button.NormalTexture.ReloadItem(ContentRegistry);
+		_button.HoverTexture.ReloadItem(ContentRegistry);
+		_button.InputTexture.ReloadItem(ContentRegistry);
 		
-		Font.SmallFont.ReloadItem(ContentRegistry);
-		Font.MediumFont.ReloadItem(ContentRegistry);
-		Font.LargeFont.ReloadItem(ContentRegistry);
+		_font.SmallFont.ReloadItem(ContentRegistry);
+		_font.MediumFont.ReloadItem(ContentRegistry);
+		_font.LargeFont.ReloadItem(ContentRegistry);
+	}
+
+	private void HandleRefresh()
+	{
+		if (!ShouldRefresh)
+			return;
+
+		Refresh();
+		ShouldRefresh = false;
+		
+		OnSkinRefreshed?.Invoke(this, EventArgs.Empty);
 	}
 
 	public static Skin FromJson(string json, ContentRegistry? registry)

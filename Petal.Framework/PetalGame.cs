@@ -77,9 +77,27 @@ public abstract class PetalGame : Game
 
 	public void ChangeScenes(Scene scene)
 	{
-		Scene?.Exit();
-		Scene = scene;
-		Scene?.Initialize();
+		if (scene is null)
+		{
+			Logger.Error("Can not change to null scene.");
+			return;
+		}
+		
+		if (Scene is not null)
+		{
+			lock (Scene)
+			{
+				Scene.Exit();
+				Scene = scene;
+				Scene.Initialize();
+			}
+		}
+
+		else
+		{
+			Scene = scene;
+			Scene.Initialize();
+		}
 	}
 
 	public WindowMode WindowMode

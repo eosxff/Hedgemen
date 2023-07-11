@@ -108,6 +108,18 @@ public struct NamespacedString
 	{
 		return val.FullName;
 	}
+	
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool operator ==(NamespacedString val1, NamespacedString val2)
+	{
+		return val1.FullName == val2.FullName;
+	}
+	
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool operator !=(NamespacedString val1, NamespacedString val2)
+	{
+		return val1.FullName != val2.FullName;
+	}
 
 	public class JsonConverter : JsonConverter<NamespacedString>
 	{

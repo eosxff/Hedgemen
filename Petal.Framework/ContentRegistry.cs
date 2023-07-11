@@ -32,6 +32,15 @@ public class ContentRegistry
 			init;
 		}
 	}
+
+	public class ContentRemovedArgs : EventArgs
+	{
+		public ContentValue RemovedContent
+		{
+			get;
+			init;
+		}
+	}
 	
 	public ILogger Logger
 	{
@@ -42,6 +51,7 @@ public class ContentRegistry
 	public event EventHandler? OnContentReloaded;
 	public event EventHandler<ContentRegisteredArgs>? OnContentRegistered;
 	public event EventHandler<ContentReplacedArgs>? OnContentReplaced;
+	public event EventHandler<ContentRemovedArgs>? OnContentRemoved; 
 
 	private readonly Dictionary<NamespacedString, ContentValue> _registry = new();
 
@@ -149,6 +159,21 @@ public class ContentRegistry
 
 		return true;
 	}
+
+	public bool Remove(NamespacedString identifier)
+	{
+		lock (_registry)
+		{
+			bool found = _registry.Remove(identifier, out var removedContent);
+
+			OnContentRemoved?.Invoke(this, new ContentRemovedArgs
+			{
+				RemovedContent = removedContent
+			});
+			
+			return found;
+		}
+	}
 }
 
 public readonly struct ContentValue
@@ -175,6 +200,7 @@ public readonly struct ContentValue
 	}
 }
 
+// todo maybe content reference should use content registry events instead of classes like skin
 public sealed class ContentReference<TContent>
 {
 	public NamespacedString ContentID

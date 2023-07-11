@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Hgm.Components;
+using Hgm.Vanilla.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
@@ -46,27 +48,28 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		var contentRegistry = Game.ContentRegistry;
 		var assetLoader = Game.Assets;
 
-		RegisterContent();
-		
-		var skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), contentRegistry);
-
-		var scene = new Scene(
-			new Stage(), skin)
+		var registerContent = Task.Run(async delegate
 		{
-			BackgroundColor = new Color(232, 190, 198, 255),
-			ViewportAdapter = new BoxingViewportAdapter(
-				Game.GraphicsDevice,
-				Game.Window,
-				new Vector2Int(640, 360))
-		};
+			await Task.Delay(2000);
+			RegisterContent();
 
-		logger.Critical(
-			$"{scene.Skin.ContentRegistry.Get<Texture2D>("hgm:ui/skin/button_input_texture").HasItem}");
-		logger.Critical($"{scene.Skin.Button.InputTexture.HasItem}");
+			var scene = MainMenuSceneFactory.NewScene(Game, contentRegistry);
+			Game.ChangeScenes(scene);
+		});
 
+		//var scene = MainMenuSceneFactory.NewScene(Game, contentRegistry);
+		//Game.ChangeScenes(scene);
+
+		var scene = SplashSceneFactory.NewScene(
+			Game,
+			new FileInfo("splash.png").Open(FileMode.Open));
 		Game.ChangeScenes(scene);
 
 		Test();
+
+		logger.Critical($"Now ready to refresh the skin.");
+		//registerContent.Wait();
+		//scene.Skin.Refresh();
 	}
 
 	private void RegisterContent()
@@ -171,8 +174,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		{
 			RaceName = "high elf"
 		});
-		
-		
 
 		var file = new FileInfo("sentient_apple_pie.json");
 		var entityManifestJson = file.ReadString(Encoding.UTF8);
@@ -195,53 +196,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 	protected override void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)
 	{
-		var scene = Game.Scene;
-
-		if (scene is null)
-			return;
-
-		scene.Root.Add(new Text
-		{
-			Font = scene.Skin.Font.LargeFont,
-			Bounds = new Rectangle(32, 32, 64, 24),
-			Color = Color.White,
-			Message = "Hedgemen!",
-			Scale = 0.75f
-		});
-
-		Game.Logger.Critical($"{scene.Skin.Button.HoverTexture.ContentID}");
-		var startButton = scene.Root.Add(new Button(scene.Skin)
-		{
-			Anchor = Anchor.CenterLeft,
-			Bounds = new Rectangle(32, -56, 128, 40)
-		});
-
-		startButton.Add(new Text
-		{
-			Anchor = Anchor.Center,
-			Font = scene.Skin.Font.MediumFont,
-			Message = "Singleplayer",
-			Scale = 0.5f
-		});
 		
-		var exitButton = scene.Root.Add(new Button(scene.Skin)
-		{
-			Anchor = Anchor.CenterLeft,
-			Bounds = new Rectangle(32, 8, 128*2, 40*2)
-		});
-
-		exitButton.OnMousePressed += (sender, args) =>
-		{
-			Game.Exit();
-		};
-		
-		exitButton.Add(new Text
-		{
-			Anchor = Anchor.Center,
-			Font = scene.Skin.Font.MediumFont,
-			Message = "Exit",
-			Scale = 0.5f
-		});
 	}
 
 	public override PetalModManifest GetEmbeddedManifest()
