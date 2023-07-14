@@ -28,6 +28,7 @@ public static class SplashSceneFactory
 			Color = Color.White,
 			Bounds = scene.ViewportAdapter.VirtualResolution.ToRectangleSize()
 		});
+		
 		return scene;
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Petal.Framework.Util;
 
 namespace Petal.Framework;
 
@@ -27,19 +28,33 @@ public struct NamespacedString
 		return new NamespacedString(@namespace, DefaultName);
 	}
 
+	public static bool IsValidQualifiedString(string? str)
+	{
+		if (string.IsNullOrEmpty(str))
+			return false;
+		
+		bool correctColonOccurrences = str.Occurrences(':') == 1;
+		bool noSpaceOccurrences = str.Occurrences(' ') == 0;
+		bool hasMinimumThreeCharacters = str.Length >= 3;
+
+		return correctColonOccurrences && noSpaceOccurrences && hasMinimumThreeCharacters;
+	}
+
 	private string _namespace;
 	private string _name;
+
+	public bool IsDefaultNamespacedString
+		=> this == Default;
 
 	[JsonConstructor]
 	public NamespacedString(string fullyQualifiedString)
 	{
-		if (fullyQualifiedString is null)
-			throw new NullReferenceException(nameof(fullyQualifiedString));
-		
-		string[] fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
-
 		if (!IsValidQualifiedString(fullyQualifiedString))
+		{
 			throw new ArgumentException($"String '{fullyQualifiedString}' is not a valid namespaced string!");
+		}
+
+		string[] fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
 
 		_namespace = fullyQualifiedStringSplit[0];
 		_name = fullyQualifiedStringSplit[1];
@@ -78,19 +93,6 @@ public struct NamespacedString
 	[JsonPropertyName("namespaced_string")]
 	public string FullName
 		=> _namespace + ':' + _name;
-
-	private static bool IsValidQualifiedString(string? fullyQualifiedString)
-	{
-		if (fullyQualifiedString is null)
-			return false;
-		
-		string[] fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
-
-		bool correctNumberOfSplits = fullyQualifiedStringSplit.Length == 2;
-		bool noSpaces = !fullyQualifiedString.Contains(' ');
-
-		return correctNumberOfSplits && noSpaces;
-	}
 
 	public override string ToString()
 	{

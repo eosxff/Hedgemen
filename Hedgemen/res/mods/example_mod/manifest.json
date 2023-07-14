@@ -1,6 +1,6 @@
 {
     "schema_version": 1,
-    "namespaced_id": "example:mod",
+    "mod_id": "example:mod",
     "version": "0.0.1",
     "name": "Example Mod!",
     "description": "Mod that exists to check if the mod loader functions as intended.",

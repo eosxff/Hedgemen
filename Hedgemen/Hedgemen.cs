@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using Hgm.Vanilla;
 using Petal.Framework;
+using Petal.Framework.Content;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
 using Petal.Framework.Util.Logging;
@@ -23,14 +24,25 @@ public class Hedgemen : PetalGame
 		return false;
 #endif
 	}
-	
+
+	private static Hedgemen _instance;
+
 	public static Hedgemen Instance
+	{
+		get
+		{
+			ArgumentNullException.ThrowIfNull(_instance);
+			return _instance;
+		}
+	}
+
+	public ContentRegistry Registry
 	{
 		get;
 		private set;
 	}
 
-	public ContentRegistry ContentRegistry
+	public Registry NRegistry // todo
 	{
 		get;
 		private set;
@@ -38,7 +50,7 @@ public class Hedgemen : PetalGame
 
 	public Hedgemen()
 	{
-		Instance = this;
+		_instance = this;
 		OnDebugChanged += DebugChangedCallback;
 	}
 
@@ -74,10 +86,10 @@ public class Hedgemen : PetalGame
 
 		var manifest = PetalModManifest.FromJson(
 			new FileInfo("mods/example_mod/manifest.json").ReadString(Encoding.UTF8));
-
-		ContentRegistry = new ContentRegistry(Logger);
+		
 		Logger.LogLevel = LogLevel.Debug;
-
+		NRegistry = new Registry(Logger);
+		Registry = new ContentRegistry(Logger);
 		ModLoader = new PetalModLoader(Logger);
 
 		Setup();
@@ -99,13 +111,14 @@ public class Hedgemen : PetalGame
 		
 		const string fileName = "petal.json";
 		var file = new FileInfo(fileName);
+		
 		var fallbackSettings = new GameSettings
 		{
 			PreferredFramerate = 60,
 			Vsync = false,
 			WindowWidth = 960,
 			WindowHeight = 540,
-			WindowMode = WindowMode.Windowed,
+			WindowMode = WindowMode.BorderlessFullscreen,
 			IsMouseVisible = true,
 			IsWindowUserResizable = true,
 			IsDebug = true

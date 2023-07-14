@@ -1,6 +1,6 @@
 {
     "schema_version": 1,
-    "namespaced_id": "no_code:mod",
+    "mod_id": "no_code:mod",
     "version": "0.0.1",
     "name": "No Code Mod!",
     "description": "Mod that exists to check if the mod loader functions as intended.",

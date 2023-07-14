@@ -80,5 +80,5 @@ public interface IModLoader<in TMod> where TMod : IMod
 	public ModLoaderSetupContext Setup(ModLoaderSetupArgs args);
 	public bool Start(ModLoaderSetupContext context);
 
-	public bool GetMod<T>(NamespacedString id, out T mod) where T : TMod;
+	public bool GetMod<T>(NamespacedString modID, out T mod) where T : TMod;
 }

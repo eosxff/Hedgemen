@@ -64,7 +64,7 @@ public class PetalModLoader : IModLoader<PetalMod>
 
 		foreach (var mod in loadedMods)
 		{
-			_mods.Add(mod.Manifest.NamespacedID, mod);
+			_mods.Add(mod.Manifest.ModID, mod);
 			mod.OnLoadedToPetalModLoader();
 		}
 
@@ -91,11 +91,11 @@ public class PetalModLoader : IModLoader<PetalMod>
 		return true;
 	}
 
-	public bool GetMod<T>(NamespacedString id, out T mod) where T : PetalMod
+	public bool GetMod<T>(NamespacedString modID, out T mod) where T : PetalMod
 	{
 		mod = default;
 
-		bool found = _mods.TryGetValue(id, out var petalMod);
+		bool found = _mods.TryGetValue(modID, out var petalMod);
 
 		if (found && petalMod is T tMod)
 		{
@@ -152,7 +152,7 @@ public class PetalModLoader : IModLoader<PetalMod>
 				Logger.Error($"Could not load mod from '{directory.Name}'.");
 			else
 			{
-				Logger.Debug($"Loaded '{mod.Manifest.NamespacedID}' of type '{mod.GetType()}'.");
+				Logger.Debug($"Loaded '{mod.Manifest.ModID}' of type '{mod.GetType()}'.");
 				list.Add(mod);
 			}
 		}

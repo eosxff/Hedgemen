@@ -30,9 +30,9 @@ public sealed class PetalModManifest
 		init;
 	} = 1;
 
-	[JsonPropertyName("namespaced_id")]
+	[JsonPropertyName("mod_id")]
 	[JsonConverter(typeof(NamespacedString.JsonConverter))]
-	public NamespacedString NamespacedID
+	public NamespacedString ModID
 	{
 		get;
 		init;

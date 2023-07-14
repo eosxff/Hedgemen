@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
 using Petal.Framework.Graphics.Adapters;
 using Petal.Framework.IO;
@@ -18,12 +19,18 @@ public static class MainMenuSceneFactory
 		var scene = new Scene(
 			new Stage(), skin)
 		{
-			BackgroundColor = new Color(232, 190, 198, 255),
+			//BackgroundColor = new Color(232, 190, 198, 255),
+			BackgroundColor = Color.Black,
 			ViewportAdapter = new BoxingViewportAdapter(
 				hedgemen.GraphicsDevice,
 				hedgemen.Window,
 				new Vector2Int(640, 360))
 		};
+
+		scene.Root.Add(new Background
+		{
+			Image = contentRegistry.Get<Texture2D>("hgm:ui/splash_texture")
+		});
 		
 		scene.Root.Add(new Text
 		{

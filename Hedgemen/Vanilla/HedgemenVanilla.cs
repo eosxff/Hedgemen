@@ -8,17 +8,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hgm.Components;
 using Hgm.Vanilla.Scenes;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Petal.Framework;
+using Petal.Framework.Content;
 using Petal.Framework.EC;
-using Petal.Framework.Graphics;
-using Petal.Framework.Graphics.Adapters;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
-using Petal.Framework.Persistence;
-using Petal.Framework.Scenery;
-using Petal.Framework.Scenery.Nodes;
 
 namespace Hgm.Vanilla;
 
@@ -45,7 +39,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 	protected override void Setup(ModLoaderSetupContext context)
 	{
 		var logger = Game.Logger;
-		var contentRegistry = Game.ContentRegistry;
+		var contentRegistry = Game.Registry;
 		var assetLoader = Game.Assets;
 
 		var registerContent = Task.Run(async delegate
@@ -68,6 +62,12 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		Test();
 
 		logger.Critical($"Now ready to refresh the skin.");
+
+		Game.NRegistry.AddRegister(new Register<EntityComponent>(
+			"hgm:entity_components",
+			Manifest.ModID,
+			Game.NRegistry));
+		
 		//registerContent.Wait();
 		//scene.Skin.Refresh();
 	}
@@ -76,7 +76,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 	{
 		var logger = Game.Logger;
 		var assetLoader = Game.Assets;
-		var contentRegistry = Game.ContentRegistry;
+		var contentRegistry = Game.Registry;
 		
 		contentRegistry.Register(
 			"hgm:ui/skin/button_hover_texture",
@@ -98,6 +98,10 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		
 		contentRegistry.Register(
 			"hgm:ui/large_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular_64"));
+
+		contentRegistry.Register(
+			"hgm:ui/splash_texture", 
+			assetLoader.LoadAsset<Texture2D>("splash.png"));
 	}
 
 	private void Test()
@@ -204,7 +208,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		return new PetalModManifest
 		{
 			SchemaVersion = 1,
-			NamespacedID = "hgm:mod",
+			ModID = "hgm:mod",
 			Name = "Hedgemen",
 			Version = Hedgemen.Version.ToString(),
 			Description = "Open world roguelike sidescroller. It's not even a game yet lol.",
