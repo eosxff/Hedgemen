@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,7 +55,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 		Game.OnSceneChanged += (sender, args) =>
 		{
-			logger.Critical($"Changing scene.");
+			logger.Debug($"Changing scene.");
 		};
 
 		var scene = SplashSceneFactory.NewScene(

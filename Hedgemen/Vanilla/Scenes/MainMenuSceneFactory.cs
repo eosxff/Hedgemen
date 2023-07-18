@@ -2,7 +2,6 @@
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Petal.Framework;
 using Petal.Framework.Content;
 using Petal.Framework.Graphics.Adapters;
 using Petal.Framework.IO;
@@ -20,7 +19,6 @@ public static class MainMenuSceneFactory
 		var scene = new Scene(
 			new Stage(), skin)
 		{
-			//BackgroundColor = new Color(232, 190, 198, 255),
 			BackgroundColor = Color.Black,
 			ViewportAdapter = new BoxingViewportAdapter(
 				hedgemen.GraphicsDevice,
@@ -42,7 +40,6 @@ public static class MainMenuSceneFactory
 			Scale = 0.75f
 		});
 
-		hedgemen.Logger.Critical($"{scene.Skin.Button.HoverTexture.Key.ContentID}");
 		var startButton = scene.Root.Add(new Button(scene.Skin)
 		{
 			Anchor = Anchor.CenterLeft,
@@ -76,8 +73,6 @@ public static class MainMenuSceneFactory
 			Message = "Exit",
 			Scale = 0.5f
 		});
-
-		hedgemen.Logger.Critical($"Ready to return main menu scene.");
 
 		return scene;
 	}

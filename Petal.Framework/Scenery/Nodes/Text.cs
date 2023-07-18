@@ -53,7 +53,7 @@ public class Text : Node
 
 	protected override void OnDraw(GameTime time)
 	{
-		if (Scene is null || Font.Key.Content is null)
+		if (Scene is null || !Font.HasValidKey)
 			return;
 
 		Scene.Renderer.Begin();

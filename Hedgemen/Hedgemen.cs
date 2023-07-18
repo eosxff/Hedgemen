@@ -45,7 +45,9 @@ public class Hedgemen : PetalGame
 	public Hedgemen()
 	{
 		_instance = this;
+
 		OnDebugChanged += DebugChangedCallback;
+		AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 	}
 
 	public PetalModLoader ModLoader
@@ -79,6 +81,13 @@ public class Hedgemen : PetalGame
 		if (sender != this)
 			return;
 
+		WriteLogFile();
+
+		AppDomain.CurrentDomain.UnhandledException -= OnUnhandledException;
+	}
+
+	private void WriteLogFile()
+	{
 		var logFile = new FileInfo("log.txt");
 		logFile.WriteString(Logger.ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
 	}
@@ -152,5 +161,11 @@ public class Hedgemen : PetalGame
 			Logger.LogLevel = oldLogLevel;
 			return fallbackSettings;
 		}
+	}
+
+	private void OnUnhandledException(object? sender, UnhandledExceptionEventArgs args)
+	{
+		Logger.Critical($"Unhandled exception:\n{args.ExceptionObject}");
+		WriteLogFile();
 	}
 }
