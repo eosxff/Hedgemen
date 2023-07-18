@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Petal.Framework.Content;
 using Petal.Framework.Graphics;
 
 namespace Petal.Framework.Scenery.Nodes;
@@ -26,7 +27,7 @@ public class Text : Node
 		set;
 	} = Color.White;
 
-	public ContentReference<SpriteFont> Font
+	public RegistryObject<SpriteFont> Font
 	{
 		get;
 		set;
@@ -39,10 +40,10 @@ public class Text : Node
 
 	protected override Rectangle GetDefaultBounds()
 	{
-		if(Font is null || !Font.HasItem)
+		if(Font?.Key.Content is null)
 			return Rectangle.Empty;
 
-		var messageSize = Font.Item.MeasureString(Message);
+		var messageSize = Font.Get().MeasureString(Message);
 		return new Rectangle(0, 0, (int)(messageSize.X * Scale), (int)(messageSize.Y * Scale));
 	}
 
@@ -52,14 +53,14 @@ public class Text : Node
 
 	protected override void OnDraw(GameTime time)
 	{
-		if (Scene is null || !Font.HasItem)
+		if (Scene is null || Font.Key.Content is null)
 			return;
-		
+
 		Scene.Renderer.Begin();
-		
+
 		Scene.Renderer.Draw(new RenderStringData
 		{
-			Font = Font.Item,
+			Font = Font.Get(),
 			Position = new Vector2(AbsoluteBounds.X, AbsoluteBounds.Y),
 			Color = Color,
 			Text = Message,
@@ -73,10 +74,10 @@ public class Text : Node
 	{
 		var calculatedBounds = base.CalculateBounds(bounds);
 
-		if (Font.Item is null)
+		if (Font.Key.Content is null)
 			return calculatedBounds;
 
-		var measuredMessage = Font.Item.MeasureString(Message);
+		var measuredMessage = Font.Get().MeasureString(Message);
 		calculatedBounds.Width = (int)(measuredMessage.X * Scale);
 		calculatedBounds.Height = (int)(measuredMessage.Y * Scale);
 

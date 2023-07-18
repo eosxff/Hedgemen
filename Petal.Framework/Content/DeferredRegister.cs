@@ -1,8 +1,11 @@
-﻿namespace Petal.Framework.Content;
+﻿using System;
+
+namespace Petal.Framework.Content;
 
 public class DeferredRegister<TContent> : IDeferredRegister
 {
-
+	public event EventHandler<IDeferredRegister.ForwardedToRegisterArgs>? OnForwardedToRegister;
+	
 	public NamespacedString RegistryName
 	{
 		get;
@@ -18,9 +21,24 @@ public class DeferredRegister<TContent> : IDeferredRegister
 	public bool IsForwarded
 	{
 		get;
+		private set;
 	}
+	
+	public DeferredRegister(NamespacedString registryName, NamespacedString modID, Registry registry)
+	{
+		RegistryName = registryName;
+		ModID = modID;
+		Registry = registry;
+	}
+	
 	public void ForwardTo(IRegister register)
 	{
-		throw new System.NotImplementedException();
+		var args = new IDeferredRegister.ForwardedToRegisterArgs
+		{
+			Register = register
+		};
+
+		IsForwarded = true;
+		OnForwardedToRegister?.Invoke(this, args);
 	}
 }

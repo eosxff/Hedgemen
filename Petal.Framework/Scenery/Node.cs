@@ -189,7 +189,7 @@ public abstract class Node
 
 	protected Node()
 	{
-		Name = GenerateNodeName(this);
+		Name = GenerateDefaultNodeName(this);
 	}
 
 	public void Update(GameTime time, NodeSelection selection)
@@ -206,7 +206,8 @@ public abstract class Node
 
 		OnUpdate(time, selection);
 
-		foreach (var child in Children) child.Update(time, selection);
+		foreach (var child in Children)
+			child.Update(time, selection);
 
 		if (IsInteractable)
 		{
@@ -509,6 +510,6 @@ public abstract class Node
 			State = NodeState.Input;
 	}
 
-	public static NamespacedString GenerateNodeName(Node node)
+	public static NamespacedString GenerateDefaultNodeName(Node node)
 		=> $"{NamespacedString.DefaultNamespace}:{node.GetType().Name.ToLowerInvariant()}@{node.GetHashCode()}";
 }

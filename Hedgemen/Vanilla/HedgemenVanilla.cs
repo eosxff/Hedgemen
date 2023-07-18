@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Hgm.Components;
 using Hgm.Vanilla.Scenes;
@@ -29,7 +26,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 	protected override void PrePetalModLoaderModSetupPhase(ModLoaderSetupContext context)
 	{
 		var logger = Game.Logger;
-		
+
 		logger.Debug("I");
 		logger.Warn("Love");
 		logger.Error("These");
@@ -38,38 +35,45 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 	protected override void Setup(ModLoaderSetupContext context)
 	{
+		Game.Registry.AddRegister(new Register<EntityComponent>(
+			"hgm:entity_components",
+			Manifest.ModID,
+			Game.Registry));
+
+		Game.Registry.AddRegister(new Register<CellComponent>(
+			"hgm:cell_components",
+			Manifest.ModID,
+			Game.Registry));
+
+		Game.Registry.AddRegister(new Register<object>(
+			"hgm:assets",
+			Manifest.ModID,
+			Game.Registry));
+
 		var logger = Game.Logger;
-		var contentRegistry = Game.Registry;
+		var assetsRegistryFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
 		var assetLoader = Game.Assets;
 
-		var registerContent = Task.Run(async delegate
+		Game.OnSceneChanged += (sender, args) =>
 		{
-			await Task.Delay(2000);
-			RegisterContent();
-
-			var scene = MainMenuSceneFactory.NewScene(Game, contentRegistry);
-			Game.ChangeScenes(scene);
-		});
-
-		//var scene = MainMenuSceneFactory.NewScene(Game, contentRegistry);
-		//Game.ChangeScenes(scene);
+			logger.Critical($"Changing scene.");
+		};
 
 		var scene = SplashSceneFactory.NewScene(
 			Game,
 			new FileInfo("splash.png").Open(FileMode.Open));
 		Game.ChangeScenes(scene);
 
+		var registerContent = Task.Run(async delegate
+		{
+			await Task.Delay(2000);
+			RegisterContent();
+
+			var mainMenuScene = MainMenuSceneFactory.NewScene(Game, assets);
+			Game.ChangeScenes(mainMenuScene);
+		});
+
 		Test();
-
-		logger.Critical($"Now ready to refresh the skin.");
-
-		Game.NRegistry.AddRegister(new Register<EntityComponent>(
-			"hgm:entity_components",
-			Manifest.ModID,
-			Game.NRegistry));
-		
-		//registerContent.Wait();
-		//scene.Skin.Refresh();
 	}
 
 	private void RegisterContent()
@@ -77,45 +81,66 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		var logger = Game.Logger;
 		var assetLoader = Game.Assets;
 		var contentRegistry = Game.Registry;
-		
-		contentRegistry.Register(
+
+		var assetsRegistryFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
+
+		if (!assetsRegistryFound)
+			return;
+
+		assets.AddKey(
 			"hgm:ui/skin/button_hover_texture",
 			assetLoader.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
-		
-		contentRegistry.Register(
+
+		assets.AddKey(
 			"hgm:ui/skin/button_normal_texture",
 			assetLoader.LoadAsset<Texture2D>(new FileInfo("button_normal.png").Open(FileMode.Open)));
-		
-		contentRegistry.Register(
+
+		assets.AddKey(
 			"hgm:ui/skin/button_input_texture",
 			assetLoader.LoadAsset<Texture2D>(new FileInfo("button_input.png").Open(FileMode.Open)));
-		
-		contentRegistry.Register(
+
+		assets.AddKey(
 			"hgm:ui/small_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular"));
-		
-		contentRegistry.Register(
+
+		assets.AddKey(
 			"hgm:ui/medium_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular_32"));
-		
-		contentRegistry.Register(
+
+		assets.AddKey(
 			"hgm:ui/large_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular_64"));
 
-		contentRegistry.Register(
-			"hgm:ui/splash_texture", 
+		assets.AddKey(
+			"hgm:ui/splash_texture",
 			assetLoader.LoadAsset<Texture2D>("splash.png"));
 	}
 
 	private void Test()
 	{
 		var logger = Game.Logger;
-		
-		/*logger.Debug($"Just testing some garbage.");
-		
+
 		var entity = new Entity();
 		entity.AddComponent(new CharacterSheet());
 		entity.AddComponent(new CharacterRace
 		{
 			RaceName = "high elf"
 		});
+
+		var file = new FileInfo("sentient_apple_pie.json");
+		var entityManifestJson = file.ReadString(Encoding.UTF8);
+		var entityManifest = EntityManifest.FromJson(entityManifestJson);
+
+		if (entityManifest is not null)
+		{
+			logger.Debug($"Entity manifest component count: {entityManifest.Components.Count}");
+			logger.Debug($"Entity component: " +
+			             $"{entityManifest.Components["hgm:character_sheet"].ReadData<int>("hgm:strength")}.");
+			logger.Debug($"Entity component: {
+				entityManifest.Components["hgm:character_race"]
+					.ReadData<string>("hgm:race_name")}.");
+		}
+		else
+		{
+			logger.Warn($"File '{file.FullName}' failed to create valid {nameof(EntityManifest)}.");
+		}
 
 		for (int i = 0; i < 1; ++i)
 		{
@@ -160,47 +185,19 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 		logger.Debug($"Test entity responds to {nameof(ChangeStatEvent)}: " +
 		             $"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");
-		
+
 		entityClone.RemoveComponent<CharacterSheet>();
-		
+
 		logger.Debug(
-			$"Test does entity respond to {nameof(ChangeStatEvent)} after removing all referenced components: " + 
+			$"Test does entity respond to {nameof(ChangeStatEvent)} after removing all referenced components: " +
 			$"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");
-		
-		logger.Error($"Testing if error applies in {(Game.IsDebug ? "Debug" : logger.LogLevel.ToString())}");
-		logger.Critical($"Testing if critical applies in {(Game.IsDebug ? "Debug" : logger.LogLevel.ToString())}");
 
-		entity.RemoveComponent<CharacterSheet>();*/
-		
-		var entity = new Entity();
-		entity.AddComponent(new CharacterSheet());
-		entity.AddComponent(new CharacterRace
-		{
-			RaceName = "high elf"
-		});
-
-		var file = new FileInfo("sentient_apple_pie.json");
-		var entityManifestJson = file.ReadString(Encoding.UTF8);
-		var entityManifest = EntityManifest.FromJson(entityManifestJson);
-
-		if (entityManifest is not null)
-		{
-			logger.Debug($"Entity manifest component count: {entityManifest.Components.Count}");
-			logger.Debug($"Entity component: " +
-			             $"{entityManifest.Components["hgm:character_sheet"].ReadData<int>("hgm:strength")}.");
-			logger.Debug($"Entity component: {
-				entityManifest.Components["hgm:character_race"]
-					.ReadData<string>("hgm:race_name")}.");
-		}
-		else
-		{
-			logger.Warn($"File '{file.FullName}' failed to create valid {nameof(EntityManifest)}.");
-		}
+		entity.RemoveComponent<CharacterSheet>();
 	}
 
 	protected override void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)
 	{
-		
+
 	}
 
 	public override PetalModManifest GetEmbeddedManifest()
@@ -227,7 +224,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 				IncompatibleMods = { },
 				Mods = new List<string>()
 			},
-			
+
 			ModFileDll = string.Empty,
 			ModMain = string.Empty,
 			IsOverhaul = false

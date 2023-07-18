@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Xna.Framework.Graphics;
+using Petal.Framework.Content;
 using Petal.Framework.Util;
 
 namespace Petal.Framework.Scenery;
@@ -9,62 +10,64 @@ namespace Petal.Framework.Scenery;
 public sealed class Skin
 {
 	public event EventHandler? OnSkinRefreshed;
-	
-	private ContentRegistry? _contentRegistry;
-	
-	public ContentRegistry? ContentRegistry
+
+	private Register<object> _assets;
+
+	public Register<object> Assets
 	{
-		get => _contentRegistry;
+		get => _assets;
 		set
 		{
-			if (_contentRegistry is not null)
+			if (_assets is not null)
 			{
-				_contentRegistry.OnContentReplaced -= ContentRegistryShouldRefreshOnReplaced;
-				_contentRegistry.OnContentRemoved -= ContentRegistryShouldRefreshOnRemoved;
+				//_registry.OnContentReplaced -= RegistryShouldRefreshOnReplaced;
+				//_registry.OnContentRemoved -= RegistryShouldRefreshOnRemoved;
 			}
-			
-			_contentRegistry = value;
 
-			if (_contentRegistry is not null)
+			_assets = value;
+
+			if (_assets is not null)
 			{
-				_contentRegistry.OnContentReplaced += ContentRegistryShouldRefreshOnReplaced;
-				_contentRegistry.OnContentRemoved += ContentRegistryShouldRefreshOnRemoved;
+				//_registry.OnContentReplaced += RegistryShouldRefreshOnReplaced;
+				//_registry.OnContentRemoved += RegistryShouldRefreshOnRemoved;
 			}
-			
+
 			Refresh();
 		}
 	}
 
-	private void ContentRegistryShouldRefreshOnReplaced(object? sender, ContentRegistry.ContentReplacedArgs args)
+	private void RegistryShouldRefreshOnReplaced(object? sender, EventArgs args)
 	{
-		if (sender is not ContentRegistry registry)
+		if (sender is not Registry registry)
 			return;
 
-		if (ContentIDMatchesAny(args.ReplacedContent.ContentID))
+		/*if (ContentIDMatchesAny(args.ReplacedContent.ContentID))
 		{
 			ShouldRefresh = true;
-		}
+		}*/
 	}
-	
-	private void ContentRegistryShouldRefreshOnRemoved(object? sender, ContentRegistry.ContentRemovedArgs args)
+
+	private void RegistryShouldRefreshOnRemoved(object? sender, EventArgs args)
 	{
-		if (sender is not ContentRegistry registry)
+		if (sender is not Registry registry)
 			return;
 
-		if (ContentIDMatchesAny(args.RemovedContent.ContentID))
+		/*if (ContentIDMatchesAny(args.RemovedContent.ContentID))
 		{
 			ShouldRefresh = true;
-		}
+		}*/
 	}
 
 	private bool ContentIDMatchesAny(NamespacedString contentID)
 	{
-		return contentID == Button.HoverTexture.ContentID ||
+		/*return contentID == Button.HoverTexture.ContentID ||
 		       contentID == Button.InputTexture.ContentID ||
 		       contentID == Button.NormalTexture.ContentID ||
 		       contentID == Font.SmallFont.ContentID ||
 		       contentID == Font.MediumFont.ContentID ||
-		       contentID == Font.LargeFont.ContentID;
+		       contentID == Font.LargeFont.ContentID;*/
+
+		return false;
 	}
 
 	private ButtonData _button;
@@ -101,51 +104,71 @@ public sealed class Skin
 	{
 	}
 
-	public Skin(ContentRegistry? contentRegistry)
+	public Skin(Register<object>? assets)
 	{
-		ContentRegistry = contentRegistry;
+		_assets = assets;
 
-		_button = new ButtonData
+		if (assets is not null)
 		{
-			HoverTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry),
-			InputTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry),
-			NormalTexture = new ContentReference<Texture2D>(NamespacedString.Default, contentRegistry)
-		};
+			_button = new ButtonData
+			{
+				HoverTexture = assets.CreateRegistryObject<Texture2D>(NamespacedString.Default),
+				InputTexture = assets.CreateRegistryObject<Texture2D>(NamespacedString.Default),
+				NormalTexture = assets.CreateRegistryObject<Texture2D>(NamespacedString.Default),
+			};
 
-		_font = new FontData()
+			_font = new FontData()
+			{
+				SmallFont = assets.CreateRegistryObject<SpriteFont>(NamespacedString.Default),
+				MediumFont = assets.CreateRegistryObject<SpriteFont>(NamespacedString.Default),
+				LargeFont = assets.CreateRegistryObject<SpriteFont>(NamespacedString.Default),
+			};
+		}
+
+		else
 		{
-			SmallFont = new ContentReference<SpriteFont>(NamespacedString.Default, contentRegistry),
-			MediumFont = new ContentReference<SpriteFont>(NamespacedString.Default, contentRegistry),
-			LargeFont = new ContentReference<SpriteFont>(NamespacedString.Default, contentRegistry)
-		};
+			_button = new ButtonData
+			{
+				HoverTexture = RegistryObject<Texture2D>.Empty,
+				InputTexture = RegistryObject<Texture2D>.Empty,
+				NormalTexture = RegistryObject<Texture2D>.Empty,
+			};
+
+			_font = new FontData()
+			{
+				SmallFont = RegistryObject<SpriteFont>.Empty,
+				MediumFont = RegistryObject<SpriteFont>.Empty,
+				LargeFont = RegistryObject<SpriteFont>.Empty,
+			};
+		}
 	}
 
 	public sealed class ButtonData
 	{
-		public ContentReference<Texture2D> NormalTexture;
-		public ContentReference<Texture2D> HoverTexture;
-		public ContentReference<Texture2D> InputTexture;
+		public RegistryObject<Texture2D> NormalTexture;
+		public RegistryObject<Texture2D> HoverTexture;
+		public RegistryObject<Texture2D> InputTexture;
 	}
 
 	public sealed class FontData
 	{
-		public ContentReference<SpriteFont> SmallFont;
-		public ContentReference<SpriteFont> MediumFont;
-		public ContentReference<SpriteFont> LargeFont;
+		public RegistryObject<SpriteFont> SmallFont;
+		public RegistryObject<SpriteFont> MediumFont;
+		public RegistryObject<SpriteFont> LargeFont;
 	}
 
 	public void Refresh()
 	{
-		if (ContentRegistry is null)
+		if (_assets is null)
 			return;
 
-		_button.NormalTexture.ReloadItem(ContentRegistry);
-		_button.HoverTexture.ReloadItem(ContentRegistry);
-		_button.InputTexture.ReloadItem(ContentRegistry);
-		
-		_font.SmallFont.ReloadItem(ContentRegistry);
-		_font.MediumFont.ReloadItem(ContentRegistry);
-		_font.LargeFont.ReloadItem(ContentRegistry);
+		_button.NormalTexture = _assets.CreateRegistryObject<Texture2D>(_button.NormalTexture.Key.ContentID);
+		_button.HoverTexture = _assets.CreateRegistryObject<Texture2D>(_button.HoverTexture.Key.ContentID);
+		_button.InputTexture = _assets.CreateRegistryObject<Texture2D>(_button.InputTexture.Key.ContentID);
+
+		_font.SmallFont = _assets.CreateRegistryObject<SpriteFont>(_font.SmallFont.Key.ContentID);
+		_font.MediumFont = _assets.CreateRegistryObject<SpriteFont>(_font.MediumFont.Key.ContentID);
+		_font.LargeFont = _assets.CreateRegistryObject<SpriteFont>(_font.LargeFont.Key.ContentID);
 	}
 
 	private void HandleRefresh()
@@ -155,15 +178,14 @@ public sealed class Skin
 
 		Refresh();
 		ShouldRefresh = false;
-		
+
 		OnSkinRefreshed?.Invoke(this, EventArgs.Empty);
 	}
 
-	public static Skin FromJson(string json, ContentRegistry? registry)
+	public static Skin FromJson(string json, Register<object> assets)
 	{
-		var skin = JsonSerializer.Deserialize(json, SkinDataRecordJsc.Default.DataRecord).Create();
-		
-		skin.ContentRegistry = registry;
+		var skin = JsonSerializer.Deserialize(json, SkinDataRecordJsc.Default.DataRecord).Create(assets);
+		skin.Assets = assets;
 
 		return skin;
 	}
@@ -191,48 +213,48 @@ public sealed class Skin
 		[JsonInclude, JsonPropertyName("button_data_input_texture_name")]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString ButtonDataInputTextureName;
-		
+
 		[JsonInclude, JsonPropertyName("font_data_small_font_name")]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString FontDataSmallFontName;
-		
+
 		[JsonInclude, JsonPropertyName("font_data_medium_font_name")]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString FontDataMediumFontName;
-		
+
 		[JsonInclude, JsonPropertyName("font_data_large_font_name")]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString FontDataLargeFontName;
 
-		public Skin Create()
+		public Skin Create(Register<object> assets)
 		{
 			return new Skin
 			{
 				Button = new ButtonData
 				{
-					NormalTexture = new ContentReference<Texture2D>(ButtonDataNormalTextureName),
-					HoverTexture = new ContentReference<Texture2D>(ButtonDataHoverTextureName),
-					InputTexture = new ContentReference<Texture2D>(ButtonDataInputTextureName)
+					NormalTexture = assets.CreateRegistryObject<Texture2D>(ButtonDataNormalTextureName),
+					HoverTexture = assets.CreateRegistryObject<Texture2D>(ButtonDataHoverTextureName),
+					InputTexture = assets.CreateRegistryObject<Texture2D>(ButtonDataInputTextureName)
 				},
-				
+
 				Font = new FontData
 				{
-					SmallFont = new ContentReference<SpriteFont>(FontDataSmallFontName),
-					MediumFont = new ContentReference<SpriteFont>(FontDataMediumFontName),
-					LargeFont = new ContentReference<SpriteFont>(FontDataLargeFontName),
+					SmallFont = assets.CreateRegistryObject<SpriteFont>(FontDataSmallFontName),
+					MediumFont = assets.CreateRegistryObject<SpriteFont>(FontDataMediumFontName),
+					LargeFont = assets.CreateRegistryObject<SpriteFont>(FontDataLargeFontName)
 				}
 			};
 		}
 
 		public void Read(Skin obj)
 		{
-			ButtonDataNormalTextureName = obj.Button.NormalTexture.ContentID;
-			ButtonDataHoverTextureName = obj.Button.HoverTexture.ContentID;
-			ButtonDataInputTextureName = obj.Button.InputTexture.ContentID;
+			ButtonDataNormalTextureName = obj.Button.NormalTexture.Key.ContentID;
+			ButtonDataHoverTextureName = obj.Button.HoverTexture.Key.ContentID;
+			ButtonDataInputTextureName = obj.Button.InputTexture.Key.ContentID;
 
-			FontDataSmallFontName = obj.Font.SmallFont.ContentID;
-			FontDataMediumFontName = obj.Font.MediumFont.ContentID;
-			FontDataLargeFontName = obj.Font.LargeFont.ContentID;
+			FontDataSmallFontName = obj.Font.SmallFont.Key.ContentID;
+			FontDataMediumFontName = obj.Font.MediumFont.Key.ContentID;
+			FontDataLargeFontName = obj.Font.LargeFont.Key.ContentID;
 		}
 	}
 }
@@ -241,5 +263,5 @@ public sealed class Skin
 [JsonSerializable(typeof(Skin.DataRecord))]
 public partial class SkinDataRecordJsc : JsonSerializerContext
 {
-	
+
 }

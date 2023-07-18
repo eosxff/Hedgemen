@@ -19,9 +19,11 @@ public sealed class AssetLoader : IDisposable
 
 	private readonly GraphicsDevice _graphicsDevice;
 	private readonly ContentManager _contentManager;
+	private readonly ILogger _logger;
 
-	public AssetLoader(GraphicsDevice graphicsDevice)
+	public AssetLoader(GraphicsDevice graphicsDevice, ILogger logger)
 	{
+		_logger = logger;
 		_graphicsDevice = graphicsDevice;
 		_contentManager = new AssetLoaderInternalContentManager(PetalGame.Petal.Services);
 	}

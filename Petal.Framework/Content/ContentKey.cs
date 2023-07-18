@@ -1,34 +1,18 @@
 ﻿namespace Petal.Framework.Content;
 
-public struct ContentKey
+public readonly struct ContentKey
 {
-	public IRegister? Register
-	{
-		get;
-		internal set;
-	}
-	
-	public NamespacedString ContentID
-	{
-		get;
-		internal set;
-	}
+	public readonly NamespacedString ContentID;
+	public readonly IRegister? Register;
+	public readonly object? Content;
 
-	public object? GetObject()
+	public ContentKey(NamespacedString contentID, IRegister? register, object? content)
 	{
-		if (Register is null)
-			return null;
-
-		return null; // todo
+		ContentID = contentID;
+		Register = register;
+		Content = content;
 	}
 
-	public TContent? GetObject<TContent>()
-	{
-		object? obj = GetObject();
-
-		if (obj is null)
-			return default;
-
-		return obj is not TContent tObj ? default : tObj;
-	}
+	public bool IsValid()
+		=> Content is not null;
 }

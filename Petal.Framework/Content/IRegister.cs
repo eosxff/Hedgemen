@@ -8,16 +8,20 @@ public interface IRegister
 	{
 		get;
 	}
-	
+
 	public NamespacedString ModID
 	{
 		get;
 	}
-	
+
 	public Registry Registry
 	{
 		get;
 	}
+
+	public bool AddKey(NamespacedString id, object content);
+	public bool RemoveKey(NamespacedString id);
+	public bool ReplaceKey(NamespacedString id, object content);
 
 	public RegistryObject<TContent> CreateRegistryObject<TContent>(NamespacedString id);
 	public void ReceiveDeferredRegister(IDeferredRegister register);

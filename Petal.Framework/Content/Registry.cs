@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Petal.Framework.Util.Logging;
 
@@ -6,10 +7,21 @@ namespace Petal.Framework.Content;
 
 public sealed class Registry
 {
+	public sealed class RegisterAdded : EventArgs
+	{
+		public required IRegister Register
+		{
+			get;
+			init;
+		}
+	}
+	
 	private const int RegistersInitialCapacity = 0;
 	
-	private Dictionary<NamespacedString, IRegister> _registers = new(RegistersInitialCapacity);
-	private ILogger _logger;
+	private readonly Dictionary<NamespacedString, IRegister> _registers = new(RegistersInitialCapacity);
+	private readonly ILogger _logger;
+
+	public event EventHandler<RegisterAdded>? OnRegisterAdded;
 
 	public Registry(ILogger logger)
 	{
@@ -22,6 +34,29 @@ public sealed class Registry
 			return false;
 		
 		_registers.Add(register.RegistryName, register);
+		_logger.Debug($"Added {register.RegistryName} to the registry.");
+		
+		OnRegisterAdded?.Invoke(this, new RegisterAdded
+		{
+			Register = register
+		});
+		
+		return true;
+	}
+
+	public bool GetRegister(
+		NamespacedString id,
+		[MaybeNullWhen(false)] out IRegister register)
+	{
+		register = default;
+
+		if (!_registers.TryGetValue(id, out var registerFromRegisters))
+		{
+			_logger.Debug($"Could not retrieve {id} from registry.");
+			return false;
+		}
+
+		register = registerFromRegisters;
 		return true;
 	}
 
@@ -30,10 +65,10 @@ public sealed class Registry
 		[MaybeNullWhen(false)] out TRegister register) where TRegister : IRegister
 	{
 		register = default;
-
-		if (!_registers.TryGetValue(id, out var registerFromRegisters))
-			return false;
 		
+		if (!GetRegister(id, out var registerFromRegisters))
+			return false;
+
 		register = registerFromRegisters is TRegister castedRegister ? castedRegister : default;
 		return register != null;
 	}

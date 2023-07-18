@@ -36,13 +36,7 @@ public class Hedgemen : PetalGame
 		}
 	}
 
-	public ContentRegistry Registry
-	{
-		get;
-		private set;
-	}
-
-	public Registry NRegistry // todo
+	public Registry Registry
 	{
 		get;
 		private set;
@@ -72,7 +66,7 @@ public class Hedgemen : PetalGame
 		Logger.Debug($"Starting {nameof(PetalModLoader)}.");
 
 		var logLevel = ModLoader.Start(context) ? LogLevel.Debug : LogLevel.Error;
-		
+
 		Logger.Add(
 			logLevel == LogLevel.Debug ?
 				$"Successfully started {nameof(PetalModLoader)}" :
@@ -80,16 +74,21 @@ public class Hedgemen : PetalGame
 			logLevel);
 	}
 
+	protected override void OnExiting(object sender, EventArgs args)
+	{
+		if (sender != this)
+			return;
+
+		var logFile = new FileInfo("log.txt");
+		logFile.WriteString(Logger.ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
+	}
+
 	protected override void Initialize()
 	{
 		base.Initialize();
 
-		var manifest = PetalModManifest.FromJson(
-			new FileInfo("mods/example_mod/manifest.json").ReadString(Encoding.UTF8));
-		
 		Logger.LogLevel = LogLevel.Debug;
-		NRegistry = new Registry(Logger);
-		Registry = new ContentRegistry(Logger);
+		Registry = new Registry(Logger);
 		ModLoader = new PetalModLoader(Logger);
 
 		Setup();
@@ -108,17 +107,17 @@ public class Hedgemen : PetalGame
 		var oldLogLevel = Logger.LogLevel;
 
 		Logger.LogLevel = LogLevel.Debug;
-		
+
 		const string fileName = "petal.json";
 		var file = new FileInfo(fileName);
-		
+
 		var fallbackSettings = new GameSettings
 		{
 			PreferredFramerate = 60,
 			Vsync = false,
 			WindowWidth = 960,
 			WindowHeight = 540,
-			WindowMode = WindowMode.BorderlessFullscreen,
+			WindowMode = WindowMode.Windowed,
 			IsMouseVisible = true,
 			IsWindowUserResizable = true,
 			IsDebug = true
@@ -130,7 +129,7 @@ public class Hedgemen : PetalGame
 			Logger.LogLevel = oldLogLevel;
 			return fallbackSettings;
 		}
-		
+
 		string json = file.ReadStringSilently(Encoding.UTF8);
 
 		if (string.IsNullOrEmpty(json))
@@ -146,7 +145,7 @@ public class Hedgemen : PetalGame
 			Logger.LogLevel = oldLogLevel;
 			return GameSettings.FromJson(json);
 		}
-		
+
 		catch (Exception e)
 		{
 			Logger.Warn("Using fallback game settings. Exception was raised.");

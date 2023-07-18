@@ -94,6 +94,17 @@ public struct NamespacedString
 	public string FullName
 		=> _namespace + ':' + _name;
 
+	public override bool Equals(object obj)
+	{
+		if (obj is not NamespacedString nsStr)
+			return false;
+
+		return FullName.Equals(nsStr.FullName, StringComparison.InvariantCulture);
+	}
+
+	public override int GetHashCode()
+		=> HashCode.Combine(Namespace, Name);
+
 	public override string ToString()
 	{
 		return FullName;
@@ -110,25 +121,21 @@ public struct NamespacedString
 	{
 		return val.FullName;
 	}
-	
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool operator ==(NamespacedString val1, NamespacedString val2)
-	{
-		return val1.FullName == val2.FullName;
-	}
-	
+		=> val1.Equals(val2);
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool operator !=(NamespacedString val1, NamespacedString val2)
-	{
-		return val1.FullName != val2.FullName;
-	}
+		=> !val1.Equals(val2);
 
 	public class JsonConverter : JsonConverter<NamespacedString>
 	{
 		public override NamespacedString Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
 			string? value = reader.GetString();
-			return string.IsNullOrEmpty(value) ? NamespacedString.Default : new NamespacedString(value);
+			return string.IsNullOrEmpty(value) ? Default : new NamespacedString(value);
 		}
 
 		public override void Write(Utf8JsonWriter writer, NamespacedString value, JsonSerializerOptions options)

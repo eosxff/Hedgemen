@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Petal.Framework.Content;
 using Petal.Framework.Graphics;
 
 namespace Petal.Framework.Scenery.Nodes;
@@ -51,20 +52,20 @@ public class Button : Node
 			return;
 
 		var textureRef = GetButtonTextureFromState();
-		
-		if (!textureRef.HasItem)
+
+		if (!textureRef.HasValidKey)
 			return;
-		
+
 		Scene.Renderer.Begin();
 
 		// todo testing purposes
-		
+
 		var renderData = new RenderData
 		{
 			Color = Color,
 			DstRect = AbsoluteBounds,
-			Texture = textureRef.Item,
-			SrcRect = textureRef.Item.Bounds // ignore warning
+			Texture = textureRef.Get(),
+			SrcRect = textureRef.Get().Bounds
 		};
 
 		const int xPadding = 4, yPadding = 4;
@@ -83,20 +84,13 @@ public class Button : Node
 			rightPadding,
 			topPadding,
 			bottomPadding);
-		
+
 		Scene.Renderer.DrawNinePatch(renderData, sourcePatch, destinationPatch);
-		
-		/*Scene.Renderer.Draw(new RenderData
-		{
-			Color = Color,
-			DstRect = AbsoluteBounds,
-			Texture = textureRef.Item
-		});*/
 
 		Scene.Renderer.End();
 	}
 
-	private ContentReference<Texture2D> GetButtonTextureFromState()
+	private RegistryObject<Texture2D> GetButtonTextureFromState()
 	{
 		if (Skin is null)
 			return null;
@@ -105,13 +99,13 @@ public class Button : Node
 		{
 			case NodeState.Normal:
 				return Skin.Button.NormalTexture;
-			
+
 			case NodeState.Input:
 				return Skin.Button.InputTexture;
-			
+
 			case NodeState.Hover:
 				return Skin.Button.HoverTexture;
-			
+
 			default:
 				throw new ArgumentOutOfRangeException();
 		}

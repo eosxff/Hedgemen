@@ -78,7 +78,5 @@ public struct GameSettings
 	}
 
 	public static GameSettings FromJson(string json)
-	{
-		return ReadFromJson<GameSettings>(json, JsonDeserializeOptions);
-	}
+		=> ReadFromJson<GameSettings>(json, JsonDeserializeOptions);
 }

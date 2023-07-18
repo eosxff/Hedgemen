@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
+using Petal.Framework.Content;
 using Petal.Framework.Graphics.Adapters;
 using Petal.Framework.IO;
 using Petal.Framework.Scenery;
@@ -12,10 +13,10 @@ namespace Hgm.Vanilla.Scenes;
 
 public static class MainMenuSceneFactory
 {
-	public static Scene NewScene(Hedgemen hedgemen, ContentRegistry contentRegistry)
+	public static Scene NewScene(Hedgemen hedgemen, Register<object> assetsRegister)
 	{
-		var skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), contentRegistry);
-		
+		var skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), assetsRegister);
+
 		var scene = new Scene(
 			new Stage(), skin)
 		{
@@ -29,9 +30,9 @@ public static class MainMenuSceneFactory
 
 		scene.Root.Add(new Background
 		{
-			Image = contentRegistry.Get<Texture2D>("hgm:ui/splash_texture")
+			Image = assetsRegister.CreateRegistryObject<Texture2D>("hgm:ui/splash_texture")
 		});
-		
+
 		scene.Root.Add(new Text
 		{
 			Font = scene.Skin.Font.LargeFont,
@@ -41,7 +42,7 @@ public static class MainMenuSceneFactory
 			Scale = 0.75f
 		});
 
-		hedgemen.Logger.Critical($"{scene.Skin.Button.HoverTexture.ContentID}");
+		hedgemen.Logger.Critical($"{scene.Skin.Button.HoverTexture.Key.ContentID}");
 		var startButton = scene.Root.Add(new Button(scene.Skin)
 		{
 			Anchor = Anchor.CenterLeft,
@@ -55,7 +56,7 @@ public static class MainMenuSceneFactory
 			Message = "Singleplayer",
 			Scale = 0.5f
 		});
-		
+
 		var exitButton = scene.Root.Add(new Button(scene.Skin)
 		{
 			Anchor = Anchor.CenterLeft,
@@ -67,7 +68,7 @@ public static class MainMenuSceneFactory
 			hedgemen.Logger.Debug($"Exiting Hedgemen.");
 			hedgemen.Exit();
 		};
-		
+
 		exitButton.Add(new Text
 		{
 			Anchor = Anchor.Center,
@@ -75,6 +76,8 @@ public static class MainMenuSceneFactory
 			Message = "Exit",
 			Scale = 0.5f
 		});
+
+		hedgemen.Logger.Critical($"Ready to return main menu scene.");
 
 		return scene;
 	}
