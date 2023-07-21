@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,27 +64,35 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			new FileInfo("splash.png").Open(FileMode.Open));
 		Game.ChangeScenes(scene);
 
-		var registerContent = Task.Run(async delegate
-		{
-			await Task.Delay(2000);
-			RegisterContent();
+		Test();
+		RegisterContentThenChangeScenes();
+	}
 
-			var mainMenuScene = MainMenuSceneFactory.NewScene(Game, assets);
-			Game.ChangeScenes(mainMenuScene);
+	private async void RegisterContentThenChangeScenes()
+	{
+		var logger = Game.Logger;
+		var assetsRegistryFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
+
+		await Task.Run(async delegate
+		{
+			await Task.Delay(1000);
+			RegisterContent();
 		});
 
-		Test();
+		logger.Debug("Now changing scenes.");
+		var mainMenuScene = MainMenuSceneFactory.NewScene(Game, assets);
+		Game.ChangeScenes(mainMenuScene);
 	}
 
 	private void RegisterContent()
 	{
 		var logger = Game.Logger;
 		var assetLoader = Game.Assets;
-		var contentRegistry = Game.Registry;
+		var registry = Game.Registry;
 
-		var assetsRegistryFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
+		var assetsRegisterFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
 
-		if (!assetsRegistryFound)
+		if (!assetsRegisterFound)
 			return;
 
 		assets.AddKey(

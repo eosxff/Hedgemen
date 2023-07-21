@@ -38,6 +38,9 @@ public sealed class Register<TContent> : IRegister
 	{
 		lock (_content)
 		{
+			if (id == NamespacedString.Default)
+				return false;
+
 			if (_content.ContainsKey(id))
 				return false;
 
@@ -91,6 +94,14 @@ public sealed class Register<TContent> : IRegister
 		return ReplaceKey(id, tContent);
 	}
 
+	public bool KeyExists(NamespacedString id)
+	{
+		lock (_content)
+		{
+			return _content.ContainsKey(id);
+		}
+	}
+
 	public RegistryObject<TContentLocal> CreateRegistryObject<TContentLocal>(NamespacedString id)
 	{
 		lock (_content)
@@ -102,10 +113,5 @@ public sealed class Register<TContent> : IRegister
 
 			return new RegistryObject<TContentLocal>(new ContentKey(id, this, null));
 		}
-	}
-
-	public void ReceiveDeferredRegister(IDeferredRegister register)
-	{
-		// todo
 	}
 }

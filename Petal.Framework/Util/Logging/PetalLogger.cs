@@ -150,13 +150,17 @@ public class PetalLogger : ILogger
 
 			switch (logLevel)
 			{
-				case LogLevel.Debug: break;
+				case LogLevel.Debug:
+					break;
+
 				case LogLevel.Warn:
 					consoleColor = ConsoleColor.Yellow;
 					break;
+
 				case LogLevel.Error:
 					consoleColor = ConsoleColor.Red;
 					break;
+
 				case LogLevel.Critical:
 					consoleColor = ConsoleColor.Blue;
 					break;

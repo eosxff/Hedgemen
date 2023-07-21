@@ -15,9 +15,9 @@ public sealed class Registry
 			init;
 		}
 	}
-	
+
 	private const int RegistersInitialCapacity = 0;
-	
+
 	private readonly Dictionary<NamespacedString, IRegister> _registers = new(RegistersInitialCapacity);
 	private readonly ILogger _logger;
 
@@ -32,15 +32,15 @@ public sealed class Registry
 	{
 		if (_registers.ContainsKey(register.RegistryName))
 			return false;
-		
+
 		_registers.Add(register.RegistryName, register);
 		_logger.Debug($"Added {register.RegistryName} to the registry.");
-		
+
 		OnRegisterAdded?.Invoke(this, new RegisterAdded
 		{
 			Register = register
 		});
-		
+
 		return true;
 	}
 
@@ -51,10 +51,7 @@ public sealed class Registry
 		register = default;
 
 		if (!_registers.TryGetValue(id, out var registerFromRegisters))
-		{
-			_logger.Debug($"Could not retrieve {id} from registry.");
 			return false;
-		}
 
 		register = registerFromRegisters;
 		return true;
@@ -65,7 +62,7 @@ public sealed class Registry
 		[MaybeNullWhen(false)] out TRegister register) where TRegister : IRegister
 	{
 		register = default;
-		
+
 		if (!GetRegister(id, out var registerFromRegisters))
 			return false;
 

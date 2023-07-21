@@ -4,36 +4,26 @@ namespace Petal.Framework.Content;
 
 public interface IDeferredRegister
 {
-	public class ForwardedToRegisterArgs : EventArgs
-	{
-		public IRegister Register
-		{
-			get;
-			init;
-		}
-	}
+	public event EventHandler? OnForwarded;
 
-	public event EventHandler<ForwardedToRegisterArgs>? OnForwardedToRegister;
-	
-	public NamespacedString RegistryName
-	{
-		get;
-	}
-	
-	public NamespacedString ModID
-	{
-		get;
-	}
-	
 	public Registry Registry
 	{
 		get;
 	}
 
-	public bool IsForwarded
+	public NamespacedString RegistryName
 	{
 		get;
 	}
-	
-	public void ForwardTo(IRegister register);
+
+	public NamespacedString ModID
+	{
+		get;
+	}
+
+	public bool AddKey(NamespacedString id, object content);
+	public bool RemoveKey(NamespacedString id);
+	public bool ReplaceKey(NamespacedString id, object content);
+
+	public void ForwardToRegister(IRegister register);
 }

@@ -37,6 +37,7 @@ public class Button : Node
 	{
 		if (Scene is not null)
 			Scene.OnSkinChanged -= SceneOnSkinChanged;
+
 		base.Destroy();
 	}
 

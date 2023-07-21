@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using Petal.Framework.IO;
 using Petal.Framework.Util.Logging;
 
@@ -13,7 +14,7 @@ namespace Petal.Framework.Modding;
 public class PetalModLoader : IModLoader<PetalMod>
 {
 	internal const string PetalRepositoryLink = "https://github.com/eosxff/Hedgemen";
-	
+
 	private readonly Dictionary<NamespacedString, PetalMod> _mods = new();
 
 	public IReadOnlyDictionary<NamespacedString, PetalMod> Mods
@@ -34,7 +35,7 @@ public class PetalModLoader : IModLoader<PetalMod>
 	{
 		string modsDirectory = args.ModsDirectoryName ?? "mods";
 		string manifestFileName = args.ManifestFileName ?? "manifest.json";
-		
+
 		var context = new ModLoaderSetupContext
 		{
 			EmbeddedMods = args.EmbeddedMods,
@@ -77,17 +78,17 @@ public class PetalModLoader : IModLoader<PetalMod>
 		{
 			mod.PrePetalModLoaderModSetupPhase(context);
 		}
-		
+
 		foreach (var mod in allMods)
 		{
 			mod.Setup(context);
 		}
-		
+
 		foreach (var mod in allMods)
 		{
 			mod.PostPetalModLoaderSetupPhase(context);
 		}
-
+		
 		return true;
 	}
 

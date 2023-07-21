@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Petal.Framework.Content;
 using Petal.Framework.Graphics.Adapters;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
@@ -28,7 +30,7 @@ public static class SplashSceneFactory
 			Color = Color.White,
 			Bounds = scene.ViewportAdapter.VirtualResolution.ToRectangleSize()
 		});
-		
+
 		return scene;
 	}
 }

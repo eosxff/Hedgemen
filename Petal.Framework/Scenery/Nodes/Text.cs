@@ -74,7 +74,7 @@ public class Text : Node
 	{
 		var calculatedBounds = base.CalculateBounds(bounds);
 
-		if (Font.Key.Content is null)
+		if (!Font.HasValidKey)
 			return calculatedBounds;
 
 		var measuredMessage = Font.Get().MeasureString(Message);
