@@ -38,7 +38,7 @@ public sealed class DataStorage
 
 	public bool IsStorageHandler
 		=> !string.IsNullOrEmpty(TypeFullName) && !string.IsNullOrEmpty(AssemblyFullName);
-		
+
 	[JsonInclude, JsonExtensionData]
 	public Dictionary<string, JsonElement> Fields
 	{
@@ -73,7 +73,7 @@ public sealed class DataStorage
 		return field;
 	}
 
-	public bool ReadData<T>(NamespacedString name, [MaybeNullWhen(false)] out T field)
+	public bool ReadData<T>(NamespacedString name, [NotNullWhen(true)] out T field)
 	{
 		field = default;
 		var genericType = typeof(T);
@@ -94,18 +94,18 @@ public sealed class DataStorage
 			throw new InvalidOperationException($"{nameof(DataStorage)} cannot be instantiated from itself." +
 			                                    $"IsStorageHandler returned false.");
 		}
-		
+
 		bool found = GetStorageHandler<T>(this, out var field);
 		return field;
 	}
 
-	public bool ReadData<T>([MaybeNullWhen(false)] out T field) where T : IDataStorageHandler
+	public bool ReadData<T>([NotNullWhen(true)] out T field) where T : IDataStorageHandler
 	{
 		field = default;
 		return GetStorageHandler(this, out field);
 	}
 
-	private bool GetStorageHandler<T>(NamespacedString name, [MaybeNullWhen(false)] out T field)
+	private bool GetStorageHandler<T>(NamespacedString name, [NotNullWhen(true)] out T field)
 		where T : IDataStorageHandler
 	{
 		field = default;
@@ -118,14 +118,14 @@ public sealed class DataStorage
 		return GetStorageHandler(record, out field);
 	}
 
-	private bool GetStorageHandler<T>(DataStorage storage, [MaybeNullWhen(false)] out T field)
+	private bool GetStorageHandler<T>(DataStorage storage, [NotNullWhen(true)] out T field)
 		where T : IDataStorageHandler
 	{
 		field = default;
 
 		if (TypeFullName is null || AssemblyFullName is null)
 			return false;
-		
+
 		if(!Assemblies.ContainsKey(AssemblyFullName))
 			RepopulateAssemblies();
 
@@ -141,7 +141,7 @@ public sealed class DataStorage
 			field = tObj;
 			field.ReadStorage(this);
 		}
-		
+
 		return true;
 	}
 
@@ -226,5 +226,5 @@ public sealed class DataStorage
 [JsonSerializable(typeof(DataStorage))]
 public partial class DataStorageJsc : JsonSerializerContext
 {
-	
+
 }

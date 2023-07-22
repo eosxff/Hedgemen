@@ -17,7 +17,7 @@ public abstract class PetalGame : Game
 	{
 		get
 		{
-			ArgumentNullException.ThrowIfNull(_instance);
+			PetalExceptions.ThrowIfNull(_instance);
 			return _instance;
 		}
 
@@ -28,7 +28,7 @@ public abstract class PetalGame : Game
 	{
 		get
 		{
-			ArgumentNullException.ThrowIfNull(_instance);
+			PetalExceptions.ThrowIfNull(_instance);
 			return _instance.IsDebug;
 		}
 	}

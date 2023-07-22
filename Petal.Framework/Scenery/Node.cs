@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Petal.Framework.Input;
+using Petal.Framework.Util;
 
 namespace Petal.Framework.Scenery;
 
@@ -194,7 +195,7 @@ public abstract class Node
 
 	public void Update(GameTime time, NodeSelection selection)
 	{
-		ArgumentNullException.ThrowIfNull(Scene, nameof(Scene));
+		PetalExceptions.ThrowIfNull(Scene, nameof(Scene));
 
 		if (_isDirty)
 		{
@@ -235,7 +236,7 @@ public abstract class Node
 				case true when selection.PreviousTarget != this:
 					OnFocusGained?.Invoke(this, EventArgs.Empty);
 					break;
-				
+
 				case false when selection.PreviousTarget == this:
 					OnFocusLost?.Invoke(this, EventArgs.Empty);
 					break;
@@ -254,7 +255,7 @@ public abstract class Node
 
 	public void Draw(GameTime time)
 	{
-		ArgumentNullException.ThrowIfNull(Scene, $"{nameof(Scene)} cannot be null when being drawn!");
+		PetalExceptions.ThrowIfNull(Scene, $"{nameof(Scene)} cannot be null when being drawn!");
 
 		if (!IsVisible)
 			return;
@@ -333,7 +334,7 @@ public abstract class Node
 	{
 		if (!IsInteractable)
 			return null;
-		
+
 		for (int i = Children.Count - 1; i >= 0; --i)
 		{
 			var child = Children[i];
@@ -413,48 +414,48 @@ public abstract class Node
 				calculatedBounds.X = bounds.X + parentBounds.Left;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
-			
+
 			case Anchor.Top:
 				calculatedBounds.X = bounds.X + parentBounds.Center.X - bounds.Width / 2;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
-			
+
 			case Anchor.TopRight:
 				calculatedBounds.X = parentBounds.Right - bounds.Width - bounds.X;
 				calculatedBounds.Y = bounds.Y + parentBounds.Top;
 				break;
-			
+
 			case Anchor.CenterLeft:
 				calculatedBounds.X = bounds.X + parentBounds.Left;
 				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - bounds.Height / 2;
 				break;
-			
+
 			case Anchor.Center:
 				calculatedBounds.X = bounds.X + parentBounds.Center.X - bounds.Width / 2;
 				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - bounds.Height / 2;
 				break;
-			
+
 			case Anchor.CenterRight:
 				calculatedBounds.X = parentBounds.Right - bounds.Width - bounds.X;
 				calculatedBounds.Y = bounds.Y + parentBounds.Center.Y - bounds.Height / 2;
 				break;
-			
+
 			case Anchor.BottomLeft:
 				calculatedBounds.X = bounds.X + parentBounds.Left;
 				calculatedBounds.Y = parentBounds.Bottom - bounds.Height - bounds.Y;
 				break;
-			
+
 			case Anchor.Bottom:
 				calculatedBounds.X = bounds.X + parentBounds.Center.X - bounds.Width / 2;
 				calculatedBounds.Y = parentBounds.Bottom - bounds.Height - bounds.Y;
 				break;
-			
+
 			case Anchor.BottomRight:
 				calculatedBounds.X = parentBounds.Right - bounds.Width - bounds.X;
 				calculatedBounds.Y = parentBounds.Bottom - bounds.Height - bounds.Y;
 				break;
 			default:
-				
+
 				throw new ArgumentOutOfRangeException(Anchor.ToString());
 		}
 
@@ -511,5 +512,5 @@ public abstract class Node
 	}
 
 	public static NamespacedString GenerateDefaultNodeName(Node node)
-		=> $"{NamespacedString.DefaultNamespace}:{node.GetType().Name.ToLowerInvariant()}@{node.GetHashCode()}";
+		=> new($"{NamespacedString.DefaultNamespace}:{node.GetType().Name.ToLowerInvariant()}@{node.GetHashCode()}");
 }

@@ -59,7 +59,7 @@ public class Stage : Node
 
 	protected override Rectangle CalculateBounds(Rectangle bounds)
 	{
-		ArgumentNullException.ThrowIfNull(Scene);
+		PetalExceptions.ThrowIfNull(Scene);
 
 		var virtualResolution = Scene.ViewportAdapter.VirtualResolution;
 		return new Rectangle(0, 0, virtualResolution.X, virtualResolution.Y);

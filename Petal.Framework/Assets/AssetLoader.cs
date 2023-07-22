@@ -21,6 +21,9 @@ public sealed class AssetLoader : IDisposable
 	private readonly ContentManager _contentManager;
 	private readonly ILogger _logger;
 
+	public GraphicsDevice GraphicsDevice
+		=> _graphicsDevice;
+
 	public AssetLoader(GraphicsDevice graphicsDevice, ILogger logger)
 	{
 		_logger = logger;
@@ -98,8 +101,11 @@ public sealed class AssetLoader : IDisposable
 		if (assetType == typeof(Texture2D))
 		{
 			var file = new FileInfo(path);
-			object asset = Texture2D.FromStream(_graphicsDevice, file.Open(FileMode.Open));
+			var stream = file.Open(FileMode.Open);
+
+			object asset = Texture2D.FromStream(_graphicsDevice, stream);
 			AssetLoaded?.Invoke(asset);
+			stream.Close();
 			return (T)asset;
 		}
 

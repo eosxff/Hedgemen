@@ -30,7 +30,7 @@ public sealed class RegistryObject<TContent>
 		return obj is not TContent tObj ? default : tObj;
 	}
 
-	public bool Get([MaybeNullWhen(false)] out TContent content)
+	public bool Get([NotNullWhen(true)] out TContent content)
 	{
 		object? obj = Key.Content;
 
@@ -57,7 +57,7 @@ public sealed class RegistryObject<TContent>
 		return default;
 	}
 
-	public bool GetAs<T>([MaybeNullWhen(false)] out T content) where T : TContent
+	public bool GetAs<T>([NotNullWhen(true)] out T content) where T : TContent
 	{
 		content = default;
 

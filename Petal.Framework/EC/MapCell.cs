@@ -74,7 +74,7 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 				case true:
 					_componentEvents[registeredEvent]++;
 					break;
-				
+
 				case false:
 					_componentEvents.Add(registeredEvent, 1);
 					break;
@@ -98,7 +98,7 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 					else
 						_componentEvents[registeredEvent]--;
 					break;
-				
+
 				case false:
 					break;
 			}
@@ -111,7 +111,7 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 		AddComponent(new T());
 	}
 
-	public bool GetComponent<T>([MaybeNullWhen(false)] out T component) where T : CellComponent
+	public bool GetComponent<T>([NotNullWhen(true)] out T component) where T : CellComponent
 	{
 		component = default;
 

@@ -6,6 +6,7 @@ using Petal.Framework;
 using Petal.Framework.Content;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
+using Petal.Framework.Util;
 using Petal.Framework.Util.Logging;
 using Petal.Framework.Windowing;
 
@@ -13,10 +14,9 @@ namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
-	public static Version Version
-		=> new(0, 0, 1);
+	public static readonly Version Version = new(0, 0, 1);
 
-	private bool IsEmbedOnlyMode()
+	private static bool IsEmbedOnlyMode()
 	{
 #if EMBED_ONLY_MODE
 		return true;
@@ -31,7 +31,7 @@ public class Hedgemen : PetalGame
 	{
 		get
 		{
-			ArgumentNullException.ThrowIfNull(_instance);
+			PetalExceptions.ThrowIfNull(_instance);
 			return _instance;
 		}
 	}

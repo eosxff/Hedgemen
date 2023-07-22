@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
 using Petal.Framework.IO;
 using Petal.Framework.Util.Logging;
 
@@ -88,7 +87,7 @@ public class PetalModLoader : IModLoader<PetalMod>
 		{
 			mod.PostPetalModLoaderSetupPhase(context);
 		}
-		
+
 		return true;
 	}
 

@@ -1,22 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Hgm.Components;
 using Hgm.Vanilla.Scenes;
-using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Content;
 using Petal.Framework.EC;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
+using Petal.Framework.Util;
 
 namespace Hgm.Vanilla;
 
 public class HedgemenVanilla : PetalEmbeddedMod
 {
-	private static Hedgemen Game
-		=> Hedgemen.Instance;
+	private static HedgemenVanilla _instance;
+
+	public static HedgemenVanilla Instance
+	{
+		get
+		{
+			PetalExceptions.ThrowIfNull(_instance);
+			return _instance;
+		}
+
+		private set => _instance = value;
+	}
+
+	public HedgemenVanilla()
+	{
+		Instance = this;
+	}
+
+	public HedgemenRegisters Registers
+	{
+		get;
+	} = new();
 
 	protected override void OnLoadedToPetalModLoader()
 	{
@@ -35,12 +54,12 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 	protected override void Setup(ModLoaderSetupContext context)
 	{
-		Game.Registry.AddRegister(new Register<EntityComponent>(
+		Game.Registry.AddRegister(new Register<ContentSupplier<EntityComponent>>(
 			"hgm:entity_components",
 			Manifest.ModID,
 			Game.Registry));
 
-		Game.Registry.AddRegister(new Register<CellComponent>(
+		Game.Registry.AddRegister(new Register<ContentSupplier<CellComponent>>(
 			"hgm:cell_components",
 			Manifest.ModID,
 			Game.Registry));
@@ -49,6 +68,8 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			"hgm:assets",
 			Manifest.ModID,
 			Game.Registry));
+
+		Registers.SetupRegisters(Game.Registry);
 
 		var logger = Game.Logger;
 		var assetsRegistryFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
@@ -73,6 +94,9 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		var logger = Game.Logger;
 		var assetsRegistryFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
 
+		if (!assetsRegistryFound)
+			return;
+
 		await Task.Run(async delegate
 		{
 			await Task.Delay(1000);
@@ -94,31 +118,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 		if (!assetsRegisterFound)
 			return;
-
-		assets.AddKey(
-			"hgm:ui/skin/button_hover_texture",
-			assetLoader.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
-
-		assets.AddKey(
-			"hgm:ui/skin/button_normal_texture",
-			assetLoader.LoadAsset<Texture2D>(new FileInfo("button_normal.png").Open(FileMode.Open)));
-
-		assets.AddKey(
-			"hgm:ui/skin/button_input_texture",
-			assetLoader.LoadAsset<Texture2D>(new FileInfo("button_input.png").Open(FileMode.Open)));
-
-		assets.AddKey(
-			"hgm:ui/small_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular"));
-
-		assets.AddKey(
-			"hgm:ui/medium_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular_32"));
-
-		assets.AddKey(
-			"hgm:ui/large_font", assetLoader.LoadAsset<SpriteFont>("pixelade_regular_64"));
-
-		assets.AddKey(
-			"hgm:ui/splash_texture",
-			assetLoader.LoadAsset<Texture2D>("splash.png"));
 	}
 
 	private void Test()
@@ -238,4 +237,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			IsOverhaul = false
 		};
 	}
+
+	private static Hedgemen Game
+		=> Hedgemen.Instance;
 }

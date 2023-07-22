@@ -5,6 +5,9 @@ using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework.Content;
 
+/// <summary>
+/// Central depository for <see cref="IRegister"/>.
+/// </summary>
 public sealed class Registry
 {
 	public sealed class RegisterAdded : EventArgs
@@ -19,22 +22,31 @@ public sealed class Registry
 	private const int RegistersInitialCapacity = 0;
 
 	private readonly Dictionary<NamespacedString, IRegister> _registers = new(RegistersInitialCapacity);
-	private readonly ILogger _logger;
 
+	public readonly ILogger Logger;
+
+	/// <summary>
+	/// Callback for successful register additions.
+	/// </summary>
 	public event EventHandler<RegisterAdded>? OnRegisterAdded;
 
 	public Registry(ILogger logger)
 	{
-		_logger = logger;
+		Logger = logger;
 	}
 
+	/// <summary>
+	/// Attempts to register an <see cref="IRegister"/> to the registry.
+	/// </summary>
+	/// <param name="register">the register to be added.</param>
+	/// <returns>value indicating if the addition was successful.</returns>
 	public bool AddRegister(IRegister register)
 	{
 		if (_registers.ContainsKey(register.RegistryName))
 			return false;
 
 		_registers.Add(register.RegistryName, register);
-		_logger.Debug($"Added {register.RegistryName} to the registry.");
+		Logger.Debug($"Added {register.RegistryName} to the registry.");
 
 		OnRegisterAdded?.Invoke(this, new RegisterAdded
 		{
@@ -44,9 +56,15 @@ public sealed class Registry
 		return true;
 	}
 
+	/// <summary>
+	/// Attempts to retrieve a register from the registry.
+	/// </summary>
+	/// <param name="id">the register's name.</param>
+	/// <param name="register">the retrieved register.</param>
+	/// <returns>value indicating if the retrieval was a success.</returns>
 	public bool GetRegister(
 		NamespacedString id,
-		[MaybeNullWhen(false)] out IRegister register)
+		[NotNullWhen(true)] out IRegister register)
 	{
 		register = default;
 
@@ -57,16 +75,32 @@ public sealed class Registry
 		return true;
 	}
 
+	/// <summary>
+	/// Attempts to retrieve a register from the registry.
+	/// </summary>
+	/// <param name="id">the register's name.</param>
+	/// <param name="register">the retrieved register.</param>
+	/// <returns>value indicating if the retrieval was a success.</returns>
+	/// <exception cref="InvalidCastException">if the retrieved register could not be cast
+	/// to the desired type.</exception>
 	public bool GetRegister<TRegister>(
 		NamespacedString id,
-		[MaybeNullWhen(false)] out TRegister register) where TRegister : IRegister
+		[NotNullWhen(true)] out TRegister register) where TRegister : IRegister
 	{
 		register = default;
 
-		if (!GetRegister(id, out var registerFromRegisters))
+		if (!GetRegister(id, out var registerFromRegistry))
 			return false;
 
-		register = registerFromRegisters is TRegister castedRegister ? castedRegister : default;
+		if (registerFromRegistry is not TRegister tRegister)
+		{
+			var type1 = registerFromRegistry.GetType();
+			var type2 = typeof(TRegister);
+
+			throw new InvalidCastException($"Cannot cast {type1} to {type2}");
+		}
+
+		register = tRegister;
 		return register != null;
 	}
 }
