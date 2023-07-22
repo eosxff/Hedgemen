@@ -9,15 +9,17 @@ using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework;
 
-public class PetalGame : Game
+public abstract class PetalGame : Game
 {
+	public static readonly Version PetalVersion = typeof(PetalGame).Assembly.GetName().Version!;
+
 	private static PetalGame _instance;
 
 	public static PetalGame Petal
 	{
 		get
 		{
-			ArgumentNullException.ThrowIfNull(_instance);
+			PetalExceptions.ThrowIfNull(_instance);
 			return _instance;
 		}
 
@@ -28,7 +30,7 @@ public class PetalGame : Game
 	{
 		get
 		{
-			ArgumentNullException.ThrowIfNull(_instance);
+			PetalExceptions.ThrowIfNull(_instance);
 			return _instance.IsDebug;
 		}
 	}
@@ -42,7 +44,17 @@ public class PetalGame : Game
 		}
 	}
 
-	public event EventHandler<DebugChangedArgs>? OnDebugChanged; 
+	public struct SceneChangedArgs
+	{
+		public required Scene NewScene
+		{
+			get;
+			init;
+		}
+	}
+
+	public event EventHandler<DebugChangedArgs>? OnDebugChanged;
+	public event EventHandler<SceneChangedArgs>? OnSceneChanged;
 
 	private WindowMode _windowMode;
 
@@ -77,9 +89,32 @@ public class PetalGame : Game
 
 	public void ChangeScenes(Scene scene)
 	{
-		Scene?.Exit();
-		Scene = scene;
-		Scene?.Initialize();
+		if (scene is null)
+		{
+			Logger.Error("Can not change to null scene.");
+			return;
+		}
+
+		if (Scene is not null)
+		{
+			lock (Scene)
+			{
+				Scene.Exit();
+				Scene = scene;
+				Scene.Initialize();
+			}
+		}
+
+		else
+		{
+			Scene = scene;
+			Scene.Initialize();
+		}
+
+		OnSceneChanged?.Invoke(this, new SceneChangedArgs
+		{
+			NewScene = scene
+		});
 	}
 
 	public WindowMode WindowMode
@@ -95,24 +130,24 @@ public class PetalGame : Game
 					Graphics.IsFullScreen = false;
 					Window.SetBorderless(false);
 					break;
-				
+
 				case WindowMode.BorderlessWindowed:
 					Graphics.IsFullScreen = false;
 					Window.SetBorderless(true);
 					break;
-				
+
 				case WindowMode.BorderlessFullscreen:
 					Graphics.IsFullScreen = false;
 					Window.SetBorderless(true);
 					Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
 					Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 					break;
-				
+
 				case WindowMode.Fullscreen:
 					Window.SetBorderless(false);
 					Graphics.ToggleFullScreen();
 					break;
-				
+
 				default:
 					throw new ArgumentOutOfRangeException(_windowMode.ToString());
 			}
@@ -138,12 +173,12 @@ public class PetalGame : Game
 		TargetElapsedTime = TimeSpan.FromMilliseconds(1000d / settings.PreferredFramerate);
 		WindowMode = settings.WindowMode;
 		Window.AllowUserResizing = settings.IsWindowUserResizable;
-		
+
 		if (settings.IsDebug != IsDebug)
 		{
 			IsDebug = settings.IsDebug;
 			Logger.LogLevel = LogLevel.Debug;
-			
+
 			OnDebugChanged?.Invoke(this, new DebugChangedArgs
 			{
 				IsDebug = settings.IsDebug,
@@ -171,6 +206,11 @@ public class PetalGame : Game
 		return settings;
 	}
 
+	protected virtual void Setup()
+	{
+
+	}
+
 	protected override void OnExiting(object sender, EventArgs args)
 	{
 		base.OnExiting(sender, args);
@@ -183,7 +223,7 @@ public class PetalGame : Game
 		base.Initialize();
 		Logger = GetInitialLogger();
 		Content = new StubContentManager(Services);
-		Assets = new AssetLoader(GraphicsDevice);
+		Assets = new AssetLoader(GraphicsDevice, Logger);
 		Window.Title = GetType().Name;
 		Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
@@ -213,7 +253,7 @@ public class PetalGame : Game
 	protected virtual ILogger GetInitialLogger()
 		=> new PetalLogger
 		{
-			LogLevel = IsDebug ? LogLevel.Debug : LogLevel.Error
+			LogLevel = LogLevel.Off
 		};
 
 	protected override void Draw(GameTime gameTime)

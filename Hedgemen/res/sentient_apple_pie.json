@@ -1,0 +1,11 @@
+{
+    "content_id": "hgm:sentient_apple_pie",
+    "components": {
+        "hgm:character_sheet": {
+            "hgm:strength": 9000
+        },
+        "hgm:character_race": {
+            "hgm:race_name": "sentient food"
+        }
+    }
+}

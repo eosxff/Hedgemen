@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petal.Framework", "Petal.Fr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petal.Framework.Sandbox", "Petal.Framework.Sandbox\Petal.Framework.Sandbox.csproj", "{9D0E6AF8-3194-4627-88E8-A22191ABE749}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleMod", "ExampleMod\ExampleMod.csproj", "{38DF5420-1A53-467D-87F0-BBB69BBAF378}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{9D0E6AF8-3194-4627-88E8-A22191ABE749}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D0E6AF8-3194-4627-88E8-A22191ABE749}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D0E6AF8-3194-4627-88E8-A22191ABE749}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38DF5420-1A53-467D-87F0-BBB69BBAF378}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38DF5420-1A53-467D-87F0-BBB69BBAF378}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38DF5420-1A53-467D-87F0-BBB69BBAF378}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38DF5420-1A53-467D-87F0-BBB69BBAF378}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

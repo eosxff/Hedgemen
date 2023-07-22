@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework.Assets;
 
@@ -18,9 +19,14 @@ public sealed class AssetLoader : IDisposable
 
 	private readonly GraphicsDevice _graphicsDevice;
 	private readonly ContentManager _contentManager;
+	private readonly ILogger _logger;
 
-	public AssetLoader(GraphicsDevice graphicsDevice)
+	public GraphicsDevice GraphicsDevice
+		=> _graphicsDevice;
+
+	public AssetLoader(GraphicsDevice graphicsDevice, ILogger logger)
 	{
+		_logger = logger;
 		_graphicsDevice = graphicsDevice;
 		_contentManager = new AssetLoaderInternalContentManager(PetalGame.Petal.Services);
 	}
@@ -95,8 +101,11 @@ public sealed class AssetLoader : IDisposable
 		if (assetType == typeof(Texture2D))
 		{
 			var file = new FileInfo(path);
-			object asset = Texture2D.FromStream(_graphicsDevice, file.Open(FileMode.Open));
+			var stream = file.Open(FileMode.Open);
+
+			object asset = Texture2D.FromStream(_graphicsDevice, stream);
 			AssetLoaded?.Invoke(asset);
+			stream.Close();
 			return (T)asset;
 		}
 

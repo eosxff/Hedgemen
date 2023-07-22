@@ -1,16 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Hgm.Components;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using Hgm.Vanilla;
 using Petal.Framework;
-using Petal.Framework.EC;
-using Petal.Framework.Graphics;
+using Petal.Framework.Content;
 using Petal.Framework.IO;
-using Petal.Framework.Scenery;
-using Petal.Framework.Scenery.Nodes;
+using Petal.Framework.Modding;
+using Petal.Framework.Util;
 using Petal.Framework.Util.Logging;
 using Petal.Framework.Windowing;
 
@@ -18,50 +14,94 @@ namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
+	public static readonly Version HedgemenVersion = typeof(Hedgemen).Assembly.GetName().Version!;
+
+	private static bool IsEmbedOnlyMode()
+	{
+#if EMBED_ONLY_MODE
+		return true;
+#else
+		return false;
+#endif
+	}
+
+	private static Hedgemen _instance;
+
 	public static Hedgemen Instance
+	{
+		get
+		{
+			PetalExceptions.ThrowIfNull(_instance);
+			return _instance;
+		}
+	}
+
+	public Registry Registry
 	{
 		get;
 		private set;
 	}
 
-	public ContentRegistry ContentRegistry
-	{
-		get;
-	} = new();
-
 	public Hedgemen()
 	{
-		Instance = this;
+		_instance = this;
+
 		OnDebugChanged += DebugChangedCallback;
+		AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+	}
+
+	public PetalModLoader ModLoader
+	{
+		get;
+		private set;
+	}
+
+	protected override void Setup()
+	{
+		var context = ModLoader.Setup(new ModLoaderSetupArgs
+		{
+			EmbedOnlyMode = IsEmbedOnlyMode(),
+			Game = this,
+			EmbeddedMods = new IMod[] { new HedgemenVanilla() }
+		});
+
+		Logger.Debug($"Hedgemen {HedgemenVersion.ToString(3)}, Petal {PetalVersion.ToString(3)}");
+		Logger.Debug($"Starting {nameof(PetalModLoader)}.");
+
+		var logLevel = ModLoader.Start(context) ? LogLevel.Debug : LogLevel.Error;
+
+		Logger.Add(
+			logLevel == LogLevel.Debug ?
+				$"Successfully started {nameof(PetalModLoader)}" :
+				$"Unsuccessfully started {nameof(PetalModLoader)}.",
+			logLevel);
+	}
+
+	protected override void OnExiting(object sender, EventArgs args)
+	{
+		if (sender != this)
+			return;
+
+		WriteLogFile();
+
+		AppDomain.CurrentDomain.UnhandledException -= OnUnhandledException;
+	}
+
+	private void WriteLogFile()
+	{
+		var logFile = new FileInfo("log.txt");
+		logFile.WriteString(Logger.ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
 	}
 
 	protected override void Initialize()
 	{
 		base.Initialize();
 
-		ContentRegistry.Register(
-			"hedgemen:ui/skin/button_hover_texture",
-			Assets.LoadAsset<Texture2D>(new FileInfo("button_hover.png").Open(FileMode.Open)));
-		
-		ContentRegistry.Register(
-			"hedgemen:ui/skin/button_normal_texture",
-			Assets.LoadAsset<Texture2D>(new FileInfo("button_normal.png").Open(FileMode.Open)));
-		
-		ContentRegistry.Register(
-			"hedgemen:ui/skin/button_input_texture",
-			Assets.LoadAsset<Texture2D>(new FileInfo("button_input.png").Open(FileMode.Open)));
+		Logger.LogLevel = LogLevel.Debug;
+		Registry = new Registry(Logger);
+		ModLoader = new PetalModLoader(Logger);
 
-		var scene = new Scene(
-			new Stage(),
-			Skin.FromJson(
-				new FileInfo("skin.json").ReadString(Encoding.UTF8),
-				ContentRegistry))
-		{
-			BackgroundColor = Color.Green,
-			ViewportAdapter = new BoxingViewportAdapter(GraphicsDevice, Window, new Vector2Int(640, 360))
-		};
-
-		ChangeScenes(scene);
+		Setup();
 	}
 
 	private void DebugChangedCallback(object? sender, DebugChangedArgs args)
@@ -74,7 +114,14 @@ public class Hedgemen : PetalGame
 
 	protected override GameSettings GetInitialGameSettings()
 	{
-		return new GameSettings
+		var oldLogLevel = Logger.LogLevel;
+
+		Logger.LogLevel = LogLevel.Debug;
+
+		const string fileName = "petal.json";
+		var file = new FileInfo(fileName);
+
+		var fallbackSettings = new GameSettings
 		{
 			PreferredFramerate = 60,
 			Vsync = false,
@@ -85,5 +132,41 @@ public class Hedgemen : PetalGame
 			IsWindowUserResizable = true,
 			IsDebug = true
 		};
+
+		if (!file.Exists)
+		{
+			Logger.Warn("Using fallback game settings.");
+			Logger.LogLevel = oldLogLevel;
+			return fallbackSettings;
+		}
+
+		string json = file.ReadStringSilently(Encoding.UTF8);
+
+		if (string.IsNullOrEmpty(json))
+		{
+			Logger.Warn("Using fallback game settings.");
+			Logger.LogLevel = oldLogLevel;
+			return fallbackSettings;
+		}
+
+		try
+		{
+			Logger.Debug($"Using settings from {fileName}.");
+			Logger.LogLevel = oldLogLevel;
+			return GameSettings.FromJson(json);
+		}
+
+		catch (Exception e)
+		{
+			Logger.Warn("Using fallback game settings. Exception was raised.");
+			Logger.LogLevel = oldLogLevel;
+			return fallbackSettings;
+		}
+	}
+
+	private void OnUnhandledException(object? sender, UnhandledExceptionEventArgs args)
+	{
+		Logger.Critical($"Unhandled exception:\n{args.ExceptionObject}");
+		WriteLogFile();
 	}
 }

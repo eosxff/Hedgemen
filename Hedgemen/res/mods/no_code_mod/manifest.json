@@ -1,0 +1,29 @@
+{
+    "schema_version": 1,
+    "mod_id": "no_code:mod",
+    "version": "0.0.1",
+    "name": "No Code Mod!",
+    "description": "Mod that exists to check if the mod loader functions as intended.",
+
+    "authors": [
+        "eosxff"
+    ],
+
+    "contact": {
+        "homepage": "https://hedgemen.com",
+        "source": "https://github.com/definestructunion/Hedgemen"
+    },
+
+    "depends": {
+        "mods": [
+
+        ],
+        "incompatible_mods": [
+            
+        ],
+        "referenced_dlls": [
+            
+        ],
+        "hedgemen": "0.0.1"
+    }
+}

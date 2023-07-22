@@ -74,7 +74,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 				case true:
 					_componentEvents[registeredEvent]++;
 					break;
-				
+
 				case false:
 					_componentEvents.Add(registeredEvent, 1);
 					break;
@@ -98,7 +98,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 					else
 						_componentEvents[registeredEvent]--;
 					break;
-				
+
 				case false:
 					break;
 			}
@@ -111,7 +111,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		AddComponent(new T());
 	}
 
-	public bool GetComponent<T>([MaybeNullWhen(false)] out T component) where T : EntityComponent
+	public bool GetComponent<T>([NotNullWhen(true)] out T component) where T : EntityComponent
 	{
 		component = default;
 
@@ -181,31 +181,31 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		RemoveAllComponents();
 	}
 
-	public SerializedData WriteObjectState()
+	public DataStorage WriteStorage()
 	{
-		var data = new SerializedData(this);
+		var data = new DataStorage(this);
 
-		var components = new List<SerializedData>(_components.Count);
+		var components = new List<DataStorage>(_components.Count);
 
 		foreach (var component in Components)
 		{
-			components.Add(component.WriteObjectState());
+			components.Add(component.WriteStorage());
 		}
 
-		data.AddField(NamespacedString.FromDefaultNamespace("components"), components);
+		data.WriteData(NamespacedString.FromDefaultNamespace("components"), components);
 
 		return data;
 	}
 
-	public void ReadObjectState(SerializedData data)
+	public void ReadStorage(DataStorage storage)
 	{
-		if (data.GetField(
+		if (storage.ReadData(
 			    NamespacedString.FromDefaultNamespace("components"),
-			    out List<SerializedData> dataList))
+			    out List<DataStorage> dataList))
 		{
 			foreach (var element in dataList)
 			{
-				bool found = element.GetSerializedObject<EntityComponent>(out var component);
+				bool found = element.ReadData<EntityComponent>(out var component);
 
 				if (found)
 					AddComponent(component);

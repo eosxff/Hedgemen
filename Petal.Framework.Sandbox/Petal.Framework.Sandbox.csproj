@@ -7,18 +7,35 @@
         <RootNamespace>Petal.Framework.Sandbox</RootNamespace>
         <NoWarn>8632</NoWarn>
 
+        <OutputPath>build</OutputPath>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
         <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+
+        <PublishAot>true</PublishAot>
+        <DefineConstants>EMBED_ONLY_MODE</DefineConstants>
+        <IlcDisableReflection>false</IlcDisableReflection>
+        <IlcGenerateCompleteTypeMetadata>true</IlcGenerateCompleteTypeMetadata>
+        <IlcTrimMetadata>false</IlcTrimMetadata>
+        <IlcGenerateStackTraceData>true</IlcGenerateStackTraceData>
+        <OptimizationPreference>Speed</OptimizationPreference>
+
+        <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
 
     <ItemGroup>
+        <RdXmlFile Include="rd.xml" />
+    </ItemGroup>
+    
+    <ItemGroup>
 
-        <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj"/>
-        <ProjectReference Include="..\Hedgemen\Hedgemen.csproj"/>
-        <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj"/>
+        <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj" />
+        <ProjectReference Include="..\Hedgemen\Hedgemen.csproj" />
+        <ProjectReference Include="..\Petal.Framework\Petal.Framework.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <ContentWithTargetPath Include="res/**">
+        <ContentWithTargetPath Include="../Hedgemen/res/**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
             <!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
             <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>

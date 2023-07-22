@@ -1,0 +1,33 @@
+{
+    "schema_version": 1,
+    "mod_id": "example:mod",
+    "version": "0.0.1",
+    "name": "Example Mod!",
+    "description": "Mod that exists to check if the mod loader functions as intended.",
+
+    "authors": [
+        "eosxff"
+    ],
+
+    "contact": {
+        "homepage": "https://hedgemen.com/fakeurl",
+        "source": "https://github.com/definestructunion/Hedgemen"
+    },
+
+    "depends": {
+        "mods": [
+
+        ],
+        "incompatible_mods": [
+            "unexample:mod",
+            "noexample:mod"
+        ],
+        "referenced_dlls": [
+            
+        ],
+        "hedgemen": "0.0.1"
+    },
+
+    "mod_file_dll": "ExampleMod.dll",
+    "mod_main": "Example.ExampleMod"
+}

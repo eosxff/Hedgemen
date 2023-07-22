@@ -59,9 +59,31 @@ public static class FileInfoExtensions
 
 		if (!self.Exists)
 			return string.Empty;
-
+		
 		using var reader = new StreamReader(self.Open(fileMode), encoding);
 		return reader.ReadToEnd();
+	}
+
+	public static string ReadStringSilently(
+		this FileInfo self,
+		Encoding? encoding,
+		FileMode fileMode = FileMode.Open)
+	{
+		encoding ??= Encoding.UTF8;
+
+		if (!self.Exists)
+			return string.Empty;
+
+		try
+		{
+			using var reader = new StreamReader(self.Open(fileMode), encoding);
+			return reader.ReadToEnd();
+		}
+		
+		catch (Exception e)
+		{
+			return string.Empty;
+		}
 	}
 
 	public static byte[] ReadBytes(
@@ -73,5 +95,24 @@ public static class FileInfoExtensions
 
 		stream.CopyTo(ms);
 		return ms.ToArray();
+	}
+	
+	public static byte[] ReadBytesSilently(
+		this FileInfo self,
+		FileMode fileMode = FileMode.Open)
+	{
+		try
+		{
+			using var stream = self.Open(fileMode);
+			using var ms = new MemoryStream();
+			
+			stream.CopyTo(ms);
+			return ms.ToArray();
+		}
+		
+		catch (Exception e)
+		{
+			return Array.Empty<byte>();
+		}
 	}
 }

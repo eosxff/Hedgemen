@@ -6,7 +6,7 @@ using Petal.Framework.Persistence;
 
 namespace Petal.Framework.EC;
 
-public interface IEntity<TComponent, in TEvent> : ISerializableObject
+public interface IEntity<TComponent, in TEvent> : IDataStorageHandler
 	where TEvent : IEvent
 	where TComponent : IComponent<TEvent>
 {
@@ -25,7 +25,7 @@ public interface IEntity<TComponent, in TEvent> : ISerializableObject
 	public void AddComponent(TComponent component);
 	public void AddComponent<T>() where T : TComponent, new();
 
-	public bool GetComponent<T>([MaybeNullWhen(false)] out T component) where T : TComponent;
+	public bool GetComponent<T>([NotNullWhen(true)] out T component) where T : TComponent;
 	public T? GetComponent<T>() where T : TComponent;
 
 	public bool RemoveComponent(TComponent component);

@@ -44,6 +44,26 @@ public sealed class DefaultRenderer : Renderer
 			data.LayerDepth);
 	}
 
+	public override void DrawNinePatch(RenderData data, NinePatch sourcePatch, NinePatch destinationPatch)
+	{
+		if (data.Texture is null)
+			return;
+
+		var sourcePatches = sourcePatch.ToArray();
+		var destinationPatches = destinationPatch.ToArray();
+		
+		for (int i = 0; i < 9; ++i)
+		{
+			var patchDrawData = new RenderData(data)
+			{
+				SrcRect = sourcePatches[i],
+				DstRect = destinationPatches[i]
+			};
+			
+			Draw(patchDrawData);
+		}
+	}
+
 	public override void Draw(RenderStringData data)
 	{
 		if (data.Font is null)

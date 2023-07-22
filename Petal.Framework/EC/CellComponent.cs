@@ -7,7 +7,7 @@ namespace Petal.Framework.EC;
 
 public abstract class CellComponent : IComponent<CellEvent>
 {
-	public delegate void EventHandle<in TEvent>(TEvent e) where TEvent : CellEvent;
+	protected delegate void EventHandle<in TEvent>(TEvent e) where TEvent : CellEvent;
 
 	private delegate void EventHandleWrapped(CellEvent e);
 
@@ -75,7 +75,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 
 	}
 
-	public virtual void RegisterEvents() // todo make protected/internal
+	protected virtual void RegisterEvents()
 	{
 
 	}
@@ -85,12 +85,12 @@ public abstract class CellComponent : IComponent<CellEvent>
 		_registeredEvents.Add(typeof(TEvent), args => handle((TEvent)args));
 	}
 
-	public virtual SerializedData WriteObjectState()
+	public virtual DataStorage WriteStorage()
 	{
-		return new SerializedData(this);
+		return new DataStorage(this);
 	}
 
-	public virtual void ReadObjectState(SerializedData data)
+	public virtual void ReadStorage(DataStorage storage)
 	{
 
 	}

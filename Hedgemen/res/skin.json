@@ -1,5 +1,9 @@
 ﻿{
-  "button_data_normal_texture_name": "hedgemen:ui/button_normal_texture",
-  "button_data_hover_texture_name": "hedgemen:ui/button_hover_texture",
-  "button_data_input_texture_name": "hedgemen:ui/button_input_texture"
+  "button_data_normal_texture_name": "hgm:ui/skin/button_normal_texture",
+  "button_data_hover_texture_name": "hgm:ui/skin/button_hover_texture",
+  "button_data_input_texture_name": "hgm:ui/skin/button_input_texture",
+
+  "font_data_small_font_name": "hgm:ui/small_font",
+  "font_data_medium_font_name": "hgm:ui/medium_font",
+  "font_data_large_font_name": "hgm:ui/large_font"
 }

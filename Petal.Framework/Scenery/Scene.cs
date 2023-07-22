@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Graphics;
+using Petal.Framework.Graphics.Adapters;
 using Petal.Framework.Input;
 using Petal.Framework.Scenery.Nodes;
 
@@ -61,6 +62,7 @@ public class Scene : IDisposable
 		{
 			_viewportAdapter = value;
 			_viewportAdapter.Reset();
+			
 			OnViewportAdapterChanged?.Invoke(this, EventArgs.Empty);
 		}
 	}
@@ -80,6 +82,7 @@ public class Scene : IDisposable
 
 			_skin = value;
 			_skin.Refresh();
+			
 			OnSkinChanged?.Invoke(this, args);
 		}
 	}
@@ -102,6 +105,8 @@ public class Scene : IDisposable
 	public Scene(Stage root, Skin skin)
 	{
 		Skin = skin;
+		Skin.OnSkinRefreshed += OnSkinRefreshed;
+		
 		Input = new InputProvider();
 		Root = root;
 		Root.Scene = this;
@@ -111,10 +116,9 @@ public class Scene : IDisposable
 		ViewportAdapter = new DefaultViewportAdapter(
 			Renderer.RenderState.Graphics.GraphicsDevice, PetalGame.Petal.Window);
 
-		ViewportAdapter.Reset();
-		ResetRenderTarget();
-
 		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
+		
+		Reset();
 	}
 
 	public void Update(GameTime time)
@@ -183,6 +187,7 @@ public class Scene : IDisposable
 	public void Initialize()
 	{
 		PetalGame.Petal.Window.ClientSizeChanged += OnWindowClientSizeChanged;
+		Skin.OnSkinRefreshed += OnSkinRefreshed;
 		ViewportAdapter.Reset();
 
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
@@ -192,6 +197,11 @@ public class Scene : IDisposable
 	{
 		ResetRenderTarget();
 		ViewportAdapter.Reset();
+	}
+
+	private void OnSkinRefreshed(object? sender, EventArgs args)
+	{
+		Root?.MarkNodeTreeAsDirty();
 	}
 
 	private void ResetRenderTarget()
@@ -208,11 +218,18 @@ public class Scene : IDisposable
 			DepthFormat.Depth24);
 	}
 
+	private void Reset()
+	{
+		ViewportAdapter.Reset();
+		ResetRenderTarget();
+	}
+
 	public void Dispose()
 	{
 		GC.SuppressFinalize(this);
 
 		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
+		Skin.OnSkinRefreshed -= OnSkinRefreshed;
 
 		_renderTarget?.Dispose();
 		Renderer?.Dispose();

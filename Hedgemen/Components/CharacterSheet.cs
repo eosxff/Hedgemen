@@ -46,7 +46,7 @@ public class CharacterSheet : EntityComponent
 
 	}
 
-	public override void RegisterEvents()
+	protected override void RegisterEvents()
 	{
 		RegisterEvent<ChangeStatEvent>(ChangeStat);
 	}
@@ -57,26 +57,26 @@ public class CharacterSheet : EntityComponent
 			Strength += args.ChangeAmount;
 	}
 
-	public override SerializedData WriteObjectState()
+	public override DataStorage WriteStorage()
 	{
-		var data = base.WriteObjectState();
-		data.AddField("hedgemen:strength", Strength);
-		data.AddField("hedgemen:dexterity", Dexterity);
-		data.AddField("hedgemen:constitution", Constitution);
-		data.AddField("hedgemen:intelligence", Intelligence);
-		data.AddField("hedgemen:wisdom", Wisdom);
-		data.AddField("hedgemen:charisma", Charisma);
+		var data = base.WriteStorage();
+		data.WriteData("hgm:strength", Strength);
+		data.WriteData("hgm:dexterity", Dexterity);
+		data.WriteData("hgm:constitution", Constitution);
+		data.WriteData("hgm:intelligence", Intelligence);
+		data.WriteData("hgm:wisdom", Wisdom);
+		data.WriteData("hgm:charisma", Charisma);
 
 		return data;
 	}
 
-	public override void ReadObjectState(SerializedData data)
+	public override void ReadStorage(DataStorage storage)
 	{
-		Strength = data.GetField<int>("hedgemen:strength");
-		Dexterity = data.GetField<int>("hedgemen:dexterity");
-		Constitution = data.GetField<int>("hedgemen:constitution");
-		Intelligence = data.GetField<int>("hedgemen:intelligence");
-		Wisdom = data.GetField<int>("hedgemen:wisdom");
-		Charisma = data.GetField<int>("hedgemen:charisma");
+		Strength = storage.ReadData<int>("hgm:strength");
+		Dexterity = storage.ReadData<int>("hgm:dexterity");
+		Constitution = storage.ReadData<int>("hgm:constitution");
+		Intelligence = storage.ReadData<int>("hgm:intelligence");
+		Wisdom = storage.ReadData<int>("hgm:wisdom");
+		Charisma = storage.ReadData<int>("hgm:charisma");
 	}
 }
