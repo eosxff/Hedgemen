@@ -14,7 +14,7 @@ namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
-	public static readonly Version Version = new(0, 0, 1);
+	public static readonly Version HedgemenVersion = typeof(Hedgemen).Assembly.GetName().Version!;
 
 	private static bool IsEmbedOnlyMode()
 	{
@@ -65,6 +65,7 @@ public class Hedgemen : PetalGame
 			EmbeddedMods = new IMod[] { new HedgemenVanilla() }
 		});
 
+		Logger.Debug($"Hedgemen {HedgemenVersion.ToString(3)}, Petal {PetalVersion.ToString(3)}");
 		Logger.Debug($"Starting {nameof(PetalModLoader)}.");
 
 		var logLevel = ModLoader.Start(context) ? LogLevel.Debug : LogLevel.Error;

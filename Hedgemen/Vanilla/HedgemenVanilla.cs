@@ -214,7 +214,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			SchemaVersion = 1,
 			ModID = "hgm:mod",
 			Name = "Hedgemen",
-			Version = Hedgemen.Version.ToString(),
+			Version = Hedgemen.HedgemenVersion.ToString(),
 			Description = "Open world roguelike sidescroller. It's not even a game yet lol.",
 			Authors = new List<string>
 			{

@@ -11,6 +11,8 @@ namespace Petal.Framework;
 
 public abstract class PetalGame : Game
 {
+	public static readonly Version PetalVersion = typeof(PetalGame).Assembly.GetName().Version!;
+
 	private static PetalGame _instance;
 
 	public static PetalGame Petal
