@@ -1,3 +1,6 @@
-1: Install .Net 7 (https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
-2: Run the command 'dotnet publish -c Release' in the shell of your choice
-3: Go to the output folder (bin/Release/net7.0/publish)
+1: Install .Net 7 (https://dotnet.microsoft.com/en-us/download/dotnet/7.0).
+2: Run the command 'dotnet publish -c Release' in the shell of your choice.
+3: Go to the output folder (bin/Release/net7.0/publish).
+
+Linux:
+- If you are supplying/replacing the FNA+Native libraries, rename the so.0 files and remove the .0
