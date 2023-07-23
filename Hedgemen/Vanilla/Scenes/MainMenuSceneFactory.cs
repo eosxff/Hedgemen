@@ -3,7 +3,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Content;
-using Petal.Framework.Graphics.Adapters;
+using Petal.Framework.Graphics;
 using Petal.Framework.IO;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
@@ -62,7 +62,6 @@ public static class MainMenuSceneFactory
 
 		exitButton.OnMousePressed += (sender, args) =>
 		{
-			hedgemen.Logger.Debug($"Exiting Hedgemen.");
 			hedgemen.Exit();
 		};
 

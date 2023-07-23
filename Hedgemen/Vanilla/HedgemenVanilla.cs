@@ -103,7 +103,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			RegisterContent();
 		});
 
-		logger.Debug("Now changing scenes.");
 		var mainMenuScene = MainMenuSceneFactory.NewScene(Game, assets);
 		Game.ChangeScenes(mainMenuScene);
 	}

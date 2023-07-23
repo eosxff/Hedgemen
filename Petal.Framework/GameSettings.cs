@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Petal.Framework.Util.Logging;
 using Petal.Framework.Windowing;
 using static Petal.Framework.Util.PetalUtilities;
 
@@ -18,55 +19,56 @@ public struct GameSettings
 			Converters = { }
 		};
 
-	[JsonInclude, JsonPropertyName("window_width")]
+	[JsonPropertyName("window_width"), JsonInclude]
 	public int WindowWidth
 	{
 		get;
 		set;
 	} = 960;
 
-	[JsonInclude, JsonPropertyName("window_height")]
+	[JsonPropertyName("window_height"), JsonInclude]
 	public int WindowHeight
 	{
 		get;
 		set;
 	} = 540;
 
-	[JsonInclude, JsonPropertyName("window_mode")]
+	[JsonPropertyName("window_mode"), JsonInclude]
 	public WindowMode WindowMode
 	{
 		get;
 		set;
 	} = WindowMode.Windowed;
 
-	[JsonInclude, JsonPropertyName("preferred_framerate")]
+	[JsonPropertyName("preferred_framerate"), JsonInclude]
 	public int PreferredFramerate
 	{
 		get;
 		set;
 	} = 60;
 
-	[JsonInclude, JsonPropertyName("vsync_enabled")]
+	[JsonPropertyName("vsync_enabled"), JsonInclude]
 	public bool Vsync
 	{
 		get;
 		set;
 	} = true;
 
-	[JsonInclude, JsonPropertyName("is_mouse_visible")]
+	[JsonPropertyName("is_mouse_visible"), JsonInclude]
 	public bool IsMouseVisible
 	{
 		get;
 		set;
 	} = true;
 
-	[JsonInclude, JsonPropertyName("is_window_user_resizable")]
+	[JsonPropertyName("is_window_user_resizable"), JsonInclude]
 	public bool IsWindowUserResizable
 	{
 		get;
 		set;
 	} = false;
 
+	[JsonPropertyName("is_debug"), JsonInclude]
 	public bool IsDebug
 	{
 		get;

@@ -177,7 +177,6 @@ public abstract class PetalGame : Game
 		if (settings.IsDebug != IsDebug)
 		{
 			IsDebug = settings.IsDebug;
-			Logger.LogLevel = LogLevel.Debug;
 
 			OnDebugChanged?.Invoke(this, new DebugChangedArgs
 			{

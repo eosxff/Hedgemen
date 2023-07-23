@@ -14,6 +14,8 @@ namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
+	private const LogLevel DebugLogLevel = LogLevel.Debug;
+	private const LogLevel ReleaseLogLevel = LogLevel.Warn;
 	public static readonly Version HedgemenVersion = typeof(Hedgemen).Assembly.GetName().Version!;
 
 	private static bool IsEmbedOnlyMode()
@@ -65,7 +67,6 @@ public class Hedgemen : PetalGame
 			EmbeddedMods = new IMod[] { new HedgemenVanilla() }
 		});
 
-		Logger.Debug($"Hedgemen {HedgemenVersion.ToString(3)}, Petal {PetalVersion.ToString(3)}");
 		Logger.Debug($"Starting {nameof(PetalModLoader)}.");
 
 		var logLevel = ModLoader.Start(context) ? LogLevel.Debug : LogLevel.Error;
@@ -79,9 +80,7 @@ public class Hedgemen : PetalGame
 
 	protected override void OnExiting(object sender, EventArgs args)
 	{
-		if (sender != this)
-			return;
-
+		Logger.Debug($"Exiting Hedgemen.");
 		WriteLogFile();
 
 		AppDomain.CurrentDomain.UnhandledException -= OnUnhandledException;
@@ -108,10 +107,31 @@ public class Hedgemen : PetalGame
 	{
 		if (sender is PetalGame game)
 		{
+			Logger.LogLevel = args.IsDebug ? DebugLogLevel : ReleaseLogLevel;
 			Logger.Debug($"Logger now set to {game.Logger.LogLevel.ToString()}.");
 		}
 	}
 
+	protected override ILogger GetInitialLogger()
+	{
+#if DEBUG
+		var logLevel = DebugLogLevel;
+#else
+		var logLevel = ReleaseLogLevel;
+#endif
+
+		var logger = new PetalLogger
+		{
+			LogLevel = logLevel
+		};
+
+		string hedgemenVersion = typeof(Hedgemen).Assembly.GetName().Version!.ToString(3);
+		string petalVersion = typeof(PetalGame).Assembly.GetName().Version!.ToString(3);
+
+		logger.Debug($"Hedgemen-{hedgemenVersion}, Petal-{petalVersion}");
+
+		return logger;
+	}
 	protected override GameSettings GetInitialGameSettings()
 	{
 		var oldLogLevel = Logger.LogLevel;

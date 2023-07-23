@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Petal.Framework.Graphics.Adapters;
+namespace Petal.Framework.Graphics;
 
 public class DefaultViewportAdapter : ViewportAdapter
 {
