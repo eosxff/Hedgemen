@@ -3,4 +3,4 @@
 3: Go to the output folder (bin/Release/net7.0/publish).
 
 Linux:
-- If you are supplying/replacing the FNA+Native libraries, rename the so.0 files and remove the .0
+- If you are supplying/replacing the FNA+Native libraries, rename each "X.so.0" to "X.so".
