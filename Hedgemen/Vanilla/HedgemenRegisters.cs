@@ -1,10 +1,8 @@
-﻿using System.IO;
-using System.Text;
+﻿using Hgm.Components;
 using Petal.Framework;
 using Petal.Framework.Assets;
 using Petal.Framework.Content;
 using Petal.Framework.EC;
-using Petal.Framework.IO;
 using Petal.Framework.Util;
 
 namespace Hgm.Vanilla;
@@ -79,6 +77,9 @@ public sealed class HedgemenRegisters
 	private void SetupEntityComponentsRegister(Registry registry)
 	{
 		SetRegister("hgm:entity_components", registry, ref _entityComponents);
+
+		EntityComponents.AddKey("hgm:character_sheet", () => new CharacterSheet());
+		EntityComponents.AddKey("hgm:character_race", () => new CharacterRace());
 	}
 
 	private void SetupCellComponentsRegister(Registry registry)

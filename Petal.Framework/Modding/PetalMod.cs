@@ -5,7 +5,7 @@ namespace Petal.Framework.Modding;
 /// <summary>
 /// Base class for mods using the <see cref="PetalModLoader"/>.
 /// </summary>
-public abstract class PetalMod : IMod
+public abstract class PetalMod
 {
 	/// <summary>
 	/// The working directory of the mod.
@@ -15,7 +15,7 @@ public abstract class PetalMod : IMod
 		get;
 		internal set;
 	}
-	
+
 	/// <summary>
 	/// The manifest data of the mod.
 	/// </summary>
@@ -30,7 +30,7 @@ public abstract class PetalMod : IMod
 	/// </summary>
 	protected internal virtual void OnLoadedToPetalModLoader()
 	{
-		
+
 	}
 
 	/// <summary>
@@ -39,16 +39,16 @@ public abstract class PetalMod : IMod
 	/// /// <param name="context">Context for the <see cref="PetalModLoader"/> setup.</param>
 	protected internal virtual void PrePetalModLoaderModSetupPhase(ModLoaderSetupContext context)
 	{
-		
+
 	}
-	
+
 	/// <summary>
 	/// All setup functionality for the mod.
 	/// </summary>
 	/// <param name="context">Context for the <see cref="PetalModLoader"/> setup.</param>
 	protected internal virtual void Setup(ModLoaderSetupContext context)
 	{
-		
+
 	}
 
 	/// <summary>
@@ -57,6 +57,6 @@ public abstract class PetalMod : IMod
 	/// <param name="context">Context for the <see cref="PetalModLoader"/> setup.</param>
 	protected internal virtual void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)
 	{
-		
+
 	}
 }

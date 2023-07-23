@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -10,7 +11,7 @@ using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework.Modding;
 
-public class PetalModLoader : IModLoader<PetalMod>
+public class PetalModLoader
 {
 	internal const string PetalRepositoryLink = "https://github.com/eosxff/Hedgemen";
 
@@ -26,10 +27,14 @@ public class PetalModLoader : IModLoader<PetalMod>
 
 	public PetalModLoader(ILogger logger)
 	{
-		ArgumentNullException.ThrowIfNull(logger);
 		Logger = logger;
 	}
 
+	/// <summary>
+	/// Readies the mod loader to be able to start with a <see cref="ModLoaderSetupContext"/>.
+	/// </summary>
+	/// <param name="args">the setup arguments.</param>
+	/// <returns></returns>
 	public ModLoaderSetupContext Setup(ModLoaderSetupArgs args)
 	{
 		string modsDirectory = args.ModsDirectoryName ?? "mods";
@@ -48,6 +53,12 @@ public class PetalModLoader : IModLoader<PetalMod>
 		return context;
 	}
 
+	/// <summary>
+	/// Starts the mod loader. Embedded mods will be loaded before regular mods. Regular mods will not be loaded
+	/// if <see cref="ModLoaderSetupContext.EmbedOnlyMode"/> is true.
+	/// </summary>
+	/// <param name="context">the current mod loader context.</param>
+	/// <returns>value indicating whether or not the mod loader was able to start correctly.</returns>
 	public bool Start(ModLoaderSetupContext context)
 	{
 		var logger = PetalGame.Petal.Logger;
@@ -91,7 +102,15 @@ public class PetalModLoader : IModLoader<PetalMod>
 		return true;
 	}
 
-	public bool GetMod<T>(NamespacedString modID, out T mod) where T : PetalMod
+	/// <summary>
+	/// Attempts to retrieve a mod based on the given <paramref name="modID"/>. The retrieved <paramref name="mod"/>
+	/// will not be not if true is returned, otherwise it will be null.
+	/// </summary>
+	/// <param name="modID">the mod namespaced identifier.</param>
+	/// <param name="mod">the retrieved mod.</param>
+	/// <typeparam name="T">the type of the mod being retrieved.</typeparam>
+	/// <returns></returns>
+	public bool GetMod<T>(NamespacedString modID, [NotNullWhen(true)] out T mod) where T : PetalMod
 	{
 		mod = default;
 
@@ -239,5 +258,89 @@ public class PetalModLoader : IModLoader<PetalMod>
 	{
 		mod.Manifest = manifest;
 		mod.Directory = directory;
+	}
+}
+
+public sealed class ModLoaderSetupContext
+{
+	public required DirectoryInfo ModsDirectory
+	{
+		get;
+		init;
+	}
+
+	public required string ManifestFileName
+	{
+		get;
+		init;
+	}
+
+	public required IReadOnlyList<PetalMod> EmbeddedMods
+	{
+		get;
+		init;
+	}
+
+	/// <summary>
+	/// Whether or not the mod loader should load third-party mods on <see cref="PetalModLoader.Start"/>.
+	/// </summary>
+	public required bool EmbedOnlyMode
+	{
+		get;
+		init;
+	}
+
+	/// <summary>
+	/// The <see cref="PetalGame"/> the mod loader is attached to.
+	/// </summary>
+	public required PetalGame Game
+	{
+		get;
+		init;
+	}
+
+	/// <summary>
+	/// The
+	/// </summary>
+	public required PetalModLoader ModLoader
+	{
+		get;
+		init;
+	}
+}
+
+/// <summary>
+/// <see cref="PetalModLoader"/> custom arguments for <see cref="PetalModLoader.Setup"/>.
+/// </summary>
+public struct ModLoaderSetupArgs
+{
+	public required PetalGame Game
+	{
+		get;
+		init;
+	}
+
+	public required IReadOnlyList<PetalMod> EmbeddedMods
+	{
+		get;
+		init;
+	}
+
+	public required bool EmbedOnlyMode
+	{
+		get;
+		init;
+	}
+
+	public string? ModsDirectoryName
+	{
+		get;
+		init;
+	}
+
+	public string? ManifestFileName
+	{
+		get;
+		init;
 	}
 }

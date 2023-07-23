@@ -64,7 +64,7 @@ public class Hedgemen : PetalGame
 		{
 			EmbedOnlyMode = IsEmbedOnlyMode(),
 			Game = this,
-			EmbeddedMods = new IMod[] { new HedgemenVanilla() }
+			EmbeddedMods = new PetalMod[] { new HedgemenVanilla() }
 		});
 
 		Logger.Debug($"Starting {nameof(PetalModLoader)}.");
