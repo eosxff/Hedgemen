@@ -2,7 +2,6 @@ Prerequisites:
 	1: .Net 7 (https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 	2: Python version >= 3.11.2 (https://www.python.org/downloads/)
 
-1: Install .Net 7 
 2: Run the command 'dotnet publish -c Release' in the shell of your choice.
 3: Go to the output folder (bin/Release/net7.0/publish).
 
