@@ -1,4 +1,5 @@
-﻿using Hgm.Components;
+﻿using System;
+using Hgm.Components;
 using Petal.Framework;
 using Petal.Framework.Assets;
 using Petal.Framework.Content;
@@ -12,10 +13,14 @@ namespace Hgm.Vanilla;
 /// </summary>
 public sealed class HedgemenRegisters
 {
+	public static readonly NamespacedString AssetsRegisterName = new("hgm:assets");
+	public static readonly NamespacedString EntityComponentsRegisterName = new("hgm:entity_components");
+	public static readonly NamespacedString CellComponentsRegisterName = new("hgm:cell_components");
+
 	private Register<object>? _assets;
 
 	/// <summary>
-	/// Game art assets register.
+	/// Game art assets register. Will throw an exception if the underlying field is null.
 	/// </summary>
 	public Register<object> Assets
 	{
@@ -29,7 +34,7 @@ public sealed class HedgemenRegisters
 	private Register<ContentSupplier<EntityComponent>>? _entityComponents;
 
 	/// <summary>
-	/// Game entity component register.
+	/// Game entity component register. Will throw an exception if the underlying field is null.
 	/// </summary>
 	public Register<ContentSupplier<EntityComponent>> EntityComponents
 	{
@@ -43,7 +48,7 @@ public sealed class HedgemenRegisters
 	private Register<ContentSupplier<CellComponent>>? _cellComponents;
 
 	/// <summary>
-	/// Game cell component register.
+	/// Game cell component register. Will throw an exception if the underlying field is null.
 	/// </summary>
 	public Register<ContentSupplier<CellComponent>> CellComponents
 	{
@@ -55,7 +60,7 @@ public sealed class HedgemenRegisters
 	}
 
 	/// <summary>
-	/// Initializes the registers to (hopefully) non-null values.
+	/// Initializes the registers to non-null values.
 	/// </summary>
 	/// <param name="registry">the registry to be registered to</param>
 	public void SetupRegisters(Registry registry)
@@ -67,8 +72,14 @@ public sealed class HedgemenRegisters
 
 	private void SetupAssetsRegister(Registry registry)
 	{
+		_assets = new Register<object>(
+			AssetsRegisterName,
+			HedgemenVanilla.ModID,
+			registry);
+
+		AddRegisterToRegistry(_assets, registry);
+
 		var assetLoader = Hedgemen.Instance.Assets;
-		SetRegister("hgm:assets", registry, ref _assets);
 
 		var assetManifest = AssetManifest.FromFile("asset_manifest.json");
 		assetManifest.ForwardToRegister(Assets, assetLoader);
@@ -76,7 +87,12 @@ public sealed class HedgemenRegisters
 
 	private void SetupEntityComponentsRegister(Registry registry)
 	{
-		SetRegister("hgm:entity_components", registry, ref _entityComponents);
+		_entityComponents = new Register<ContentSupplier<EntityComponent>>(
+			EntityComponentsRegisterName,
+			HedgemenVanilla.ModID,
+			registry);
+
+		AddRegisterToRegistry(_entityComponents, registry);
 
 		EntityComponents.AddKey("hgm:character_sheet", () => new CharacterSheet());
 		EntityComponents.AddKey("hgm:character_race", () => new CharacterRace());
@@ -84,22 +100,30 @@ public sealed class HedgemenRegisters
 
 	private void SetupCellComponentsRegister(Registry registry)
 	{
-		SetRegister("hgm:cell_components", registry, ref _cellComponents);
+		_cellComponents = new Register<ContentSupplier<CellComponent>>(
+			CellComponentsRegisterName,
+			HedgemenVanilla.ModID,
+			registry);
+
+		AddRegisterToRegistry(_cellComponents, registry);
 	}
 
-	private void SetRegister<TRegisterContent>(
-		NamespacedString registerName,
-		Registry registry,
-		ref Register<TRegisterContent>? register)
+	/// <summary>
+	/// Adds the <paramref name="register"/> to the <paramref name="registry"/>.
+	/// If this operation fails, an exception will be thrown.
+	/// </summary>
+	/// <param name="register">the register.</param>
+	/// <param name="registry">the register.</param>
+	/// <exception cref="InvalidOperationException">if this operation failed. The logger should give details.
+	/// </exception>
+	private void AddRegisterToRegistry(
+		IRegister register,
+		Registry registry)
 	{
-		bool found = registry.GetRegister(registerName, out Register<TRegisterContent> registerInRegistry);
+		bool success = registry.AddRegister(register);
 
-		if (!found)
-		{
-			registry.Logger.Error($"Could not find '{registerName}' in registry.");
-			return;
-		}
-
-		register = registerInRegistry;
+		if (!success)
+			throw new InvalidOperationException(
+				$"'{register.RegistryName}' could not be added to {nameof(Registry)}");
 	}
 }

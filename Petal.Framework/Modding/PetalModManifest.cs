@@ -13,7 +13,7 @@ public sealed class PetalModManifest
 		var manifest = JsonSerializer.Deserialize<PetalModManifest>(json, JsonDeserializeOptions);
 		return manifest;
 	}
-	
+
 	public static JsonSerializerOptions JsonDeserializeOptions
 		=> new()
 		{
@@ -22,7 +22,7 @@ public sealed class PetalModManifest
 			WriteIndented = true,
 			Converters = { }
 		};
-	
+
 	[JsonPropertyName("schema_version")]
 	public int SchemaVersion
 	{
@@ -86,7 +86,7 @@ public sealed class PetalModManifest
 		get;
 		init;
 	} = string.Empty;
-	
+
 	[JsonPropertyName("mod_main")]
 	public string ModMain
 	{
@@ -115,14 +115,14 @@ public sealed class PetalModManifestContactInfo
 	{
 		get;
 		init;
-	} = PetalModLoader.PetalRepositoryLink;
+	} = PetalGame.PetalRepositoryLink;
 
 	[JsonPropertyName("source")]
 	public string Source
 	{
 		get;
 		init;
-	} = PetalModLoader.PetalRepositoryLink;
+	} = PetalGame.PetalRepositoryLink;
 }
 
 [Serializable]
@@ -134,7 +134,7 @@ public sealed class PetalModManifestDependenciesInfo
 		get;
 		init;
 	} = new List<string>();
-	
+
 	[JsonPropertyName("incompatible_mods"), JsonInclude]
 	[JsonConverter(typeof(NamespacedString.ImmutableListJsonConverter))]
 	public IReadOnlyList<NamespacedString> IncompatibleMods
@@ -155,5 +155,5 @@ public sealed class PetalModManifestDependenciesInfo
 [JsonSerializable(typeof(PetalModManifest))]
 public partial class PetalModManifestJsc : JsonSerializerContext
 {
-	
+
 }

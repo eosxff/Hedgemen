@@ -7,14 +7,16 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using Petal.Framework.IO;
+using Petal.Framework.Util;
 using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework.Modding;
 
+/// <summary>
+/// A somewhat general purpose mod loader. Obviously designed with Hedgemen in mind.
+/// </summary>
 public class PetalModLoader
 {
-	internal const string PetalRepositoryLink = "https://github.com/eosxff/Hedgemen";
-
 	private readonly Dictionary<NamespacedString, PetalMod> _mods = new();
 
 	public IReadOnlyDictionary<NamespacedString, PetalMod> Mods
@@ -160,12 +162,15 @@ public class PetalModLoader
 				Logger.Debug($"Loaded Embedded mod '{embeddedModsElement}'.");
 			}
 			else
+			{
 				Logger.Critical($"Failed to load embedded mod '{embeddedModsElement}' This should not happen.");
+				throw new PetalException();
+			}
 		}
 
 		foreach (var directory in directories)
 		{
-			var loadSuccessful = LoadModFromDirectory(context, directory, out var mod);
+			bool loadSuccessful = LoadModFromDirectory(context, directory, out var mod);
 
 			if (!loadSuccessful)
 				Logger.Error($"Could not load mod from '{directory.Name}'.");
@@ -191,7 +196,7 @@ public class PetalModLoader
 			return false;
 		}
 
-		var manifestJson = manifestFile.ReadString(Encoding.UTF8);
+		string manifestJson = manifestFile.ReadString(Encoding.UTF8);
 		var manifest = JsonSerializer.Deserialize<PetalModManifest?>(manifestJson);
 
 		if (manifest is null)

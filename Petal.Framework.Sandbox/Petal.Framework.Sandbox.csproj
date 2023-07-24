@@ -35,9 +35,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ContentWithTargetPath Include="../Hedgemen/res/**">
+        <ContentWithTargetPath Include="../Building/resources/**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-            <!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
             <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
         </ContentWithTargetPath>
     </ItemGroup>
@@ -45,7 +44,6 @@
     <ItemGroup>
         <ContentWithTargetPath Include="res/**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-            <!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
             <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
         </ContentWithTargetPath>
     </ItemGroup>

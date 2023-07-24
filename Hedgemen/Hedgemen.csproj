@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <Version>0.1.0</Version>
         <OutputType>Exe</OutputType>
@@ -16,9 +15,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ContentWithTargetPath Include="res/**">
+        <ContentWithTargetPath Include="../Building/resources/**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-            <!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
             <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
         </ContentWithTargetPath>
     </ItemGroup>
@@ -33,3 +31,6 @@
         </Reference>
     </ItemGroup>
 </Project>
+
+<!--i'm bad at remembering things-->
+<!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->

@@ -11,6 +11,8 @@ namespace Petal.Framework;
 
 public abstract class PetalGame : Game
 {
+	internal const string PetalRepositoryLink = "https://github.com/eosxff/Hedgemen";
+
 	public static readonly Version PetalVersion = typeof(PetalGame).Assembly.GetName().Version!;
 
 	private static PetalGame _instance;

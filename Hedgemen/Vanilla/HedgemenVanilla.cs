@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Hgm.Components;
 using Hgm.Vanilla.Scenes;
+using Petal.Framework;
 using Petal.Framework.Content;
 using Petal.Framework.EC;
 using Petal.Framework.IO;
@@ -14,6 +15,8 @@ namespace Hgm.Vanilla;
 
 public class HedgemenVanilla : PetalEmbeddedMod
 {
+	public static readonly NamespacedString ModID = new("hgm:mod");
+
 	private static HedgemenVanilla _instance;
 
 	public static HedgemenVanilla Instance
@@ -54,21 +57,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 	protected override void Setup(ModLoaderSetupContext context)
 	{
-		Game.Registry.AddRegister(new Register<ContentSupplier<EntityComponent>>(
-			"hgm:entity_components",
-			Manifest.ModID,
-			Game.Registry));
-
-		Game.Registry.AddRegister(new Register<ContentSupplier<CellComponent>>(
-			"hgm:cell_components",
-			Manifest.ModID,
-			Game.Registry));
-
-		Game.Registry.AddRegister(new Register<object>(
-			"hgm:assets",
-			Manifest.ModID,
-			Game.Registry));
-
 		Registers.SetupRegisters(Game.Registry);
 
 		var logger = Game.Logger;
@@ -211,7 +199,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		return new PetalModManifest
 		{
 			SchemaVersion = 1,
-			ModID = "hgm:mod",
+			ModID = ModID,
 			Name = "Hedgemen",
 			Version = Hedgemen.HedgemenVersion.ToString(),
 			Description = "Open world roguelike sidescroller. It's not even a game yet lol.",
