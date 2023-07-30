@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Xna.Framework;
 
 [Serializable]
@@ -146,7 +147,7 @@ public struct Vector2Int
 	{
 		return a.Equals(b);
 	}
-	
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool operator !=(Vector2Int a, Vector2Int b)
 	{

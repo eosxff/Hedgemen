@@ -60,32 +60,6 @@ public class DeferredRegister<TContent> : IDeferredRegister
 		return AddKey(id, tContent);
 	}
 
-	public bool RemoveKey(NamespacedString id)
-	{
-		lock (_content)
-		{
-			bool removed = _content.Remove(id);
-			return removed;
-		}
-	}
-
-	public bool ReplaceKey(NamespacedString id, TContent content)
-	{
-		lock (_content)
-		{
-			bool replaced = _content.ChangeValue(id, content);
-			return replaced;
-		}
-	}
-
-	public bool ReplaceKey(NamespacedString id, object content)
-	{
-		if (content is not TContent tContent)
-			return false;
-
-		return ReplaceKey(id, tContent);
-	}
-
 	public void ForwardToRegister(IRegister register)
 	{
 		lock (_content)

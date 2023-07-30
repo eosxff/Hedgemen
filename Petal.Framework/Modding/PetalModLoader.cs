@@ -106,24 +106,33 @@ public class PetalModLoader
 
 	/// <summary>
 	/// Attempts to retrieve a mod based on the given <paramref name="modID"/>. The retrieved <paramref name="mod"/>
-	/// will not be not if true is returned, otherwise it will be null.
+	/// will be a valid reference if true is returned, otherwise it will be null.
 	/// </summary>
 	/// <param name="modID">the mod namespaced identifier.</param>
 	/// <param name="mod">the retrieved mod.</param>
 	/// <typeparam name="T">the type of the mod being retrieved.</typeparam>
-	/// <returns></returns>
+	/// <returns>if the operation succeeded.</returns>
 	public bool GetMod<T>(NamespacedString modID, [NotNullWhen(true)] out T mod) where T : PetalMod
 	{
 		mod = default;
 
 		bool found = _mods.TryGetValue(modID, out var petalMod);
 
-		if (found && petalMod is T tMod)
+		if (!found)
 		{
-			mod = tMod;
+			Logger.Error($"{modID} could not be found in the mod loader.");
+			return false;
 		}
 
-		return found;
+		if (petalMod is T tMod)
+			mod = tMod;
+		else
+		{
+			Logger.Error($"Mod {petalMod.GetType()} can not be cast to {typeof(T)}.");
+			return false;
+		}
+
+		return true;
 	}
 
 	private List<DirectoryInfo> QueryModsFromModDirectory(ModLoaderSetupContext context)
@@ -153,6 +162,7 @@ public class PetalModLoader
 	{
 		var list = new List<PetalMod>(context.EmbeddedMods.Count + directories.Count);
 
+		// load first class mods
 		foreach (var embeddedModsElement in context.EmbeddedMods)
 		{
 			if (embeddedModsElement is PetalEmbeddedMod embeddedMod)
@@ -163,11 +173,13 @@ public class PetalModLoader
 			}
 			else
 			{
-				Logger.Critical($"Failed to load embedded mod '{embeddedModsElement}' This should not happen.");
+				Logger.Critical($"First class/embedded mod {embeddedModsElement.GetType()} " +
+				                $"is not of type {typeof(PetalEmbeddedMod)}.");
 				throw new PetalException();
 			}
 		}
 
+		// load third party mods
 		foreach (var directory in directories)
 		{
 			bool loadSuccessful = LoadModFromDirectory(context, directory, out var mod);
@@ -187,7 +199,6 @@ public class PetalModLoader
 	private bool LoadModFromDirectory(ModLoaderSetupContext context, DirectoryInfo directory, out PetalMod mod)
 	{
 		mod = null;
-
 		var manifestFile = directory.FindFile(context.ManifestFileName);
 
 		if (!manifestFile.Exists) // should never trip
@@ -207,7 +218,7 @@ public class PetalModLoader
 
 		if (string.IsNullOrEmpty(manifest.ModFileDll))
 		{
-			mod = new DefaultPetalMod();
+			mod = new DefaultPetalMod(); // todo
 		}
 
 		else
@@ -259,13 +270,16 @@ public class PetalModLoader
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private void SetModManifestAndDirectory(PetalMod mod, PetalModManifest manifest, DirectoryInfo directory)
+	private static void SetModManifestAndDirectory(PetalMod mod, PetalModManifest manifest, DirectoryInfo directory)
 	{
 		mod.Manifest = manifest;
 		mod.Directory = directory;
 	}
 }
 
+/// <summary>
+/// Initialization context for <see cref="PetalModLoader"/>.
+/// </summary>
 public sealed class ModLoaderSetupContext
 {
 	public required DirectoryInfo ModsDirectory
@@ -274,12 +288,19 @@ public sealed class ModLoaderSetupContext
 		init;
 	}
 
+	/// <summary>
+	/// The <see cref="PetalModManifest"/> file name for when <see cref="PetalModLoader"/>
+	/// scans directories for valid mods.
+	/// </summary>
 	public required string ManifestFileName
 	{
 		get;
 		init;
 	}
 
+	/// <summary>
+	/// First party mods.
+	/// </summary>
 	public required IReadOnlyList<PetalMod> EmbeddedMods
 	{
 		get;
@@ -288,6 +309,7 @@ public sealed class ModLoaderSetupContext
 
 	/// <summary>
 	/// Whether or not the mod loader should load third-party mods on <see cref="PetalModLoader.Start"/>.
+	/// First party mods will always be loaded.
 	/// </summary>
 	public required bool EmbedOnlyMode
 	{
@@ -319,30 +341,47 @@ public sealed class ModLoaderSetupContext
 /// </summary>
 public struct ModLoaderSetupArgs
 {
+	/// <summary>
+	/// The game instance the mod loader uses.
+	/// </summary>
 	public required PetalGame Game
 	{
 		get;
 		init;
 	}
 
+	/// <summary>
+	/// First party mods.
+	/// </summary>
 	public required IReadOnlyList<PetalMod> EmbeddedMods
 	{
 		get;
 		init;
 	}
 
+	/// <summary>
+	/// Whether or not the mod loader should load third-party mods on <see cref="PetalModLoader.Start"/>.
+	/// First party mods will always be loaded.
+	/// </summary>
 	public required bool EmbedOnlyMode
 	{
 		get;
 		init;
 	}
 
+	/// <summary>
+	/// The local directory path for <see cref="PetalModLoader"/> to scan from.
+	/// </summary>
 	public string? ModsDirectoryName
 	{
 		get;
 		init;
 	}
 
+	/// <summary>
+	/// The <see cref="PetalModManifest"/> file name for when <see cref="PetalModLoader"/>
+	/// scans directories for valid mods.
+	/// </summary>
 	public string? ManifestFileName
 	{
 		get;

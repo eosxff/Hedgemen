@@ -22,8 +22,5 @@ public interface IDeferredRegister
 	}
 
 	public bool AddKey(NamespacedString id, object content);
-	public bool RemoveKey(NamespacedString id);
-	public bool ReplaceKey(NamespacedString id, object content);
-
 	public void ForwardToRegister(IRegister register);
 }

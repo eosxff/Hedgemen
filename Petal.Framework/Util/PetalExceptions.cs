@@ -4,6 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace Petal.Framework.Util;
 
+/// <summary>
+/// Utility class for exceptions.
+/// </summary>
 public static class PetalExceptions
 {
 	/// <summary>
@@ -31,20 +34,12 @@ public static class PetalExceptions
 	}
 }
 
+/// <summary>
+/// Generic exception for petal.
+/// </summary>
 public sealed class PetalException : Exception
 {
-	public PetalException()
-	{
-
-	}
-
-	public PetalException(string? message) : base(message)
-	{
-
-	}
-
-	public PetalException(string? message, Exception? innerException) : base(message, innerException)
-	{
-
-	}
+	public PetalException() { }
+	public PetalException(string? message) : base(message) { }
+	public PetalException(string? message, Exception? innerException) : base(message, innerException) { }
 }

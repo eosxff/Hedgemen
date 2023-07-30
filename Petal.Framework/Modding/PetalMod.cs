@@ -52,7 +52,7 @@ public abstract class PetalMod
 	}
 
 	/// <summary>
-	/// Called after<see cref="PetalModLoader"/> calls <see cref="Setup"/> for all loaded <see cref="PetalMod"/>.
+	/// Called after <see cref="PetalModLoader.Setup"/> for all loaded mods.
 	/// </summary>
 	/// <param name="context">Context for the <see cref="PetalModLoader"/> setup.</param>
 	protected internal virtual void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)

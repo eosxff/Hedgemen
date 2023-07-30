@@ -5,6 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace Petal.Framework.Modding;
 
+/// <summary>
+/// Mod details.
+/// </summary>
 [Serializable]
 public sealed class PetalModManifest
 {
