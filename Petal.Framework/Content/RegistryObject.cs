@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Petal.Framework.Content;
 
@@ -20,17 +21,32 @@ public sealed class RegistryObject<TContent>
 		Key = key;
 	}
 
-	public TContent? Get()
+	public TContentLocal? Supply<TContentLocal>()
 	{
-		object? obj = Key.Content;
-
-		if (obj is null)
-			return default;
-
-		return obj is not TContent tObj ? default : tObj;
+		bool success = Supply(out TContentLocal content);
+		return content;
 	}
 
-	public bool Get([NotNullWhen(true)] out TContent content)
+	public bool Supply<TContentLocal>([NotNullWhen(true)] out TContentLocal? suppliedContent)
+	{
+		suppliedContent = default;
+
+		bool success = Get(out var content);
+
+		if (!success || content is not ContentSupplier<TContentLocal> supplier)
+			return false;
+
+		suppliedContent = supplier();
+		return true;
+	}
+
+	public TContent? Get()
+	{
+		bool success = Get(out var content);
+		return content;
+	}
+
+	public bool Get([NotNullWhen(true)] out TContent? content)
 	{
 		object? obj = Key.Content;
 
@@ -57,7 +73,7 @@ public sealed class RegistryObject<TContent>
 		return default;
 	}
 
-	public bool GetAs<T>([NotNullWhen(true)] out T content) where T : TContent
+	public bool GetAs<T>([NotNullWhen(true)] out T? content) where T : TContent
 	{
 		content = default;
 

@@ -1,0 +1,95 @@
+using Hgm.Components;
+using Hgm.Vanilla.WorldGeneration;
+using Hgm.WorldGeneration;
+using Petal.Framework.Assets;
+using Petal.Framework.Content;
+using Petal.Framework.EC;
+
+namespace Hgm.Vanilla;
+
+public sealed class HedgemenContent
+{
+	public RegistryObject<ContentSupplier<EntityComponent>> CharacterSheet
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<ContentSupplier<EntityComponent>> CharacterRace
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<ContentSupplier<ILandscaper>> OverworldTerrainLandscaper
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Cartographer> OverworldCartographer
+	{
+		get;
+		private set;
+	}
+
+	/// <summary>
+	/// Loads all the content in vanilla Hedgemen in this order: assets > entity components > cell components >
+	/// landscapers > cartographers.
+	/// </summary>
+	/// <param name="registers">the vanilla registers.</param>
+	public void Setup(HedgemenRegisters registers)
+	{
+		RegisterAssets(registers);
+		RegisterEntityComponents(registers);
+		RegisterCellComponents(registers);
+		RegisterLandscapers(registers);
+		RegisterCartographers(registers);
+	}
+
+	private void RegisterAssets(HedgemenRegisters registers)
+	{
+		var assetLoader = Hedgemen.Instance.Assets;
+
+		var assetManifest = AssetManifest.FromFile("asset_manifest.json");
+		assetManifest.ForwardToRegister(registers.Assets, assetLoader);
+	}
+
+	private void RegisterEntityComponents(HedgemenRegisters registers)
+	{
+		var register = registers.EntityComponents;
+
+		register.AddKey("hgm:character_sheet", () => new CharacterSheet());
+		register.AddKey("hgm:character_race", () => new CharacterRace());
+
+		CharacterSheet = register.CreateRegistryObject("hgm:character_sheet");
+		CharacterRace = register.CreateRegistryObject("hgm:character_race");
+	}
+
+	private void RegisterCellComponents(HedgemenRegisters registers)
+	{
+		var register = registers.CellComponents;
+
+		register.AddKey("hgm:perlin_generation", () => new PerlinGeneration());
+	}
+
+	private void RegisterLandscapers(HedgemenRegisters registers)
+	{
+		var register = registers.Landscapers;
+
+		register.AddKey("hgm:overworld_terrain_landscaper", () => new OverworldTerrainLandscaper());
+
+		OverworldTerrainLandscaper = register.CreateRegistryObject("hgm:overworld_terrain_landscaper");
+	}
+
+	private void RegisterCartographers(HedgemenRegisters registers)
+	{
+		var register = registers.Cartographers;
+
+		var overworld = new Cartographer();
+		overworld.Landscapers.Add(OverworldTerrainLandscaper);
+		register.AddKey("hgm:overworld_cartographer", overworld);
+
+		OverworldCartographer = register.CreateRegistryObject("hgm:overworld_cartographer");
+	}
+}

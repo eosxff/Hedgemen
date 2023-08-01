@@ -84,19 +84,19 @@ public class PetalModLoader
 		logger.Debug($"Loaded {_mods.Count} mods.");
 		logger.Debug($"Initializing {_mods.Count} mods.");
 
-		ICollection<PetalMod> allMods = _mods.Values;
+		ICollection<PetalMod> modsCollection = _mods.Values;
 
-		foreach (var mod in allMods)
+		foreach (var mod in modsCollection)
 		{
 			mod.PrePetalModLoaderModSetupPhase(context);
 		}
 
-		foreach (var mod in allMods)
+		foreach (var mod in modsCollection)
 		{
 			mod.Setup(context);
 		}
 
-		foreach (var mod in allMods)
+		foreach (var mod in modsCollection)
 		{
 			mod.PostPetalModLoaderSetupPhase(context);
 		}
@@ -112,7 +112,7 @@ public class PetalModLoader
 	/// <param name="mod">the retrieved mod.</param>
 	/// <typeparam name="T">the type of the mod being retrieved.</typeparam>
 	/// <returns>if the operation succeeded.</returns>
-	public bool GetMod<T>(NamespacedString modID, [NotNullWhen(true)] out T mod) where T : PetalMod
+	public bool GetMod<T>(NamespacedString modID, [NotNullWhen(true)] out T? mod) where T : PetalMod
 	{
 		mod = default;
 

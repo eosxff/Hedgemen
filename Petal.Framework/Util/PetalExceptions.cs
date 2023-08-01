@@ -35,7 +35,8 @@ public static class PetalExceptions
 }
 
 /// <summary>
-/// Generic exception for petal.
+/// Generic exception for petal. <see cref="PetalGame.Logger"/> will ideally give more details when this exception
+/// is raised.
 /// </summary>
 public sealed class PetalException : Exception
 {

@@ -96,14 +96,10 @@ public abstract class PetalGame : Game
 	/// <summary>
 	/// Changes the current scene. This will properly exit out and initialize the scenes accordingly.
 	/// </summary>
-	/// <param name="scene"></param>
+	/// <param name="scene">new scene to change to.</param>
 	public void ChangeScenes(Scene scene)
 	{
-		if (scene is null)
-		{
-			Logger.Error("Can not change to null scene.");
-			return;
-		}
+		PetalExceptions.ThrowIfNull(scene);
 
 		if (Scene is not null)
 		{
@@ -276,7 +272,6 @@ public abstract class PetalGame : Game
 	/// <summary>
 	/// Used to apply settings on engine initialization.
 	/// </summary>
-	/// <returns></returns>
 	protected virtual GameSettings GetInitialGameSettings()
 	{
 		return new GameSettings

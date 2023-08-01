@@ -73,7 +73,7 @@ public sealed class DataStorage
 		return field;
 	}
 
-	public bool ReadData<T>(NamespacedString name, [NotNullWhen(true)] out T field)
+	public bool ReadData<T>(NamespacedString name, [NotNullWhen(true)] out T? field)
 	{
 		field = default;
 		var genericType = typeof(T);
@@ -99,13 +99,13 @@ public sealed class DataStorage
 		return field;
 	}
 
-	public bool ReadData<T>([NotNullWhen(true)] out T field) where T : IDataStorageHandler
+	public bool ReadData<T>([NotNullWhen(true)] out T? field) where T : IDataStorageHandler
 	{
 		field = default;
 		return GetStorageHandler(this, out field);
 	}
 
-	private bool GetStorageHandler<T>(NamespacedString name, [NotNullWhen(true)] out T field)
+	private bool GetStorageHandler<T>(NamespacedString name, [NotNullWhen(true)] out T? field)
 		where T : IDataStorageHandler
 	{
 		field = default;
@@ -118,7 +118,7 @@ public sealed class DataStorage
 		return GetStorageHandler(record, out field);
 	}
 
-	private bool GetStorageHandler<T>(DataStorage storage, [NotNullWhen(true)] out T field)
+	private bool GetStorageHandler<T>(DataStorage storage, [NotNullWhen(true)] out T? field)
 		where T : IDataStorageHandler
 	{
 		field = default;

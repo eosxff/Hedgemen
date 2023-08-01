@@ -5,6 +5,7 @@ using Petal.Framework.Persistence;
 
 namespace Petal.Framework.EC;
 
+
 public abstract class EntityComponent : IComponent<EntityEvent>
 {
 	protected delegate void EventHandle<in TEvent>(TEvent e) where TEvent : EntityEvent;

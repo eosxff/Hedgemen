@@ -25,7 +25,7 @@ public interface IEntity<TComponent, in TEvent> : IDataStorageHandler
 	public void AddComponent(TComponent component);
 	public void AddComponent<T>() where T : TComponent, new();
 
-	public bool GetComponent<T>([NotNullWhen(true)] out T component) where T : TComponent;
+	public bool GetComponent<T>([NotNullWhen(true)] out T? component) where T : TComponent;
 	public T? GetComponent<T>() where T : TComponent;
 
 	public bool RemoveComponent(TComponent component);

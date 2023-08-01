@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Hgm.Components;
 using Hgm.Vanilla.Scenes;
+using Hgm.WorldGeneration;
+using Microsoft.Xna.Framework;
 using Petal.Framework;
 using Petal.Framework.Content;
 using Petal.Framework.EC;
@@ -41,6 +43,11 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		get;
 	} = new();
 
+	public HedgemenContent Content
+	{
+		get;
+	} = new();
+
 	protected override void OnLoadedToPetalModLoader()
 	{
 		Game.Logger.Debug($"Loaded {nameof(HedgemenVanilla)}");
@@ -58,11 +65,9 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 	protected override void Setup(ModLoaderSetupContext context)
 	{
-		Registers.SetupRegisters(Game.Registry);
-
 		var logger = Game.Logger;
-		var assetsRegistryFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
-		var assetLoader = Game.Assets;
+		Registers.SetupRegisters(Game.Registry);
+		Content.Setup(Registers);
 
 		Game.OnSceneChanged += (sender, args) =>
 		{
@@ -73,6 +78,15 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			Game,
 			new FileInfo("splash.png").Open(FileMode.Open));
 		Game.ChangeScenes(scene);
+
+		var cartographer = Content.OverworldCartographer.Get();
+		var map = cartographer.Generate(new CartographyOptions
+		{
+			MapDimensions = new Vector2Int(128, 128),
+			Seed = 1337
+		});
+
+		//Game.Logger.Critical(map.Cells[50, 50].GetComponent<PerlinGeneration>().Height);
 
 		Test();
 		RegisterContentThenChangeScenes();
@@ -89,23 +103,10 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		await Task.Run(async delegate
 		{
 			await Task.Delay(1000);
-			RegisterContent();
 		});
 
 		var mainMenuScene = MainMenuSceneFactory.NewScene(Game, assets);
 		Game.ChangeScenes(mainMenuScene);
-	}
-
-	private void RegisterContent()
-	{
-		var logger = Game.Logger;
-		var assetLoader = Game.Assets;
-		var registry = Game.Registry;
-
-		var assetsRegisterFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
-
-		if (!assetsRegisterFound)
-			return;
 	}
 
 	private void Test()

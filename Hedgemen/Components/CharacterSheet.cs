@@ -41,11 +41,6 @@ public class CharacterSheet : EntityComponent
 		set;
 	} = 10;
 
-	public CharacterSheet()
-	{
-
-	}
-
 	protected override void RegisterEvents()
 	{
 		RegisterEvent<ChangeStatEvent>(ChangeStat);
@@ -59,15 +54,15 @@ public class CharacterSheet : EntityComponent
 
 	public override DataStorage WriteStorage()
 	{
-		var data = base.WriteStorage();
-		data.WriteData("hgm:strength", Strength);
-		data.WriteData("hgm:dexterity", Dexterity);
-		data.WriteData("hgm:constitution", Constitution);
-		data.WriteData("hgm:intelligence", Intelligence);
-		data.WriteData("hgm:wisdom", Wisdom);
-		data.WriteData("hgm:charisma", Charisma);
+		var storage = base.WriteStorage();
+		storage.WriteData("hgm:strength", Strength);
+		storage.WriteData("hgm:dexterity", Dexterity);
+		storage.WriteData("hgm:constitution", Constitution);
+		storage.WriteData("hgm:intelligence", Intelligence);
+		storage.WriteData("hgm:wisdom", Wisdom);
+		storage.WriteData("hgm:charisma", Charisma);
 
-		return data;
+		return storage;
 	}
 
 	public override void ReadStorage(DataStorage storage)

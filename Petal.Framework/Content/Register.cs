@@ -52,6 +52,20 @@ public sealed class Register<TContent> : IRegister
 		}
 	}
 
+	public bool GetKey(NamespacedString id, out ContentKey key)
+	{
+		lock (_content)
+		{
+			key = default;
+
+			if (id == NamespacedString.Default || !_content.ContainsKey(id))
+				return false;
+
+			key = _content[id];
+			return true;
+		}
+	}
+
 	public bool AddKey(NamespacedString id, object content)
 	{
 		if (content is not TContent tContent)
@@ -112,6 +126,19 @@ public sealed class Register<TContent> : IRegister
 			}
 
 			return new RegistryObject<TContentLocal>(new ContentKey(id, this, null));
+		}
+	}
+
+	public RegistryObject<TContent> CreateRegistryObject(NamespacedString id)
+	{
+		lock (_content)
+		{
+			if (_content.TryGetValue(id, out var key))
+			{
+				return new RegistryObject<TContent>(key);
+			}
+
+			return new RegistryObject<TContent>(new ContentKey(id, this, null));
 		}
 	}
 }

@@ -10,8 +10,8 @@ namespace Petal.Framework.EC;
 
 public class MapCell : IEntity<CellComponent, CellEvent>
 {
-	private IDictionary<Type, CellComponent> _components = new Dictionary<Type, CellComponent>();
-	private IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
+	private readonly IDictionary<Type, CellComponent> _components = new Dictionary<Type, CellComponent>();
+	private readonly IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
 
 	public IReadOnlyCollection<CellComponent> Components
 		=> _components.Values as Dictionary<Type, CellComponent>.ValueCollection;
@@ -111,7 +111,7 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 		AddComponent(new T());
 	}
 
-	public bool GetComponent<T>([NotNullWhen(true)] out T component) where T : CellComponent
+	public bool GetComponent<T>([NotNullWhen(true)] out T? component) where T : CellComponent
 	{
 		component = default;
 

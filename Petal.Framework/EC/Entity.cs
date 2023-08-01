@@ -10,8 +10,8 @@ namespace Petal.Framework.EC;
 
 public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 {
-	private IDictionary<Type, EntityComponent> _components = new Dictionary<Type, EntityComponent>();
-	private IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
+	private readonly IDictionary<Type, EntityComponent> _components = new Dictionary<Type, EntityComponent>();
+	private readonly IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
 
 	public IReadOnlyCollection<EntityComponent> Components
 		=> _components.Values as Dictionary<Type, EntityComponent>.ValueCollection;
@@ -88,7 +88,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
+			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
 
 			switch (found)
 			{
@@ -111,7 +111,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		AddComponent(new T());
 	}
 
-	public bool GetComponent<T>([NotNullWhen(true)] out T component) where T : EntityComponent
+	public bool GetComponent<T>([NotNullWhen(true)] out T? component) where T : EntityComponent
 	{
 		component = default;
 
