@@ -7,4 +7,16 @@ public abstract class CellEvent : IEvent
 		get;
 		init;
 	}
+
+	public bool AllowAsync
+	{
+		get;
+		internal set;
+	}
+
+	public bool Async
+	{
+		get;
+		internal set;
+	}
 }

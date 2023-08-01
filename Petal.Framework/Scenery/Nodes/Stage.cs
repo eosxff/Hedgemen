@@ -76,21 +76,15 @@ public class Stage : Node
 
 	public void DestroyAllMarkedNodes()
 	{
-		lock (_nodes)
-		{
-			foreach (var node in _nodes.Values)
-				if (node.IsMarkedForDeletion)
-					node.InternalDestroy();
-		}
+		foreach (var node in _nodes.Values)
+			if (node.IsMarkedForDeletion)
+				node.InternalDestroy();
 	}
 
 	internal void InternalAddNode(Node node)
 	{
-		lock (_nodes)
-		{
-			node.Name = SanitizeNodeName(node);
-			_nodes.Add(node.Name, node);
-		}
+		node.Name = SanitizeNodeName(node);
+		_nodes.Add(node.Name, node);
 	}
 
 	private NamespacedString SanitizeNodeName(Node node)
@@ -112,20 +106,14 @@ public class Stage : Node
 
 	internal bool InternalRemoveNode(Node node)
 	{
-		lock (_nodes)
-		{
-			return _nodes.Remove(node.Name);
-		}
+		return _nodes.Remove(node.Name);
 	}
 
 	internal void InternalUpdateNodeEntry(NamespacedString oldName)
 	{
-		lock (_nodes)
-		{
-			if (!_nodes.TryGetValue(oldName, out var node))
-				return;
+		if (!_nodes.TryGetValue(oldName, out var node))
+			return;
 
-			_nodes.ChangeKey(oldName, node.Name);
-		}
+		_nodes.ChangeKey(oldName, node.Name);
 	}
 }

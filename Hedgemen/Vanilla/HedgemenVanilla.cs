@@ -169,10 +169,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 			task.ContinueWith(_ =>
 			{
-				lock (entity)
-				{
-					logger.Debug($"New entity strength: {entity.GetComponent<CharacterSheet>().Strength}");
-				}
+				logger.Debug($"New entity strength: {entity.GetComponent<CharacterSheet>().Strength}");
 			});
 		}
 

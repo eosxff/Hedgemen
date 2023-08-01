@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Petal.Framework;
+using Petal.Framework.EC;
 using Petal.Framework.Persistence;
 using Petal.Framework.Util;
 
-namespace Petal.Framework.EC;
-
-public class MapCell : IEntity<CellComponent, CellEvent>
+public sealed class MapCell : IEntity<CellComponent, CellEvent>
 {
 	private readonly IDictionary<Type, CellComponent> _components = new Dictionary<Type, CellComponent>();
 	private readonly IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
@@ -26,13 +26,31 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 
 	public async Task PropagateEventAsync(CellEvent e)
 	{
-		await Task.Run(() => PropagateEvent(e));
+		if (!e.AllowAsync)
+			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously");
+
+		e.Async = true;
+		await Task.Run(RunAsync);
+
+		void RunAsync()
+		{
+			PropagateEvent(e);
+		}
 	}
 
 	public void PropagateEventIfResponsive(CellEvent e)
 	{
 		if (WillRespondToEvent(e.GetType()))
 			PropagateEvent(e);
+	}
+
+	public async Task PropagateEventIfResponsiveAsync(CellEvent e)
+	{
+		if (!e.AllowAsync)
+			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously");
+
+		if (WillRespondToEvent(e.GetType()))
+			await PropagateEventAsync(e);
 	}
 
 	public bool WillRespondToEvent(Type eventType)
@@ -67,7 +85,7 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
+			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
 
 			switch (found)
 			{
@@ -88,20 +106,15 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
+			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
 
-			switch (found)
-			{
-				case true:
-					if (eventCount - 1 <= 0)
-						_componentEvents.Remove(registeredEvent);
-					else
-						_componentEvents[registeredEvent]--;
-					break;
+			if (!found)
+				continue;
 
-				case false:
-					break;
-			}
+			if (eventCount - 1 <= 0)
+				_componentEvents.Remove(registeredEvent);
+			else
+				_componentEvents[registeredEvent]--;
 		}
 	}
 

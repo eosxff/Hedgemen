@@ -12,11 +12,6 @@ public sealed class Cartographer
 		get;
 	} = new();
 
-	public Cartographer()
-	{
-
-	}
-
 	public WorldMap Generate(CartographyOptions options)
 	{
 		var cells = new Map<MapCell>(options.MapDimensions);

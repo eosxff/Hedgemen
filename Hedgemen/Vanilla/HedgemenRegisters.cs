@@ -1,7 +1,6 @@
 ﻿using System;
 using Hgm.WorldGeneration;
 using Petal.Framework;
-using Petal.Framework.Assets;
 using Petal.Framework.Content;
 using Petal.Framework.EC;
 using Petal.Framework.Util;

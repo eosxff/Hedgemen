@@ -26,13 +26,31 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 	public async Task PropagateEventAsync(EntityEvent e)
 	{
-		await Task.Run(() => PropagateEvent(e));
+		if (!e.AllowAsync)
+			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously");
+
+		e.Async = true;
+		await Task.Run(RunAsync);
+
+		void RunAsync()
+		{
+			PropagateEvent(e);
+		}
 	}
 
 	public void PropagateEventIfResponsive(EntityEvent e)
 	{
 		if (WillRespondToEvent(e.GetType()))
 			PropagateEvent(e);
+	}
+
+	public async Task PropagateEventIfResponsiveAsync(EntityEvent e)
+	{
+		if (!e.AllowAsync)
+			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously");
+
+		if (WillRespondToEvent(e.GetType()))
+			await PropagateEventAsync(e);
 	}
 
 	public bool WillRespondToEvent(Type eventType)
@@ -67,7 +85,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
+			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
 
 			switch (found)
 			{
@@ -90,18 +108,13 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		{
 			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
 
-			switch (found)
-			{
-				case true:
-					if (eventCount - 1 <= 0)
-						_componentEvents.Remove(registeredEvent);
-					else
-						_componentEvents[registeredEvent]--;
-					break;
+			if (!found)
+				continue;
 
-				case false:
-					break;
-			}
+			if (eventCount - 1 <= 0)
+				_componentEvents.Remove(registeredEvent);
+			else
+				_componentEvents[registeredEvent]--;
 		}
 	}
 
