@@ -1,6 +1,6 @@
 ﻿namespace Petal.Framework.Content;
 
-public readonly struct ContentKey
+public readonly struct ContentKey // maybe we should make this a class with the ability to automatically switch content?
 {
 	public readonly NamespacedString ContentID;
 	public readonly IRegister? Register;

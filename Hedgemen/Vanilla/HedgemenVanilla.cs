@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -13,6 +14,7 @@ using Petal.Framework.EC;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Coroutines;
 
 namespace Hgm.Vanilla;
 
@@ -88,8 +90,16 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 		//Game.Logger.Critical(map.Cells[50, 50].GetComponent<PerlinGeneration>().Height);
 
+		Game.Coroutines.StartCoroutine(TestCoroutine());
 		Test();
 		RegisterContentThenChangeScenes();
+	}
+
+	private IEnumerator TestCoroutine()
+	{
+		Game.Logger.Critical("Test coroutine before yield return.");
+		yield return new WaitForSeconds(2.5f);
+		Game.Logger.Critical("Test coroutine after yield return.");
 	}
 
 	private async void RegisterContentThenChangeScenes()

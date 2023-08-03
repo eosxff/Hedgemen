@@ -3,7 +3,7 @@ Prerequisites:
 	2: Python version >= 3.11.2 (https://www.python.org/downloads/)
 
 2: Run the command 'dotnet publish -c Release' in the shell of your choice.
-3: Go to the output folder (bin/Release/net7.0/publish).
+3: Go to the output folder (build/publish).
 
 Notes:
 	- I use my own FNA natives, and may not always be up to date. If you would like to download your own visit:

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Petal.Framework.Content;
-using Petal.Framework.EC;
 using Petal.Framework.Util;
 
 namespace Hgm.WorldGeneration;

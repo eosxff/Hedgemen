@@ -5,6 +5,7 @@ using Petal.Framework.Assets;
 using Petal.Framework.Scenery;
 using Petal.Framework.Windowing;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Coroutines;
 using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework;
@@ -92,6 +93,11 @@ public abstract class PetalGame : Game
 		get;
 		private set;
 	}
+
+	public CoroutineManager Coroutines
+	{
+		get;
+	} = new();
 
 	/// <summary>
 	/// Changes the current scene. This will properly exit out and initialize the scenes accordingly.
@@ -311,6 +317,7 @@ public abstract class PetalGame : Game
 	/// <param name="gameTime">the elapsed time since the previous update call.</param>
 	protected override void Update(GameTime gameTime)
 	{
+		Coroutines.Update(gameTime);
 		Scene?.Update(gameTime);
 		base.Update(gameTime);
 	}

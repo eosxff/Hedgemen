@@ -18,56 +18,9 @@ public sealed class Skin
 		get => _assets;
 		set
 		{
-			if (_assets is not null)
-			{
-				//_registry.OnContentReplaced -= RegistryShouldRefreshOnReplaced;
-				//_registry.OnContentRemoved -= RegistryShouldRefreshOnRemoved;
-			}
-
 			_assets = value;
-
-			if (_assets is not null)
-			{
-				//_registry.OnContentReplaced += RegistryShouldRefreshOnReplaced;
-				//_registry.OnContentRemoved += RegistryShouldRefreshOnRemoved;
-			}
-
 			Refresh();
 		}
-	}
-
-	private void RegistryShouldRefreshOnReplaced(object? sender, EventArgs args)
-	{
-		if (sender is not Registry registry)
-			return;
-
-		/*if (ContentIDMatchesAny(args.ReplacedContent.ContentID))
-		{
-			ShouldRefresh = true;
-		}*/
-	}
-
-	private void RegistryShouldRefreshOnRemoved(object? sender, EventArgs args)
-	{
-		if (sender is not Registry registry)
-			return;
-
-		/*if (ContentIDMatchesAny(args.RemovedContent.ContentID))
-		{
-			ShouldRefresh = true;
-		}*/
-	}
-
-	private bool ContentIDMatchesAny(NamespacedString contentID)
-	{
-		/*return contentID == Button.HoverTexture.ContentID ||
-		       contentID == Button.InputTexture.ContentID ||
-		       contentID == Button.NormalTexture.ContentID ||
-		       contentID == Font.SmallFont.ContentID ||
-		       contentID == Font.MediumFont.ContentID ||
-		       contentID == Font.LargeFont.ContentID;*/
-
-		return false;
 	}
 
 	private ButtonData _button;
@@ -191,7 +144,7 @@ public sealed class Skin
 	}
 
 	[Serializable]
-	public struct DataRecord : IDataRecord<Skin>
+	public struct DataRecord
 	{
 		[JsonIgnore]
 		public static JsonSerializerOptions JsonDeserializeOptions
@@ -202,27 +155,27 @@ public sealed class Skin
 				Converters = { }
 			};
 
-		[JsonInclude, JsonPropertyName("button_data_normal_texture_name")]
+		[JsonPropertyName("button_data_normal_texture_name"), JsonInclude]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString ButtonDataNormalTextureName;
 
-		[JsonInclude, JsonPropertyName("button_data_hover_texture_name")]
+		[JsonPropertyName("button_data_hover_texture_name"), JsonInclude]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString ButtonDataHoverTextureName;
 
-		[JsonInclude, JsonPropertyName("button_data_input_texture_name")]
+		[JsonPropertyName("button_data_input_texture_name"), JsonInclude]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString ButtonDataInputTextureName;
 
-		[JsonInclude, JsonPropertyName("font_data_small_font_name")]
+		[JsonPropertyName("font_data_small_font_name"), JsonInclude]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString FontDataSmallFontName;
 
-		[JsonInclude, JsonPropertyName("font_data_medium_font_name")]
+		[JsonPropertyName("font_data_medium_font_name"), JsonInclude]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString FontDataMediumFontName;
 
-		[JsonInclude, JsonPropertyName("font_data_large_font_name")]
+		[JsonPropertyName("font_data_large_font_name"), JsonInclude]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString FontDataLargeFontName;
 

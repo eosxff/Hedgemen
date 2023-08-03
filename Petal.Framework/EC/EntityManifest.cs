@@ -15,7 +15,7 @@ public sealed class EntityManifest
 		JsonData? jsonData = JsonSerializer.Deserialize(json, EntityManifestJsc.Default.JsonData);
 		return jsonData.HasValue ? jsonData.Value.Create() : null;
 	}
-	
+
 	public NamespacedString ContentID
 	{
 		get;
@@ -29,7 +29,7 @@ public sealed class EntityManifest
 	} = new Dictionary<NamespacedString, DataStorage>();
 
 	[Serializable]
-	public struct JsonData : IDataRecord<EntityManifest>
+	public struct JsonData
 	{
 		[JsonPropertyName("content_id"), JsonInclude]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
@@ -54,16 +54,16 @@ public sealed class EntityManifest
 			{
 				var entry = componentKvp.Value.Deserialize(
 					DataStorageJsc.Default.DataStorage);
-				
+
 				dictionary.Add(componentKvp.Key, entry);
 			}
-			
+
 			var manifest = new EntityManifest
 			{
 				ContentID = new NamespacedString(ContentID),
 				Components = dictionary
 			};
-			
+
 			return manifest;
 		}
 
@@ -77,7 +77,7 @@ public sealed class EntityManifest
 				var entry = JsonSerializer.SerializeToElement(
 					component.Value,
 					DataStorageJsc.Default.DataStorage);
-				
+
 				Components.Add(component.Key, entry);
 			}
 		}
@@ -88,5 +88,5 @@ public sealed class EntityManifest
 [JsonSerializable(typeof(EntityManifest.JsonData))]
 public partial class EntityManifestJsc : JsonSerializerContext
 {
-	
+
 }
