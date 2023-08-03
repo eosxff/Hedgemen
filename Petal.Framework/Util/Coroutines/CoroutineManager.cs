@@ -46,6 +46,7 @@ public sealed class CoroutineManager
 		{
 			_unblockedCoroutines.Clear();
 			_runningNextFrame.Clear();
+			RemoveFromState(CoroutineManagerState.ClearRequested);
 		}
 	}
 
@@ -71,10 +72,11 @@ public sealed class CoroutineManager
 
 	public void Update(GameTime gameTime)
 	{
+		AddToState(CoroutineManagerState.InUpdate);
+		
 		if (HasState(CoroutineManagerState.ClearRequested))
 		{
 			ClearAllCoroutines();
-			RemoveFromState(CoroutineManagerState.ClearRequested);
 		}
 
 		foreach (var coroutine in _unblockedCoroutines)
