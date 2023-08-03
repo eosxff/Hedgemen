@@ -3,6 +3,7 @@ using Hgm.Components;
 using Hgm.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Petal.Framework.Util;
+using Petal.Framework.Vendor;
 
 namespace Hgm.Vanilla.WorldGeneration;
 

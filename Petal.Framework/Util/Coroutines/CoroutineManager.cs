@@ -50,6 +50,7 @@ public sealed class CoroutineManager
 		}
 	}
 
+	// preferably we would be able to start coroutines in any arbitrary thread
 	public Coroutine? StartCoroutine(IEnumerator enumerator)
 	{
 		var coroutine = new Coroutine
@@ -73,7 +74,7 @@ public sealed class CoroutineManager
 	public void Update(GameTime gameTime)
 	{
 		AddToState(CoroutineManagerState.InUpdate);
-		
+
 		if (HasState(CoroutineManagerState.ClearRequested))
 		{
 			ClearAllCoroutines();
