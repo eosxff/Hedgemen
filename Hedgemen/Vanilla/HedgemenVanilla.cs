@@ -90,16 +90,35 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 		//Game.Logger.Critical(map.Cells[50, 50].GetComponent<PerlinGeneration>().Height);
 
-		Game.Coroutines.StartCoroutine(TestCoroutine());
+		Game.Coroutines.StartCoroutine(TestCoroutine(2.5f));
 		Test();
 		RegisterContentThenChangeScenes();
+
+		// todo remove debugging stuff
+		Game.Coroutines.StartCoroutine(TestCoroutine(2.5f));
+		Task.Run(() =>
+		{
+			for (int i = 1; i <= 50; ++i)
+			{
+				Game.Coroutines.EnqueueCoroutine(TestCoroutine(10.0f / i));
+			}
+		});
+		Game.Coroutines.StartCoroutine(TestCoroutine(2.5f));
 	}
 
-	private IEnumerator TestCoroutine()
+	private int _test = 0;
+
+	private IEnumerator TestCoroutine(float waitTimeSeconds)
 	{
-		Game.Logger.Critical("Test coroutine before yield return.");
-		yield return new WaitForSeconds(2.5f);
-		Game.Logger.Critical("Test coroutine after yield return.");
+		yield return new WaitForSeconds(waitTimeSeconds);
+		Game.Logger.Critical($"{_test}:{waitTimeSeconds}:{(int)Math.Round(waitTimeSeconds)}");
+		_test += (int)Math.Round(waitTimeSeconds);
+	}
+
+	private IEnumerator TestEnqueuedCoroutine()
+	{
+		yield return null;
+		Game.Logger.Critical("Enqueued!");
 	}
 
 	private async void RegisterContentThenChangeScenes()
