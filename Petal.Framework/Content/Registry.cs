@@ -46,7 +46,7 @@ public sealed class Registry
 			return false;
 
 		_registers.Add(register.RegistryName, register);
-		Logger.Debug($"Added {register.RegistryName} to the registry.");
+		Logger.Info($"Added {register.RegistryName} to the registry.");
 
 		OnRegisterAdded?.Invoke(this, new RegisterAdded
 		{

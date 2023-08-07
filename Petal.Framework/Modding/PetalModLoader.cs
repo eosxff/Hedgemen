@@ -71,7 +71,7 @@ public class PetalModLoader
 		else
 			Logger.Warn("Embed only mode is on. Only loading embedded mods.");
 
-		logger.Debug($"Number of mods recognized in folder '{context.ModsDirectory}': {modDirectoryQuery.Count}");
+		logger.Info($"Number of mods recognized in folder '{context.ModsDirectory}': {modDirectoryQuery.Count}");
 
 		var loadedMods = LoadModsFromEmbedAndDirectory(context, modDirectoryQuery);
 
@@ -81,8 +81,8 @@ public class PetalModLoader
 			mod.OnLoadedToPetalModLoader();
 		}
 
-		logger.Debug($"Loaded {_mods.Count} mods.");
-		logger.Debug($"Initializing {_mods.Count} mods.");
+		logger.Info($"Loaded {_mods.Count} mods.");
+		logger.Info($"Initializing {_mods.Count} mods.");
 
 		ICollection<PetalMod> modsCollection = _mods.Values;
 
@@ -169,7 +169,7 @@ public class PetalModLoader
 			{
 				SetModManifestAndDirectory(embeddedMod, embeddedMod.GetEmbeddedManifest(), new DirectoryInfo("."));
 				list.Add(embeddedMod);
-				Logger.Debug($"Loaded Embedded mod '{embeddedModsElement}'.");
+				Logger.Info($"Loaded Embedded mod '{embeddedModsElement}'.");
 			}
 			else
 			{
@@ -188,7 +188,7 @@ public class PetalModLoader
 				Logger.Error($"Could not load mod from '{directory.Name}'.");
 			else
 			{
-				Logger.Debug($"Loaded '{mod.Manifest.ModID}' of type '{mod.GetType()}'.");
+				Logger.Info($"Loaded '{mod.Manifest.ModID}' of type '{mod.GetType()}'.");
 				list.Add(mod);
 			}
 		}

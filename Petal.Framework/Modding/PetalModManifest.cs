@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Petal.Framework.Persistence;
 
 namespace Petal.Framework.Modding;
 
@@ -132,14 +133,15 @@ public sealed class PetalModManifestContactInfo
 public sealed class PetalModManifestDependenciesInfo
 {
 	[JsonPropertyName("mods")]
-	public IReadOnlyList<string> Mods
+	[JsonConverter(typeof(ImmutableListJsonConverter<NamespacedString, NamespacedString.JsonConverter>))]
+	public IReadOnlyList<NamespacedString> Mods
 	{
 		get;
 		init;
-	} = new List<string>();
+	} = new List<NamespacedString>();
 
 	[JsonPropertyName("incompatible_mods"), JsonInclude]
-	[JsonConverter(typeof(NamespacedString.ImmutableListJsonConverter))]
+	[JsonConverter(typeof(ImmutableListJsonConverter<NamespacedString, NamespacedString.JsonConverter>))]
 	public IReadOnlyList<NamespacedString> IncompatibleMods
 	{
 		get;

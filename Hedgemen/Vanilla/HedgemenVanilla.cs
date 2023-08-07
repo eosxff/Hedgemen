@@ -52,7 +52,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 	protected override void OnLoadedToPetalModLoader()
 	{
-		Game.Logger.Debug($"Loaded {nameof(HedgemenVanilla)}");
+		Game.Logger.Info($"Loaded {nameof(HedgemenVanilla)}");
 	}
 
 	protected override void PrePetalModLoaderModSetupPhase(ModLoaderSetupContext context)
@@ -60,7 +60,8 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		var logger = Game.Logger;
 
 		logger.Debug("I");
-		logger.Warn("Love");
+		logger.Info("Love");
+		logger.Warn("All");
 		logger.Error("These");
 		logger.Critical("Colours");
 	}
@@ -73,7 +74,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 		Game.OnSceneChanged += (sender, args) =>
 		{
-			logger.Debug($"Changing scene.");
+			logger.Info($"Changing scene.");
 		};
 
 		var scene = SplashSceneFactory.NewScene(
@@ -88,37 +89,8 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			Seed = 1337
 		});
 
-		//Game.Logger.Critical(map.Cells[50, 50].GetComponent<PerlinGeneration>().Height);
-
-		Game.Coroutines.StartCoroutine(TestCoroutine(2.5f));
 		Test();
 		RegisterContentThenChangeScenes();
-
-		// todo remove debugging stuff
-		Game.Coroutines.StartCoroutine(TestCoroutine(2.5f));
-		Task.Run(() =>
-		{
-			for (int i = 1; i <= 50; ++i)
-			{
-				Game.Coroutines.EnqueueCoroutine(TestCoroutine(10.0f / i));
-			}
-		});
-		Game.Coroutines.StartCoroutine(TestCoroutine(2.5f));
-	}
-
-	private int _test = 0;
-
-	private IEnumerator TestCoroutine(float waitTimeSeconds)
-	{
-		yield return new WaitForSeconds(waitTimeSeconds);
-		Game.Logger.Critical($"{_test}:{waitTimeSeconds}:{(int)Math.Round(waitTimeSeconds)}");
-		_test += (int)Math.Round(waitTimeSeconds);
-	}
-
-	private IEnumerator TestEnqueuedCoroutine()
-	{
-		yield return null;
-		Game.Logger.Critical("Enqueued!");
 	}
 
 	private async void RegisterContentThenChangeScenes()
@@ -150,15 +122,15 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		});
 
 		var file = new FileInfo("sentient_apple_pie.json");
-		var entityManifestJson = file.ReadString(Encoding.UTF8);
+		string entityManifestJson = file.ReadString(Encoding.UTF8);
 		var entityManifest = EntityManifest.FromJson(entityManifestJson);
 
 		if (entityManifest is not null)
 		{
-			logger.Debug($"Entity manifest component count: {entityManifest.Components.Count}");
-			logger.Debug($"Entity component: " +
+			logger.Info($"Entity manifest component count: {entityManifest.Components.Count}");
+			logger.Info($"Entity component: " +
 			             $"{entityManifest.Components["hgm:character_sheet"].ReadData<int>("hgm:strength")}.");
-			logger.Debug($"Entity component: {
+			logger.Info($"Entity component: {
 				entityManifest.Components["hgm:character_race"]
 					.ReadData<string>("hgm:race_name")}.");
 		}
@@ -198,19 +170,19 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 			task.ContinueWith(_ =>
 			{
-				logger.Debug($"New entity strength: {entity.GetComponent<CharacterSheet>().Strength}");
+				logger.Info($"New entity strength: {entity.GetComponent<CharacterSheet>()?.Strength}");
 			});
 		}
 
 		var data = entity.WriteStorage();
 		var entityClone = data.ReadData<Entity>();
 
-		logger.Debug($"Test entity responds to {nameof(ChangeStatEvent)}: " +
+		logger.Info($"Test entity responds to {nameof(ChangeStatEvent)}: " +
 		             $"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");
 
 		entityClone.RemoveComponent<CharacterSheet>();
 
-		logger.Debug(
+		logger.Info(
 			$"Test does entity respond to {nameof(ChangeStatEvent)} after removing all referenced components: " +
 			$"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");
 
@@ -243,8 +215,8 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			Dependencies = new PetalModManifestDependenciesInfo
 			{
 				ReferencedDlls = new List<string>(),
-				IncompatibleMods = { },
-				Mods = new List<string>()
+				IncompatibleMods = new List<NamespacedString>(),
+				Mods = new List<NamespacedString>()
 			},
 
 			ModFileDll = string.Empty,

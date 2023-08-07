@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 
@@ -155,19 +156,15 @@ public sealed class CoroutineManager
 		}
 
 		if (coroutine.Enumerator.Current is ICoroutineUpdateable updateable)
-		{
 			updateable.Tick();
-		}
 
-		else if (coroutine.Enumerator.Current is IEnumerator enumerator)
-		{
+		else if (coroutine.Enumerator.Current is IEnumerator enumerator && !enqueued)
 			coroutine.WaitForCoroutine = StartCoroutine(enumerator);
-		}
 
 		else if (coroutine.Enumerator.Current is Coroutine coroutineCurrent)
-		{
 			coroutine.WaitForCoroutine = coroutineCurrent;
-		}
+
+		Console.WriteLine(new StackFrame());
 
 		return true;
 	}

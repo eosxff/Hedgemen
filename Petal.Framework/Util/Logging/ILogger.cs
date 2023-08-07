@@ -21,6 +21,12 @@ public interface ILogger
 {
 	public event EventHandler<LogLevelChangedArgs> OnLogLevelChanged;
 
+	public bool LogInvalidLevelsSilently
+	{
+		get;
+		set;
+	}
+
 	public LogLevel LogLevel
 	{
 		get;
@@ -40,14 +46,9 @@ public interface ILogger
 	}
 
 	public void Add(string message, LogLevel logLevel);
-	public void Add(object obj, LogLevel logLevel);
 	public void Debug(string message);
-	public void Debug(object obj);
-	
+	public void Info(string message);
 	public void Warn(string message);
-	public void Warn(object obj);
 	public void Error(string message);
-	public void Error(object obj);
 	public void Critical(string message);
-	public void Critical(object obj);
 }
