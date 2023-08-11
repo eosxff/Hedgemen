@@ -10,7 +10,7 @@ using Petal.Framework.Persistence;
 
 namespace Petal.Framework.Assets;
 
-public class AssetManifest : IManifest
+public class AssetManifest : IBankManifest
 {
 	private readonly List<AssetManifestEntry> _entries = new();
 

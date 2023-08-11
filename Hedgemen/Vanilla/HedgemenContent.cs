@@ -7,7 +7,6 @@ using Hgm.Vanilla.WorldGeneration;
 using Hgm.WorldGeneration;
 using Petal.Framework.Assets;
 using Petal.Framework.Content;
-using Petal.Framework.EC;
 using Petal.Framework.IO;
 using Petal.Framework.Persistence;
 
@@ -15,13 +14,13 @@ namespace Hgm.Vanilla;
 
 public sealed class HedgemenContent
 {
-	public RegistryObject<ContentSupplier<EntityComponent>> CharacterSheet
+	public RegistryObject<ContentSupplier<CharacterSheet>> CharacterSheet
 	{
 		get;
 		private set;
 	}
 
-	public RegistryObject<ContentSupplier<EntityComponent>> CharacterRace
+	public RegistryObject<ContentSupplier<CharacterRace>> CharacterRace
 	{
 		get;
 		private set;
@@ -74,8 +73,8 @@ public sealed class HedgemenContent
 		register.AddKey("hgm:character_sheet", () => new CharacterSheet());
 		register.AddKey("hgm:character_race", () => new CharacterRace());
 
-		CharacterSheet = register.CreateRegistryObject("hgm:character_sheet");
-		CharacterRace = register.CreateRegistryObject("hgm:character_race");
+		CharacterSheet = register.MakeDerivedReference<ContentSupplier<CharacterSheet>>("hgm:character_sheet");
+		CharacterRace = register.MakeDerivedReference<ContentSupplier<CharacterRace>>("hgm:character_race");
 	}
 
 	private void RegisterCellComponents(HedgemenRegisters registers)
@@ -91,7 +90,7 @@ public sealed class HedgemenContent
 
 		register.AddKey("hgm:overworld_terrain_landscaper", () => new OverworldTerrainLandscaper());
 
-		OverworldTerrainLandscaper = register.CreateRegistryObject("hgm:overworld_terrain_landscaper");
+		OverworldTerrainLandscaper = register.MakeReference("hgm:overworld_terrain_landscaper");
 	}
 
 	private void RegisterCartographers(HedgemenRegisters registers)
@@ -102,6 +101,6 @@ public sealed class HedgemenContent
 		overworld.Landscapers.Add(OverworldTerrainLandscaper);
 		register.AddKey("hgm:overworld_cartographer", overworld);
 
-		OverworldCartographer = register.CreateRegistryObject("hgm:overworld_cartographer");
+		OverworldCartographer = register.MakeReference("hgm:overworld_cartographer");
 	}
 }

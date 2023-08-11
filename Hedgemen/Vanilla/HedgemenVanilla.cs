@@ -24,17 +24,17 @@ public class HedgemenVanilla : PetalEmbeddedMod
 {
 	public static readonly NamespacedString ModID = new("hgm:mod");
 
-	private static HedgemenVanilla _instance;
+	private static HedgemenVanilla HedgemenVanillaInstance;
 
 	public static HedgemenVanilla Instance
 	{
 		get
 		{
-			PetalExceptions.ThrowIfNull(_instance);
-			return _instance;
+			PetalExceptions.ThrowIfNull(HedgemenVanillaInstance);
+			return HedgemenVanillaInstance;
 		}
 
-		private set => _instance = value;
+		private set => HedgemenVanillaInstance = value;
 	}
 
 	public HedgemenVanilla()
@@ -92,7 +92,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			Seed = 1337
 		});
 
-		Test();
 		RegisterContentThenChangeScenes();
 	}
 
@@ -111,89 +110,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 		var mainMenuScene = MainMenuSceneFactory.NewScene(Game, assets);
 		Game.ChangeScenes(mainMenuScene);
-	}
-
-	private void Test()
-	{
-		var logger = Game.Logger;
-
-		Game.Logger.Critical(typeof(Dictionary<object, object>).Assembly.FullName);
-
-		var entity = new Entity();
-		entity.AddComponent(new CharacterSheet());
-		entity.AddComponent(new CharacterRace
-		{
-			RaceName = "high elf"
-		});
-
-		var file = new FileInfo("sentient_apple_pie.json");
-		string entityManifestJson = file.ReadString(Encoding.UTF8);
-		var entityManifest = EntityManifest.FromJson(entityManifestJson);
-
-		if (entityManifest is not null)
-		{
-			logger.Info($"Entity manifest component count: {entityManifest.Components.Count}");
-			logger.Info($"Entity component: " +
-			             $"{entityManifest.Components["hgm:character_sheet"].ReadData<int>("hgm:strength")}.");
-			logger.Info($"Entity component: {
-				entityManifest.Components["hgm:character_race"]
-					.ReadData<string>("hgm:race_name")}.");
-		}
-		else
-		{
-			logger.Warn($"File '{file.FullName}' failed to create valid {nameof(EntityManifest)}.");
-		}
-
-		for (int i = 0; i < 1; ++i)
-		{
-			if (entity.WillRespondToEvent<ChangeStatEvent>())
-			{
-				entity.PropagateEvent(new ChangeStatEvent
-				{
-					Sender = entity,
-					ChangeAmount = 1015,
-					StatName = "strength"
-				});
-			}
-
-			entity.PropagateEventIfResponsive(new ChangeStatEvent
-			{
-				Sender = entity,
-				ChangeAmount = 10,
-				StatName = "constitution"
-			});
-		}
-
-		if (entity.WillRespondToEvent<ChangeStatEvent>())
-		{
-			var task = entity.PropagateEventAsync(new ChangeStatEvent
-			{
-				Sender = entity,
-				ChangeAmount = 1015,
-				StatName = "strength"
-			});
-
-			task.ContinueWith(_ =>
-			{
-				logger.Info($"New entity strength: {entity.GetComponent<CharacterSheet>()?.Strength}");
-			});
-		}
-
-		var data = entity.WriteStorage();
-		bool entityCloneCreated = data.ReadData<Entity>(out var entityClone);
-
-		Game.Logger.Critical(entityCloneCreated.ToString());
-
-		logger.Info($"Test entity responds to {nameof(ChangeStatEvent)}: " +
-		             $"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");
-
-		entityClone.RemoveComponent<CharacterSheet>();
-
-		logger.Info(
-			$"Test does entity respond to {nameof(ChangeStatEvent)} after removing all referenced components: " +
-			$"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");
-
-		entity.RemoveComponent<CharacterSheet>();
 	}
 
 	protected override void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)

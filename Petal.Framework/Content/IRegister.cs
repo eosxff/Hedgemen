@@ -27,5 +27,5 @@ public interface IRegister
 	public bool ReplaceKey(NamespacedString id, object content);
 	public bool KeyExists(NamespacedString id);
 
-	public RegistryObject<TContent> CreateRegistryObject<TContent>(NamespacedString id);
+	public RegistryObject<TContent> MakeReference<TContent>(NamespacedString id);
 }

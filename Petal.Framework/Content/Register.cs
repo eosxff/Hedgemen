@@ -101,7 +101,7 @@ public sealed class Register<TContent> : IRegister
 		return _content.ContainsKey(id);
 	}
 
-	public RegistryObject<TContentLocal> CreateRegistryObject<TContentLocal>(NamespacedString id)
+	public RegistryObject<TContentLocal> MakeReference<TContentLocal>(NamespacedString id)
 	{
 		if (_content.TryGetValue(id, out var key))
 		{
@@ -111,7 +111,7 @@ public sealed class Register<TContent> : IRegister
 		return new RegistryObject<TContentLocal>(new ContentKey(id, this, null));
 	}
 
-	public RegistryObject<TContent> CreateRegistryObject(NamespacedString id)
+	public RegistryObject<TContent> MakeReference(NamespacedString id)
 	{
 		if (_content.TryGetValue(id, out var key))
 		{
@@ -119,5 +119,16 @@ public sealed class Register<TContent> : IRegister
 		}
 
 		return new RegistryObject<TContent>(new ContentKey(id, this, null));
+	}
+
+	public RegistryObject<TDerivedContent> MakeDerivedReference<TDerivedContent>(NamespacedString id)
+		where TDerivedContent : TContent
+	{
+		if (_content.TryGetValue(id, out var key))
+		{
+			return new RegistryObject<TDerivedContent>(key);
+		}
+
+		return new RegistryObject<TDerivedContent>(new ContentKey(id, this, null));
 	}
 }

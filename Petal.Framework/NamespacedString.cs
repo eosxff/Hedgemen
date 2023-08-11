@@ -56,9 +56,7 @@ public struct NamespacedString
 	public NamespacedString(string fullyQualifiedString)
 	{
 		if (!IsValidQualifiedString(fullyQualifiedString))
-		{
 			throw new ArgumentException($"String '{fullyQualifiedString}' is not a valid namespaced string!");
-		}
 
 		string[] fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
 

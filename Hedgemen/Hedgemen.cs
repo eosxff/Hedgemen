@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Hgm.Vanilla;
@@ -60,11 +61,17 @@ public class Hedgemen : PetalGame
 
 	protected override void Setup()
 	{
+		var embeddedMods = new List<PetalEmbeddedMod>(2);
+		embeddedMods.Add(new HedgemenVanilla());
+
+		if(IsDebug)
+			embeddedMods.Add(new HedgemenDebugMod());
+
 		var context = ModLoader.Setup(new ModLoaderSetupArgs
 		{
 			EmbedOnlyMode = IsEmbedOnlyMode(),
 			Game = this,
-			EmbeddedMods = new PetalMod[] { new HedgemenVanilla() }
+			EmbeddedMods = embeddedMods
 		});
 
 		Logger.Info($"Starting {nameof(PetalModLoader)}.");

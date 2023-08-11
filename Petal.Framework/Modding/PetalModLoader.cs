@@ -81,8 +81,7 @@ public class PetalModLoader
 			mod.OnLoadedToPetalModLoader();
 		}
 
-		logger.Info($"Loaded {_mods.Count} mods.");
-		logger.Info($"Initializing {_mods.Count} mods.");
+		logger.Info($"Loaded {_mods.Count} mods. Beginning initialization.");
 
 		ICollection<PetalMod> modsCollection = _mods.Values;
 
@@ -126,6 +125,7 @@ public class PetalModLoader
 
 		if (petalMod is T tMod)
 			mod = tMod;
+
 		else
 		{
 			Logger.Error($"Mod {petalMod.GetType()} can not be cast to {typeof(T)}.");

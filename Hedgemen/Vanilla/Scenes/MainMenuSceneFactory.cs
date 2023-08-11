@@ -28,7 +28,7 @@ public static class MainMenuSceneFactory
 
 		scene.Root.Add(new Background
 		{
-			Image = assetsRegister.CreateRegistryObject<Texture2D>("hgm:ui/splash_texture")
+			Image = assetsRegister.MakeReference<Texture2D>("hgm:ui/splash_texture")
 		});
 
 		scene.Root.Add(new Text

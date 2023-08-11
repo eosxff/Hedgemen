@@ -65,16 +65,16 @@ public sealed class Skin
 		{
 			_button = new ButtonData
 			{
-				HoverTexture = assets.CreateRegistryObject<Texture2D>(NamespacedString.Default),
-				InputTexture = assets.CreateRegistryObject<Texture2D>(NamespacedString.Default),
-				NormalTexture = assets.CreateRegistryObject<Texture2D>(NamespacedString.Default),
+				HoverTexture = assets.MakeReference<Texture2D>(NamespacedString.Default),
+				InputTexture = assets.MakeReference<Texture2D>(NamespacedString.Default),
+				NormalTexture = assets.MakeReference<Texture2D>(NamespacedString.Default),
 			};
 
 			_font = new FontData()
 			{
-				SmallFont = assets.CreateRegistryObject<SpriteFont>(NamespacedString.Default),
-				MediumFont = assets.CreateRegistryObject<SpriteFont>(NamespacedString.Default),
-				LargeFont = assets.CreateRegistryObject<SpriteFont>(NamespacedString.Default),
+				SmallFont = assets.MakeReference<SpriteFont>(NamespacedString.Default),
+				MediumFont = assets.MakeReference<SpriteFont>(NamespacedString.Default),
+				LargeFont = assets.MakeReference<SpriteFont>(NamespacedString.Default),
 			};
 		}
 
@@ -115,13 +115,13 @@ public sealed class Skin
 		if (_assets is null)
 			return;
 
-		_button.NormalTexture = _assets.CreateRegistryObject<Texture2D>(_button.NormalTexture.Key.ContentID);
-		_button.HoverTexture = _assets.CreateRegistryObject<Texture2D>(_button.HoverTexture.Key.ContentID);
-		_button.InputTexture = _assets.CreateRegistryObject<Texture2D>(_button.InputTexture.Key.ContentID);
+		_button.NormalTexture = _assets.MakeReference<Texture2D>(_button.NormalTexture.Key.ContentID);
+		_button.HoverTexture = _assets.MakeReference<Texture2D>(_button.HoverTexture.Key.ContentID);
+		_button.InputTexture = _assets.MakeReference<Texture2D>(_button.InputTexture.Key.ContentID);
 
-		_font.SmallFont = _assets.CreateRegistryObject<SpriteFont>(_font.SmallFont.Key.ContentID);
-		_font.MediumFont = _assets.CreateRegistryObject<SpriteFont>(_font.MediumFont.Key.ContentID);
-		_font.LargeFont = _assets.CreateRegistryObject<SpriteFont>(_font.LargeFont.Key.ContentID);
+		_font.SmallFont = _assets.MakeReference<SpriteFont>(_font.SmallFont.Key.ContentID);
+		_font.MediumFont = _assets.MakeReference<SpriteFont>(_font.MediumFont.Key.ContentID);
+		_font.LargeFont = _assets.MakeReference<SpriteFont>(_font.LargeFont.Key.ContentID);
 	}
 
 	private void HandleRefresh()
@@ -185,16 +185,16 @@ public sealed class Skin
 			{
 				Button = new ButtonData
 				{
-					NormalTexture = assets.CreateRegistryObject<Texture2D>(ButtonDataNormalTextureName),
-					HoverTexture = assets.CreateRegistryObject<Texture2D>(ButtonDataHoverTextureName),
-					InputTexture = assets.CreateRegistryObject<Texture2D>(ButtonDataInputTextureName)
+					NormalTexture = assets.MakeReference<Texture2D>(ButtonDataNormalTextureName),
+					HoverTexture = assets.MakeReference<Texture2D>(ButtonDataHoverTextureName),
+					InputTexture = assets.MakeReference<Texture2D>(ButtonDataInputTextureName)
 				},
 
 				Font = new FontData
 				{
-					SmallFont = assets.CreateRegistryObject<SpriteFont>(FontDataSmallFontName),
-					MediumFont = assets.CreateRegistryObject<SpriteFont>(FontDataMediumFontName),
-					LargeFont = assets.CreateRegistryObject<SpriteFont>(FontDataLargeFontName)
+					SmallFont = assets.MakeReference<SpriteFont>(FontDataSmallFontName),
+					MediumFont = assets.MakeReference<SpriteFont>(FontDataMediumFontName),
+					LargeFont = assets.MakeReference<SpriteFont>(FontDataLargeFontName)
 				}
 			};
 		}
