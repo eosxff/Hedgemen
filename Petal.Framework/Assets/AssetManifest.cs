@@ -1,66 +1,99 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using Petal.Framework.Content;
+using Petal.Framework.IO;
+using Petal.Framework.Persistence;
 
 namespace Petal.Framework.Assets;
 
-[Serializable]
-public sealed class AssetManifest
+public class AssetManifest : IManifest
 {
-	public static AssetManifest FromJson(string json)
-	{
-		return JsonSerializer.Deserialize(json, AssetManifestJsc.Default.AssetManifest);
-	}
+	private readonly List<AssetManifestEntry> _entries = new();
 
-	public static AssetManifest FromFile(FileInfo file)
-	{
-		return JsonSerializer.Deserialize(file.Open(FileMode.Open), AssetManifestJsc.Default.AssetManifest);
-	}
+	public IReadOnlyList<AssetManifestEntry> Entries
+		=> _entries;
 
-	public static AssetManifest FromFile(string filePath)
-	{
-		var file = new FileInfo(filePath);
-		return JsonSerializer.Deserialize(file.Open(FileMode.Open), AssetManifestJsc.Default.AssetManifest);
-	}
-
-	[JsonPropertyName("entries"), JsonInclude]
-	public List<AssetManifestEntry> Assets
-	{
-		get;
-		set;
-	}
-
-	public AssetManifest() : this(0)
+	public AssetManifest()
 	{
 
 	}
 
-	public AssetManifest(int initialCapacity)
+	public AssetManifest(DataStorage storage)
 	{
-		Assets = new List<AssetManifestEntry>(initialCapacity);
-	}
+		var entries = storage.ReadData<List<DataStorage>>("nil:entries");
 
-	public void ForwardToRegister(IRegister assetRegister, AssetLoader assetLoader)
-	{
-		foreach (var assetEntry in Assets)
+		foreach (var entryStorage in entries)
 		{
-			bool success = assetRegister.AddKey(assetEntry.Name, assetEntry.LoadAsset(assetLoader));
-
-			if (!success)
+			var entry = new AssetManifestEntry
 			{
-				string message = $"Could not forward " + $"{assetEntry.Name} to {assetRegister.RegistryName}";
-				assetRegister.Registry.Logger.Error(message);
-			}
+				Name = entryStorage.ReadData<string>("nil:name"),
+				Path = entryStorage.ReadData<string>("nil:path"),
+				Type = entryStorage.ReadData<AssetType>("nil:type"),
+			};
+
+			_entries.Add(entry);
 		}
 	}
+
+	public void ForwardToRegister(IRegister register, AssetLoader assetLoader)
+	{
+		foreach (var assetEntry in Entries)
+		{
+			bool success = register.AddKey(assetEntry.Name, assetEntry.LoadAsset(assetLoader));
+
+			if (success)
+				continue;
+
+			string message = $"Could not forward " + $"{assetEntry.Name} to {register.RegistryName}";
+			register.Registry.Logger.Error(message);
+		}
+	}
+	public void ForwardToRegister(IRegister register)
+		=> ForwardToRegister(register, PetalGame.Petal.Assets);
 }
 
-[JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(AssetManifest))]
-public partial class AssetManifestJsc : JsonSerializerContext
+public readonly struct AssetManifestEntry
 {
+	public required NamespacedString Name
+	{
+		get;
+		init;
+	}
 
+	public required string Path
+	{
+		get;
+		init;
+	}
+
+	public required AssetType Type
+	{
+		get;
+		init;
+	}
+
+	public object LoadAsset(AssetLoader loader)
+	{
+		switch (Type)
+		{
+			case AssetType.Texture:
+				return loader.LoadAsset<Texture2D>(new FileInfo(Path).Open(FileMode.Open));
+			case AssetType.Font:
+				return loader.LoadAsset<SpriteFont>(Path);
+			case AssetType.Effect:
+				return new Effect(loader.GraphicsDevice, new FileInfo(Path).ReadBytes());
+			case AssetType.SoundEffect:
+				return SoundEffect.FromStream(new FileInfo(Path).Open(FileMode.Open));
+			case AssetType.Song:
+				return Song.FromUri(Path, new Uri($"file://{Path}"));
+			case AssetType.None:
+				throw new InvalidOperationException($"Can't load asset type {Type}.");
+			default:
+				throw new ArgumentOutOfRangeException(Type.ToString());
+		}
+	}
 }

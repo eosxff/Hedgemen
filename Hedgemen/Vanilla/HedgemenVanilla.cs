@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Hgm.Components;
 using Hgm.Vanilla.Scenes;
@@ -13,6 +14,7 @@ using Petal.Framework.Content;
 using Petal.Framework.EC;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
+using Petal.Framework.Persistence;
 using Petal.Framework.Util;
 using Petal.Framework.Util.Coroutines;
 
@@ -69,6 +71,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 	protected override void Setup(ModLoaderSetupContext context)
 	{
 		var logger = Game.Logger;
+
 		Registers.SetupRegisters(Game.Registry);
 		Content.Setup(Registers);
 
@@ -113,6 +116,8 @@ public class HedgemenVanilla : PetalEmbeddedMod
 	private void Test()
 	{
 		var logger = Game.Logger;
+
+		Game.Logger.Critical(typeof(Dictionary<object, object>).Assembly.FullName);
 
 		var entity = new Entity();
 		entity.AddComponent(new CharacterSheet());
@@ -175,7 +180,9 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		}
 
 		var data = entity.WriteStorage();
-		var entityClone = data.ReadData<Entity>();
+		bool entityCloneCreated = data.ReadData<Entity>(out var entityClone);
+
+		Game.Logger.Critical(entityCloneCreated.ToString());
 
 		logger.Info($"Test entity responds to {nameof(ChangeStatEvent)}: " +
 		             $"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");

@@ -15,10 +15,7 @@ public static class PetalExceptions
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNull([NotNull] object? obj)
-	{
-		if (obj is null)
-			throw new ArgumentNullException(nameof(obj));
-	}
+		=> ThrowIfNull(obj, nameof(obj));
 
 	/// <summary>
 	/// Throws <see cref="ArgumentNullException"/> if <paramref name="obj"/> is null. If no
@@ -31,6 +28,30 @@ public static class PetalExceptions
 	{
 		if (obj is null)
 			throw new ArgumentNullException(paramName);
+	}
+
+	/// <summary>
+	/// Throws <see cref="ArgumentNullException"/> if <paramref name="str"/> is null and <see cref="ArgumentException"/>
+	/// if <paramref name="str"/> is empty. If no exception is raised then <paramref name="str"/> is not null or empty.
+	/// </summary>
+	/// <param name="str">the <see cref="String"/> to evaluate.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNullOrEmpty([NotNull] string? str)
+		=> ThrowIfNullOrEmpty(str, nameof(str));
+
+	/// <summary>
+	/// Throws <see cref="ArgumentNullException"/> if <paramref name="str"/> is null and <see cref="ArgumentException"/>
+	/// if <paramref name="str"/> is empty. If no exception is raised then <paramref name="str"/> is not null or empty.
+	/// </summary>
+	/// <param name="str">the <see cref="String"/> to evaluate.</param>
+	/// <param name="paramName">the parameter name to print if an exception is raised.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNullOrEmpty([NotNull] string? str, string paramName)
+	{
+		if (str is null)
+			throw new ArgumentNullException(paramName);
+		if (str.Length == 0)
+			throw new ArgumentException($"{paramName} is empty.");
 	}
 }
 

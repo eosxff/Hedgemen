@@ -45,12 +45,9 @@ public sealed class CoroutineManager
 
 	private void ClearAllCoroutines()
 	{
-		lock (_lock)
-		{
-			_unblockedCoroutines.Clear();
-			_runningNextFrame.Clear();
-			RemoveFromState(CoroutineManagerState.ClearRequested);
-		}
+		_unblockedCoroutines.Clear();
+		_runningNextFrame.Clear();
+		RemoveFromState(CoroutineManagerState.ClearRequested);
 	}
 
 	// preferably we would be able to start coroutines in any arbitrary thread

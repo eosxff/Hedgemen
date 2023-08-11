@@ -1,9 +1,15 @@
+using System;
+using System.IO;
+using System.Text;
+using System.Text.Json;
 using Hgm.Components;
 using Hgm.Vanilla.WorldGeneration;
 using Hgm.WorldGeneration;
 using Petal.Framework.Assets;
 using Petal.Framework.Content;
 using Petal.Framework.EC;
+using Petal.Framework.IO;
+using Petal.Framework.Persistence;
 
 namespace Hgm.Vanilla;
 
@@ -51,8 +57,14 @@ public sealed class HedgemenContent
 	{
 		var assetLoader = Hedgemen.Instance.Assets;
 
-		var assetManifest = AssetManifest.FromFile("asset_manifest.json");
-		assetManifest.ForwardToRegister(registers.Assets, assetLoader);
+		var file = new FileInfo("asset_manifest.json");
+
+		var manifestStorage = JsonSerializer.Deserialize(
+			file.ReadString(Encoding.UTF8),
+			DataStorageJsonTypeInfo.Default.DataStorage);
+
+		var manifest = new AssetManifest(manifestStorage);
+		manifest.ForwardToRegister(registers.Assets, assetLoader);
 	}
 
 	private void RegisterEntityComponents(HedgemenRegisters registers)

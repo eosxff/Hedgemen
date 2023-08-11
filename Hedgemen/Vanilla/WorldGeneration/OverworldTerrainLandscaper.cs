@@ -14,6 +14,7 @@ public sealed class OverworldTerrainLandscaper : ILandscaper
 		var gen = new FastNoiseLite(options.Seed);
 		cells.Iterate((e, pos) => GetPerlinGeneration(e, pos, gen, options));
 	}
+
 	public bool ShouldPerformGenerationStep(Map<MapCell> cells, CartographyOptions options)
 	{
 		return true;

@@ -11,7 +11,7 @@ namespace Petal.Framework;
 public struct NamespacedString
 {
 	public static string DefaultNamespace
-		=> "any";
+		=> "nil";
 	public static string DefaultName
 		=> "null";
 
