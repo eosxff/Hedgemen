@@ -78,19 +78,17 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		Game.OnSceneChanged += (sender, args) =>
 		{
 			logger.Info($"Changing scene.");
+
+			args.NewScene.AfterUpdate += (sender1, args1) =>
+			{
+				Game.Logger.Debug("sdkg");
+			};
 		};
 
 		var scene = SplashSceneFactory.NewScene(
 			Game,
 			new FileInfo("splash.png").Open(FileMode.Open));
 		Game.ChangeScenes(scene);
-
-		var cartographer = Content.OverworldCartographer.Get();
-		var map = cartographer.Generate(new CartographyOptions
-		{
-			MapDimensions = new Vector2Int(128, 128),
-			Seed = 1337
-		});
 
 		RegisterContentThenChangeScenes();
 	}
@@ -141,7 +139,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 				IncompatibleMods = new List<NamespacedString>(),
 				Mods = new List<NamespacedString>()
 			},
-
 			ModFileDll = string.Empty,
 			ModMain = string.Empty,
 			IsOverhaul = false

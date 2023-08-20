@@ -1,7 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Hgm.Components;
+using Hgm.WorldGeneration;
+using Microsoft.Xna.Framework;
 using Petal.Framework;
 using Petal.Framework.EC;
 using Petal.Framework.IO;
@@ -20,83 +25,36 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 
 	private void Test()
 	{
-		var logger = Game.Logger;
+		var cartographer = HedgemenVanilla.Instance.Content.OverworldCartographer.Get();
 
-		var entity = new Entity();
-		entity.AddComponent(new CharacterSheet());
-		entity.AddComponent(new CharacterRace
+		if (cartographer is not null)
 		{
-			RaceName = "high elf"
-		});
-
-		var file = new FileInfo("sentient_apple_pie.json");
-		string entityManifestJson = file.ReadString(Encoding.UTF8);
-		var entityManifest = EntityManifest.FromJson(entityManifestJson);
-
-		if (entityManifest is not null)
-		{
-			logger.Info($"Entity manifest component count: {entityManifest.Components.Count}");
-			logger.Info($"Entity component: " +
-			             $"{entityManifest.Components["hgm:character_sheet"].ReadData<int>("hgm:strength")}.");
-			logger.Info($"Entity component: {
-				entityManifest.Components["hgm:character_race"]
-					.ReadData<string>("hgm:race_name")}.");
+			Task.Run(() => GenerateMap(cartographer));
 		}
+
 		else
 		{
-			logger.Warn($"File '{file.FullName}' failed to create valid {nameof(EntityManifest)}.");
+			Game.Logger.Debug("Could not get overworld cartographer!");
 		}
+	}
 
-		for (int i = 0; i < 1; ++i)
+	private void GenerateMap(Cartographer cartographer)
+	{
+		var mapDimensions = new Vector2Int(1024, 1024);
+		Game.Logger.Debug($"Generating overworld {mapDimensions.X}x{mapDimensions.Y}!");
+
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
+
+		cartographer.Generate(new CartographyOptions
 		{
-			if (entity.WillRespondToEvent<ChangeStatEvent>())
-			{
-				entity.PropagateEvent(new ChangeStatEvent
-				{
-					Sender = entity,
-					ChangeAmount = 1015,
-					StatName = "strength"
-				});
-			}
+			MapDimensions = mapDimensions,
+			Seed = 1025
+		});
 
-			entity.PropagateEventIfResponsive(new ChangeStatEvent
-			{
-				Sender = entity,
-				ChangeAmount = 10,
-				StatName = "constitution"
-			});
-		}
+		stopwatch.Stop();
 
-		if (entity.WillRespondToEvent<ChangeStatEvent>())
-		{
-			var task = entity.PropagateEventAsync(new ChangeStatEvent
-			{
-				Sender = entity,
-				ChangeAmount = 1015,
-				StatName = "strength"
-			});
-
-			task.ContinueWith(_ =>
-			{
-				logger.Info($"New entity strength: {entity.GetComponent<CharacterSheet>()?.Strength}");
-			});
-		}
-
-		var data = entity.WriteStorage();
-		bool entityCloneCreated = data.ReadData<Entity>(out var entityClone);
-
-		Game.Logger.Critical(entityCloneCreated.ToString());
-
-		logger.Info($"Test entity responds to {nameof(ChangeStatEvent)}: " +
-		             $"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");
-
-		entityClone.RemoveComponent<CharacterSheet>();
-
-		logger.Info(
-			$"Test does entity respond to {nameof(ChangeStatEvent)} after removing all referenced components: " +
-			$"{entityClone.WillRespondToEvent<ChangeStatEvent>()}");
-
-		entity.RemoveComponent<CharacterSheet>();
+		Game.Logger.Debug($"Finished generating overworld ({Math.Round(stopwatch.Elapsed.TotalMilliseconds)}ms)");
 	}
 
 	public override PetalModManifest GetEmbeddedManifest()

@@ -21,22 +21,22 @@ public sealed class RegistryObject<TContent>
 		Key = key;
 	}
 
-	public TContentLocal? Supply<TContentLocal>()
+	public TSuppliedContent? Supply<TSuppliedContent>()
 	{
-		bool success = Supply(out TContentLocal content);
+		bool success = Supply(out TSuppliedContent content);
 		return content;
 	}
 
-	public bool Supply<TContentLocal>([NotNullWhen(true)] out TContentLocal? suppliedContent)
+	public bool Supply<TSuppliedContent>([NotNullWhen(true)] out TSuppliedContent? suppliedContent)
 	{
 		suppliedContent = default;
 
-		bool success = Get(out var content);
+		bool success = GetAs(out Supplier<TSuppliedContent> content);
 
-		if (!success || content is not ContentSupplier<TContentLocal> supplier)
+		if (!success)
 			return false;
 
-		suppliedContent = supplier();
+		suppliedContent = content();
 		return true;
 	}
 
@@ -60,31 +60,30 @@ public sealed class RegistryObject<TContent>
 		return true;
 	}
 
-	public T? GetAs<T>() where T : TContent
+	public T? GetAs<T>()
 	{
-		var found = Get(out var item);
-
-		if (!found)
-			return default;
-
-		if (item is T tItem)
-			return tItem;
-
-		return default;
+		bool found = GetAs(out T item);
+		return item;
 	}
 
-	public bool GetAs<T>([NotNullWhen(true)] out T? content) where T : TContent
+	public bool GetAs<T>([NotNullWhen(true)] out T? content)
 	{
 		content = default;
 
-		var found = Get(out var item);
+		bool found = Get(out var item);
 
 		if (!found)
 			return false;
 
-		if (item is T tItem)
-			content = tItem;
+		if (item is not T tItem)
+			return false;
 
+		content = tItem;
 		return true;
+	}
+
+	public RegistryObject<TBaseContent> ReferenceAs<TBaseContent>()
+	{
+		return new RegistryObject<TBaseContent>(Key);
 	}
 }

@@ -64,19 +64,21 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 		return WillRespondToEvent(typeof(T));
 	}
 
-	public void AddComponent(CellComponent component)
+	public bool AddComponent(CellComponent component)
 	{
 		if (component is null)
-			return;
+			return false;
 
 		var componentType = component.GetType();
 
 		if (_components.ContainsKey(componentType))
-			return;
+			return false;
 
 		_components.Add(componentType, component);
 		component.AddToMapCell(this);
 		AddRegisteredEventsFromComponent(component);
+
+		return true;
 	}
 
 	private void AddRegisteredEventsFromComponent(CellComponent component)
@@ -119,9 +121,9 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public void AddComponent<T>() where T : CellComponent, new()
+	public bool AddComponent<T>() where T : CellComponent, new()
 	{
-		AddComponent(new T());
+		return AddComponent(new T());
 	}
 
 	public bool GetComponent<T>([NotNullWhen(true)] out T? component) where T : CellComponent

@@ -110,7 +110,7 @@ public class PetalModLoader
 	/// <param name="modID">the mod namespaced identifier.</param>
 	/// <param name="mod">the retrieved mod.</param>
 	/// <typeparam name="T">the type of the mod being retrieved.</typeparam>
-	/// <returns>if the operation succeeded.</returns>
+	/// <returns>true if the operation succeeded.</returns>
 	public bool GetMod<T>(NamespacedString modID, [NotNullWhen(true)] out T? mod) where T : PetalMod
 	{
 		mod = default;
@@ -174,7 +174,7 @@ public class PetalModLoader
 			else
 			{
 				Logger.Critical($"First class/embedded mod {embeddedModsElement.GetType()} " +
-				                $"is not of type {typeof(PetalEmbeddedMod)}.");
+				                $"is not of type {typeof(PetalEmbeddedMod)}. This should never happen.");
 				throw new PetalException();
 			}
 		}
@@ -196,8 +196,13 @@ public class PetalModLoader
 		return list;
 	}
 
-	private bool LoadModFromDirectory(ModLoaderSetupContext context, DirectoryInfo directory, out PetalMod mod)
+	private bool LoadModFromDirectory(
+		ModLoaderSetupContext context,
+		DirectoryInfo directory,
+		[NotNullWhen(true)]
+		out PetalMod mod)
 	{
+		// create the manifest from file. handle invalid values
 		mod = null;
 		var manifestFile = directory.FindFile(context.ManifestFileName);
 

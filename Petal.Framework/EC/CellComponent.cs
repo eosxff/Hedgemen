@@ -21,14 +21,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 
 	public IReadOnlyCollection<Type> GetRegisteredEvents()
 	{
-		var list = new List<Type>(_registeredEvents.Count);
-
-		foreach (var registeredEvent in _registeredEvents.Keys)
-		{
-			list.Add(registeredEvent);
-		}
-
-		return list;
+		return _registeredEvents.Keys;
 	}
 
 	public void PropagateEvent(CellEvent e)

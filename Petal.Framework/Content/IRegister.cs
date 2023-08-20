@@ -2,7 +2,7 @@
 
 namespace Petal.Framework.Content;
 
-public delegate TContent ContentSupplier<out TContent>();
+public delegate T Supplier<out T>();
 
 public interface IRegister
 {

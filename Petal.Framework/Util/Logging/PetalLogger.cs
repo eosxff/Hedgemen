@@ -1,20 +1,51 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Petal.Framework.Util.Logging;
 
 public class PetalLogger : ILogger
 {
-	private readonly StringBuilder _builder;
+	private readonly struct LogEntry
+	{
+		public required string Message
+		{
+			get;
+			init;
+		}
+
+		public required StackFrame StackFrame
+		{
+			get;
+			init;
+		}
+
+		public required LogLevel Level
+		{
+			get;
+			init;
+		}
+
+		public required bool Silent
+		{
+			get;
+			init;
+		}
+	}
+
+	private readonly StringBuilder _builder = new();
+	private readonly BlockingCollection<LogEntry> _entries = new();
+
 	private LogLevel _logLevel = LogLevel.Off;
+
+	public event EventHandler<LogLevelChangedArgs> OnLogLevelChanged;
 
 	public PetalLogger()
 	{
-		_builder = new StringBuilder();
+		Task.Factory.StartNew(HandleEntries);
 	}
-
-	public event EventHandler<LogLevelChangedArgs> OnLogLevelChanged;
 
 	public bool LogInvalidLevelsSilently
 	{
@@ -55,36 +86,49 @@ public class PetalLogger : ILogger
 	} = "HH:mm:ss";
 
 	public void Debug(string message)
-		=> HandleAdd(message, LogLevel.Debug, 2);
+		=> HandleAddEntry(message, LogLevel.Debug, 2);
 
 	public void Info(string message)
-		=> HandleAdd(message, LogLevel.Info, 2);
+		=> HandleAddEntry(message, LogLevel.Info, 2);
 
 	public void Warn(string message)
-		=> HandleAdd(message, LogLevel.Warn, 2);
+		=> HandleAddEntry(message, LogLevel.Warn, 2);
 
 	public void Error(string message)
-		=> HandleAdd(message, LogLevel.Error, 2);
+		=> HandleAddEntry(message, LogLevel.Error, 2);
 
 	public void Critical(string message)
-		=> HandleAdd(message, LogLevel.Critical, 2);
+		=> HandleAddEntry(message, LogLevel.Critical, 2);
 
 	public void Add(string message, LogLevel logLevel)
-		=> HandleAdd(message, logLevel, 2);
+		=> HandleAddEntry(message, logLevel, 2);
 
-	private void HandleAdd(string message, LogLevel logLevel, int skipFrames)
+	private void HandleAddEntry(string message, LogLevel level, int stackFrameSkipFrames)
 	{
 		// never log when it's supposed to be off
-		if (logLevel == LogLevel.Off)
+		if (level == LogLevel.Off)
 			return;
 
-		bool silent = !ValidLogLevel(logLevel);
+		bool silent = !ValidLogLevel(level);
 
 		if (!LogInvalidLevelsSilently && silent)
 			return;
 
-		var stackFrame = new StackFrame(skipFrames, true);
-		Add(message, logLevel, stackFrame, silent);
+		_entries.Add(new LogEntry
+		{
+			Message = message,
+			Level = level,
+			StackFrame = new StackFrame(stackFrameSkipFrames, true),
+			Silent = silent
+		});
+	}
+
+	private void HandleEntries()
+	{
+		foreach (var entry in _entries.GetConsumingEnumerable())
+		{
+			Add(entry.Message, entry.Level, entry.StackFrame, entry.Silent);
+		}
 	}
 
 	private void Add(string message, LogLevel logLevel, StackFrame stackFrame, bool silent)

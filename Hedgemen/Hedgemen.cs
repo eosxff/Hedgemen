@@ -16,7 +16,7 @@ namespace Hgm;
 public class Hedgemen : PetalGame
 {
 	private const LogLevel DebugLogLevel = LogLevel.Debug;
-	private const LogLevel ReleaseLogLevel = LogLevel.Info;
+	private const LogLevel ReleaseLogLevel = LogLevel.Warn;
 	public static readonly Version HedgemenVersion = typeof(Hedgemen).Assembly.GetName().Version!;
 
 	private static bool IsEmbedOnlyMode()
@@ -28,14 +28,14 @@ public class Hedgemen : PetalGame
 #endif
 	}
 
-	private static Hedgemen _instance;
+	private static Hedgemen HedgemenInstance;
 
 	public static Hedgemen Instance
 	{
 		get
 		{
-			PetalExceptions.ThrowIfNull(_instance);
-			return _instance;
+			PetalExceptions.ThrowIfNull(HedgemenInstance);
+			return HedgemenInstance;
 		}
 	}
 
@@ -47,7 +47,7 @@ public class Hedgemen : PetalGame
 
 	public Hedgemen()
 	{
-		_instance = this;
+		HedgemenInstance = this;
 
 		OnDebugChanged += DebugChangedCallback;
 		AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
@@ -61,8 +61,10 @@ public class Hedgemen : PetalGame
 
 	protected override void Setup()
 	{
-		var embeddedMods = new List<PetalEmbeddedMod>(2);
-		embeddedMods.Add(new HedgemenVanilla());
+		var embeddedMods = new List<PetalEmbeddedMod>(2)
+		{
+			new HedgemenVanilla()
+		};
 
 		if(IsDebug)
 			embeddedMods.Add(new HedgemenDebugMod());
@@ -76,13 +78,18 @@ public class Hedgemen : PetalGame
 
 		Logger.Info($"Starting {nameof(PetalModLoader)}.");
 
-		var logLevel = ModLoader.Start(context) ? LogLevel.Info : LogLevel.Error;
+		const LogLevel modLoaderSuccessfulLevel = LogLevel.Info;
+		const LogLevel modLoaderUnsuccessfulLevel = LogLevel.Critical;
 
-		Logger.Add(
-			logLevel == LogLevel.Info ?
-				$"Successfully started {nameof(PetalModLoader)}" :
-				$"Unsuccessfully started {nameof(PetalModLoader)}.",
-			logLevel);
+		var logLevel = ModLoader.Start(context) ? modLoaderSuccessfulLevel : modLoaderUnsuccessfulLevel;
+
+		if(logLevel == modLoaderSuccessfulLevel)
+			Logger.Add($"Successfully started {nameof(PetalModLoader)}", modLoaderSuccessfulLevel);
+		else
+		{
+			Logger.Add($"{nameof(PetalModLoader)} could not be started. Aborting.", modLoaderUnsuccessfulLevel);
+			throw new PetalException();
+		}
 	}
 
 	protected override void OnExiting(object sender, EventArgs args)
@@ -96,6 +103,10 @@ public class Hedgemen : PetalGame
 	private void WriteLogFile()
 	{
 		var logFile = new FileInfo("log.txt");
+
+		if(logFile.Exists)
+			logFile.Delete();
+
 		logFile.WriteString(Logger.ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
 	}
 
@@ -130,7 +141,6 @@ public class Hedgemen : PetalGame
 		{
 			LogLevel = logLevel,
 			LogInvalidLevelsSilently = true,
-			//Format = "[%T/%L] [%c:%m:%l]\n%M"
 		};
 
 		string hedgemenVersion = typeof(Hedgemen).Assembly.GetName().Version!.ToString(3);
@@ -157,7 +167,7 @@ public class Hedgemen : PetalGame
 			WindowHeight = 540,
 			WindowMode = WindowMode.Windowed,
 			IsMouseVisible = true,
-			IsWindowUserResizable = true,
+			IsWindowUserResizable = false,
 			IsDebug = true
 		};
 

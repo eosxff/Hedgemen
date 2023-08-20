@@ -7,7 +7,7 @@
 	"vsync": false,
 
 	"is_mouse_visible": true,
-	"is_window_user_resizable": true,
+	"is_window_user_resizable": false,
 
 	"is_debug": true
 }

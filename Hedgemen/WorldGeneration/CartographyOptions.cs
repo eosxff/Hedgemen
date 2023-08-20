@@ -15,6 +15,4 @@ public readonly struct CartographyOptions
 		get;
 		init;
 	}
-
-	
 }

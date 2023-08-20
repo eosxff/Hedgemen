@@ -30,9 +30,9 @@ public sealed class HedgemenRegisters
 		}
 	}
 
-	private Register<ContentSupplier<EntityComponent>>? _entityComponents;
+	private Register<Supplier<EntityComponent>>? _entityComponents;
 
-	public Register<ContentSupplier<EntityComponent>> EntityComponents
+	public Register<Supplier<EntityComponent>> EntityComponents
 	{
 		get
 		{
@@ -41,9 +41,9 @@ public sealed class HedgemenRegisters
 		}
 	}
 
-	private Register<ContentSupplier<CellComponent>>? _cellComponents;
+	private Register<Supplier<CellComponent>>? _cellComponents;
 
-	public Register<ContentSupplier<CellComponent>> CellComponents
+	public Register<Supplier<CellComponent>> CellComponents
 	{
 		get
 		{
@@ -52,9 +52,9 @@ public sealed class HedgemenRegisters
 		}
 	}
 
-	private Register<ContentSupplier<ILandscaper>>? _landscapers;
+	private Register<Supplier<ILandscaper>>? _landscapers;
 
-	public Register<ContentSupplier<ILandscaper>> Landscapers
+	public Register<Supplier<ILandscaper>> Landscapers
 	{
 		get
 		{
@@ -99,7 +99,7 @@ public sealed class HedgemenRegisters
 
 	private void SetupEntityComponentsRegister(Registry registry)
 	{
-		_entityComponents = new Register<ContentSupplier<EntityComponent>>(
+		_entityComponents = new Register<Supplier<EntityComponent>>(
 			EntityComponentsRegisterName,
 			HedgemenVanilla.ModID,
 			registry);
@@ -109,7 +109,7 @@ public sealed class HedgemenRegisters
 
 	private void SetupCellComponentsRegister(Registry registry)
 	{
-		_cellComponents = new Register<ContentSupplier<CellComponent>>(
+		_cellComponents = new Register<Supplier<CellComponent>>(
 			CellComponentsRegisterName,
 			HedgemenVanilla.ModID,
 			registry);
@@ -119,7 +119,7 @@ public sealed class HedgemenRegisters
 
 	private void SetupLandscapersRegister(Registry registry)
 	{
-		_landscapers = new Register<ContentSupplier<ILandscaper>>(
+		_landscapers = new Register<Supplier<ILandscaper>>(
 			LandscapersRegisterName,
 			HedgemenVanilla.ModID,
 			registry);

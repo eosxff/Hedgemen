@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Xna.Framework;
+namespace Microsoft.Xna.Framework;  // ;)
 
 [Serializable]
 public struct Vector2Int

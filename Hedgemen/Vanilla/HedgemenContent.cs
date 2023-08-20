@@ -5,8 +5,10 @@ using System.Text.Json;
 using Hgm.Components;
 using Hgm.Vanilla.WorldGeneration;
 using Hgm.WorldGeneration;
+using Petal.Framework;
 using Petal.Framework.Assets;
 using Petal.Framework.Content;
+using Petal.Framework.EC;
 using Petal.Framework.IO;
 using Petal.Framework.Persistence;
 
@@ -14,19 +16,55 @@ namespace Hgm.Vanilla;
 
 public sealed class HedgemenContent
 {
-	public RegistryObject<ContentSupplier<CharacterSheet>> CharacterSheet
+	public RegistryObject<Supplier<EntityComponent>> CharacterSheet
 	{
 		get;
 		private set;
 	}
 
-	public RegistryObject<ContentSupplier<CharacterRace>> CharacterRace
+	public RegistryObject<Supplier<EntityComponent>> CharacterRace
 	{
 		get;
 		private set;
 	}
 
-	public RegistryObject<ContentSupplier<ILandscaper>> OverworldTerrainLandscaper
+	public RegistryObject<Supplier<ILandscaper>> OverworldTerrainLandscaper
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> OverworldDeepWater
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> OverworldShallowWater
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> PerlinGeneration
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> OverworldLand
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> OverworldMountain
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> OverworldTallMountain
 	{
 		get;
 		private set;
@@ -73,22 +111,48 @@ public sealed class HedgemenContent
 		register.AddKey("hgm:character_sheet", () => new CharacterSheet());
 		register.AddKey("hgm:character_race", () => new CharacterRace());
 
-		CharacterSheet = register.MakeDerivedReference<ContentSupplier<CharacterSheet>>("hgm:character_sheet");
-		CharacterRace = register.MakeDerivedReference<ContentSupplier<CharacterRace>>("hgm:character_race");
+		CharacterSheet = register.MakeReference("hgm:character_sheet");
+		CharacterRace = register.MakeReference("hgm:character_race");
 	}
 
 	private void RegisterCellComponents(HedgemenRegisters registers)
 	{
 		var register = registers.CellComponents;
 
-		register.AddKey("hgm:perlin_generation", () => new PerlinGeneration());
+		var perlinGenerationName = new NamespacedString("hgm:perlin_generation");
+		var overworldDeepWaterName = new NamespacedString("hgm:overworld_deep_water");
+		var overworldShallowWaterName = new NamespacedString("hgm:overworld_shallow_water");
+		var overworldLandName = new NamespacedString("hgm:overworld_land");
+		var overworldMountainName = new NamespacedString("hgm:overworld_mountain");
+		var overworldTallMountainName = new NamespacedString("hgm:overworld_tall_mountain");
+
+		register.AddKey(perlinGenerationName, () => new PerlinGeneration());
+		register.AddKey(overworldDeepWaterName, () => new OverworldDeepWater());
+		register.AddKey(overworldShallowWaterName,() => new OverworldShallowWater());
+		register.AddKey(overworldLandName, () => new OverworldLand());
+		register.AddKey(overworldMountainName, () => new OverworldMountain());
+		register.AddKey(overworldTallMountainName, () => new OverworldTallMountain());
+
+		PerlinGeneration = register.MakeReference(perlinGenerationName);
+		OverworldDeepWater = register.MakeReference(overworldDeepWaterName);
+		OverworldShallowWater = register.MakeReference(overworldShallowWaterName);
+		OverworldLand = register.MakeReference(overworldLandName);
+		OverworldMountain = register.MakeReference(overworldMountainName);
+		OverworldTallMountain = register.MakeReference(overworldTallMountainName);
 	}
 
 	private void RegisterLandscapers(HedgemenRegisters registers)
 	{
 		var register = registers.Landscapers;
 
-		register.AddKey("hgm:overworld_terrain_landscaper", () => new OverworldTerrainLandscaper());
+		register.AddKey("hgm:overworld_terrain_landscaper", () => new OverworldTerrainLandscaper
+		{
+			DeepWater = OverworldDeepWater.Get(),
+			ShallowWater = OverworldShallowWater.Get(),
+			Land = OverworldLand.Get(),
+			Mountain = OverworldMountain.Get(),
+			TallMountain = OverworldTallMountain.Get()
+		});
 
 		OverworldTerrainLandscaper = register.MakeReference("hgm:overworld_terrain_landscaper");
 	}

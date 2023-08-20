@@ -64,19 +64,21 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		return WillRespondToEvent(typeof(T));
 	}
 
-	public void AddComponent(EntityComponent component)
+	public bool AddComponent(EntityComponent component)
 	{
 		if (component is null)
-			return;
+			return true;
 
 		var componentType = component.GetType();
 
 		if (_components.ContainsKey(componentType))
-			return;
+			return true;
 
 		_components.Add(componentType, component);
 		component.AddToEntity(this);
 		AddRegisteredEventsFromComponent(component);
+
+		return true;
 	}
 
 	private void AddRegisteredEventsFromComponent(EntityComponent component)
@@ -119,9 +121,9 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public void AddComponent<T>() where T : EntityComponent, new()
+	public bool AddComponent<T>() where T : EntityComponent, new()
 	{
-		AddComponent(new T());
+		return AddComponent(new T());
 	}
 
 	public bool GetComponent<T>([NotNullWhen(true)] out T? component) where T : EntityComponent
