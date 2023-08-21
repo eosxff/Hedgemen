@@ -78,11 +78,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		Game.OnSceneChanged += (sender, args) =>
 		{
 			logger.Info($"Changing scene.");
-
-			args.NewScene.AfterUpdate += (sender1, args1) =>
-			{
-				Game.Logger.Debug("sdkg");
-			};
 		};
 
 		var scene = SplashSceneFactory.NewScene(

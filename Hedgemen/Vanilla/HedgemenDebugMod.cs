@@ -40,7 +40,7 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 
 	private void GenerateMap(Cartographer cartographer)
 	{
-		var mapDimensions = new Vector2Int(1024, 1024);
+		var mapDimensions = new Vector2Int(384, 384);
 		Game.Logger.Debug($"Generating overworld {mapDimensions.X}x{mapDimensions.Y}!");
 
 		var stopwatch = new Stopwatch();
@@ -54,7 +54,7 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 
 		stopwatch.Stop();
 
-		Game.Logger.Debug($"Finished generating overworld ({Math.Round(stopwatch.Elapsed.TotalMilliseconds)}ms)");
+		Game.Logger.Debug($"Finished generating overworld! ({Math.Round(stopwatch.Elapsed.TotalMilliseconds)}ms)");
 	}
 
 	public override PetalModManifest GetEmbeddedManifest()

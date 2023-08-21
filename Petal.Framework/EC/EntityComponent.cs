@@ -12,7 +12,7 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 
 	private delegate void EventHandleWrapped(EntityEvent e);
 
-	private Dictionary<Type, EventHandleWrapped> _registeredEvents = new();
+	private readonly Dictionary<Type, EventHandleWrapped> _registeredEvents = new();
 
 	public Entity Self
 	{
@@ -83,7 +83,7 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 
 	protected void RegisterEvent<TEvent>(EventHandle<TEvent> handle) where TEvent : EntityEvent
 	{
-		_registeredEvents.Add(typeof(TEvent), args => handle((TEvent)args));
+		_registeredEvents.TryAdd(typeof(TEvent), args => handle((TEvent)args));
 	}
 
 	public virtual DataStorage WriteStorage()

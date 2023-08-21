@@ -8,33 +8,6 @@ namespace Petal.Framework.Util.Logging;
 
 public class PetalLogger : ILogger
 {
-	private readonly struct LogEntry
-	{
-		public required string Message
-		{
-			get;
-			init;
-		}
-
-		public required StackFrame StackFrame
-		{
-			get;
-			init;
-		}
-
-		public required LogLevel Level
-		{
-			get;
-			init;
-		}
-
-		public required bool Silent
-		{
-			get;
-			init;
-		}
-	}
-
 	private readonly StringBuilder _builder = new();
 	private readonly BlockingCollection<LogEntry> _entries = new();
 
@@ -191,5 +164,32 @@ public class PetalLogger : ILogger
 	public override string ToString()
 	{
 		return _builder.ToString();
+	}
+
+	private readonly struct LogEntry
+	{
+		public required string Message
+		{
+			get;
+			init;
+		}
+
+		public required StackFrame StackFrame
+		{
+			get;
+			init;
+		}
+
+		public required LogLevel Level
+		{
+			get;
+			init;
+		}
+
+		public required bool Silent
+		{
+			get;
+			init;
+		}
 	}
 }

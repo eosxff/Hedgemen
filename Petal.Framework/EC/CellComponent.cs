@@ -11,7 +11,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 
 	private delegate void EventHandleWrapped(CellEvent e);
 
-	private Dictionary<Type, EventHandleWrapped> _registeredEvents = new();
+	private readonly Dictionary<Type, EventHandleWrapped> _registeredEvents = new();
 
 	public MapCell Self
 	{
@@ -75,7 +75,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 
 	protected void RegisterEvent<TEvent>(EventHandle<TEvent> handle) where TEvent : CellEvent
 	{
-		_registeredEvents.Add(typeof(TEvent), args => handle((TEvent)args));
+		_registeredEvents.TryAdd(typeof(TEvent), args => handle((TEvent)args));
 	}
 
 	public virtual DataStorage WriteStorage()

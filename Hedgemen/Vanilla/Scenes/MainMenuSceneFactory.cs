@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -43,7 +44,7 @@ public static class MainMenuSceneFactory
 		var startButton = scene.Root.Add(new Button(scene.Skin)
 		{
 			Anchor = Anchor.CenterLeft,
-			Bounds = new Rectangle(32, -56, 128, 40)
+			Bounds = new Rectangle(32, -50, 128, 42)
 		});
 
 		startButton.Add(new Text
@@ -57,7 +58,7 @@ public static class MainMenuSceneFactory
 		var exitButton = scene.Root.Add(new Button(scene.Skin)
 		{
 			Anchor = Anchor.CenterLeft,
-			Bounds = new Rectangle(32, 8, 128*2, 40*2)
+			Bounds = new Rectangle(32, 0, 128, 42)
 		});
 
 		exitButton.OnMousePressed += (sender, args) =>
