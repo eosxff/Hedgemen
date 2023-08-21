@@ -21,16 +21,7 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 	}
 
 	public IReadOnlyCollection<Type> GetRegisteredEvents()
-	{
-		var list = new List<Type>(_registeredEvents.Count);
-
-		foreach (var registeredEvent in _registeredEvents.Keys)
-		{
-			list.Add(registeredEvent);
-		}
-
-		return list;
-	}
+		=> _registeredEvents.Keys;
 
 	public void PropagateEvent(EntityEvent e)
 	{

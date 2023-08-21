@@ -20,9 +20,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 	}
 
 	public IReadOnlyCollection<Type> GetRegisteredEvents()
-	{
-		return _registeredEvents.Keys;
-	}
+		=> _registeredEvents.Keys;
 
 	public void PropagateEvent(CellEvent e)
 	{
