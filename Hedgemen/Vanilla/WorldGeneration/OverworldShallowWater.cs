@@ -1,7 +1,9 @@
+using Microsoft.Xna.Framework;
+
 namespace Hgm.Vanilla.WorldGeneration;
 
 public sealed class OverworldShallowWater : Terrain
 {
-	public override float GetMinimumHeightRequirement()
-		=> 0.35f;
+	public override Color GetMapPixelColor()
+		=> Color.Aqua;
 }

@@ -9,6 +9,12 @@ namespace Petal.Framework.Scenery;
 
 public class Scene : IDisposable
 {
+	public NamespacedString Name
+	{
+		get;
+		set;
+	} = NamespacedString.Default;
+
 	public class SkinChangedEventArgs : EventArgs
 	{
 		public Skin OldSkin
@@ -61,7 +67,7 @@ public class Scene : IDisposable
 		{
 			_viewportAdapter = value;
 			_viewportAdapter.Reset();
-			
+
 			OnViewportAdapterChanged?.Invoke(this, EventArgs.Empty);
 		}
 	}
@@ -81,7 +87,7 @@ public class Scene : IDisposable
 
 			_skin = value;
 			_skin.Refresh();
-			
+
 			OnSkinChanged?.Invoke(this, args);
 		}
 	}
@@ -105,7 +111,7 @@ public class Scene : IDisposable
 	{
 		Skin = skin;
 		Skin.OnSkinRefreshed += OnSkinRefreshed;
-		
+
 		Input = new InputProvider();
 		Root = root;
 		Root.Scene = this;
@@ -116,7 +122,7 @@ public class Scene : IDisposable
 			Renderer.RenderState.Graphics.GraphicsDevice, PetalGame.Petal.Window);
 
 		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
-		
+
 		Reset();
 	}
 

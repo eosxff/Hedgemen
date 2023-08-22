@@ -1,22 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Hgm.Components;
 using Hgm.Vanilla.Scenes;
-using Hgm.WorldGeneration;
-using Microsoft.Xna.Framework;
 using Petal.Framework;
 using Petal.Framework.Content;
-using Petal.Framework.EC;
-using Petal.Framework.IO;
 using Petal.Framework.Modding;
-using Petal.Framework.Persistence;
 using Petal.Framework.Util;
-using Petal.Framework.Util.Coroutines;
 
 namespace Hgm.Vanilla;
 

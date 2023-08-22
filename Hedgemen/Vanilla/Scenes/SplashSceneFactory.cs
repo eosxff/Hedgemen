@@ -16,6 +16,7 @@ public static class SplashSceneFactory
 	{
 		var scene = new Scene(new Stage(), new Skin())
 		{
+			Name = "hgm:splash_scene",
 			BackgroundColor = Color.Black,
 			ViewportAdapter = new BoxingViewportAdapter(
 				hedgemen.GraphicsDevice,

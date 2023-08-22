@@ -5,6 +5,7 @@ using System.Text.Json;
 using Hgm.Components;
 using Hgm.Vanilla.WorldGeneration;
 using Hgm.WorldGeneration;
+using Microsoft.Xna.Framework;
 using Petal.Framework;
 using Petal.Framework.Assets;
 using Petal.Framework.Content;
@@ -148,10 +149,26 @@ public sealed class HedgemenContent
 		register.AddKey("hgm:overworld_terrain_landscaper", () => new OverworldTerrainLandscaper
 		{
 			DeepWater = OverworldDeepWater.Get(),
+			DeepWaterHeight = 0.15f,
+
 			ShallowWater = OverworldShallowWater.Get(),
+			ShallowWaterHeight = 0.25f,
+
 			Land = OverworldLand.Get(),
+			LandHeight = 0.45f,
+
 			Mountain = OverworldMountain.Get(),
-			TallMountain = OverworldTallMountain.Get()
+			MountainHeight = 0.65f,
+
+			TallMountain = OverworldTallMountain.Get(),
+			TallMountainHeight = 1.0f,
+
+			Scale = 1.0f,
+			Octaves = 5,
+			Frequency = 3.5f,
+			Lacunarity = 3.0f,
+			Offset = new Vector2Int(0, 0),
+			FalloffModifier = 0.5f
 		});
 
 		OverworldTerrainLandscaper = register.MakeReference("hgm:overworld_terrain_landscaper");

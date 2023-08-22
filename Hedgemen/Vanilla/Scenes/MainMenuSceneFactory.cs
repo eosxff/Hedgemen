@@ -20,6 +20,7 @@ public static class MainMenuSceneFactory
 		var scene = new Scene(
 			new Stage(), skin)
 		{
+			Name = "hgm:main_menu_scene",
 			BackgroundColor = Color.Black,
 			ViewportAdapter = new BoxingViewportAdapter(
 				hedgemen.GraphicsDevice,
