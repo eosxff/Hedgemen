@@ -148,9 +148,7 @@ public sealed class CoroutineManager
 	private bool TickCoroutine(Coroutine coroutine, bool enqueued)
 	{
 		if (!coroutine.Enumerator.MoveNext() || coroutine.IsFinished)
-		{
 			return false;
-		}
 
 		if (coroutine.Enumerator.Current is ICoroutineUpdateable updateable)
 			updateable.Tick();
@@ -160,8 +158,6 @@ public sealed class CoroutineManager
 
 		else if (coroutine.Enumerator.Current is Coroutine coroutineCurrent)
 			coroutine.WaitForCoroutine = coroutineCurrent;
-
-		Console.WriteLine(new StackFrame());
 
 		return true;
 	}

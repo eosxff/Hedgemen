@@ -219,9 +219,14 @@ public sealed class OverworldTerrainLandscaper : ILandscaper
 
 		for (int i = 0; i < Octaves; ++i)
 		{
-			var sample = ToCylinderCoordinates(new Vector2(x + Offset.X, y + Offset.Y), options);
+			//float sampleX = (x - width / 2.0f) / Scale + Offset.X;
+			//float sampleY = (y - height / 2.0f) / Scale + Offset.Y;
+			//var sample = ToCylinderCoordinates(new Vector2(sampleX, sampleY), options);
+			//var sample = ToCylinderCoordinates(new Vector2(x * Scale + Offset.X, y * Scale + Offset.Y), options);
+			var sample = ToCylinderCoordinates(new Vector2(x, y), options);
 
-			noise += noiseGen.GetNoise(sample.X, sample.Y, sample.Z) * Scale;
+
+			noise += noiseGen.GetNoise(sample.X, sample.Y, sample.Z);
 		}
 
 		return noise;

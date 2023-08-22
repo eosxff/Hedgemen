@@ -146,29 +146,54 @@ public sealed class HedgemenContent
 	{
 		var register = registers.Landscapers;
 
-		register.AddKey("hgm:overworld_terrain_landscaper", () => new OverworldTerrainLandscaper
+		/*register.AddKey("hgm:overworld_terrain_landscaper", () => new OverworldTerrainLandscaper
 		{
 			DeepWater = OverworldDeepWater.Get(),
-			DeepWaterHeight = 0.15f,
+			DeepWaterHeight = 0.1f,
 
 			ShallowWater = OverworldShallowWater.Get(),
-			ShallowWaterHeight = 0.25f,
+			ShallowWaterHeight = 0.2f,
 
 			Land = OverworldLand.Get(),
 			LandHeight = 0.45f,
 
 			Mountain = OverworldMountain.Get(),
-			MountainHeight = 0.65f,
+			MountainHeight = 0.75f,
 
 			TallMountain = OverworldTallMountain.Get(),
 			TallMountainHeight = 1.0f,
 
-			Scale = 1.0f,
-			Octaves = 5,
+			Scale = 0.75f,
+			Octaves = 6,
 			Frequency = 3.5f,
 			Lacunarity = 3.0f,
 			Offset = new Vector2Int(0, 0),
-			FalloffModifier = 0.5f
+			FalloffModifier = 0.25f
+		});*/
+
+		register.AddKey("hgm:overworld_terrain_landscaper", () => new OverworldTerrainLandscaper
+		{
+			DeepWater = OverworldDeepWater.Get(),
+			DeepWaterHeight = 0.25f,
+
+			ShallowWater = OverworldShallowWater.Get(),
+			ShallowWaterHeight = 0.35f,
+
+			Land = OverworldLand.Get(),
+			LandHeight = 0.65f,
+
+			Mountain = OverworldMountain.Get(),
+			MountainHeight = 0.75f,
+
+			TallMountain = OverworldTallMountain.Get(),
+			TallMountainHeight = 1.0f,
+
+			Scale = 0.25f,
+			Octaves = 5,
+			Frequency = 3.5f,
+			Lacunarity = 2.5f,
+			Offset = new Vector2Int(0, 0),
+			FalloffModifier = 0.25f
 		});
 
 		OverworldTerrainLandscaper = register.MakeReference("hgm:overworld_terrain_landscaper");

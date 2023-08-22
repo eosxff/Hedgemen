@@ -14,6 +14,7 @@ using Petal.Framework;
 using Petal.Framework.EC;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
+using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util.Coroutines;
 
@@ -54,8 +55,8 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 		var map = cartographer.Generate(new CartographyOptions
 		{
 			MapDimensions = mapDimensions,
-			//Seed = new Random().Next(int.MaxValue)
-			Seed = 1025
+			Seed = new Random().Next(int.MaxValue)
+			//Seed = 1025
 		});
 
 		stopwatch.Stop();
@@ -103,7 +104,8 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 			Game.Scene.Root.Add(new Image
 			{
 				Texture = _mapTexture,
-				Bounds = new Rectangle(128, 0, 256, 256)
+				Bounds = new Rectangle(128, 0, 360, 360),
+				Anchor = Anchor.TopRight
 			});
 		}
 	}
