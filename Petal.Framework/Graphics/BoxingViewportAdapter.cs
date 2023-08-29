@@ -63,7 +63,7 @@ public class BoxingViewportAdapter : ScalingViewportAdapter
 		OnClientSizeChanged(this, EventArgs.Empty);
 	}
 
-	public override Point PointToScreen(int x, int y)
+	public override Vector2 PointToScreen(float x, float y)
 	{
 		var viewport = GraphicsDevice.Viewport;
 		return base.PointToScreen(x - viewport.X, y - viewport.Y);

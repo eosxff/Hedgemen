@@ -48,13 +48,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 	protected override void PrePetalModLoaderModSetupPhase(ModLoaderSetupContext context)
 	{
-		var logger = Game.Logger;
 
-		logger.Debug("I");
-		logger.Info("Love");
-		logger.Warn("All");
-		logger.Error("These");
-		logger.Critical("Colours");
 	}
 
 	protected override void Setup(ModLoaderSetupContext context)

@@ -142,7 +142,7 @@ public class Scene : IDisposable
 
 	private Vector2 TransformCursorPosition(Vector2 position)
 	{
-		var point = ViewportAdapter.PointToScreen((int)position.X, (int)position.Y);
+		var point = ViewportAdapter.PointToScreen(position.X, position.Y);
 		return new Vector2(point.X, point.Y);
 	}
 

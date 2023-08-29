@@ -25,7 +25,8 @@ public static class MainMenuSceneFactory
 			ViewportAdapter = new BoxingViewportAdapter(
 				hedgemen.GraphicsDevice,
 				hedgemen.Window,
-				new Vector2Int(640, 360))
+				//new Vector2Int(640, 360))
+				new Vector2Int(320, 180))
 		};
 
 		scene.Root.Add(new Background
@@ -36,16 +37,16 @@ public static class MainMenuSceneFactory
 		scene.Root.Add(new Text
 		{
 			Font = scene.Skin.Font.LargeFont,
-			Bounds = new Rectangle(32, 32, 64, 24),
+			Bounds = new Rectangle(16, 16, 32, 12),
 			Color = Color.White,
 			Message = "Hedgemen!",
-			Scale = 0.75f
+			Scale = 0.375f
 		});
 
 		var startButton = scene.Root.Add(new Button(scene.Skin)
 		{
 			Anchor = Anchor.CenterLeft,
-			Bounds = new Rectangle(32, -50, 128, 42)
+			Bounds = new Rectangle(16, -25, 64, 21)
 		});
 
 		startButton.Add(new Text
@@ -53,13 +54,13 @@ public static class MainMenuSceneFactory
 			Anchor = Anchor.Center,
 			Font = scene.Skin.Font.MediumFont,
 			Message = "Singleplayer",
-			Scale = 0.5f
+			Scale = 0.25f
 		});
 
 		var exitButton = scene.Root.Add(new Button(scene.Skin)
 		{
 			Anchor = Anchor.CenterLeft,
-			Bounds = new Rectangle(32, 0, 128, 42)
+			Bounds = new Rectangle(16, 0, 64, 21)
 		});
 
 		exitButton.OnMousePressed += (sender, args) =>
@@ -72,7 +73,7 @@ public static class MainMenuSceneFactory
 			Anchor = Anchor.Center,
 			Font = scene.Skin.Font.MediumFont,
 			Message = "Exit",
-			Scale = 0.5f
+			Scale = 0.25f
 		});
 
 		return scene;

@@ -14,56 +14,56 @@ public struct NinePatch
 		get;
 		init;
 	}
-	
+
 	[JsonPropertyName("top"), JsonInclude]
 	public required Rectangle Top
 	{
 		get;
 		init;
 	}
-	
+
 	[JsonPropertyName("top_right"), JsonInclude]
 	public required Rectangle TopRight
 	{
 		get;
 		init;
 	}
-	
+
 	[JsonPropertyName("left"), JsonInclude]
 	public required Rectangle Left
 	{
 		get;
 		init;
 	}
-	
+
 	[JsonPropertyName("center"), JsonInclude]
 	public required Rectangle Center
 	{
 		get;
 		init;
 	}
-	
+
 	[JsonPropertyName("right"), JsonInclude]
 	public required Rectangle Right
 	{
 		get;
 		init;
 	}
-	
+
 	[JsonPropertyName("bottom_left"), JsonInclude]
 	public required Rectangle BottomLeft
 	{
 		get;
 		init;
 	}
-	
+
 	[JsonPropertyName("bottom"), JsonInclude]
 	public required Rectangle Bottom
 	{
 		get;
 		init;
 	}
-	
+
 	[JsonPropertyName("bottom_right"), JsonInclude]
 	public required Rectangle BottomRight
 	{

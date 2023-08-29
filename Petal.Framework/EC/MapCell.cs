@@ -220,7 +220,7 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 		{
 			foreach (var element in dataList)
 			{
-				bool found = element.ReadData<CellComponent>(out var component);
+				bool found = element.InstantiateData<CellComponent>(out var component);
 
 				if (found)
 					AddComponent(component);

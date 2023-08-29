@@ -99,7 +99,7 @@ public sealed class HedgemenContent
 
 		var manifestStorage = JsonSerializer.Deserialize(
 			file.ReadString(Encoding.UTF8),
-			DataStorageJsonTypeInfo.Default.DataStorage);
+			DataStorage.JsonTypeInfo);
 
 		var manifest = new AssetManifest(manifestStorage);
 		manifest.ForwardToRegister(registers.Assets, assetLoader);
@@ -146,57 +146,34 @@ public sealed class HedgemenContent
 	{
 		var register = registers.Landscapers;
 
-		/*register.AddKey("hgm:overworld_terrain_landscaper", () => new OverworldTerrainLandscaper
+		var overworldTerrainLandscaperName = new NamespacedString("hgm:overworld_terrain_landscaper");
+
+		register.AddKey(overworldTerrainLandscaperName, () => new OverworldTerrainLandscaper
 		{
 			DeepWater = OverworldDeepWater.Get(),
-			DeepWaterHeight = 0.1f,
+			DeepWaterHeight = 0.5f,
 
 			ShallowWater = OverworldShallowWater.Get(),
-			ShallowWaterHeight = 0.2f,
+			ShallowWaterHeight = 0.58f,
 
 			Land = OverworldLand.Get(),
-			LandHeight = 0.45f,
+			LandHeight = 0.75f,
 
 			Mountain = OverworldMountain.Get(),
-			MountainHeight = 0.75f,
+			MountainHeight = 0.85f,
 
 			TallMountain = OverworldTallMountain.Get(),
 			TallMountainHeight = 1.0f,
 
-			Scale = 0.75f,
-			Octaves = 6,
-			Frequency = 3.5f,
-			Lacunarity = 3.0f,
-			Offset = new Vector2Int(0, 0),
-			FalloffModifier = 0.25f
-		});*/
-
-		register.AddKey("hgm:overworld_terrain_landscaper", () => new OverworldTerrainLandscaper
-		{
-			DeepWater = OverworldDeepWater.Get(),
-			DeepWaterHeight = 0.25f,
-
-			ShallowWater = OverworldShallowWater.Get(),
-			ShallowWaterHeight = 0.35f,
-
-			Land = OverworldLand.Get(),
-			LandHeight = 0.65f,
-
-			Mountain = OverworldMountain.Get(),
-			MountainHeight = 0.75f,
-
-			TallMountain = OverworldTallMountain.Get(),
-			TallMountainHeight = 1.0f,
-
-			Scale = 0.25f,
+			Scale = 50.0f,
 			Octaves = 5,
-			Frequency = 3.5f,
-			Lacunarity = 2.5f,
+			Frequency = 2.5f,
+			Lacunarity = 2.75f,
 			Offset = new Vector2Int(0, 0),
-			FalloffModifier = 0.25f
+			FalloffModifier = 0.0f
 		});
 
-		OverworldTerrainLandscaper = register.MakeReference("hgm:overworld_terrain_landscaper");
+		OverworldTerrainLandscaper = register.MakeReference(overworldTerrainLandscaperName);
 	}
 
 	private void RegisterCartographers(HedgemenRegisters registers)

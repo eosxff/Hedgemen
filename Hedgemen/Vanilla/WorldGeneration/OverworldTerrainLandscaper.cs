@@ -27,7 +27,7 @@ public sealed class OverworldTerrainLandscaper : ILandscaper
 	public required Supplier<CellComponent> TallMountain;
 	public required float TallMountainHeight;
 
-	public required float Scale;
+	public required float Scale; // currently does nothing
 	public required int Octaves;
 	public required float Frequency;
 	public required float Lacunarity;
@@ -39,10 +39,13 @@ public sealed class OverworldTerrainLandscaper : ILandscaper
 		var noiseMap = GenerateNoiseMap(options);
 		NormalizeNoiseMap(noiseMap, options);
 
-		var falloffMap = GenerateFalloffMap(options);
-		ApplyFalloffMap(noiseMap, falloffMap, options);
-
-		//NormalizeNoiseMap(noiseMap, options);
+		// a falloffmodifier of 0 would be pointless. a falloffmodifier of <0 would be fucking shitfucked stupid
+		if(FalloffModifier > 0.0f)
+		{
+			var falloffMap = GenerateFalloffMap(options);
+			ApplyFalloffMap(noiseMap, falloffMap, options);
+			//NormalizeNoiseMap(noiseMap, options);
+		}
 
 		cells.Populate(() => new MapCell());
 		AddPerlinComponents(cells, noiseMap, options);
@@ -100,7 +103,7 @@ public sealed class OverworldTerrainLandscaper : ILandscaper
 		var noiseMap = new Map<float>(width, height);
 
 		var noiseGen = new FastNoiseLite(options.Seed);
-		noiseGen.SetFractalType(FastNoiseLite.FractalType.Ridged);
+		noiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
 		noiseGen.SetFractalLacunarity(Lacunarity);
 		noiseGen.SetFractalOctaves(Octaves);
 		noiseGen.SetFrequency(Frequency);
@@ -161,19 +164,13 @@ public sealed class OverworldTerrainLandscaper : ILandscaper
 				float xx = x / (float)width * 2 - 1;
 				float yy = y / (float)height * 2 - 1;
 
-				float value = Math.Max(Math.Abs(xx), Math.Abs(yy)) * FalloffModifier;
+				float value = Math.Max(Math.Abs(xx), Math.Abs(yy));
 
-				falloffMap[x, y] = value;
-				//falloffMap[x, y] = Bias(value, 2.5f, 1.0f);
+				falloffMap[x, y] = value * FalloffModifier;
 			}
 		}
 
 		return falloffMap;
-	}
-
-	private static float Bias(float value, float a, float b)
-	{
-		return (float)(Math.Pow(value, a) / (Math.Pow(value, a) + Math.Pow(b - b * value, a)));
 	}
 
 	private void ApplyFalloffMap(Map<float> noiseMap, Map<float> falloffMap, CartographyOptions options)
@@ -192,41 +189,12 @@ public sealed class OverworldTerrainLandscaper : ILandscaper
 
 	private float GetNoise(int x, int y, FastNoiseLite noiseGen, CartographyOptions options)
 	{
-		/*int width = options.MapDimensions.X;
-		int height = options.MapDimensions.Y;
-
-		float noise = 0.0f;
-		float amplitude = 1.0f;
-		float frequency = 1.0f;
-
-		for (int i = 0; i < Octaves; ++i)
-		{
-			float sampleX = (x - width / 2.0f) / Scale * frequency + Offset.X;
-			float sampleY = (y - height / 2.0f) / Scale * frequency + Offset.Y;
-			var sample = ToCylinderCoordinates(new Vector2(sampleX, sampleY), options);
-
-			noise += noiseGen.GetNoise(sample.X, sample.Y, sample.Z) * amplitude;
-
-			frequency *= Lacunarity;
-			amplitude *= Persistence;
-		}
-
-		return noise;*/
-
-		int width = options.MapDimensions.X;
-		int height = options.MapDimensions.Y;
 		float noise = 0.0f;
 
 		for (int i = 0; i < Octaves; ++i)
 		{
-			//float sampleX = (x - width / 2.0f) / Scale + Offset.X;
-			//float sampleY = (y - height / 2.0f) / Scale + Offset.Y;
-			//var sample = ToCylinderCoordinates(new Vector2(sampleX, sampleY), options);
-			//var sample = ToCylinderCoordinates(new Vector2(x * Scale + Offset.X, y * Scale + Offset.Y), options);
-			var sample = ToCylinderCoordinates(new Vector2(x, y), options);
-
-
-			noise += noiseGen.GetNoise(sample.X, sample.Y, sample.Z);
+			var sample = ToCylinderCoordinates(new Vector2(x + Offset.X, y + Offset.Y), options);
+			noise += noiseGen.GetNoise(sample.X, sample.Y, sample.Z) * Scale; // scale gets normalized anyways
 		}
 
 		return noise;

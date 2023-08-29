@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Petal.Framework.Util;
 
 namespace Petal.Framework.Persistence;
@@ -13,6 +14,12 @@ namespace Petal.Framework.Persistence;
 [Serializable]
 public sealed class DataStorage
 {
+	public static JsonTypeInfo<DataStorage> JsonTypeInfo =>
+		DataStorageJsonTypeInfo.Default.DataStorage;
+
+	private static JsonTypeInfo<DataStorageInstantiateData> InstantiateDataJsonTypeInfo =>
+		DataStorageInstantiateDataJsonTypeInfo.Default.DataStorageInstantiateData;
+
 	private static readonly Dictionary<string, Assembly> Assemblies = new();
 
 	private static JsonSerializerOptions DefaultJsonOptions
@@ -25,7 +32,7 @@ public sealed class DataStorage
 
 	public static DataStorage FromJson(JsonElement element)
 	{
-		var storage = element.Deserialize(DataStorageJsonTypeInfo.Default.DataStorage);
+		var storage = element.Deserialize(JsonTypeInfo);
 		PetalExceptions.ThrowIfNull(storage);
 		return storage;
 	}
@@ -33,7 +40,7 @@ public sealed class DataStorage
 	public static DataStorage FromJson(string json)
 	{
 		PetalExceptions.ThrowIfNullOrEmpty(json, nameof(json));
-		var storage = JsonSerializer.Deserialize(json, DataStorageJsonTypeInfo.Default.DataStorage);
+		var storage = JsonSerializer.Deserialize(json, JsonTypeInfo);
 		PetalExceptions.ThrowIfNull(storage);
 		return storage;
 	}
@@ -86,7 +93,7 @@ public sealed class DataStorage
 		return false;
 	}
 
-	public T? ReadData<T>() where T : IDataStorageHandler
+	public T? InstantiateData<T>() where T : IDataStorageHandler
 	{
 		if (!HasInstantiateData)
 		{
@@ -97,7 +104,7 @@ public sealed class DataStorage
 		return field;
 	}
 
-	public bool ReadData<T>([NotNullWhen(true)] out T? field) where T : IDataStorageHandler
+	public bool InstantiateData<T>([NotNullWhen(true)] out T? field) where T : IDataStorageHandler
 	{
 		field = default;
 		return GetStorageHandler(this, out field);
@@ -155,7 +162,7 @@ public sealed class DataStorage
 		object? obj = assembly.CreateInstance(instantiateData.TypeFullName);
 
 		if (obj is not T tObj)
-			return true;
+			return false;
 
 		field = tObj;
 		field.ReadStorage(this);
@@ -170,8 +177,7 @@ public sealed class DataStorage
 		if (!ExtensionData.TryGetValue(InstantiateDataID.FullName, out var element))
 			return false;
 
-		instantiateData = element.Deserialize(
-			DataStorageInstantiateDataJsonTypeInfo.Default.DataStorageInstantiateData);
+		instantiateData = element.Deserialize(InstantiateDataJsonTypeInfo);
 
 		return true;
 	}
@@ -236,11 +242,14 @@ public sealed class DataStorage
 
 		var element = JsonSerializer.SerializeToElement(
 			instantiateData,
-			DataStorageInstantiateDataJsonTypeInfo.Default.DataStorageInstantiateData);
+			InstantiateDataJsonTypeInfo);
 
 		ExtensionData.Add(InstantiateDataID.FullName, element);
 	}
 
+	/// <summary>
+	/// Whether or not this instance represents an object itself and thus can be instantiated directly.
+	/// </summary>
 	public bool HasInstantiateData
 		=> ExtensionData.ContainsKey(InstantiateDataID.FullName);
 
@@ -262,14 +271,14 @@ public struct DataStorageInstantiateData
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(DataStorage))]
-public partial class DataStorageJsonTypeInfo : JsonSerializerContext
+internal partial class DataStorageJsonTypeInfo : JsonSerializerContext
 {
 
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(DataStorageInstantiateData))]
-public partial class DataStorageInstantiateDataJsonTypeInfo : JsonSerializerContext
+internal partial class DataStorageInstantiateDataJsonTypeInfo : JsonSerializerContext
 {
 
 }

@@ -46,11 +46,20 @@ public class PetalLogger : ILogger
 		}
 	}
 
+	/// <summary>
+	/// %L: log level,
+	/// %T: date time,
+	/// %c: class name,
+	/// %n: file name,
+	/// %m: method name,
+	/// %l: line number,
+	/// %M: message,
+	/// </summary>
 	public string Format
 	{
 		get;
 		set;
-	} = "[%T/%L] %M [%c:%m:%l]";
+	} = "[%T] %M [%c:%m:%l/%L]";
 
 	public string DateTimeFormat
 	{

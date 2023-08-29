@@ -19,15 +19,6 @@ public class Hedgemen : PetalGame
 	private const LogLevel ReleaseLogLevel = LogLevel.Warn;
 	public static readonly Version HedgemenVersion = typeof(Hedgemen).Assembly.GetName().Version!;
 
-	private static bool IsEmbedOnlyMode()
-	{
-#if EMBED_ONLY_MODE
-		return true;
-#else
-		return false;
-#endif
-	}
-
 	private static Hedgemen HedgemenInstance;
 
 	public static Hedgemen Instance
@@ -45,18 +36,18 @@ public class Hedgemen : PetalGame
 		private set;
 	}
 
+	public PetalModLoader ModLoader
+	{
+		get;
+		private set;
+	}
+
 	public Hedgemen()
 	{
 		HedgemenInstance = this;
 
 		OnDebugChanged += DebugChangedCallback;
 		AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-	}
-
-	public PetalModLoader ModLoader
-	{
-		get;
-		private set;
 	}
 
 	protected override void Setup()
@@ -100,16 +91,6 @@ public class Hedgemen : PetalGame
 		AppDomain.CurrentDomain.UnhandledException -= OnUnhandledException;
 	}
 
-	private void WriteLogFile()
-	{
-		var logFile = new FileInfo("log.txt");
-
-		if(logFile.Exists)
-			logFile.Delete();
-
-		logFile.WriteString(Logger.ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
-	}
-
 	protected override void Initialize()
 	{
 		base.Initialize();
@@ -118,15 +99,6 @@ public class Hedgemen : PetalGame
 		ModLoader = new PetalModLoader(Logger);
 
 		Setup();
-	}
-
-	private void DebugChangedCallback(object? sender, DebugChangedArgs args)
-	{
-		if (sender is PetalGame game)
-		{
-			Logger.LogLevel = args.IsDebug ? DebugLogLevel : ReleaseLogLevel;
-			Logger.Info($"Logger now set to {game.Logger.LogLevel.ToString()}.");
-		}
 	}
 
 	protected override ILogger GetInitialLogger()
@@ -202,9 +174,37 @@ public class Hedgemen : PetalGame
 		}
 	}
 
+	private void WriteLogFile()
+	{
+		var logFile = new FileInfo($"log-{DateTime.Now:yyyy-MM-dd-hh:mm:ss}.txt");
+
+		if(logFile.Exists)
+			logFile.Delete();
+
+		logFile.WriteString(Logger.ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
+	}
+
+	private void DebugChangedCallback(object? sender, DebugChangedArgs args)
+	{
+		if (sender is PetalGame game)
+		{
+			Logger.LogLevel = args.IsDebug ? DebugLogLevel : ReleaseLogLevel;
+			Logger.Info($"Logger now set to {game.Logger.LogLevel.ToString()}.");
+		}
+	}
+
 	private void OnUnhandledException(object? sender, UnhandledExceptionEventArgs args)
 	{
 		Logger.Critical($"Unhandled exception:\n{args.ExceptionObject}");
 		WriteLogFile();
+	}
+
+	private static bool IsEmbedOnlyMode()
+	{
+#if EMBED_ONLY_MODE
+		return true;
+#else
+		return false;
+#endif
 	}
 }

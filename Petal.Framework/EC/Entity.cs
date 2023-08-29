@@ -27,10 +27,11 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 	public async Task PropagateEventAsync(EntityEvent e)
 	{
 		if (!e.AllowAsync)
-			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously");
+			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously.");
 
 		e.Async = true;
 		await Task.Run(RunAsync);
+		return;
 
 		void RunAsync()
 		{
@@ -47,7 +48,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 	public async Task PropagateEventIfResponsiveAsync(EntityEvent e)
 	{
 		if (!e.AllowAsync)
-			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously");
+			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously.");
 
 		if (WillRespondToEvent(e.GetType()))
 			await PropagateEventAsync(e);
@@ -220,7 +221,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		{
 			foreach (var element in dataList)
 			{
-				bool found = element.ReadData<EntityComponent>(out var component);
+				bool found = element.InstantiateData<EntityComponent>(out var component);
 
 				if (found)
 					AddComponent(component);

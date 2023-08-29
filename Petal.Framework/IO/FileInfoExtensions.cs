@@ -76,8 +76,7 @@ public static class FileInfoExtensions
 
 		try
 		{
-			using var reader = new StreamReader(self.Open(fileMode), encoding);
-			return reader.ReadToEnd();
+			return ReadString(self, encoding, fileMode);
 		}
 
 		catch (Exception e)

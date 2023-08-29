@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Hgm.Components;
+using Hgm.EntityComponents;
 using Hgm.Vanilla.WorldGeneration;
 using Hgm.WorldGeneration;
 using Microsoft.Xna.Framework;
@@ -23,6 +24,17 @@ namespace Hgm.Vanilla;
 public sealed class HedgemenDebugMod : PetalEmbeddedMod
 {
 	public static readonly NamespacedString ModID = new("hgm_debug:mod");
+
+	protected override void PrePetalModLoaderModSetupPhase(ModLoaderSetupContext context)
+	{
+		var logger = context.Game.Logger;
+
+		logger.Debug("I");
+		logger.Info("Love");
+		logger.Warn("All");
+		logger.Error("These");
+		logger.Critical("Colours");
+	}
 
 	protected override void Setup(ModLoaderSetupContext context)
 	{
@@ -42,6 +54,15 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 		{
 			Game.Logger.Debug("Could not get overworld cartographer!");
 		}
+
+		var party = new Party();
+		party.Members.Add(new PartyMember());
+
+		var partyStorage = party.WriteStorage();
+
+		var newParty = new Party();
+		newParty.ReadStorage(partyStorage);
+		Game.Logger.Debug($"New party member: {newParty.Members[0]}");
 	}
 
 	private void GenerateMap(Cartographer cartographer)
@@ -86,7 +107,7 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 		mapTexture.SetData(colorMap);
 
 		mapTexture.SaveAsPng(
-			new FileInfo("map.png").Open(FileMode.OpenOrCreate),
+			new FileInfo($"map-{DateTime.Now:yyyy-MM-dd-hh:mm:ss}.png").Open(FileMode.OpenOrCreate),
 			mapDimensions.X,
 			mapDimensions.Y);
 
@@ -104,7 +125,7 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 			Game.Scene.Root.Add(new Image
 			{
 				Texture = _mapTexture,
-				Bounds = new Rectangle(128, 0, 360, 360),
+				Bounds = new Rectangle(0, 0, 180, 180),
 				Anchor = Anchor.TopRight
 			});
 		}

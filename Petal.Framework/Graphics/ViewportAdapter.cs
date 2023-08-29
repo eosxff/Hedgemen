@@ -18,7 +18,7 @@ public abstract class ViewportAdapter : IDisposable
 		=> _virtualResolution;
 
 	private Vector2Int _viewportResolution;
-	
+
 	public Vector2Int ViewportResolution
 	{
 		get => _viewportResolution;
@@ -36,7 +36,7 @@ public abstract class ViewportAdapter : IDisposable
 
 	public virtual Vector2 GetScale()
 		=> new(ViewportResolution.X, ViewportResolution.Y);
-	
+
 	protected ViewportAdapter(GraphicsDevice graphicsDevice)
 	{
 		GraphicsDevice = graphicsDevice;
@@ -62,16 +62,16 @@ public abstract class ViewportAdapter : IDisposable
 		return Matrix.Identity;
 	}
 
-	public Point PointToScreen(Point point)
+	public Vector2 PointToScreen(Point point)
 	{
 		return PointToScreen(point.X, point.Y);
 	}
 
-	public virtual Point PointToScreen(int x, int y)
+	public virtual Vector2 PointToScreen(float x, float y)
 	{
 		var scaleMatrix = GetScaleMatrix();
 		var inverseMatrix = Matrix.Invert(scaleMatrix);
-		return Vector2.Transform(new Vector2(x, y), inverseMatrix).ToPoint();
+		return Vector2.Transform(new Vector2(x, y), inverseMatrix);
 	}
 
 	public virtual void Reset()

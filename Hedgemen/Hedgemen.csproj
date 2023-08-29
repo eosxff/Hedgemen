@@ -33,6 +33,7 @@
 
     <ItemGroup>
       <Folder Include="Manifests\" />
+      <Folder Include="WorldGeneration\New\" />
     </ItemGroup>
 </Project>
 
