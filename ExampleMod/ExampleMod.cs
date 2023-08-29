@@ -16,7 +16,7 @@ public class ExampleMod : PetalMod
 
 	protected override void OnLoadedToPetalModLoader()
 	{
-		Game.Logger.Debug($"Loaded {nameof(ExampleMod)}");
+		Game.Logger.Info($"Loaded {nameof(ExampleMod)}");
 	}
 
 	protected override void PrePetalModLoaderModSetupPhase(ModLoaderSetupContext context)
@@ -36,9 +36,9 @@ public class ExampleMod : PetalMod
 		if (!Game.Registry.GetRegister("hgm:assets", out var assets))
 			return;
 
-		TestAsset = assets.CreateRegistryObject<Texture2D>("example:test_asset");
+		TestAsset = assets.MakeReference<Texture2D>("example:test_asset");
 
-		Game.Logger.Debug($"Test asset: {TestAsset.Key.ContentID}. Is valid: {TestAsset.HasValidKey}");
-		Game.Logger.Debug($"Finished forwarding assets register!");
+		Game.Logger.Info($"Test asset: {TestAsset.Key.ContentID}. Is valid: {TestAsset.HasValidKey}");
+		Game.Logger.Info($"Finished forwarding assets register!");
 	}
 }

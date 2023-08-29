@@ -11,7 +11,7 @@ namespace Petal.Framework;
 public struct NamespacedString
 {
 	public static string DefaultNamespace
-		=> "any";
+		=> "nil";
 	public static string DefaultName
 		=> "null";
 
@@ -28,14 +28,20 @@ public struct NamespacedString
 		return new NamespacedString(@namespace, DefaultName);
 	}
 
+	/// <summary>
+	/// A valid namespaced string has 4 rules: it must not be null, it must contain a single colon, it must have 0
+	/// spaces, and it must be a minimum of 3 characters (ex: a:b).
+	/// </summary>
+	/// <param name="str">the string to evaluate.</param>
+	/// <returns>if the provided <paramref name="str"/> is a valid namespaced string.</returns>
 	public static bool IsValidQualifiedString(string? str)
 	{
 		if (string.IsNullOrEmpty(str))
 			return false;
-		
+
 		bool correctColonOccurrences = str.Occurrences(':') == 1;
 		bool noSpaceOccurrences = str.Occurrences(' ') == 0;
-		bool hasMinimumThreeCharacters = str.Length >= 3;
+		bool hasMinimumThreeCharacters = str.Length >= 3; // "_:_"
 
 		return correctColonOccurrences && noSpaceOccurrences && hasMinimumThreeCharacters;
 	}
@@ -50,9 +56,7 @@ public struct NamespacedString
 	public NamespacedString(string fullyQualifiedString)
 	{
 		if (!IsValidQualifiedString(fullyQualifiedString))
-		{
 			throw new ArgumentException($"String '{fullyQualifiedString}' is not a valid namespaced string!");
-		}
 
 		string[] fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
 
@@ -66,6 +70,9 @@ public struct NamespacedString
 		_name = name;
 	}
 
+	/// <summary>
+	/// Pre-colon string. namespace:_
+	/// </summary>
 	[JsonIgnore]
 	public string Namespace
 	{
@@ -78,6 +85,9 @@ public struct NamespacedString
 		set => _namespace = value;
 	}
 
+	/// <summary>
+	/// Post-colon string. _:name
+	/// </summary>
 	[JsonIgnore]
 	public string Name
 	{
@@ -141,93 +151,6 @@ public struct NamespacedString
 		public override void Write(Utf8JsonWriter writer, NamespacedString value, JsonSerializerOptions options)
 		{
 			writer.WriteStringValue(value.FullName);
-		}
-	}
-
-	public class ListJsonConverter : JsonConverter<IList<NamespacedString>>
-	{
-		public override IList<NamespacedString> Read(
-			ref Utf8JsonReader reader,
-			Type typeToConvert,
-			JsonSerializerOptions options)
-		{
-			if (reader.TokenType != JsonTokenType.StartArray)
-				throw new JsonException();
-
-			var list = new List<NamespacedString>();
-
-			while (reader.Read())
-			{
-				if (reader.TokenType == JsonTokenType.EndArray)
-					return list;
-
-				if (reader.TokenType != JsonTokenType.String)
-					throw new JsonException();
-
-				string? namespacedString = reader.GetString();
-				
-				if(IsValidQualifiedString(namespacedString))
-					list.Add(new NamespacedString(namespacedString));
-			}
-		
-			return list;
-		}
-
-		public override void Write(Utf8JsonWriter writer, IList<NamespacedString> value, JsonSerializerOptions options)
-		{
-			writer.WriteStartArray();
-		
-			foreach (var namespacedString in value)
-			{
-				writer.WriteStringValue(namespacedString.FullName);
-			}
-		
-			writer.WriteEndArray();
-		}
-	}
-
-	public class ImmutableListJsonConverter : JsonConverter<IReadOnlyList<NamespacedString>>
-	{
-		public override IReadOnlyList<NamespacedString> Read(
-			ref Utf8JsonReader reader,
-			Type typeToConvert,
-			JsonSerializerOptions options)
-		{
-			if (reader.TokenType != JsonTokenType.StartArray)
-				throw new JsonException();
-
-			var list = new List<NamespacedString>();
-
-			while (reader.Read())
-			{
-				if (reader.TokenType == JsonTokenType.EndArray)
-					return list;
-
-				if (reader.TokenType != JsonTokenType.String)
-					throw new JsonException();
-
-				string? namespacedString = reader.GetString();
-				
-				if(IsValidQualifiedString(namespacedString))
-					list.Add(new NamespacedString(namespacedString));
-			}
-		
-			return list;
-		}
-
-		public override void Write(
-			Utf8JsonWriter writer,
-			IReadOnlyList<NamespacedString> value,
-			JsonSerializerOptions options)
-		{
-			writer.WriteStartArray();
-		
-			foreach (var namespacedString in value)
-			{
-				writer.WriteStringValue(namespacedString.FullName);
-			}
-		
-			writer.WriteEndArray();
 		}
 	}
 }

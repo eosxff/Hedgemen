@@ -8,7 +8,7 @@ public static class FileInfoExtensions
 {
 	public static string GetFullNameWithoutExtension(this FileInfo self)
 	{
-		return self.FullName[..self.FullName.LastIndexOf(self.Extension, StringComparison.InvariantCulture)];
+		return self.FullName.Substring(self.FullName.LastIndexOf(self.Extension, StringComparison.InvariantCulture));
 	}
 
 	public static bool WriteString(
@@ -59,7 +59,7 @@ public static class FileInfoExtensions
 
 		if (!self.Exists)
 			return string.Empty;
-		
+
 		using var reader = new StreamReader(self.Open(fileMode), encoding);
 		return reader.ReadToEnd();
 	}
@@ -76,10 +76,9 @@ public static class FileInfoExtensions
 
 		try
 		{
-			using var reader = new StreamReader(self.Open(fileMode), encoding);
-			return reader.ReadToEnd();
+			return ReadString(self, encoding, fileMode);
 		}
-		
+
 		catch (Exception e)
 		{
 			return string.Empty;
@@ -96,20 +95,16 @@ public static class FileInfoExtensions
 		stream.CopyTo(ms);
 		return ms.ToArray();
 	}
-	
+
 	public static byte[] ReadBytesSilently(
 		this FileInfo self,
 		FileMode fileMode = FileMode.Open)
 	{
 		try
 		{
-			using var stream = self.Open(fileMode);
-			using var ms = new MemoryStream();
-			
-			stream.CopyTo(ms);
-			return ms.ToArray();
+			return ReadBytes(self, fileMode);
 		}
-		
+
 		catch (Exception e)
 		{
 			return Array.Empty<byte>();

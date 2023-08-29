@@ -11,7 +11,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 
 	private delegate void EventHandleWrapped(CellEvent e);
 
-	private Dictionary<Type, EventHandleWrapped> _registeredEvents = new();
+	private readonly Dictionary<Type, EventHandleWrapped> _registeredEvents = new();
 
 	public MapCell Self
 	{
@@ -20,16 +20,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 	}
 
 	public IReadOnlyCollection<Type> GetRegisteredEvents()
-	{
-		var list = new List<Type>(_registeredEvents.Count);
-
-		foreach (var registeredEvent in _registeredEvents.Keys)
-		{
-			list.Add(registeredEvent);
-		}
-
-		return list;
-	}
+		=> _registeredEvents.Keys;
 
 	public void PropagateEvent(CellEvent e)
 	{
@@ -82,7 +73,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 
 	protected void RegisterEvent<TEvent>(EventHandle<TEvent> handle) where TEvent : CellEvent
 	{
-		_registeredEvents.Add(typeof(TEvent), args => handle((TEvent)args));
+		_registeredEvents.TryAdd(typeof(TEvent), args => handle((TEvent)args));
 	}
 
 	public virtual DataStorage WriteStorage()

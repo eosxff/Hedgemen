@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Petal.Framework;
+using Petal.Framework.EC;
 using Petal.Framework.Persistence;
 using Petal.Framework.Util;
 
-namespace Petal.Framework.EC;
-
-public class MapCell : IEntity<CellComponent, CellEvent>
+public sealed class MapCell : IEntity<CellComponent, CellEvent>
 {
-	private IDictionary<Type, CellComponent> _components = new Dictionary<Type, CellComponent>();
-	private IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
+	private readonly IDictionary<Type, CellComponent> _components = new Dictionary<Type, CellComponent>();
+	private readonly IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
 
 	public IReadOnlyCollection<CellComponent> Components
 		=> _components.Values as Dictionary<Type, CellComponent>.ValueCollection;
@@ -26,13 +26,31 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 
 	public async Task PropagateEventAsync(CellEvent e)
 	{
-		await Task.Run(() => PropagateEvent(e));
+		if (!e.AllowAsync)
+			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously");
+
+		e.Async = true;
+		await Task.Run(RunAsync);
+
+		void RunAsync()
+		{
+			PropagateEvent(e);
+		}
 	}
 
 	public void PropagateEventIfResponsive(CellEvent e)
 	{
 		if (WillRespondToEvent(e.GetType()))
 			PropagateEvent(e);
+	}
+
+	public async Task PropagateEventIfResponsiveAsync(CellEvent e)
+	{
+		if (!e.AllowAsync)
+			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously");
+
+		if (WillRespondToEvent(e.GetType()))
+			await PropagateEventAsync(e);
 	}
 
 	public bool WillRespondToEvent(Type eventType)
@@ -46,19 +64,21 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 		return WillRespondToEvent(typeof(T));
 	}
 
-	public void AddComponent(CellComponent component)
+	public bool AddComponent(CellComponent component)
 	{
 		if (component is null)
-			return;
+			return false;
 
 		var componentType = component.GetType();
 
 		if (_components.ContainsKey(componentType))
-			return;
+			return false;
 
 		_components.Add(componentType, component);
 		component.AddToMapCell(this);
 		AddRegisteredEventsFromComponent(component);
+
+		return true;
 	}
 
 	private void AddRegisteredEventsFromComponent(CellComponent component)
@@ -67,7 +87,7 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
+			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
 
 			switch (found)
 			{
@@ -88,30 +108,25 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
+			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
 
-			switch (found)
-			{
-				case true:
-					if (eventCount - 1 <= 0)
-						_componentEvents.Remove(registeredEvent);
-					else
-						_componentEvents[registeredEvent]--;
-					break;
+			if (!found)
+				continue;
 
-				case false:
-					break;
-			}
+			if (eventCount - 1 <= 0)
+				_componentEvents.Remove(registeredEvent);
+			else
+				_componentEvents[registeredEvent]--;
 		}
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public void AddComponent<T>() where T : CellComponent, new()
+	public bool AddComponent<T>() where T : CellComponent, new()
 	{
-		AddComponent(new T());
+		return AddComponent(new T());
 	}
 
-	public bool GetComponent<T>([NotNullWhen(true)] out T component) where T : CellComponent
+	public bool GetComponent<T>([NotNullWhen(true)] out T? component) where T : CellComponent
 	{
 		component = default;
 
@@ -205,7 +220,7 @@ public class MapCell : IEntity<CellComponent, CellEvent>
 		{
 			foreach (var element in dataList)
 			{
-				bool found = element.ReadData<CellComponent>(out var component);
+				bool found = element.InstantiateData<CellComponent>(out var component);
 
 				if (found)
 					AddComponent(component);

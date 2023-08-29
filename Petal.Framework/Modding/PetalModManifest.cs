@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Petal.Framework.Persistence;
 
 namespace Petal.Framework.Modding;
 
+/// <summary>
+/// Mod details.
+/// </summary>
 [Serializable]
 public sealed class PetalModManifest
 {
@@ -13,7 +17,7 @@ public sealed class PetalModManifest
 		var manifest = JsonSerializer.Deserialize<PetalModManifest>(json, JsonDeserializeOptions);
 		return manifest;
 	}
-	
+
 	public static JsonSerializerOptions JsonDeserializeOptions
 		=> new()
 		{
@@ -22,7 +26,7 @@ public sealed class PetalModManifest
 			WriteIndented = true,
 			Converters = { }
 		};
-	
+
 	[JsonPropertyName("schema_version")]
 	public int SchemaVersion
 	{
@@ -86,7 +90,7 @@ public sealed class PetalModManifest
 		get;
 		init;
 	} = string.Empty;
-	
+
 	[JsonPropertyName("mod_main")]
 	public string ModMain
 	{
@@ -115,28 +119,29 @@ public sealed class PetalModManifestContactInfo
 	{
 		get;
 		init;
-	} = PetalModLoader.PetalRepositoryLink;
+	} = PetalGame.PetalRepositoryLink;
 
 	[JsonPropertyName("source")]
 	public string Source
 	{
 		get;
 		init;
-	} = PetalModLoader.PetalRepositoryLink;
+	} = PetalGame.PetalRepositoryLink;
 }
 
 [Serializable]
 public sealed class PetalModManifestDependenciesInfo
 {
 	[JsonPropertyName("mods")]
-	public IReadOnlyList<string> Mods
+	[JsonConverter(typeof(ImmutableListJsonConverter<NamespacedString, NamespacedString.JsonConverter>))]
+	public IReadOnlyList<NamespacedString> Mods
 	{
 		get;
 		init;
-	} = new List<string>();
-	
+	} = new List<NamespacedString>();
+
 	[JsonPropertyName("incompatible_mods"), JsonInclude]
-	[JsonConverter(typeof(NamespacedString.ImmutableListJsonConverter))]
+	[JsonConverter(typeof(ImmutableListJsonConverter<NamespacedString, NamespacedString.JsonConverter>))]
 	public IReadOnlyList<NamespacedString> IncompatibleMods
 	{
 		get;
@@ -155,5 +160,5 @@ public sealed class PetalModManifestDependenciesInfo
 [JsonSerializable(typeof(PetalModManifest))]
 public partial class PetalModManifestJsc : JsonSerializerContext
 {
-	
+
 }

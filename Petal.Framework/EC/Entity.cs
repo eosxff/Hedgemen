@@ -10,8 +10,8 @@ namespace Petal.Framework.EC;
 
 public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 {
-	private IDictionary<Type, EntityComponent> _components = new Dictionary<Type, EntityComponent>();
-	private IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
+	private readonly IDictionary<Type, EntityComponent> _components = new Dictionary<Type, EntityComponent>();
+	private readonly IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
 
 	public IReadOnlyCollection<EntityComponent> Components
 		=> _components.Values as Dictionary<Type, EntityComponent>.ValueCollection;
@@ -26,13 +26,32 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 	public async Task PropagateEventAsync(EntityEvent e)
 	{
-		await Task.Run(() => PropagateEvent(e));
+		if (!e.AllowAsync)
+			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously.");
+
+		e.Async = true;
+		await Task.Run(RunAsync);
+		return;
+
+		void RunAsync()
+		{
+			PropagateEvent(e);
+		}
 	}
 
 	public void PropagateEventIfResponsive(EntityEvent e)
 	{
 		if (WillRespondToEvent(e.GetType()))
 			PropagateEvent(e);
+	}
+
+	public async Task PropagateEventIfResponsiveAsync(EntityEvent e)
+	{
+		if (!e.AllowAsync)
+			throw new InvalidOperationException($"{e.GetType().Name} can not be ran asynchronously.");
+
+		if (WillRespondToEvent(e.GetType()))
+			await PropagateEventAsync(e);
 	}
 
 	public bool WillRespondToEvent(Type eventType)
@@ -46,19 +65,21 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		return WillRespondToEvent(typeof(T));
 	}
 
-	public void AddComponent(EntityComponent component)
+	public bool AddComponent(EntityComponent component)
 	{
 		if (component is null)
-			return;
+			return true;
 
 		var componentType = component.GetType();
 
 		if (_components.ContainsKey(componentType))
-			return;
+			return true;
 
 		_components.Add(componentType, component);
 		component.AddToEntity(this);
 		AddRegisteredEventsFromComponent(component);
+
+		return true;
 	}
 
 	private void AddRegisteredEventsFromComponent(EntityComponent component)
@@ -67,7 +88,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
+			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
 
 			switch (found)
 			{
@@ -88,30 +109,25 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out var eventCount);
+			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
 
-			switch (found)
-			{
-				case true:
-					if (eventCount - 1 <= 0)
-						_componentEvents.Remove(registeredEvent);
-					else
-						_componentEvents[registeredEvent]--;
-					break;
+			if (!found)
+				continue;
 
-				case false:
-					break;
-			}
+			if (eventCount - 1 <= 0)
+				_componentEvents.Remove(registeredEvent);
+			else
+				_componentEvents[registeredEvent]--;
 		}
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public void AddComponent<T>() where T : EntityComponent, new()
+	public bool AddComponent<T>() where T : EntityComponent, new()
 	{
-		AddComponent(new T());
+		return AddComponent(new T());
 	}
 
-	public bool GetComponent<T>([NotNullWhen(true)] out T component) where T : EntityComponent
+	public bool GetComponent<T>([NotNullWhen(true)] out T? component) where T : EntityComponent
 	{
 		component = default;
 
@@ -205,7 +221,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		{
 			foreach (var element in dataList)
 			{
-				bool found = element.ReadData<EntityComponent>(out var component);
+				bool found = element.InstantiateData<EntityComponent>(out var component);
 
 				if (found)
 					AddComponent(component);

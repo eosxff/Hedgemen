@@ -22,10 +22,10 @@ public interface IEntity<TComponent, in TEvent> : IDataStorageHandler
 	public bool WillRespondToEvent(Type eventType);
 	public bool WillRespondToEvent<T>() where T : TEvent;
 
-	public void AddComponent(TComponent component);
-	public void AddComponent<T>() where T : TComponent, new();
+	public bool AddComponent(TComponent component);
+	public bool AddComponent<T>() where T : TComponent, new();
 
-	public bool GetComponent<T>([NotNullWhen(true)] out T component) where T : TComponent;
+	public bool GetComponent<T>([NotNullWhen(true)] out T? component) where T : TComponent;
 	public T? GetComponent<T>() where T : TComponent;
 
 	public bool RemoveComponent(TComponent component);

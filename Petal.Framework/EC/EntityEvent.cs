@@ -7,4 +7,13 @@ public abstract class EntityEvent : IEvent
 		get;
 		init;
 	}
+
+	public virtual bool AllowAsync
+		=> false;
+
+	public bool Async
+	{
+		get;
+		internal set;
+	} = false;
 }

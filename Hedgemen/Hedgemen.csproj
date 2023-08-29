@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <Version>0.1.0</Version>
-        <OutputType>Exe</OutputType>
+        <OutputType>WinExe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
         <LangVersion>11</LangVersion>
         <RootNamespace>Hgm</RootNamespace>
@@ -16,9 +15,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ContentWithTargetPath Include="res/**">
+        <ContentWithTargetPath Include="../Building/resources/**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-            <!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
             <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
         </ContentWithTargetPath>
     </ItemGroup>
@@ -32,4 +30,12 @@
             <HintPath>..\Petal.Framework\lib\FNA.dll</HintPath>
         </Reference>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Manifests\" />
+      <Folder Include="WorldGeneration\New\" />
+    </ItemGroup>
 </Project>
+
+<!--i'm bad at remembering things-->
+<!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->

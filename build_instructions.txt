@@ -1,3 +1,14 @@
-1: Install .Net 7 (https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
-2: Run the command 'dotnet publish -c Release' in the shell of your choice
-3: Go to the output folder (bin/Release/net7.0/publish)
+Prerequisites:
+	1: .Net 7 (https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+	2: Python version >= 3.11.2 (https://www.python.org/downloads/)
+
+2: Run the command 'dotnet publish -c Release' in the shell of your choice.
+3: Go to the output folder (build/publish).
+
+Notes:
+	- I use my own FNA natives, and may not always be up to date. If you would like to download your own visit:
+		FNA downloads page: https://fna-xna.github.io/download/
+		FNA natives archive file: https://fna.flibitijibibo.com/archive/fnalibs.tar.bz2
+
+Linux:
+	- If you are supplying/replacing the FNA+Native libraries, rename each "X.so.0" to "X.so".

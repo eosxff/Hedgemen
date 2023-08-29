@@ -1,20 +1,30 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Petal.Framework.Util.Logging;
 
 public class PetalLogger : ILogger
 {
-	private readonly StringBuilder _builder;
+	private readonly StringBuilder _builder = new();
+	private readonly BlockingCollection<LogEntry> _entries = new();
+
 	private LogLevel _logLevel = LogLevel.Off;
+
+	public event EventHandler<LogLevelChangedArgs> OnLogLevelChanged;
 
 	public PetalLogger()
 	{
-		_builder = new StringBuilder();
+		Task.Factory.StartNew(HandleEntries);
 	}
 
-	public event EventHandler<LogLevelChangedArgs> OnLogLevelChanged;
+	public bool LogInvalidLevelsSilently
+	{
+		get;
+		set;
+	} = true;
 
 	public LogLevel LogLevel
 	{
@@ -36,11 +46,20 @@ public class PetalLogger : ILogger
 		}
 	}
 
+	/// <summary>
+	/// %L: log level,
+	/// %T: date time,
+	/// %c: class name,
+	/// %n: file name,
+	/// %m: method name,
+	/// %l: line number,
+	/// %M: message,
+	/// </summary>
 	public string Format
 	{
 		get;
 		set;
-	} = "[%T] %M [%c:%m:%l/%S]";
+	} = "[%T] %M [%c:%m:%l/%L]";
 
 	public string DateTimeFormat
 	{
@@ -49,144 +68,101 @@ public class PetalLogger : ILogger
 	} = "HH:mm:ss";
 
 	public void Debug(string message)
-	{
-		if (!ValidLogLevel(LogLevel.Debug))
-			return;
+		=> HandleAddEntry(message, LogLevel.Debug, 2);
 
-		var stackFrame = new StackFrame(1, true);
-		Add(message, LogLevel.Debug, stackFrame);
-	}
-
-	public void Debug(object obj)
-	{
-		if (!ValidLogLevel(LogLevel.Debug))
-			return;
-
-		var stackFrame = new StackFrame(1, true);
-		Add(obj.ToString(), LogLevel.Debug, stackFrame);
-	}
+	public void Info(string message)
+		=> HandleAddEntry(message, LogLevel.Info, 2);
 
 	public void Warn(string message)
-	{
-		if (!ValidLogLevel(LogLevel.Warn))
-			return;
-
-		var stackFrame = new StackFrame(1, true);
-		Add(message, LogLevel.Warn, stackFrame);
-	}
-
-	public void Warn(object obj)
-	{
-		if (!ValidLogLevel(LogLevel.Warn))
-			return;
-
-		var stackFrame = new StackFrame(1, true);
-		Add(obj.ToString(), LogLevel.Warn, stackFrame);
-	}
+		=> HandleAddEntry(message, LogLevel.Warn, 2);
 
 	public void Error(string message)
-	{
-		if (!ValidLogLevel(LogLevel.Error))
-			return;
-
-		var stackFrame = new StackFrame(1, true);
-		Add(message, LogLevel.Error, stackFrame);
-	}
-
-	public void Error(object obj)
-	{
-		if (!ValidLogLevel(LogLevel.Error))
-			return;
-
-		var stackFrame = new StackFrame(1, true);
-		Add(obj.ToString(), LogLevel.Error, stackFrame);
-	}
+		=> HandleAddEntry(message, LogLevel.Error, 2);
 
 	public void Critical(string message)
-	{
-		if (!ValidLogLevel(LogLevel.Critical))
-			return;
-
-		var stackFrame = new StackFrame(1, true);
-		Add(message, LogLevel.Critical, stackFrame);
-	}
-
-	public void Critical(object obj)
-	{
-		if (!ValidLogLevel(LogLevel.Critical))
-			return;
-
-		var stackFrame = new StackFrame(1, true);
-		Add(obj.ToString(), LogLevel.Critical, stackFrame);
-	}
+		=> HandleAddEntry(message, LogLevel.Critical, 2);
 
 	public void Add(string message, LogLevel logLevel)
+		=> HandleAddEntry(message, logLevel, 2);
+
+	private void HandleAddEntry(string message, LogLevel level, int stackFrameSkipFrames)
 	{
-		if (!ValidLogLevel(logLevel))
+		// never log when it's supposed to be off
+		if (level == LogLevel.Off)
 			return;
 
-		var stackFrame = new StackFrame(1, true);
-		Add(message, logLevel, stackFrame);
-	}
+		bool silent = !ValidLogLevel(level);
 
-	public void Add(object obj, LogLevel logLevel)
-	{
-		if (!ValidLogLevel(logLevel))
+		if (!LogInvalidLevelsSilently && silent)
 			return;
 
-		var stackFrame = new StackFrame(1, true);
-		Add(obj.ToString(), logLevel, stackFrame);
-	}
-
-	private StackFrame GetStackFrame(int skipFrames)
-		=> new(skipFrames);
-
-	private void Add(string message, LogLevel logLevel, StackFrame stackFrame)
-	{
-		lock (_builder)
+		_entries.Add(new LogEntry
 		{
-			var oldConsoleColor = Console.ForegroundColor;
-			var consoleColor = ConsoleColor.White;
+			Message = message,
+			Level = level,
+			StackFrame = new StackFrame(stackFrameSkipFrames, true),
+			Silent = silent
+		});
+	}
 
-			switch (logLevel)
-			{
-				case LogLevel.Debug:
-					break;
-
-				case LogLevel.Warn:
-					consoleColor = ConsoleColor.Yellow;
-					break;
-
-				case LogLevel.Error:
-					consoleColor = ConsoleColor.Red;
-					break;
-
-				case LogLevel.Critical:
-					consoleColor = ConsoleColor.Blue;
-					break;
-			}
-
-			string dateTime = DateTime.Now.ToString(DateTimeFormat);
-			string? className = stackFrame.GetMethod() != null ? stackFrame.GetMethod()?.DeclaringType?.Name : "null";
-			string? fileName = stackFrame.GetFileName();
-			string? methodName = stackFrame.GetMethod() != null ? stackFrame.GetMethod()?.Name : "null";
-			int lineNumber = stackFrame.GetFileLineNumber();
-
-			string consoleMessage = Format
-				.Replace("%S", logLevel.ToString())
-				.Replace("%T", dateTime)
-				.Replace("%c", className)
-				.Replace("%n", fileName)
-				.Replace("%m", methodName)
-				.Replace("%l", lineNumber.ToString())
-				.Replace("%M", message);
-
-			Console.ForegroundColor = consoleColor;
-			Console.WriteLine(consoleMessage);
-			Console.ForegroundColor = oldConsoleColor;
-
-			_builder.Append(consoleMessage).Append('\n');
+	private void HandleEntries()
+	{
+		foreach (var entry in _entries.GetConsumingEnumerable())
+		{
+			Add(entry.Message, entry.Level, entry.StackFrame, entry.Silent);
 		}
+	}
+
+	private void Add(string message, LogLevel logLevel, StackFrame stackFrame, bool silent)
+	{
+		var oldConsoleColor = Console.ForegroundColor;
+		var consoleColor = ConsoleColor.White;
+
+		switch (logLevel)
+		{
+			case LogLevel.Debug:
+				consoleColor = ConsoleColor.Green;
+				break;
+
+			case LogLevel.Info:
+				break;
+
+			case LogLevel.Warn:
+				consoleColor = ConsoleColor.Yellow;
+				break;
+
+			case LogLevel.Error:
+				consoleColor = ConsoleColor.Red;
+				break;
+
+			case LogLevel.Critical:
+				consoleColor = ConsoleColor.Blue;
+				break;
+		}
+
+		string dateTime = DateTime.Now.ToString(DateTimeFormat);
+		string? className = stackFrame.GetMethod() != null ? stackFrame.GetMethod()?.DeclaringType?.Name : "null";
+		string? fileName = stackFrame.GetFileName();
+		string? methodName = stackFrame.GetMethod() != null ? stackFrame.GetMethod()?.Name : "null";
+		int lineNumber = stackFrame.GetFileLineNumber();
+
+		string fullMessage = Format
+			.Replace("%L", logLevel.ToString())
+			.Replace("%T", dateTime)
+			.Replace("%c", className)
+			.Replace("%n", fileName)
+			.Replace("%m", methodName)
+			.Replace("%l", lineNumber.ToString())
+			.Replace("%M", message);
+
+		if (!silent)
+		{
+			Console.ForegroundColor = consoleColor;
+			Console.WriteLine(fullMessage);
+			Console.ForegroundColor = oldConsoleColor;
+		}
+
+		_builder.Append(fullMessage).Append('\n');
 	}
 
 	private bool ValidLogLevel(LogLevel logLevel)
@@ -197,5 +173,32 @@ public class PetalLogger : ILogger
 	public override string ToString()
 	{
 		return _builder.ToString();
+	}
+
+	private readonly struct LogEntry
+	{
+		public required string Message
+		{
+			get;
+			init;
+		}
+
+		public required StackFrame StackFrame
+		{
+			get;
+			init;
+		}
+
+		public required LogLevel Level
+		{
+			get;
+			init;
+		}
+
+		public required bool Silent
+		{
+			get;
+			init;
+		}
 	}
 }

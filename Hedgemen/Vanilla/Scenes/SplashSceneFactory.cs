@@ -3,7 +3,7 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Content;
-using Petal.Framework.Graphics.Adapters;
+using Petal.Framework.Graphics;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
@@ -16,6 +16,7 @@ public static class SplashSceneFactory
 	{
 		var scene = new Scene(new Stage(), new Skin())
 		{
+			Name = "hgm:splash_scene",
 			BackgroundColor = Color.Black,
 			ViewportAdapter = new BoxingViewportAdapter(
 				hedgemen.GraphicsDevice,

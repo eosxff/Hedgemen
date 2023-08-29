@@ -1,9 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <Directives>
     <Application>
-        <Assembly Name="mscorlib" Dynamic="Required All" />
-        <Assembly Name="FNA" Dynamic="Required All" />
-        <Assembly Name="Petal.Framework" Dynamic="Required All" />
-        <Assembly Name="System" Dynamic="Required All" />
-        <Assembly Name="System.Text.Json" Dynamic="Required All" />
+        <!-- fuck this shit -->
+        <Assembly Name="Hedgemen.AoT" Dynamic="Required All" Serialized="Required Public" />
+        
+        <Assembly Name="mscorlib" Dynamic="Required All" Serialized="Required Public" />
+        <Assembly Name="System.Private.CoreLib" Dynamic="Required All" Serialized="Required Public">
+            <Type
+                    Name="System.Collections.Generic.List`1[[System.Int32,System.Private.CoreLib]]"
+                    Dynamic="Required All"
+                    DataContractSerializer="Required All" />
+        </Assembly>
+
+        <!--<Assembly Name="System.Private.CoreLib" Dynamic="Required All" Serialized="Required Public">
+            <Type
+                    Name="System.Collections.Generic.Dictionary"
+                    Dynamic="Required All"
+                    DataContractSerializer="Required All" />
+            <Type
+                    Name="System.Collections.Generic.List"
+                    Dynamic="Required All"
+                    DataContractSerializer="Required All" />
+        </Assembly>-->
+        
+        <Assembly Name="FNA" Dynamic="Required All" Serialized="Required Public" />
+        <Assembly Name="Petal.Framework" Dynamic="Required All" Serialized="Required Public" />
+        <Assembly Name="System" Dynamic="Required All" Serialized="Required Public" />
+        <Assembly Name="System.Text.Json" Dynamic="Required All" Serialized="Required Public">
+            <Type Name="System.Text.Json.JsonElement" Dynamic="Required All" />
+        </Assembly>
+
+        <!--<Namespace Name="System.Collections.Generic">
+            <TypeInstantiation
+                    Name="Dictionary"
+                    Dynamic="Required All"
+                    DataContractSerializer="Required All" />
+            <TypeInstantiation
+                    Name="List"
+                    Dynamic="Required All"
+                    DataContractSerializer="Required All" />
+        </Namespace>-->
+        <!--<TypeInstantiation Name="System.Collections.Generic.List"/>-->
     </Application>
 </Directives>

@@ -26,9 +26,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ContentWithTargetPath Include="res/**">
+        <ContentWithTargetPath Include="../Building/resources/**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-            <!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
             <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
         </ContentWithTargetPath>
     </ItemGroup>
@@ -46,4 +45,8 @@
             <HintPath>..\Petal.Framework\lib\FNA.dll</HintPath>
         </Reference>
     </ItemGroup>
+
+	<ItemGroup>
+		<IlcArg Include="--nometadatablocking" />
+	</ItemGroup>
 </Project>

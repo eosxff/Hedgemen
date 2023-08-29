@@ -5,12 +5,19 @@ using Petal.Framework.Assets;
 using Petal.Framework.Scenery;
 using Petal.Framework.Windowing;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Coroutines;
 using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework;
 
+/// <summary>
+/// Entry point for games using the petal framework. Sets up a window with a graphics device that runs a game loop
+/// calling <see cref="Update"/> and <see cref="Draw"/>
+/// </summary>
 public abstract class PetalGame : Game
 {
+	internal static string PetalRepositoryLink => "https://github.com/eosxff/Hedgemen";
+
 	public static readonly Version PetalVersion = typeof(PetalGame).Assembly.GetName().Version!;
 
 	private static PetalGame _instance;
@@ -87,13 +94,18 @@ public abstract class PetalGame : Game
 		private set;
 	}
 
+	public CoroutineManager Coroutines
+	{
+		get;
+	} = new();
+
+	/// <summary>
+	/// Changes the current scene. This will properly exit out and initialize the scenes accordingly.
+	/// </summary>
+	/// <param name="scene">new scene to change to.</param>
 	public void ChangeScenes(Scene scene)
 	{
-		if (scene is null)
-		{
-			Logger.Error("Can not change to null scene.");
-			return;
-		}
+		PetalExceptions.ThrowIfNull(scene);
 
 		if (Scene is not null)
 		{
@@ -117,11 +129,18 @@ public abstract class PetalGame : Game
 		});
 	}
 
+	/// <summary>
+	/// The current window mode used by the game. Will only apply changes if the new value is not the same
+	/// as the old value.
+	/// </summary>
 	public WindowMode WindowMode
 	{
 		get => _windowMode;
 		set
 		{
+			if (_windowMode == value)
+				return;
+
 			_windowMode = value;
 
 			switch (_windowMode)
@@ -148,7 +167,7 @@ public abstract class PetalGame : Game
 					Graphics.ToggleFullScreen();
 					break;
 
-				default:
+				default: // should never trip
 					throw new ArgumentOutOfRangeException(_windowMode.ToString());
 			}
 
@@ -156,12 +175,21 @@ public abstract class PetalGame : Game
 		}
 	}
 
+	/// <summary>
+	/// Creates a new instance of <see cref="PetalGame"/>. Note that this instance will not be properly initialized
+	/// until <see cref="PetalGame.Run"/> is called.
+	/// </summary>
 	protected PetalGame()
 	{
 		Graphics = new GraphicsDeviceManager(this);
 		Petal = this;
 	}
 
+	/// <summary>
+	/// Applies <see cref="GameSettings"/>. If debug mode changes, <see cref="PetalGame.OnDebugChanged"/> will
+	/// be called.
+	/// </summary>
+	/// <param name="settings">the settings to apply.</param>
 	public void ApplyGameSettings(GameSettings settings)
 	{
 		Graphics.PreferredBackBufferWidth = settings.WindowWidth;
@@ -177,7 +205,6 @@ public abstract class PetalGame : Game
 		if (settings.IsDebug != IsDebug)
 		{
 			IsDebug = settings.IsDebug;
-			Logger.LogLevel = LogLevel.Debug;
 
 			OnDebugChanged?.Invoke(this, new DebugChangedArgs
 			{
@@ -188,13 +215,17 @@ public abstract class PetalGame : Game
 		Graphics.ApplyChanges();
 	}
 
+	/// <summary>
+	/// Retrieves the current <see cref="GameSettings"/>.
+	/// </summary>
+	/// <returns>game settings currently used.</returns>
 	public GameSettings QueryGameSettings()
 	{
 		var settings = new GameSettings
 		{
 			WindowWidth = Graphics.PreferredBackBufferWidth,
 			WindowHeight = Graphics.PreferredBackBufferHeight,
-			WindowMode = WindowMode.Windowed,
+			WindowMode = WindowMode,
 			// don't use milliseconds (precision loss)
 			PreferredFramerate = (int)Math.Round(1000d / (TargetElapsedTime.Ticks / 10000d)),
 			Vsync = IsFixedTimeStep,
@@ -206,6 +237,9 @@ public abstract class PetalGame : Game
 		return settings;
 	}
 
+	/// <summary>
+	/// Post engine initialization game setup.
+	/// </summary>
 	protected virtual void Setup()
 	{
 
@@ -218,6 +252,10 @@ public abstract class PetalGame : Game
 		Petal = null;
 	}
 
+	/// <summary>
+	/// Engine initialization. If overriding, try not to make assumptions about object state, regardless of
+	/// whether or not the particular object is not annotated with '?'.
+	/// </summary>
 	protected override void Initialize()
 	{
 		base.Initialize();
@@ -237,6 +275,9 @@ public abstract class PetalGame : Game
 		Graphics.ApplyChanges();
 	}
 
+	/// <summary>
+	/// Used to apply settings on engine initialization.
+	/// </summary>
 	protected virtual GameSettings GetInitialGameSettings()
 	{
 		return new GameSettings
@@ -244,26 +285,39 @@ public abstract class PetalGame : Game
 			WindowWidth = 960,
 			WindowHeight = 540,
 			PreferredFramerate = 60,
-			Vsync = false,
+			Vsync = true,
 			WindowMode = WindowMode.Windowed,
 			IsMouseVisible = true
 		};
 	}
 
+	/// <summary>
+	/// Retrieves the default logger when initializing the game.
+	/// </summary>
+	/// <returns></returns>
 	protected virtual ILogger GetInitialLogger()
 		=> new PetalLogger
 		{
 			LogLevel = LogLevel.Off
 		};
 
+	/// <summary>
+	/// Called when the game is to perpetuate the draw loop.
+	/// </summary>
+	/// <param name="gameTime">the elapsed time since the previous draw call.</param>
 	protected override void Draw(GameTime gameTime)
 	{
 		Scene?.Draw(gameTime);
 		base.Draw(gameTime);
 	}
 
+	/// <summary>
+	/// Called when the game is to perpetuate the update loop.
+	/// </summary>
+	/// <param name="gameTime">the elapsed time since the previous update call.</param>
 	protected override void Update(GameTime gameTime)
 	{
+		Coroutines.Update(gameTime);
 		Scene?.Update(gameTime);
 		base.Update(gameTime);
 	}

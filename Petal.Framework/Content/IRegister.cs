@@ -1,6 +1,8 @@
-﻿namespace Petal.Framework.Content;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public delegate TContent ContentSupplier<out TContent>();
+namespace Petal.Framework.Content;
+
+public delegate T Supplier<out T>();
 
 public interface IRegister
 {
@@ -20,9 +22,10 @@ public interface IRegister
 	}
 
 	public bool AddKey(NamespacedString id, object content);
+	public bool GetKey(NamespacedString id, out ContentKey key);
 	public bool RemoveKey(NamespacedString id);
 	public bool ReplaceKey(NamespacedString id, object content);
 	public bool KeyExists(NamespacedString id);
 
-	public RegistryObject<TContent> CreateRegistryObject<TContent>(NamespacedString id);
+	public RegistryObject<TContent> MakeReference<TContent>(NamespacedString id);
 }

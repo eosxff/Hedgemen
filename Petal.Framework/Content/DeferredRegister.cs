@@ -39,17 +39,14 @@ public class DeferredRegister<TContent> : IDeferredRegister
 
 	public bool AddKey(NamespacedString id, TContent content)
 	{
-		lock (_content)
-		{
-			if (id == NamespacedString.Default)
-				return false;
+		if (id == NamespacedString.Default)
+			return false;
 
-			if (_content.ContainsKey(id))
-				return false;
+		if (_content.ContainsKey(id))
+			return false;
 
-			_content.Add(id, content);
-			return true;
-		}
+		_content.Add(id, content);
+		return true;
 	}
 
 	public bool AddKey(NamespacedString id, object content)
@@ -60,40 +57,11 @@ public class DeferredRegister<TContent> : IDeferredRegister
 		return AddKey(id, tContent);
 	}
 
-	public bool RemoveKey(NamespacedString id)
-	{
-		lock (_content)
-		{
-			bool removed = _content.Remove(id);
-			return removed;
-		}
-	}
-
-	public bool ReplaceKey(NamespacedString id, TContent content)
-	{
-		lock (_content)
-		{
-			bool replaced = _content.ChangeValue(id, content);
-			return replaced;
-		}
-	}
-
-	public bool ReplaceKey(NamespacedString id, object content)
-	{
-		if (content is not TContent tContent)
-			return false;
-
-		return ReplaceKey(id, tContent);
-	}
-
 	public void ForwardToRegister(IRegister register)
 	{
-		lock (_content)
+		foreach (var kvp in _content)
 		{
-			foreach (var kvp in _content)
-			{
-				register.AddKey(kvp.Key, kvp.Value);
-			}
+			register.AddKey(kvp.Key, kvp.Value);
 		}
 
 		OnForwarded?.Invoke(this, EventArgs.Empty);

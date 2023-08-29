@@ -69,7 +69,7 @@ public class Button : Node
 			SrcRect = textureRef.Get().Bounds
 		};
 
-		const int xPadding = 4, yPadding = 4;
+		const int xPadding = 4, yPadding = 4; // todo should not be defined here
 		const int leftPadding = xPadding, rightPadding = xPadding, topPadding = yPadding, bottomPadding = yPadding;
 
 		var sourcePatch = new NinePatch(

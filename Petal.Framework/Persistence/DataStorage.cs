@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Petal.Framework.Util;
 
 namespace Petal.Framework.Persistence;
@@ -12,6 +14,12 @@ namespace Petal.Framework.Persistence;
 [Serializable]
 public sealed class DataStorage
 {
+	public static JsonTypeInfo<DataStorage> JsonTypeInfo =>
+		DataStorageJsonTypeInfo.Default.DataStorage;
+
+	private static JsonTypeInfo<DataStorageInstantiateData> InstantiateDataJsonTypeInfo =>
+		DataStorageInstantiateDataJsonTypeInfo.Default.DataStorageInstantiateData;
+
 	private static readonly Dictionary<string, Assembly> Assemblies = new();
 
 	private static JsonSerializerOptions DefaultJsonOptions
@@ -22,28 +30,32 @@ public sealed class DataStorage
 			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
 		};
 
-	[JsonPropertyName("type_full_name"), JsonInclude]
-	public string? TypeFullName
+	public static DataStorage FromJson(JsonElement element)
+	{
+		var storage = element.Deserialize(JsonTypeInfo);
+		PetalExceptions.ThrowIfNull(storage);
+		return storage;
+	}
+
+	public static DataStorage FromJson(string json)
+	{
+		PetalExceptions.ThrowIfNullOrEmpty(json, nameof(json));
+		var storage = JsonSerializer.Deserialize(json, JsonTypeInfo);
+		PetalExceptions.ThrowIfNull(storage);
+		return storage;
+	}
+
+	public static DataStorage FromStream(Stream stream)
+	{
+		var reader = new StreamReader(stream);
+		return FromJson(reader.ReadToEnd());
+	}
+
+	[JsonExtensionData]
+	public Dictionary<string, JsonElement> ExtensionData
 	{
 		get;
 		set;
-	}
-
-	[JsonPropertyName("assembly_full_name"), JsonInclude]
-	public string? AssemblyFullName
-	{
-		get;
-		set;
-	}
-
-	public bool IsStorageHandler
-		=> !string.IsNullOrEmpty(TypeFullName) && !string.IsNullOrEmpty(AssemblyFullName);
-
-	[JsonInclude, JsonExtensionData]
-	public Dictionary<string, JsonElement> Fields
-	{
-		get;
-		private set;
 	} = new();
 
 	[RequiresUnreferencedCode("Use FromJson(string) instead if targeting ahead of time compilation.")]
@@ -53,18 +65,13 @@ public sealed class DataStorage
 		return JsonSerializer.Deserialize<DataStorage>(json, options);
 	}
 
-	public static DataStorage FromJson(string json)
-	{
-		return JsonSerializer.Deserialize(json, DataStorageJsc.Default.DataStorage);
-	}
-
 	public DataStorage()
 	{
 	}
 
 	public DataStorage(object? obj)
 	{
-		SetSelfData(obj);
+		WriteInstantiateData(obj);
 	}
 
 	public T? ReadData<T>(NamespacedString name)
@@ -73,12 +80,11 @@ public sealed class DataStorage
 		return field;
 	}
 
-	public bool ReadData<T>(NamespacedString name, [NotNullWhen(true)] out T field)
+	public bool ReadData<T>(NamespacedString name, [NotNullWhen(true)] out T? field)
 	{
 		field = default;
-		var genericType = typeof(T);
 
-		if (Fields.TryGetValue(name, out var element))
+		if (ExtensionData.TryGetValue(name, out var element))
 		{
 			field = element.Deserialize<T>(DefaultJsonOptions);
 			return field != null;
@@ -87,80 +93,21 @@ public sealed class DataStorage
 		return false;
 	}
 
-	public T? ReadData<T>() where T : IDataStorageHandler
+	public T? InstantiateData<T>() where T : IDataStorageHandler
 	{
-		if (!IsStorageHandler)
+		if (!HasInstantiateData)
 		{
-			throw new InvalidOperationException($"{nameof(DataStorage)} cannot be instantiated from itself." +
-			                                    $"IsStorageHandler returned false.");
+			throw new InvalidOperationException($"Storage does not have instantiate data.");
 		}
 
 		bool found = GetStorageHandler<T>(this, out var field);
 		return field;
 	}
 
-	public bool ReadData<T>([NotNullWhen(true)] out T field) where T : IDataStorageHandler
+	public bool InstantiateData<T>([NotNullWhen(true)] out T? field) where T : IDataStorageHandler
 	{
 		field = default;
 		return GetStorageHandler(this, out field);
-	}
-
-	private bool GetStorageHandler<T>(NamespacedString name, [NotNullWhen(true)] out T field)
-		where T : IDataStorageHandler
-	{
-		field = default;
-
-		if (!Fields.TryGetValue(name, out var element))
-			return false;
-
-		var record = element.Deserialize<DataStorage>(DefaultJsonOptions);
-
-		return GetStorageHandler(record, out field);
-	}
-
-	private bool GetStorageHandler<T>(DataStorage storage, [NotNullWhen(true)] out T field)
-		where T : IDataStorageHandler
-	{
-		field = default;
-
-		if (TypeFullName is null || AssemblyFullName is null)
-			return false;
-
-		if(!Assemblies.ContainsKey(AssemblyFullName))
-			RepopulateAssemblies();
-
-		bool found = Assemblies.TryGetValue(AssemblyFullName, out var assembly);
-
-		if (!found)
-			throw new TypeAccessException($"{TypeFullName} could not be found in the application.");
-
-		object obj = assembly.CreateInstance(TypeFullName);
-
-		if (obj is T tObj)
-		{
-			field = tObj;
-			field.ReadStorage(this);
-		}
-
-		return true;
-	}
-
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	private static void RepopulateAssemblies()
-	{
-		Assemblies.Clear();
-
-		var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-		foreach (var assembly in assemblies)
-			Assemblies.Add(assembly.FullName!, assembly);
-	}
-
-	public T? GetStorageHandler<T>(NamespacedString name)
-		where T : IDataStorageHandler
-	{
-		bool found = GetStorageHandler<T>(name, out var field);
-		return field;
 	}
 
 	public T ReadData<T>(NamespacedString name, T defaultValue)
@@ -181,35 +128,105 @@ public sealed class DataStorage
 	{
 		if (field is IDataStorageHandler serializableObject)
 		{
-			AddStorageHandler(name, serializableObject);
+			WriteDataHandler(name, serializableObject);
 			return;
 		}
 
 		var serializedField = JsonSerializer.SerializeToElement(field, DefaultJsonOptions);
-		Fields.TryAdd(name, serializedField);
+		ExtensionData.TryAdd(name, serializedField);
 	}
 
-	private void AddStorageHandler(NamespacedString name, IDataStorageHandler handler)
+	private bool GetStorageHandler<T>(NamespacedString name, [NotNullWhen(true)] out T? field)
+		where T : IDataStorageHandler
+	{
+		field = default;
+
+		if (!ExtensionData.TryGetValue(name.FullName, out var element))
+			return false;
+
+		var record = element.Deserialize<DataStorage>(DefaultJsonOptions);
+
+		return GetStorageHandler(record, out field);
+	}
+
+	private bool GetStorageHandler<T>(DataStorage storage, [NotNullWhen(true)] out T? field)
+		where T : IDataStorageHandler
+	{
+		field = default;
+
+		if (!GetInstantiateData(out var instantiateData))
+			return false;
+
+		var assembly = GetAssembly(instantiateData.AssemblyFullName);
+
+		object? obj = assembly.CreateInstance(instantiateData.TypeFullName);
+
+		if (obj is not T tObj)
+			return false;
+
+		field = tObj;
+		field.ReadStorage(this);
+
+		return true;
+	}
+
+	private bool GetInstantiateData(out DataStorageInstantiateData instantiateData)
+	{
+		instantiateData = default;
+
+		if (!ExtensionData.TryGetValue(InstantiateDataID.FullName, out var element))
+			return false;
+
+		instantiateData = element.Deserialize(InstantiateDataJsonTypeInfo);
+
+		return true;
+	}
+
+	private static Assembly GetAssembly(string assemblyFullName)
+	{
+		if(!Assemblies.ContainsKey(assemblyFullName))
+			RepopulateAssemblies();
+
+		bool found = Assemblies.TryGetValue(assemblyFullName, out var assembly);
+
+		if (!found)
+			throw new TypeAccessException($"{assemblyFullName} could not be found in the app domain.");
+
+		return assembly;
+	}
+
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	private static void RepopulateAssemblies()
+	{
+		Assemblies.Clear();
+
+		var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+		foreach (var assembly in assemblies)
+			Assemblies.Add(assembly.FullName!, assembly);
+	}
+
+	public T? GetStorageHandler<T>(NamespacedString name)
+		where T : IDataStorageHandler
+	{
+		bool found = GetStorageHandler<T>(name, out var field);
+		return field;
+	}
+
+	private void WriteDataHandler(NamespacedString name, IDataStorageHandler handler)
 	{
 		var fieldJsonElement =
 			JsonSerializer.SerializeToElement(handler.WriteStorage(), DefaultJsonOptions);
 
-		Fields.TryAdd(name, fieldJsonElement);
+		ExtensionData.TryAdd(name, fieldJsonElement);
 	}
 
-	public void ReplaceData(NamespacedString name, object field)
+	public void WriteInstantiateData(object obj)
 	{
-		if (!Fields.ContainsKey(name))
-			return;
+		PetalExceptions.ThrowIfNull(obj);
 
-		var fieldJsonElement = JsonSerializer.SerializeToElement(field, DefaultJsonOptions);
-		Fields.ChangeValue(name, fieldJsonElement);
-	}
-
-	public void SetSelfData(object? obj)
-	{
-		if (obj is null)
-			return;
+		if (HasInstantiateData)
+			throw new InvalidOperationException();
 
 		string? typeFullName = obj.GetType().FullName;
 		string? assemblyFullName = obj.GetType().Assembly.FullName;
@@ -217,14 +234,51 @@ public sealed class DataStorage
 		if (typeFullName is null || assemblyFullName is null)
 			return;
 
-		TypeFullName = typeFullName;
-		AssemblyFullName = assemblyFullName;
+		var instantiateData = new DataStorageInstantiateData
+		{
+			TypeFullName = typeFullName,
+			AssemblyFullName = assemblyFullName
+		};
+
+		var element = JsonSerializer.SerializeToElement(
+			instantiateData,
+			InstantiateDataJsonTypeInfo);
+
+		ExtensionData.Add(InstantiateDataID.FullName, element);
 	}
+
+	/// <summary>
+	/// Whether or not this instance represents an object itself and thus can be instantiated directly.
+	/// </summary>
+	public bool HasInstantiateData
+		=> ExtensionData.ContainsKey(InstantiateDataID.FullName);
+
+	private static NamespacedString InstantiateDataID => NamespacedString.FromDefaultNamespace("instantiate_data");
+}
+
+[Serializable]
+public struct DataStorageInstantiateData
+{
+	[JsonPropertyName("type_full_name"), JsonInclude]
+	public string? TypeFullName;
+
+	[JsonPropertyName("assembly_full_name"), JsonInclude]
+	public string? AssemblyFullName;
+
+	[JsonIgnore]
+	public bool IsValid => !string.IsNullOrEmpty(TypeFullName) || !string.IsNullOrEmpty(AssemblyFullName);
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(DataStorage))]
-public partial class DataStorageJsc : JsonSerializerContext
+internal partial class DataStorageJsonTypeInfo : JsonSerializerContext
+{
+
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(DataStorageInstantiateData))]
+internal partial class DataStorageInstantiateDataJsonTypeInfo : JsonSerializerContext
 {
 
 }

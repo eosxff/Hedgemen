@@ -1,0 +1,13 @@
+{
+	"window_width": 960,
+	"window_height": 540,
+	"window_mode": "windowed",
+
+	"preferred_framerate": 60,
+	"vsync": false,
+
+	"is_mouse_visible": true,
+	"is_window_user_resizable": false,
+
+	"is_debug": true
+}

@@ -36,20 +36,28 @@ public sealed class Register<TContent> : IRegister
 
 	public bool AddKey(NamespacedString id, TContent content)
 	{
-		lock (_content)
-		{
-			if (id == NamespacedString.Default)
-				return false;
+		if (id == NamespacedString.Default)
+			return false;
 
-			if (_content.ContainsKey(id))
-				return false;
+		if (_content.ContainsKey(id))
+			return false;
 
-			_content.Add(id, new ContentKey(id, this, content));
+		_content.Add(id, new ContentKey(id, this, content));
 
-			OnKeyAdded?.Invoke(this, EventArgs.Empty);
+		OnKeyAdded?.Invoke(this, EventArgs.Empty);
 
-			return true;
-		}
+		return true;
+	}
+
+	public bool GetKey(NamespacedString id, out ContentKey key)
+	{
+		key = default;
+
+		if (id == NamespacedString.Default || !_content.ContainsKey(id))
+			return false;
+
+		key = _content[id];
+		return true;
 	}
 
 	public bool AddKey(NamespacedString id, object content)
@@ -62,28 +70,22 @@ public sealed class Register<TContent> : IRegister
 
 	public bool RemoveKey(NamespacedString id)
 	{
-		lock (_content)
-		{
-			bool removed = _content.Remove(id);
+		bool removed = _content.Remove(id);
 
-			if(removed)
-				OnKeyRemoved?.Invoke(this, EventArgs.Empty);
+		if(removed)
+			OnKeyRemoved?.Invoke(this, EventArgs.Empty);
 
-			return removed;
-		}
+		return removed;
 	}
 
 	public bool ReplaceKey(NamespacedString id, TContent content)
 	{
-		lock (_content)
-		{
-			bool replaced = _content.ChangeValue(id, new ContentKey(id, this, content));
+		bool replaced = _content.ChangeValue(id, new ContentKey(id, this, content));
 
-			if(replaced)
-				OnKeyReplaced?.Invoke(this, EventArgs.Empty);
+		if(replaced)
+			OnKeyReplaced?.Invoke(this, EventArgs.Empty);
 
-			return replaced;
-		}
+		return replaced;
 	}
 
 	public bool ReplaceKey(NamespacedString id, object content)
@@ -96,22 +98,37 @@ public sealed class Register<TContent> : IRegister
 
 	public bool KeyExists(NamespacedString id)
 	{
-		lock (_content)
-		{
-			return _content.ContainsKey(id);
-		}
+		return _content.ContainsKey(id);
 	}
 
-	public RegistryObject<TContentLocal> CreateRegistryObject<TContentLocal>(NamespacedString id)
+	public RegistryObject<TContentLocal> MakeReference<TContentLocal>(NamespacedString id)
 	{
-		lock (_content)
+		if (_content.TryGetValue(id, out var key))
 		{
-			if (_content.TryGetValue(id, out var key))
-			{
-				return new RegistryObject<TContentLocal>(key);
-			}
-
-			return new RegistryObject<TContentLocal>(new ContentKey(id, this, null));
+			return new RegistryObject<TContentLocal>(key);
 		}
+
+		return new RegistryObject<TContentLocal>(new ContentKey(id, this, null));
+	}
+
+	public RegistryObject<TContent> MakeReference(NamespacedString id)
+	{
+		if (_content.TryGetValue(id, out var key))
+		{
+			return new RegistryObject<TContent>(key);
+		}
+
+		return new RegistryObject<TContent>(new ContentKey(id, this, null));
+	}
+
+	public RegistryObject<TDerivedContent> MakeDerivedReference<TDerivedContent>(NamespacedString id)
+		where TDerivedContent : TContent
+	{
+		if (_content.TryGetValue(id, out var key))
+		{
+			return new RegistryObject<TDerivedContent>(key);
+		}
+
+		return new RegistryObject<TDerivedContent>(new ContentKey(id, this, null));
 	}
 }

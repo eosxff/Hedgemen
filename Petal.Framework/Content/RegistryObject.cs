@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Petal.Framework.Content;
 
@@ -20,17 +21,32 @@ public sealed class RegistryObject<TContent>
 		Key = key;
 	}
 
-	public TContent? Get()
+	public TSuppliedContent? Supply<TSuppliedContent>()
 	{
-		object? obj = Key.Content;
-
-		if (obj is null)
-			return default;
-
-		return obj is not TContent tObj ? default : tObj;
+		bool success = Supply(out TSuppliedContent content);
+		return content;
 	}
 
-	public bool Get([NotNullWhen(true)] out TContent content)
+	public bool Supply<TSuppliedContent>([NotNullWhen(true)] out TSuppliedContent? suppliedContent)
+	{
+		suppliedContent = default;
+
+		bool success = GetAs(out Supplier<TSuppliedContent> content);
+
+		if (!success)
+			return false;
+
+		suppliedContent = content();
+		return true;
+	}
+
+	public TContent? Get()
+	{
+		bool success = Get(out var content);
+		return content;
+	}
+
+	public bool Get([NotNullWhen(true)] out TContent? content)
 	{
 		object? obj = Key.Content;
 
@@ -44,31 +60,30 @@ public sealed class RegistryObject<TContent>
 		return true;
 	}
 
-	public T? GetAs<T>() where T : TContent
+	public T? GetAs<T>()
 	{
-		var found = Get(out var item);
-
-		if (!found)
-			return default;
-
-		if (item is T tItem)
-			return tItem;
-
-		return default;
+		bool found = GetAs(out T item);
+		return item;
 	}
 
-	public bool GetAs<T>([NotNullWhen(true)] out T content) where T : TContent
+	public bool GetAs<T>([NotNullWhen(true)] out T? content)
 	{
 		content = default;
 
-		var found = Get(out var item);
+		bool found = Get(out var item);
 
 		if (!found)
 			return false;
 
-		if (item is T tItem)
-			content = tItem;
+		if (item is not T tItem)
+			return false;
 
+		content = tItem;
 		return true;
+	}
+
+	public RegistryObject<TBaseContent> ReferenceAs<TBaseContent>()
+	{
+		return new RegistryObject<TBaseContent>(Key);
 	}
 }

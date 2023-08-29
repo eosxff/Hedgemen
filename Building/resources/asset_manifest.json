@@ -1,0 +1,45 @@
+{
+	"nil:entries": [
+		{
+			"nil:name": "hgm:ui/skin/button_hover_texture",
+			"nil:path": "button_hover.png",
+			"nil:type": "texture"
+		},
+	
+		{
+			"nil:name": "hgm:ui/skin/button_normal_texture",
+			"nil:path": "button_normal.png",
+			"nil:type": "texture"
+		},
+	
+		{
+			"nil:name": "hgm:ui/skin/button_input_texture",
+			"nil:path": "button_input.png",
+			"nil:type": "texture"
+		},
+
+		{
+			"nil:name": "hgm:ui/splash_texture",
+			"nil:path": "splash.png",
+			"nil:type": "texture"
+		},
+	
+		{
+			"nil:name": "hgm:ui/small_font",
+			"nil:path": "pixelade_regular",
+			"nil:type": "font"
+		},
+	
+		{
+			"nil:name": "hgm:ui/medium_font",
+			"nil:path": "pixelade_regular_32",
+			"nil:type": "font"
+		},
+	
+		{
+			"nil:name": "hgm:ui/large_font",
+			"nil:path": "pixelade_regular_64",
+			"nil:type": "font"
+		}
+	]
+}

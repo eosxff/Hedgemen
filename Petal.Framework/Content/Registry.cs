@@ -6,7 +6,7 @@ using Petal.Framework.Util.Logging;
 namespace Petal.Framework.Content;
 
 /// <summary>
-/// Central depository for <see cref="IRegister"/>.
+/// Central depository for content registering.
 /// </summary>
 public sealed class Registry
 {
@@ -46,7 +46,7 @@ public sealed class Registry
 			return false;
 
 		_registers.Add(register.RegistryName, register);
-		Logger.Debug($"Added {register.RegistryName} to the registry.");
+		Logger.Info($"Added {register.RegistryName} to the registry.");
 
 		OnRegisterAdded?.Invoke(this, new RegisterAdded
 		{
@@ -64,7 +64,7 @@ public sealed class Registry
 	/// <returns>value indicating if the retrieval was a success.</returns>
 	public bool GetRegister(
 		NamespacedString id,
-		[NotNullWhen(true)] out IRegister register)
+		[NotNullWhen(true)] out IRegister? register)
 	{
 		register = default;
 
@@ -85,7 +85,7 @@ public sealed class Registry
 	/// to the desired type.</exception>
 	public bool GetRegister<TRegister>(
 		NamespacedString id,
-		[NotNullWhen(true)] out TRegister register) where TRegister : IRegister
+		[NotNullWhen(true)] out TRegister? register) where TRegister : IRegister
 	{
 		register = default;
 
