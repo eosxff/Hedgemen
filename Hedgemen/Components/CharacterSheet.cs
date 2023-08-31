@@ -61,7 +61,6 @@ public class CharacterSheet : EntityComponent
 		storage.WriteField("hgm:intelligence", Intelligence);
 		storage.WriteField("hgm:wisdom", Wisdom);
 		storage.WriteField("hgm:charisma", Charisma);
-
 		return storage;
 	}
 

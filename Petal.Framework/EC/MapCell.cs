@@ -31,6 +31,7 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 
 		e.Async = true;
 		await Task.Run(RunAsync);
+		return;
 
 		void RunAsync()
 		{
@@ -108,9 +109,7 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
-
-			if (!found)
+			if (!_componentEvents.TryGetValue(registeredEvent, out int eventCount))
 				continue;
 
 			if (eventCount - 1 <= 0)
@@ -130,13 +129,11 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 	{
 		component = default;
 
-		bool found = _components.TryGetValue(typeof(T), out var comp);
-
-		if (!found)
+		if (!_components.TryGetValue(typeof(T), out var comp))
 			return false;
 
-		if (comp is T compAsT)
-			component = compAsT;
+		if (comp is T compT)
+			component = compT;
 
 		return true;
 	}
@@ -144,7 +141,7 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)] // will this even inline?
 	public T? GetComponent<T>() where T : CellComponent
 	{
-		bool found = GetComponent<T>(out var component);
+		GetComponent<T>(out var component);
 		return component;
 	}
 
@@ -162,9 +159,7 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 
 	public bool RemoveComponent(Type componentType)
 	{
-		bool found = _components.TryGetValue(componentType, out var component);
-
-		if (!found)
+		if (!_components.TryGetValue(componentType, out var component))
 			return false;
 
 		return RemoveComponent(component, true);
@@ -216,9 +211,7 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 
 		foreach (var element in dataList)
 		{
-			bool found = element.InstantiateData<CellComponent>(out var component);
-
-			if (found)
+			if(element.InstantiateData<CellComponent>(out var component))
 				AddComponent(component);
 		}
 	}

@@ -109,9 +109,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
-
-			if (!found)
+			if (!_componentEvents.TryGetValue(registeredEvent, out int eventCount))
 				continue;
 
 			if (eventCount - 1 <= 0)
@@ -131,13 +129,11 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 	{
 		component = default;
 
-		bool found = _components.TryGetValue(typeof(T), out var comp);
-
-		if (!found)
+		if (!_components.TryGetValue(typeof(T), out var comp))
 			return false;
 
-		if (comp is T compAsT)
-			component = compAsT;
+		if (comp is T compT)
+			component = compT;
 
 		return true;
 	}
@@ -145,7 +141,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)] // will this even inline?
 	public T? GetComponent<T>() where T : EntityComponent
 	{
-		bool found = GetComponent<T>(out var component);
+		GetComponent<T>(out var component);
 		return component;
 	}
 
@@ -163,9 +159,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 	public bool RemoveComponent(Type componentType)
 	{
-		bool found = _components.TryGetValue(componentType, out var component);
-
-		if (!found)
+		if (!_components.TryGetValue(componentType, out var component))
 			return false;
 
 		return RemoveComponent(component, true);
@@ -218,9 +212,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 		foreach (var element in dataList)
 		{
-			bool found = element.InstantiateData<EntityComponent>(out var component);
-
-			if (found)
+			if(element.InstantiateData<EntityComponent>(out var component))
 				AddComponent(component);
 		}
 	}

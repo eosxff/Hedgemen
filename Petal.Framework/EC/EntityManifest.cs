@@ -12,8 +12,8 @@ public sealed class EntityManifest
 {
 	public static EntityManifest? FromJson(string json)
 	{
-		JsonData? jsonData = JsonSerializer.Deserialize(json, EntityManifestJsc.Default.JsonData);
-		return jsonData.HasValue ? jsonData.Value.Create() : null;
+		var jsonData = JsonSerializer.Deserialize(json, EntityManifestJsc.Default.JsonData);
+		return jsonData.Create();
 	}
 
 	public NamespacedString ContentID
