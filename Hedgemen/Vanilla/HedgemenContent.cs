@@ -99,7 +99,7 @@ public sealed class HedgemenContent
 
 		var manifestStorage = JsonSerializer.Deserialize(
 			file.ReadString(Encoding.UTF8),
-			DataStorage.JsonTypeInfo);
+			PersistentData.JsonTypeInfo);
 
 		var manifest = new AssetManifest(manifestStorage);
 		manifest.ForwardToRegister(registers.Assets, assetLoader);

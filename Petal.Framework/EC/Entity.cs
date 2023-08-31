@@ -197,35 +197,31 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		RemoveAllComponents();
 	}
 
-	public DataStorage WriteStorage()
+	public PersistentData WriteData()
 	{
-		var data = new DataStorage(this);
+		var data = new PersistentData(this);
 
-		var components = new List<DataStorage>(_components.Count);
+		var components = new List<PersistentData>(_components.Count);
 
 		foreach (var component in Components)
-		{
-			components.Add(component.WriteStorage());
-		}
+			components.Add(component.WriteData());
 
-		data.WriteData(NamespacedString.FromDefaultNamespace("components"), components);
+		data.WriteField("components", components);
 
 		return data;
 	}
 
-	public void ReadStorage(DataStorage storage)
+	public void ReadData(PersistentData data)
 	{
-		if (storage.ReadData(
-			    NamespacedString.FromDefaultNamespace("components"),
-			    out List<DataStorage> dataList))
-		{
-			foreach (var element in dataList)
-			{
-				bool found = element.InstantiateData<EntityComponent>(out var component);
+		if (!data.ReadField("components", out List<PersistentData> dataList))
+			return;
 
-				if (found)
-					AddComponent(component);
-			}
+		foreach (var element in dataList)
+		{
+			bool found = element.InstantiateData<EntityComponent>(out var component);
+
+			if (found)
+				AddComponent(component);
 		}
 	}
 }

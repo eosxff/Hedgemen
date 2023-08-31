@@ -52,26 +52,26 @@ public class CharacterSheet : EntityComponent
 			Strength += args.ChangeAmount;
 	}
 
-	public override DataStorage WriteStorage()
+	public override PersistentData WriteData()
 	{
-		var storage = base.WriteStorage();
-		storage.WriteData("hgm:strength", Strength);
-		storage.WriteData("hgm:dexterity", Dexterity);
-		storage.WriteData("hgm:constitution", Constitution);
-		storage.WriteData("hgm:intelligence", Intelligence);
-		storage.WriteData("hgm:wisdom", Wisdom);
-		storage.WriteData("hgm:charisma", Charisma);
+		var storage = base.WriteData();
+		storage.WriteField("hgm:strength", Strength);
+		storage.WriteField("hgm:dexterity", Dexterity);
+		storage.WriteField("hgm:constitution", Constitution);
+		storage.WriteField("hgm:intelligence", Intelligence);
+		storage.WriteField("hgm:wisdom", Wisdom);
+		storage.WriteField("hgm:charisma", Charisma);
 
 		return storage;
 	}
 
-	public override void ReadStorage(DataStorage storage)
+	public override void ReadData(PersistentData data)
 	{
-		Strength = storage.ReadData<int>("hgm:strength");
-		Dexterity = storage.ReadData<int>("hgm:dexterity");
-		Constitution = storage.ReadData<int>("hgm:constitution");
-		Intelligence = storage.ReadData<int>("hgm:intelligence");
-		Wisdom = storage.ReadData<int>("hgm:wisdom");
-		Charisma = storage.ReadData<int>("hgm:charisma");
+		Strength = data.ReadField<int>("hgm:strength");
+		Dexterity = data.ReadField<int>("hgm:dexterity");
+		Constitution = data.ReadField<int>("hgm:constitution");
+		Intelligence = data.ReadField<int>("hgm:intelligence");
+		Wisdom = data.ReadField<int>("hgm:wisdom");
+		Charisma = data.ReadField<int>("hgm:charisma");
 	}
 }

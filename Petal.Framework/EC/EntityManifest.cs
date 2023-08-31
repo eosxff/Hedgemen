@@ -22,11 +22,11 @@ public sealed class EntityManifest
 		set;
 	} = NamespacedString.Default;
 
-	public IReadOnlyDictionary<NamespacedString, DataStorage> Components
+	public IReadOnlyDictionary<NamespacedString, PersistentData> Components
 	{
 		get;
 		set;
-	} = new Dictionary<NamespacedString, DataStorage>();
+	} = new Dictionary<NamespacedString, PersistentData>();
 
 	[Serializable]
 	public struct JsonData
@@ -48,12 +48,12 @@ public sealed class EntityManifest
 
 		public EntityManifest Create()
 		{
-			var dictionary = new Dictionary<NamespacedString, DataStorage>(Components.Count);
+			var dictionary = new Dictionary<NamespacedString, PersistentData>(Components.Count);
 
 			foreach (var componentKvp in Components)
 			{
 				var entry = componentKvp.Value.Deserialize(
-					DataStorageJsonTypeInfo.Default.DataStorage);
+					PersistentDataJsonTypeInfo.Default.PersistentData);
 
 				dictionary.Add(componentKvp.Key, entry);
 			}
@@ -76,7 +76,7 @@ public sealed class EntityManifest
 			{
 				var entry = JsonSerializer.SerializeToElement(
 					component.Value,
-					DataStorageJsonTypeInfo.Default.DataStorage);
+					PersistentDataJsonTypeInfo.Default.PersistentData);
 
 				Components.Add(component.Key, entry);
 			}

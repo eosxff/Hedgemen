@@ -58,10 +58,10 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 		var party = new Party();
 		party.Members.Add(new PartyMember());
 
-		var partyStorage = party.WriteStorage();
+		var partyStorage = party.WriteData();
 
 		var newParty = new Party();
-		newParty.ReadStorage(partyStorage);
+		newParty.ReadData(partyStorage);
 		Game.Logger.Debug($"New party member: {newParty.Members[0]}");
 	}
 

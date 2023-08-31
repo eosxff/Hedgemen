@@ -6,7 +6,7 @@ using Petal.Framework.Persistence;
 
 namespace Petal.Framework.EC;
 
-public interface IEntity<TComponent, in TEvent> : IDataStorageHandler
+public interface IEntity<TComponent, in TEvent> : IPersistent
 	where TEvent : IEvent
 	where TComponent : IComponent<TEvent>
 {

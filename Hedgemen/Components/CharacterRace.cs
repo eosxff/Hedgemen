@@ -14,16 +14,16 @@ public class CharacterRace : EntityComponent
 		set;
 	} = "human";
 
-	public override DataStorage WriteStorage()
+	public override PersistentData WriteData()
 	{
-		var record = base.WriteStorage();
-		record.WriteData("hgm:race_name", RaceName);
+		var record = base.WriteData();
+		record.WriteField("hgm:race_name", RaceName);
 
 		return record;
 	}
 
-	public override void ReadStorage(DataStorage storage)
+	public override void ReadData(PersistentData data)
 	{
-		RaceName = storage.ReadData("hgm:race_name", "human");
+		RaceName = data.ReadField("hgm:race_name", "human");
 	}
 }

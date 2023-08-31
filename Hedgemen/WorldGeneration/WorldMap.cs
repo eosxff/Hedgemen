@@ -6,7 +6,7 @@ using Petal.Framework.Util;
 
 namespace Hgm.WorldGeneration;
 
-public class WorldMap : IDataStorageHandler
+public class WorldMap : IPersistent
 {
 	public Guid UniverseGuid
 	{
@@ -35,13 +35,13 @@ public class WorldMap : IDataStorageHandler
 
 	}
 
-	public DataStorage WriteStorage()
+	public PersistentData WriteData()
 	{
-		var storage = new DataStorage(this);
+		var storage = new PersistentData(this);
 		return storage;
 	}
 
-	public void ReadStorage(DataStorage storage)
+	public void ReadData(PersistentData data)
 	{
 
 	}

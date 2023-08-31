@@ -4,7 +4,7 @@ using Petal.Framework.Persistence;
 
 namespace Hgm.EntityComponents;
 
-public sealed class Party : IDataStorageHandler
+public sealed class Party : IPersistent
 {
 	private List<PartyMember> _members = new();
 
@@ -12,16 +12,16 @@ public sealed class Party : IDataStorageHandler
 	public List<PartyMember> Members
 		=> _members;
 
-	public DataStorage WriteStorage()
+	public PersistentData WriteData()
 	{
-		var storage = new DataStorage(this);
-		storage.WriteData("hgm:members", _members.WriteStorageList());
+		var storage = new PersistentData(this);
+		storage.WriteField("hgm:members", _members.WriteStorageList());
 		return storage;
 	}
 
-	public void ReadStorage(DataStorage storage)
+	public void ReadData(PersistentData data)
 	{
-		storage.ReadData("hgm:members", out var members, new List<DataStorage>());
+		data.ReadField("hgm:members", out var members, new List<PersistentData>());
 		_members = members.ReadStorageList<PartyMember>();
 	}
 }

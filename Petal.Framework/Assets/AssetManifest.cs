@@ -22,17 +22,17 @@ public class AssetManifest : IBankManifest
 
 	}
 
-	public AssetManifest(DataStorage storage)
+	public AssetManifest(PersistentData storage)
 	{
-		var entries = storage.ReadData<List<DataStorage>>("nil:entries");
+		var entries = storage.ReadField<List<PersistentData>>("entries");
 
 		foreach (var entryStorage in entries)
 		{
 			var entry = new AssetManifestEntry
 			{
-				Name = entryStorage.ReadData<string>("nil:name"),
-				Path = entryStorage.ReadData<string>("nil:path"),
-				Type = entryStorage.ReadData<AssetType>("nil:type"),
+				Name = entryStorage.ReadField<string>("name"),
+				Path = entryStorage.ReadField<string>("path"),
+				Type = entryStorage.ReadField<AssetType>("type"),
 			};
 
 			_entries.Add(entry);

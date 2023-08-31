@@ -9,7 +9,7 @@ namespace Hgm.Components;
 public sealed class PerlinGeneration : CellComponent
 {
 	private float _height = 0.0f;
-	
+
 	public float Height
 	{
 		get => _height;
@@ -20,22 +20,22 @@ public sealed class PerlinGeneration : CellComponent
 	{
 		RegisterEvent<SetHeightEvent>(SetHeight);
 	}
-	
+
 	private void SetHeight(SetHeightEvent e)
 	{
 		Height = e.Height;
 	}
 
-	public override DataStorage WriteStorage()
+	public override PersistentData WriteData()
 	{
-		var data = base.WriteStorage();
-		data.WriteData("hgm:perlin_height", Height);
+		var data = base.WriteData();
+		data.WriteField("hgm:perlin_height", Height);
 
 		return data;
 	}
 
-	public override void ReadStorage(DataStorage storage)
+	public override void ReadData(PersistentData data)
 	{
-		storage.ReadData("hgm:perlin_height", out _height, 0.0f);
+		data.ReadField("hgm:perlin_height", out _height, 0.0f);
 	}
 }
