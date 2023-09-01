@@ -58,11 +58,17 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 		var party = new Party();
 		party.Members.Add(new PartyMember());
 
-		var partyStorage = party.WriteData();
-
 		var newParty = new Party();
-		newParty.ReadData(partyStorage);
+		newParty.ReadData(party.WriteData());
 		Game.Logger.Debug($"New party member: {newParty.Members[0]}");
+
+		var campaign = new Campaign();
+		campaign.Settings.Mods.Add("hgm:mod");
+		campaign.Settings.Mods.Add("hgm_debug:mod");
+
+		var newCampaign = new Campaign();
+		newCampaign.ReadData(campaign.WriteData());
+		Game.Logger.Debug($"Campaign mods count: {newCampaign.Settings.Mods.Count}.");
 	}
 
 	private void GenerateMap(Cartographer cartographer)
@@ -157,7 +163,6 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 				IncompatibleMods = new List<NamespacedString>(),
 				Mods = new List<NamespacedString>()
 			},
-
 			ModFileDll = string.Empty,
 			ModMain = string.Empty,
 			IsOverhaul = false

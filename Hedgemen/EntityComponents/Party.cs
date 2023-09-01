@@ -15,13 +15,13 @@ public sealed class Party : IPersistent
 	public PersistentData WriteData()
 	{
 		var storage = new PersistentData(this);
-		storage.WriteField("hgm:members", _members.WriteStorageList());
+		storage.WriteField("hgm:members", _members.WritePersistentList());
 		return storage;
 	}
 
 	public void ReadData(PersistentData data)
 	{
 		data.ReadField("hgm:members", out var members, new List<PersistentData>());
-		_members = members.ReadStorageList<PartyMember>();
+		_members = members.ReadPersistentList<PartyMember>();
 	}
 }

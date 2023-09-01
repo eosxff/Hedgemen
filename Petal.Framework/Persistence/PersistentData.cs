@@ -17,9 +17,6 @@ public sealed class PersistentData
 	public static JsonTypeInfo<PersistentData> JsonTypeInfo =>
 		PersistentDataJsonTypeInfo.Default.PersistentData;
 
-	private static JsonTypeInfo<PersistentDataInstantiateData> InstantiateDataJsonTypeInfo =>
-		PersistentDataInstantiateDataJsonTypeInfo.Default.PersistentDataInstantiateData;
-
 	private static readonly Dictionary<string, Assembly> Assemblies = new();
 
 	private static JsonSerializerOptions DefaultJsonOptions
@@ -94,16 +91,16 @@ public sealed class PersistentData
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool ReadField<TField>(
 		NamespacedString name,
-		[NotNullWhen(true)]
+		[NotNullWhen(true), NotNullIfNotNull("defaultValue")]
 		out TField? field,
 		TField defaultValue = default)
 		=> ReadField(name.FullName, out field);
 
 	public bool ReadField<TField>(
 		string name,
-		[NotNullWhen(true)]
+		[NotNullWhen(true), NotNullIfNotNull(nameof(defaultValue))]
 		out TField? field,
-		TField defaultValue = default)
+		TField? defaultValue = default)
 	{
 		field = defaultValue;
 
@@ -118,7 +115,7 @@ public sealed class PersistentData
 				return false;
 
 			field = deserializedField;
-			ExtensionData[name] = field; // todo maybe caching reference types is a terrible idea
+			//ExtensionData[name] = field; // todo maybe caching reference types is a terrible idea
 			return true;
 		}
 
@@ -132,9 +129,31 @@ public sealed class PersistentData
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	[return: NotNullIfNotNull(nameof(defaultValue))]
+	public TData? ReadData<TData>(
+		NamespacedString name,
+		TData? defaultValue = default)
+		where TData : IPersistent
+	{
+		ReadData(name, out var data, defaultValue);
+		return data;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	[return: NotNullIfNotNull(nameof(defaultValue))]
+	public TData? ReadData<TData>(
+		string name,
+		TData? defaultValue = default)
+		where TData : IPersistent
+	{
+		ReadData(name, out var data, defaultValue);
+		return data;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool ReadData<TData>(
 		NamespacedString name,
-		[NotNullWhen(true)]
+		[NotNullWhen(true), NotNullIfNotNull("defaultValue")]
 		out TData? data,
 		TData? defaultValue = default)
 		where TData : IPersistent
@@ -228,7 +247,7 @@ public sealed class PersistentData
 
 		var element = JsonSerializer.SerializeToElement(
 			instantiateData,
-			InstantiateDataJsonTypeInfo);
+			PersistentDataInstantiateData.JsonTypeInfo);
 
 		ExtensionData.Add(InstantiateDataName, element);
 	}
@@ -270,7 +289,7 @@ public sealed class PersistentData
 		if (extension is not JsonElement element)
 			return false;
 
-		instantiateData = element.Deserialize(InstantiateDataJsonTypeInfo);
+		instantiateData = element.Deserialize(PersistentDataInstantiateData.JsonTypeInfo);
 		return true;
 	}
 
@@ -312,6 +331,9 @@ public sealed class PersistentData
 [Serializable]
 public struct PersistentDataInstantiateData
 {
+	public static JsonTypeInfo<PersistentDataInstantiateData> JsonTypeInfo =>
+		PersistentDataInstantiateDataJsonTypeInfo.Default.PersistentDataInstantiateData;
+
 	[JsonPropertyName("type_full_name"), JsonInclude]
 	public string? TypeFullName;
 
@@ -324,6 +346,7 @@ public struct PersistentDataInstantiateData
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(PersistentData))]
+[JsonSerializable(typeof(JsonElement))]
 internal partial class PersistentDataJsonTypeInfo : JsonSerializerContext
 {
 
@@ -331,6 +354,7 @@ internal partial class PersistentDataJsonTypeInfo : JsonSerializerContext
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(PersistentDataInstantiateData))]
+[JsonSerializable(typeof(JsonElement))]
 internal partial class PersistentDataInstantiateDataJsonTypeInfo : JsonSerializerContext
 {
 

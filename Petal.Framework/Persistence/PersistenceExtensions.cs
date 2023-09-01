@@ -4,7 +4,7 @@ namespace Petal.Framework.Persistence;
 
 public static class PersistenceExtensions
 {
-	public static List<PersistentData> WriteStorageList<T>(this IReadOnlyList<T> self)
+	public static List<PersistentData> WritePersistentList<T>(this IReadOnlyList<T> self)
 		where T : IPersistent
 	{
 		var list = new List<PersistentData>(self.Count);
@@ -17,7 +17,7 @@ public static class PersistenceExtensions
 		return list;
 	}
 
-	public static List<T> ReadStorageList<T>(this IReadOnlyList<PersistentData> self)
+	public static List<T> ReadPersistentList<T>(this IReadOnlyList<PersistentData> self)
 		where T : IPersistent
 	{
 		var list = new List<T>(self.Count);
@@ -33,7 +33,7 @@ public static class PersistenceExtensions
 		return list;
 	}
 
-	public static Dictionary<TKey, PersistentData> WriteStorageDictionary<TKey, TValue>(
+	public static Dictionary<TKey, PersistentData> WritePersistentDictionary<TKey, TValue>(
 		this IReadOnlyDictionary<TKey, TValue> self)
 		where TValue : IPersistent
 	{
@@ -47,7 +47,7 @@ public static class PersistenceExtensions
 		return dictionary;
 	}
 
-	public static Dictionary<TKey, TValue> ReadStorageDictionary<TKey, TValue>(
+	public static Dictionary<TKey, TValue> ReadPersistentDictionary<TKey, TValue>(
 		this IReadOnlyDictionary<TKey, PersistentData> self)
 		where TValue : IPersistent
 	{

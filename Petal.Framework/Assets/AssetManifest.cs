@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Media;
 using Petal.Framework.Content;
 using Petal.Framework.IO;
 using Petal.Framework.Persistence;
+using Petal.Framework.Util;
 
 namespace Petal.Framework.Assets;
 
@@ -30,7 +31,7 @@ public class AssetManifest : IBankManifest
 		{
 			var entry = new AssetManifestEntry
 			{
-				Name = entryStorage.ReadField<string>("name"),
+				Name = entryStorage.ReadField<string>("name").Namespaced(),
 				Path = entryStorage.ReadField<string>("path"),
 				Type = entryStorage.ReadField<AssetType>("type"),
 			};
@@ -48,7 +49,7 @@ public class AssetManifest : IBankManifest
 			if (success)
 				continue;
 
-			string message = $"Could not forward " + $"{assetEntry.Name} to {register.RegistryName}";
+			string message = $"Could not forward {assetEntry.Name} to {register.RegistryName}";
 			register.Registry.Logger.Error(message);
 		}
 	}
