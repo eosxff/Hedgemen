@@ -29,6 +29,6 @@ public static class StringExtensions
 		return occurrences;
 	}
 
-	public static NamespacedString Namespaced(this string self)
+	public static NamespacedString ToNamespaced(this string self)
 		=> new(self);
 }

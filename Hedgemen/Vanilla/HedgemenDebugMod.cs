@@ -15,6 +15,7 @@ using Petal.Framework;
 using Petal.Framework.EC;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
+using Petal.Framework.Persistence;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util.Coroutines;
@@ -62,13 +63,18 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 		newParty.ReadData(party.WriteData());
 		Game.Logger.Debug($"New party member: {newParty.Members[0]}");
 
-		var campaign = new Campaign();
-		campaign.Settings.Mods.Add("hgm:mod");
-		campaign.Settings.Mods.Add("hgm_debug:mod");
+		var serializedCampaign = new Campaign();
+		serializedCampaign.Settings.Mods.Add("hgm:mod");
+		serializedCampaign.Settings.Mods.Add("hgm_debug:mod");
 
-		var newCampaign = new Campaign();
-		newCampaign.ReadData(campaign.WriteData());
-		Game.Logger.Debug($"Campaign mods count: {newCampaign.Settings.Mods.Count}.");
+		string serializedCampaignFileName = "campaign_settings.json";
+		var serializedCampaignFile = new FileInfo(serializedCampaignFileName);
+		//serializedCampaignFile.WriteString(serializedCampaign.WriteData().Serialize().ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
+
+		var campaignData = PersistentData.FromStream(new FileInfo(serializedCampaignFileName).Open(FileMode.Open));
+		var campaign = campaignData.InstantiateData<Campaign>();
+
+		Game.Logger.Debug($"Campaign mods count: {campaign.Settings.Mods.Count}.");
 	}
 
 	private void GenerateMap(Cartographer cartographer)

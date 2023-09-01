@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
@@ -52,18 +53,23 @@ public sealed class CampaignSettings : IPersistent
 		var modsList = Mods.Select(e => e.FullName).ToList();
 
 		var data = new PersistentData(this);
-		data.WriteField("hgm:campaign_mods", modsList);
+		data.WriteField("hgm:mods", modsList);
+		data.WriteField("hgm:ironman", Ironman);
+		data.WriteField("hgm:difficulty", Difficulty);
 		return data;
 	}
 
 	public void ReadData(PersistentData data)
 	{
 		// fixme why the fuck does code analysis break when using var instead of List<string> for modsList?
-		data.ReadField("hgm:campaign_mods", out List<string> modsList, new List<string>());
+		data.ReadField("hgm:mods", out List<string> modsList, new List<string>());
 		Mods = new List<NamespacedString>(modsList.Count);
 
 		foreach(string mod in modsList)
 			Mods.Add(new NamespacedString(mod));
+
+		Ironman = data.ReadField("hgm:ironman", false);
+		Difficulty = data.ReadField("hgm:difficulty", CampaignDifficulty.Normal);
 	}
 }
 

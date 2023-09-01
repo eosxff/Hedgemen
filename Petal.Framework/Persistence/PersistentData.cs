@@ -51,7 +51,7 @@ public sealed class PersistentData
 	/// <summary>
 	/// This is only public for serialization purposes. Highly recommended to not mess with it directly.
 	/// </summary>
-	[JsonExtensionData]
+	[JsonExtensionData, JsonInclude]
 	public Dictionary<string, object> ExtensionData
 	{
 		get;
@@ -182,6 +182,7 @@ public sealed class PersistentData
 		if (!persistentData.InstantiateData(out TData instantiatedData))
 			return false;
 
+		instantiatedData.ReadData(persistentData);
 		data = instantiatedData;
 		return true;
 	}
@@ -257,6 +258,11 @@ public sealed class PersistentData
 	/// </summary>
 	public bool HasInstantiateData
 		=> ExtensionData.ContainsKey(InstantiateDataName);
+
+	public JsonElement Serialize()
+	{
+		return JsonSerializer.SerializeToElement(this, JsonTypeInfo);
+	}
 
 	private bool GetPersistentObject<T>(PersistentData storage, [NotNullWhen(true)] out T? field)
 		where T : IPersistent
@@ -344,7 +350,7 @@ public struct PersistentDataInstantiateData
 	public bool IsValid => !string.IsNullOrEmpty(TypeFullName) || !string.IsNullOrEmpty(AssemblyFullName);
 }
 
-[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSourceGenerationOptions(WriteIndented = true, IgnoreReadOnlyProperties = true)]
 [JsonSerializable(typeof(PersistentData))]
 [JsonSerializable(typeof(JsonElement))]
 internal partial class PersistentDataJsonTypeInfo : JsonSerializerContext
@@ -352,7 +358,7 @@ internal partial class PersistentDataJsonTypeInfo : JsonSerializerContext
 
 }
 
-[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSourceGenerationOptions(WriteIndented = true, IgnoreReadOnlyProperties = true)]
 [JsonSerializable(typeof(PersistentDataInstantiateData))]
 [JsonSerializable(typeof(JsonElement))]
 internal partial class PersistentDataInstantiateDataJsonTypeInfo : JsonSerializerContext

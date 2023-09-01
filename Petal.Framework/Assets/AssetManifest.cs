@@ -31,7 +31,7 @@ public class AssetManifest : IBankManifest
 		{
 			var entry = new AssetManifestEntry
 			{
-				Name = entryStorage.ReadField<string>("name").Namespaced(),
+				Name = entryStorage.ReadField<string>("name").ToNamespaced(),
 				Path = entryStorage.ReadField<string>("path"),
 				Type = entryStorage.ReadField<AssetType>("type"),
 			};
