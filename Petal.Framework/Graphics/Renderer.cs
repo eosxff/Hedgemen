@@ -11,12 +11,7 @@ public abstract class Renderer : IDisposable
 	{
 		get;
 		protected set;
-	}
-
-	protected Renderer()
-	{
-		RenderState = new RendererState();
-	}
+	} = new();
 
 	public abstract void Begin();
 	public abstract void End();
@@ -100,55 +95,55 @@ public struct RenderStringData
 	public string Text
 	{
 		get;
-		init;
+		set;
 	} = string.Empty;
 
 	public SpriteFont Font
 	{
 		get;
-		init;
+		set;
 	} = null;
 
 	public Vector2 Position
 	{
 		get;
-		init;
+		set;
 	} = Vector2.Zero;
 
 	public Color Color
 	{
 		get;
-		init;
+		set;
 	} = Color.White;
 
 	public float Rotation
 	{
 		get;
-		init;
+		set;
 	} = 0.0f;
 
 	public Vector2 Origin
 	{
 		get;
-		init;
+		set;
 	} = new(0.0f, 0.0f);
 
 	public float Scale
 	{
 		get;
-		init;
+		set;
 	} = 1.0f;
 
 	public SpriteEffects SpriteEffects
 	{
 		get;
-		init;
+		set;
 	} = SpriteEffects.None;
 
 	public float LayerDepth
 	{
 		get;
-		init;
+		set;
 	} = 0.0f;
 
 	public RenderStringData()

@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Petal.Framework.Util.Logging;
 using Petal.Framework.Windowing;
 using static Petal.Framework.Util.PetalUtilities;
@@ -11,14 +12,8 @@ namespace Petal.Framework;
 [Serializable]
 public struct GameSettings
 {
-	public static JsonSerializerOptions JsonDeserializeOptions
-		=> new()
-		{
-			IgnoreReadOnlyProperties = true,
-			IgnoreReadOnlyFields = true,
-			WriteIndented = true,
-			Converters = { }
-		};
+	public static JsonTypeInfo<GameSettings> JsonTypeInfo
+		=> GameSettingsJsonTypeInfo.Default.GameSettings;
 
 	[JsonPropertyName("window_width"), JsonInclude]
 	public int WindowWidth
@@ -81,7 +76,10 @@ public struct GameSettings
 	}
 
 	public static GameSettings FromJson(string json)
-		=> ReadFromJson<GameSettings>(json, JsonDeserializeOptions);
+		=> ReadFromJson(json, JsonTypeInfo);
+
+	public static GameSettings FromJson(JsonElement json)
+		=> ReadFromJson(json, JsonTypeInfo);
 
 	public override string ToString()
 	{
@@ -94,4 +92,12 @@ public struct GameSettings
 		       $"{nameof(IsWindowUserResizable)}:{IsWindowUserResizable}, " +
 		       $"{nameof(IsDebug)}:{IsDebug}]";
 	}
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(GameSettings))]
+[JsonConverter(typeof(JsonStringEnumConverter))]
+internal partial class GameSettingsJsonTypeInfo : JsonSerializerContext
+{
+
 }

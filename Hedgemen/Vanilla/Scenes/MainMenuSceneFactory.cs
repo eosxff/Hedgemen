@@ -18,7 +18,7 @@ public static class MainMenuSceneFactory
 		var skin = Skin.FromJson(new FileInfo("skin.json").ReadString(Encoding.UTF8), assetsRegister);
 
 		var scene = new Scene(
-			new Stage(), skin)
+			new Stage(), skin, Hedgemen.Instance)
 		{
 			Name = "hgm:main_menu_scene",
 			BackgroundColor = Color.Black,
@@ -54,6 +54,7 @@ public static class MainMenuSceneFactory
 			Anchor = Anchor.Center,
 			Font = scene.Skin.Font.MediumFont,
 			Message = "Singleplayer",
+			Outline = new Vector2(2.0f, 2.0f),
 			Scale = 0.25f
 		});
 
@@ -73,6 +74,7 @@ public static class MainMenuSceneFactory
 			Anchor = Anchor.Center,
 			Font = scene.Skin.Font.MediumFont,
 			Message = "Exit",
+			Outline = new Vector2(2.0f, 2.0f),
 			Scale = 0.25f
 		});
 

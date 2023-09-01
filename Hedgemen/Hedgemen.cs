@@ -166,9 +166,9 @@ public class Hedgemen : PetalGame
 			return GameSettings.FromJson(json);
 		}
 
-		catch (Exception)
+		catch (Exception e)
 		{
-			Logger.Warn("Using fallback game settings. Exception was raised.");
+			Logger.Warn($"Using fallback game settings. Exception was raised:\n{e}");
 			Logger.LogLevel = oldLogLevel;
 			return fallbackSettings;
 		}

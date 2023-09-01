@@ -14,14 +14,14 @@ public static class SplashSceneFactory
 {
 	public static Scene NewScene(Hedgemen hedgemen, Stream backgroundStream)
 	{
-		var scene = new Scene(new Stage(), new Skin())
+		var scene = new Scene(new Stage(), new Skin(), Hedgemen.Instance)
 		{
 			Name = "hgm:splash_scene",
 			BackgroundColor = Color.Black,
 			ViewportAdapter = new BoxingViewportAdapter(
 				hedgemen.GraphicsDevice,
 				hedgemen.Window,
-				new Vector2Int(640, 360))
+				new Vector2Int(320, 180))
 		};
 
 		scene.Root.Add(new Image

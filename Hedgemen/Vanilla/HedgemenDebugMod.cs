@@ -64,12 +64,15 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 		Game.Logger.Debug($"New party member: {newParty.Members[0]}");
 
 		var serializedCampaign = new Campaign();
+		serializedCampaign.Directory = new CampaignDirectory(new DirectoryInfo("campaign.json"));
 		serializedCampaign.Settings.Mods.Add("hgm:mod");
 		serializedCampaign.Settings.Mods.Add("hgm_debug:mod");
+		serializedCampaign.Settings.CampaignName = "Campaign 1025";
+		serializedCampaign.Settings.Difficulty = CampaignDifficulty.Hard;
 
 		string serializedCampaignFileName = "campaign_settings.json";
 		var serializedCampaignFile = new FileInfo(serializedCampaignFileName);
-		//serializedCampaignFile.WriteString(serializedCampaign.WriteData().Serialize().ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
+		serializedCampaignFile.WriteString(serializedCampaign.WriteData().Serialize().ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
 
 		var campaignData = PersistentData.FromStream(new FileInfo(serializedCampaignFileName).Open(FileMode.Open));
 		var campaign = campaignData.InstantiateData<Campaign>();

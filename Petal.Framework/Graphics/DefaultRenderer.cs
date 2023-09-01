@@ -6,9 +6,14 @@ public sealed class DefaultRenderer : Renderer
 {
 	private readonly SpriteBatch _renderer;
 
-	public DefaultRenderer()
+	public DefaultRenderer() : this(PetalGame.Petal.GraphicsDevice)
 	{
-		_renderer = new SpriteBatch(PetalGame.Petal.GraphicsDevice);
+
+	}
+
+	public DefaultRenderer(GraphicsDevice graphicsDevice)
+	{
+		_renderer = new SpriteBatch(graphicsDevice);
 	}
 
 	public override void Begin()
@@ -51,7 +56,7 @@ public sealed class DefaultRenderer : Renderer
 
 		var sourcePatches = sourcePatch.ToArray();
 		var destinationPatches = destinationPatch.ToArray();
-		
+
 		for (int i = 0; i < 9; ++i)
 		{
 			var patchDrawData = new RenderData(data)
@@ -59,7 +64,7 @@ public sealed class DefaultRenderer : Renderer
 				SrcRect = sourcePatches[i],
 				DstRect = destinationPatches[i]
 			};
-			
+
 			Draw(patchDrawData);
 		}
 	}

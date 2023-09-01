@@ -107,8 +107,10 @@ public class Scene : IDisposable
 
 	public event EventHandler? OnViewportAdapterChanged;
 
-	public Scene(Stage root, Skin skin)
+	public Scene(Stage root, Skin skin, PetalGame? game = null)
 	{
+		game ??= PetalGame.Petal;
+
 		Skin = skin;
 		Skin.OnSkinRefreshed += OnSkinRefreshed;
 
@@ -116,10 +118,10 @@ public class Scene : IDisposable
 		Root = root;
 		Root.Scene = this;
 
-		Renderer = new DefaultRenderer();
+		Renderer = new DefaultRenderer(game.GraphicsDevice);
 
 		ViewportAdapter = new DefaultViewportAdapter(
-			Renderer.RenderState.Graphics.GraphicsDevice, PetalGame.Petal.Window);
+			Renderer.RenderState.Graphics.GraphicsDevice, game.Window);
 
 		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
 
