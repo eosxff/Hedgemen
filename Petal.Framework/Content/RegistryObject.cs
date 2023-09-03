@@ -23,7 +23,7 @@ public sealed class RegistryObject<TContent>
 
 	public TSuppliedContent? Supply<TSuppliedContent>()
 	{
-		bool success = Supply(out TSuppliedContent content);
+		Supply(out TSuppliedContent content);
 		return content;
 	}
 
@@ -42,7 +42,7 @@ public sealed class RegistryObject<TContent>
 
 	public TContent? Get()
 	{
-		bool success = Get(out var content);
+		Get(out var content);
 		return content;
 	}
 
@@ -62,7 +62,7 @@ public sealed class RegistryObject<TContent>
 
 	public T? GetAs<T>()
 	{
-		bool found = GetAs(out T item);
+		GetAs(out T item);
 		return item;
 	}
 

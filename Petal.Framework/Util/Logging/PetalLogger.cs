@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Petal.Framework.Util.Logging;
@@ -9,6 +10,7 @@ namespace Petal.Framework.Util.Logging;
 public class PetalLogger : ILogger
 {
 	private readonly StringBuilder _builder = new();
+	private readonly Task _loggingTask;
 	private readonly BlockingCollection<LogEntry> _entries = new();
 
 	private LogLevel _logLevel = LogLevel.Off;
@@ -17,7 +19,7 @@ public class PetalLogger : ILogger
 
 	public PetalLogger()
 	{
-		Task.Factory.StartNew(HandleEntries);
+		_loggingTask = Task.Factory.StartNew(HandleEntries);
 	}
 
 	public bool LogInvalidLevelsSilently
