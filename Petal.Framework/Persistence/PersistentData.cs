@@ -115,7 +115,7 @@ public sealed class PersistentData
 				return false;
 
 			field = deserializedField;
-			//ExtensionData[name] = field; // todo maybe caching reference types is a terrible idea
+			//ExtensionData[name] = field; // maybe caching reference types is a terrible idea
 			return true;
 		}
 

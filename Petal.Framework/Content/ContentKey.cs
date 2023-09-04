@@ -2,13 +2,13 @@
 
 public readonly struct ContentKey // maybe we should make this a class with the ability to automatically switch content?
 {
-	public readonly NamespacedString ContentID;
+	public readonly NamespacedString Location;
 	public readonly IRegister? Register;
 	public readonly object? Content;
 
-	public ContentKey(NamespacedString contentID, IRegister? register, object? content)
+	public ContentKey(NamespacedString location, IRegister? register, object? content)
 	{
-		ContentID = contentID;
+		Location = location;
 		Register = register;
 		Content = content;
 	}

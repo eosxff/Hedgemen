@@ -9,8 +9,6 @@ namespace Petal.Framework.Scenery;
 
 public sealed class Skin
 {
-	public event EventHandler? OnSkinRefreshed;
-
 	private Register<object> _assets;
 
 	public Register<object> Assets
@@ -115,13 +113,13 @@ public sealed class Skin
 		if (_assets is null)
 			return;
 
-		_button.NormalTexture = _assets.MakeReference<Texture2D>(_button.NormalTexture.Key.ContentID);
-		_button.HoverTexture = _assets.MakeReference<Texture2D>(_button.HoverTexture.Key.ContentID);
-		_button.InputTexture = _assets.MakeReference<Texture2D>(_button.InputTexture.Key.ContentID);
+		_button.NormalTexture = _assets.MakeReference<Texture2D>(_button.NormalTexture.Location);
+		_button.HoverTexture = _assets.MakeReference<Texture2D>(_button.HoverTexture.Location);
+		_button.InputTexture = _assets.MakeReference<Texture2D>(_button.InputTexture.Location);
 
-		_font.SmallFont = _assets.MakeReference<SpriteFont>(_font.SmallFont.Key.ContentID);
-		_font.MediumFont = _assets.MakeReference<SpriteFont>(_font.MediumFont.Key.ContentID);
-		_font.LargeFont = _assets.MakeReference<SpriteFont>(_font.LargeFont.Key.ContentID);
+		_font.SmallFont = _assets.MakeReference<SpriteFont>(_font.SmallFont.Location);
+		_font.MediumFont = _assets.MakeReference<SpriteFont>(_font.MediumFont.Location);
+		_font.LargeFont = _assets.MakeReference<SpriteFont>(_font.LargeFont.Location);
 	}
 
 	private void HandleRefresh()
@@ -131,8 +129,6 @@ public sealed class Skin
 
 		Refresh();
 		ShouldRefresh = false;
-
-		OnSkinRefreshed?.Invoke(this, EventArgs.Empty);
 	}
 
 	public static Skin FromJson(string json, Register<object> assets)
@@ -201,13 +197,13 @@ public sealed class Skin
 
 		public void Read(Skin obj)
 		{
-			ButtonDataNormalTextureName = obj.Button.NormalTexture.Key.ContentID;
-			ButtonDataHoverTextureName = obj.Button.HoverTexture.Key.ContentID;
-			ButtonDataInputTextureName = obj.Button.InputTexture.Key.ContentID;
+			ButtonDataNormalTextureName = obj.Button.NormalTexture.Location;
+			ButtonDataHoverTextureName = obj.Button.HoverTexture.Location;
+			ButtonDataInputTextureName = obj.Button.InputTexture.Location;
 
-			FontDataSmallFontName = obj.Font.SmallFont.Key.ContentID;
-			FontDataMediumFontName = obj.Font.MediumFont.Key.ContentID;
-			FontDataLargeFontName = obj.Font.LargeFont.Key.ContentID;
+			FontDataSmallFontName = obj.Font.SmallFont.Location;
+			FontDataMediumFontName = obj.Font.MediumFont.Location;
+			FontDataLargeFontName = obj.Font.LargeFont.Location;
 		}
 	}
 }

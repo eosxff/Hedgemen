@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using Petal.Framework.Util;
 
 namespace Petal.Framework.Content;
 
@@ -8,82 +9,80 @@ public sealed class RegistryObject<TContent>
 	public static RegistryObject<TContent> Empty
 		=> new(new ContentKey(NamespacedString.Default, null, null));
 
-	public ContentKey Key
-	{
-		get;
-	}
+	private TContent? _content;
+	private NamespacedString _location;
 
-	public bool HasValidKey
-		=> Key.Content is not null && Key.ContentID != NamespacedString.Default && Key.Register != null;
+	public NamespacedString Location
+		=> _location;
+
+	public bool IsPresent
+		=> _content is not null && Location != NamespacedString.Default;
 
 	public RegistryObject(ContentKey key)
 	{
-		Key = key;
+		_location = key.Location;
+		_content = (TContent)key.Content;
 	}
 
-	public TSuppliedContent? Supply<TSuppliedContent>()
+	public TSuppliedContent Supply<TSuppliedContent>()
 	{
-		Supply(out TSuppliedContent content);
-		return content;
+		PetalExceptions.ThrowIfNull(_content);
+
+		if (_content is not Supplier<TSuppliedContent> supplier)
+		{
+			throw new InvalidCastException(
+				$"Can not cast {_content.GetType()} to type {typeof(Supplier<TSuppliedContent>)}.");
+		}
+
+		return supplier();
 	}
 
 	public bool Supply<TSuppliedContent>([NotNullWhen(true)] out TSuppliedContent? suppliedContent)
 	{
 		suppliedContent = default;
 
-		bool success = GetAs(out Supplier<TSuppliedContent> content);
-
-		if (!success)
+		if (_content is null)
 			return false;
 
-		suppliedContent = content();
+		if (_content is not Supplier<TSuppliedContent> supplier)
+			return false;
+
+		suppliedContent = supplier();
 		return true;
 	}
 
-	public TContent? Get()
+	public TContent Get()
 	{
-		Get(out var content);
-		return content;
+		PetalExceptions.ThrowIfNull(_content);
+		return _content;
 	}
 
-	public bool Get([NotNullWhen(true)] out TContent? content)
+	public bool Get(out TContent? content)
 	{
-		object? obj = Key.Content;
-
-		if (obj is not TContent tObj)
-		{
-			content = default;
-			return false;
-		}
-
-		content = tObj;
-		return true;
+		content = _content;
+		return content is not null;
 	}
 
 	public T? GetAs<T>()
 	{
-		GetAs(out T item);
-		return item;
+		PetalExceptions.ThrowIfNull(_content);
+		return _content is not T tContent ? default : tContent;
 	}
 
 	public bool GetAs<T>([NotNullWhen(true)] out T? content)
 	{
 		content = default;
 
-		bool found = Get(out var item);
-
-		if (!found)
+		if (_content is null)
 			return false;
 
-		if (item is not T tItem)
+		if (_content is not T tContent)
+		{
+			content = default;
 			return false;
+		}
 
-		content = tItem;
+		content = tContent;
 		return true;
-	}
-
-	public RegistryObject<TBaseContent> ReferenceAs<TBaseContent>()
-	{
-		return new RegistryObject<TBaseContent>(Key);
 	}
 }

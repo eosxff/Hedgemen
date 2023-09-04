@@ -113,7 +113,7 @@ public struct NamespacedString
 	}
 
 	public override int GetHashCode()
-		=> HashCode.Combine(Namespace, Name);
+		=> FullName.GetHashCode();
 
 	public override string ToString()
 	{

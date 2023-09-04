@@ -20,7 +20,7 @@ public sealed class Cartographer
 
 		foreach (var landscaperRO in Landscapers)
 		{
-			if (!landscaperRO.HasValidKey)
+			if (!landscaperRO.IsPresent)
 				continue;
 
 			var landscaper = landscaperRO.Supply<ILandscaper>();

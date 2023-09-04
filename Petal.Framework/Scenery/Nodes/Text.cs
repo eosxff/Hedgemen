@@ -52,7 +52,7 @@ public class Text : Node
 
 	protected override Rectangle GetDefaultBounds()
 	{
-		if(Font?.Key.Content is null)
+		if(!Font.IsPresent)
 			return Rectangle.Empty;
 
 		var messageSize = Font.Get().MeasureString(Message);
@@ -65,7 +65,7 @@ public class Text : Node
 
 	protected override void OnDraw(GameTime time)
 	{
-		if (Scene is null || !Font.HasValidKey)
+		if (Scene is null || !Font.IsPresent)
 			return;
 
 		var textData = new RenderStringData
@@ -115,7 +115,7 @@ public class Text : Node
 	{
 		var calculatedBounds = base.CalculateBounds(bounds);
 
-		if (!Font.HasValidKey)
+		if (!Font.IsPresent)
 			return calculatedBounds;
 
 		var measuredMessage = Font.Get().MeasureString(Message);

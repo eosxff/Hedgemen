@@ -25,6 +25,12 @@ public class DeferredRegister<TContent> : IDeferredRegister
 		get;
 	}
 
+	public bool IsForwarded
+	{
+		get;
+		private set;
+	} = false;
+
 	public DeferredRegister(NamespacedString registryName, NamespacedString modID, Registry registry)
 	{
 		RegistryName = registryName;
@@ -64,6 +70,7 @@ public class DeferredRegister<TContent> : IDeferredRegister
 			register.AddKey(kvp.Key, kvp.Value);
 		}
 
+		IsForwarded = true;
 		OnForwarded?.Invoke(this, EventArgs.Empty);
 	}
 

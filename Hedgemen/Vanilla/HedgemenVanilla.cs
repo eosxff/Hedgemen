@@ -5,6 +5,8 @@ using Hgm.Vanilla.Scenes;
 using Petal.Framework;
 using Petal.Framework.Content;
 using Petal.Framework.Modding;
+using Petal.Framework.Scenery;
+using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
 
 namespace Hgm.Vanilla;
@@ -63,8 +65,9 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			logger.Info($"Changing scene.");
 		};
 
-		var scene = SplashSceneFactory.NewScene(
-			Game,
+		var scene = new StartupSplashScene(
+			new Stage(),
+			new Skin(Registers.Assets),
 			new FileInfo("splash.png").Open(FileMode.Open));
 		Game.ChangeScenes(scene);
 
@@ -84,8 +87,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			await Task.Delay(1000);
 		});
 
-		var mainMenuScene = MainMenuSceneFactory.NewScene(Game, assets);
-		Game.ChangeScenes(mainMenuScene);
+		Game.ChangeScenes(new MainMenuScene(Registers.Assets));
 	}
 
 	protected override void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)

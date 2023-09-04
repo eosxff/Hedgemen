@@ -7,12 +7,18 @@ using Petal.Framework.Scenery.Nodes;
 
 namespace Petal.Framework.Scenery;
 
-public class Scene : IDisposable
+public abstract class Scene : IDisposable
 {
+	public PetalGame Game
+	{
+		get;
+		private set;
+	}
+
 	public NamespacedString Name
 	{
 		get;
-		set;
+		protected set;
 	} = NamespacedString.Default;
 
 	public class SkinChangedEventArgs : EventArgs
@@ -107,12 +113,12 @@ public class Scene : IDisposable
 
 	public event EventHandler? OnViewportAdapterChanged;
 
-	public Scene(Stage root, Skin skin, PetalGame? game = null)
+	protected Scene(Stage root, Skin skin, PetalGame? game = null)
 	{
 		game ??= PetalGame.Petal;
+		Game = game;
 
 		Skin = skin;
-		Skin.OnSkinRefreshed += OnSkinRefreshed;
 
 		Input = new InputProvider();
 		Root = root;
@@ -122,6 +128,23 @@ public class Scene : IDisposable
 
 		ViewportAdapter = new DefaultViewportAdapter(
 			Renderer.RenderState.Graphics.GraphicsDevice, game.Window);
+
+		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
+
+		Reset();
+	}
+
+	protected Scene()
+	{
+		Game = PetalGame.Petal;
+		Input = new InputProvider();
+		Root = new Stage
+		{
+			Scene = this
+		};
+		Renderer = new DefaultRenderer(Game.GraphicsDevice);
+		ViewportAdapter = new DefaultViewportAdapter(
+			Renderer.RenderState.Graphics.GraphicsDevice, Game.Window);
 
 		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
 
@@ -194,16 +217,20 @@ public class Scene : IDisposable
 	public void Initialize()
 	{
 		PetalGame.Petal.Window.ClientSizeChanged += OnWindowClientSizeChanged;
-		Skin.OnSkinRefreshed += OnSkinRefreshed;
 		ViewportAdapter.Reset();
 
+		OnInitialize();
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
+	}
+
+	protected virtual void OnInitialize()
+	{
+
 	}
 
 	private void OnWindowClientSizeChanged(object? sender, EventArgs args)
 	{
-		ResetRenderTarget();
-		ViewportAdapter.Reset();
+		Reset();
 	}
 
 	private void OnSkinRefreshed(object? sender, EventArgs args)
@@ -236,7 +263,6 @@ public class Scene : IDisposable
 		GC.SuppressFinalize(this);
 
 		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
-		Skin.OnSkinRefreshed -= OnSkinRefreshed;
 
 		_renderTarget?.Dispose();
 		Renderer?.Dispose();

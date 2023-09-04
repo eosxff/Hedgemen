@@ -54,7 +54,7 @@ public class Button : Node
 
 		var textureRef = GetButtonTextureFromState();
 
-		if (!textureRef.HasValidKey)
+		if (!textureRef.IsPresent)
 			return;
 
 		Scene.Renderer.Begin();
