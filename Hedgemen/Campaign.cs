@@ -8,7 +8,7 @@ using Petal.Framework.Persistence;
 
 namespace Hgm;
 
-public sealed class Campaign : IPersistent
+public abstract class Campaign : IPersistent
 {
 	public CampaignDirectory Directory
 	{
@@ -22,7 +22,7 @@ public sealed class Campaign : IPersistent
 		set;
 	} = new();
 
-	public PersistentData WriteData()
+	public virtual PersistentData WriteData()
 	{
 		var data = new PersistentData(this);
 		data.WriteData("hgm:campaign_settings", Settings);
@@ -30,12 +30,15 @@ public sealed class Campaign : IPersistent
 		return data;
 	}
 
-	public void ReadData(PersistentData data)
+	public virtual void ReadData(PersistentData data)
 	{
 		data.ReadField("hgm:campaign_directory", out string directoryName, string.Empty);
 		Directory = new CampaignDirectory(new DirectoryInfo(directoryName));
 		Settings = data.ReadData("hgm:campaign_settings", new CampaignSettings());
 	}
+
+	public abstract void StartCampaign();
+	//public abstract void LoadCampaign(PersistentData data); // todo stub
 }
 
 public sealed class CampaignSettings : IPersistent
@@ -76,7 +79,7 @@ public sealed class CampaignSettings : IPersistent
 
 	public void ReadData(PersistentData data)
 	{
-		// fixme why the fuck does code analysis break when using var instead of List<string> for modsList?
+		// fixme why does code analysis break when using var instead of List<string> for modsList?
 		data.ReadField("hgm:mods", out List<string> modsList, new List<string>());
 		Mods = new List<NamespacedString>(modsList.Count);
 

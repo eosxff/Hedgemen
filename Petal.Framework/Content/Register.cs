@@ -101,6 +101,9 @@ public sealed class Register<TContent> : IRegister
 		return _content.ContainsKey(id);
 	}
 
+	public ICollection<ContentKey> RegisteredContent
+		=> _content.Values;
+
 	public RegistryObject<TContentLocal> MakeReference<TContentLocal>(NamespacedString id)
 	{
 		if (_content.TryGetValue(id, out var key))

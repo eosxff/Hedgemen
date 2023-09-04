@@ -18,6 +18,7 @@ using Petal.Framework.Modding;
 using Petal.Framework.Persistence;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
+using Petal.Framework.Util;
 using Petal.Framework.Util.Coroutines;
 
 namespace Hgm.Vanilla;
@@ -63,21 +64,33 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 		newParty.ReadData(party.WriteData());
 		Game.Logger.Debug($"New party member: {newParty.Members[0]}");
 
-		var serializedCampaign = new Campaign();
-		serializedCampaign.Directory = new CampaignDirectory(new DirectoryInfo("campaign.json"));
-		serializedCampaign.Settings.Mods.Add("hgm:mod");
-		serializedCampaign.Settings.Mods.Add("hgm_debug:mod");
-		serializedCampaign.Settings.CampaignName = "Campaign 1025";
-		serializedCampaign.Settings.Difficulty = CampaignDifficulty.Hard;
+		var serializedCampaign = new HedgemenCampaign
+		{
+			Directory = new CampaignDirectory(new DirectoryInfo("campaign.json")),
+			Settings = new CampaignSettings
+			{
+				CampaignName = "Hedgemen Campaign",
+				Difficulty = CampaignDifficulty.Hard,
+				Ironman = true,
+				Mods =
+				{
+					"hgm:mod".ToNamespaced(),
+					"hgm_debug:mod".ToNamespaced()
+				}
+			}
+		};
 
-		string serializedCampaignFileName = "campaign_settings.json";
+		const string serializedCampaignFileName = "campaign_settings.json";
 		var serializedCampaignFile = new FileInfo(serializedCampaignFileName);
-		serializedCampaignFile.WriteString(serializedCampaign.WriteData().Serialize().ToString(), Encoding.UTF8, FileMode.OpenOrCreate);
+		serializedCampaignFile.WriteString(
+			serializedCampaign.WriteData().Serialize().ToString(),
+			Encoding.UTF8,
+			FileMode.OpenOrCreate);
 
 		var campaignData = PersistentData.FromStream(new FileInfo(serializedCampaignFileName).Open(FileMode.Open));
 		var campaign = campaignData.InstantiateData<Campaign>();
 
-		Game.Logger.Debug($"Campaign mods count: {campaign.Settings.Mods.Count}.");
+		Game.Logger.Debug($"Campaign mods count: {campaign.Settings.Mods.Count}. Type: {campaign.GetType()}");
 	}
 
 	private void GenerateMap(Cartographer cartographer)
@@ -99,10 +112,7 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 
 		Game.Logger.Debug($"Finished generating overworld! ({Math.Round(stopwatch.Elapsed.TotalMilliseconds)}ms)");
 
-		var colorQuery = new QueryMapPixelColorEvent
-		{
-			Sender = null
-		};
+		var colorQuery = new QueryMapPixelColorEvent();
 
 		var colorMap = new Color[mapDimensions.X * mapDimensions.Y];
 

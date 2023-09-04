@@ -18,6 +18,7 @@ public sealed class HedgemenRegisters
 	public static readonly NamespacedString CellComponentsRegisterName = new("hgm:cell_components");
 	public static readonly NamespacedString LandscapersRegisterName = new("hgm:landscapers");
 	public static readonly NamespacedString CartographersRegisterName = new("hgm:cartographers");
+	public static readonly NamespacedString CampaignRegisterName = new("hgm:campaigns");
 
 	private Register<object>? _assets;
 
@@ -74,6 +75,17 @@ public sealed class HedgemenRegisters
 		}
 	}
 
+	private Register<Supplier<Campaign>> _campaigns;
+
+	public Register<Supplier<Campaign>> Campaigns
+	{
+		get
+		{
+			PetalExceptions.ThrowIfNull(_campaigns);
+			return _campaigns;
+		}
+	}
+
 	/// <summary>
 	/// Initializes the registers to non-null values. Note that this does not add the content.
 	/// </summary>
@@ -85,6 +97,7 @@ public sealed class HedgemenRegisters
 		SetupCellComponentsRegister(registry);
 		SetupLandscapersRegister(registry);
 		SetupCartographersRegister(registry);
+		SetupCampaignsRegister(registry);
 	}
 
 	private void SetupAssetsRegister(Registry registry)
@@ -135,6 +148,14 @@ public sealed class HedgemenRegisters
 			registry);
 
 		AddRegisterToRegistry(_cartographers, registry);
+	}
+
+	private void SetupCampaignsRegister(Registry registry)
+	{
+		_campaigns = new Register<Supplier<Campaign>>(
+			CampaignRegisterName,
+			HedgemenVanilla.ModID,
+			registry);
 	}
 
 	/// <summary>

@@ -77,6 +77,12 @@ public sealed class HedgemenContent
 		private set;
 	}
 
+	public RegistryObject<Supplier<Campaign>> HedgemenCampaign
+	{
+		get;
+		private set;
+	}
+
 	/// <summary>
 	/// Loads all the content in vanilla Hedgemen in this order: assets > entity components > cell components >
 	/// landscapers > cartographers.
@@ -89,6 +95,7 @@ public sealed class HedgemenContent
 		RegisterCellComponents(registers);
 		RegisterLandscapers(registers);
 		RegisterCartographers(registers);
+		RegisterCampaigns(registers);
 	}
 
 	private void RegisterAssets(HedgemenRegisters registers)
@@ -185,5 +192,16 @@ public sealed class HedgemenContent
 		register.AddKey("hgm:overworld_cartographer", overworld);
 
 		OverworldCartographer = register.MakeReference("hgm:overworld_cartographer");
+	}
+
+	private void RegisterCampaigns(HedgemenRegisters registers)
+	{
+		var register = registers.Campaigns;
+
+		var hedgemenCampaignName = new NamespacedString("hgm:hedgemen_campaign");
+
+		register.AddKey(hedgemenCampaignName, () => new HedgemenCampaign());
+
+		HedgemenCampaign = register.MakeReference(hedgemenCampaignName);
 	}
 }

@@ -272,7 +272,10 @@ public sealed class PersistentData
 		if (!GetInstantiateData(out var instantiateData))
 			return false;
 
-		var assembly = GetAssembly(instantiateData.AssemblyFullName);
+		var assembly = GetAssembly(instantiateData.AssemblyFullName, out bool foundAssembly);
+
+		if (!foundAssembly)
+			return false;
 
 		object? obj = assembly.CreateInstance(instantiateData.TypeFullName);
 
@@ -281,7 +284,6 @@ public sealed class PersistentData
 
 		field = tObj;
 		field.ReadData(this);
-
 		return true;
 	}
 
@@ -299,16 +301,12 @@ public sealed class PersistentData
 		return true;
 	}
 
-	private static Assembly GetAssembly(string assemblyFullName)
+	private static Assembly GetAssembly(string assemblyFullName, out bool result)
 	{
 		if(!Assemblies.ContainsKey(assemblyFullName))
 			RepopulateAssemblies();
 
-		bool found = Assemblies.TryGetValue(assemblyFullName, out var assembly);
-
-		if (!found)
-			throw new TypeAccessException($"{assemblyFullName} could not be found in the app domain.");
-
+		result = Assemblies.TryGetValue(assemblyFullName, out var assembly);
 		return assembly;
 	}
 
