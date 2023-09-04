@@ -29,7 +29,7 @@ public class DeferredRegister<TContent> : IDeferredRegister
 	{
 		get;
 		private set;
-	} = false;
+	}
 
 	public DeferredRegister(NamespacedString registryName, NamespacedString modID, Registry registry)
 	{
