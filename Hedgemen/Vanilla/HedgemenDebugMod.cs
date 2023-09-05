@@ -40,7 +40,7 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 
 	protected override void Setup(ModLoaderSetupContext context)
 	{
-		Test();
+		//Test();
 	}
 
 	private void Test()
@@ -66,11 +66,10 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 
 		var serializedCampaign = new HedgemenCampaign
 		{
-			Directory = new CampaignDirectory(new DirectoryInfo("campaign.json")),
+			Directory = new CampaignDirectory(new DirectoryInfo("campaigns/hedgemen_campaign")),
 			Settings = new CampaignSettings
 			{
 				CampaignName = "Hedgemen Campaign",
-				Difficulty = CampaignDifficulty.Hard,
 				Ironman = true,
 				Mods =
 				{

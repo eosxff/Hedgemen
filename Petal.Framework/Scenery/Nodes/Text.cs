@@ -113,7 +113,15 @@ public class Text : Node
 
 	protected override Rectangle CalculateBounds(Rectangle bounds)
 	{
-		var calculatedBounds = base.CalculateBounds(bounds);
+		if (!Font.IsPresent)
+			return base.CalculateBounds(bounds);
+
+		var measuredMessage = Font.Get().MeasureString(Message);
+		bounds.Width = (int)(measuredMessage.X * Scale);
+		bounds.Height = (int)(measuredMessage.Y * Scale);
+		return base.CalculateBounds(bounds);
+
+		/*var calculatedBounds = base.CalculateBounds(bounds);
 
 		if (!Font.IsPresent)
 			return calculatedBounds;
@@ -122,6 +130,6 @@ public class Text : Node
 		calculatedBounds.Width = (int)(measuredMessage.X * Scale);
 		calculatedBounds.Height = (int)(measuredMessage.Y * Scale);
 
-		return calculatedBounds;
+		return calculatedBounds;*/
 	}
 }

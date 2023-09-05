@@ -38,7 +38,7 @@ public abstract class Campaign : IPersistent
 	}
 
 	public abstract void StartCampaign();
-	//public abstract void LoadCampaign(PersistentData data); // todo stub
+	public abstract void LoadCampaign(PersistentData data);
 }
 
 public sealed class CampaignSettings : IPersistent
@@ -61,18 +61,11 @@ public sealed class CampaignSettings : IPersistent
 		set;
 	} = true;
 
-	public CampaignDifficulty Difficulty
-	{
-		get;
-		set;
-	} = CampaignDifficulty.Normal;
-
 	public PersistentData WriteData()
 	{
 		var data = new PersistentData(this);
 		data.WriteField("hgm:mods", Mods.Select(e => e.FullName).ToList());
 		data.WriteField("hgm:ironman", Ironman);
-		data.WriteField("hgm:difficulty", Difficulty);
 		data.WriteField("hgm:name", CampaignName);
 		return data;
 	}
@@ -87,14 +80,6 @@ public sealed class CampaignSettings : IPersistent
 			Mods.Add(new NamespacedString(mod));
 
 		Ironman = data.ReadField("hgm:ironman", false);
-		Difficulty = data.ReadField("hgm:difficulty", CampaignDifficulty.Normal);
 		CampaignName = data.ReadField("hgm:campaign_name", "New Campaign");
 	}
-}
-
-public enum CampaignDifficulty
-{
-	Easy,
-	Normal,
-	Hard
 }

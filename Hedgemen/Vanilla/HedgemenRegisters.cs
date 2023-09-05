@@ -156,6 +156,8 @@ public sealed class HedgemenRegisters
 			CampaignRegisterName,
 			HedgemenVanilla.ModID,
 			registry);
+
+		AddRegisterToRegistry(_campaigns, registry);
 	}
 
 	/// <summary>
