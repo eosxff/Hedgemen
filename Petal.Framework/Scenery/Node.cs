@@ -275,6 +275,14 @@ public abstract class Node
 
 	public TNode Add<TNode>(TNode child) where TNode : Node
 	{
+		PetalExceptions.ThrowIfNull(child, nameof(child));
+
+		if (ReferenceEquals(child, this))
+			throw new InvalidOperationException($"Can not add node to itself.");
+
+		if (_children.Contains(child))
+			throw new InvalidOperationException($"{child} is already a child in node.");
+
 		_children.Add(child);
 		child.Parent = this;
 		child.Scene = Scene;

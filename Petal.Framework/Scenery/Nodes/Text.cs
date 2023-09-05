@@ -120,16 +120,5 @@ public class Text : Node
 		bounds.Width = (int)(measuredMessage.X * Scale);
 		bounds.Height = (int)(measuredMessage.Y * Scale);
 		return base.CalculateBounds(bounds);
-
-		/*var calculatedBounds = base.CalculateBounds(bounds);
-
-		if (!Font.IsPresent)
-			return calculatedBounds;
-
-		var measuredMessage = Font.Get().MeasureString(Message);
-		calculatedBounds.Width = (int)(measuredMessage.X * Scale);
-		calculatedBounds.Height = (int)(measuredMessage.Y * Scale);
-
-		return calculatedBounds;*/
 	}
 }

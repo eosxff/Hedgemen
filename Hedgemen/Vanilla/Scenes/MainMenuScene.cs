@@ -78,7 +78,7 @@ public sealed class MainMenuScene : Scene
 		Title = Root.Add(new Text
 		{
 			Font = Skin.Font.LargeFont,
-			Bounds = new Rectangle(0, 0, 32, 12),
+			Bounds = new Rectangle(0, 16, 32, 12),
 			Color = Color.White,
 			Message = "Hedgemen!",
 			Scale = 0.375f,
@@ -88,7 +88,7 @@ public sealed class MainMenuScene : Scene
 		SingleplayerButton = Root.Add(new Button(Skin)
 		{
 			Anchor = Anchor.Center,
-			Bounds = new Rectangle(0, -16, 48, 16)
+			Bounds = new Rectangle(0, -16, 96, 16)
 		});
 
 		SingleplayerButton.OnMousePressed += SingleplayerButtonOnMousePressed;
@@ -105,7 +105,7 @@ public sealed class MainMenuScene : Scene
 		QuitButton = Root.Add(new Button(Skin)
 		{
 			Anchor = Anchor.Center,
-			Bounds = new Rectangle(0, 1, 48, 16)
+			Bounds = new Rectangle(0, 1, 96, 16)
 		});
 
 		QuitButton.OnMousePressed += QuitButtonOnMousePressed;
@@ -133,7 +133,7 @@ public sealed class MainMenuScene : Scene
 
 		var campaignRO = campaignRegister.MakeReference("hgm:hedgemen_campaign");
 
-		var campaign = campaignRO.Supply<Campaign>();
+		var campaign = (HedgemenCampaign)campaignRO.Supply<Campaign>();
 		campaign.StartCampaign();
 	}
 
