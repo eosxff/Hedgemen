@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using Hgm.Vanilla;
 using Petal.Framework;
@@ -17,7 +18,7 @@ public class Hedgemen : PetalGame
 {
 	private const LogLevel DebugLogLevel = LogLevel.Debug;
 	private const LogLevel ReleaseLogLevel = LogLevel.Warn;
-	public static readonly Version HedgemenVersion = typeof(Hedgemen).Assembly.GetName().Version!;
+	public static string Version => VersionStringify(typeof(Hedgemen).Assembly.GetName().Version!);
 
 	private static Hedgemen HedgemenInstance;
 
@@ -115,10 +116,7 @@ public class Hedgemen : PetalGame
 			LogInvalidLevelsSilently = true,
 		};
 
-		string hedgemenVersion = typeof(Hedgemen).Assembly.GetName().Version!.ToString(3);
-		string petalVersion = typeof(PetalGame).Assembly.GetName().Version!.ToString(3);
-
-		logger.Info($"Hedgemen-{hedgemenVersion}, Petal-{petalVersion}");
+		logger.Info($"Hedgemen:{Version}");
 
 		return logger;
 	}
@@ -207,4 +205,7 @@ public class Hedgemen : PetalGame
 		return false;
 #endif
 	}
+
+	private static string VersionStringify(Version version)
+		=> $"indev-{version.Major}.{version.Minor}.{version.Build}";
 }

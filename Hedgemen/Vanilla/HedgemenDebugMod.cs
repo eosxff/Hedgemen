@@ -164,7 +164,7 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 			SchemaVersion = 1,
 			ModID = ModID,
 			Name = "Hedgemen Debug",
-			Version = Hedgemen.HedgemenVersion.ToString(),
+			Version = Hedgemen.Version.ToString(),
 			Description = "Open world roguelike sidescroller. It's not even a game yet lol.",
 			Authors = new List<string>
 			{

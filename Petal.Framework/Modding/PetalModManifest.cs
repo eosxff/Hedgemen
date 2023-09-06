@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Petal.Framework.Persistence;
 
 namespace Petal.Framework.Modding;
@@ -12,26 +13,26 @@ namespace Petal.Framework.Modding;
 [Serializable]
 public sealed class PetalModManifest
 {
+	public static JsonTypeInfo<PetalModManifest> JsonTypeInfo
+		=> PetalModManifestJsonTypeInfo.Default.PetalModManifest;
+
 	public static PetalModManifest? FromJson(string json)
 	{
-		var manifest = JsonSerializer.Deserialize<PetalModManifest>(json, JsonDeserializeOptions);
+		var manifest = JsonSerializer.Deserialize(json, JsonTypeInfo);
 		return manifest;
 	}
 
-	public static JsonSerializerOptions JsonDeserializeOptions
-		=> new()
-		{
-			IgnoreReadOnlyProperties = true,
-			IgnoreReadOnlyFields = true,
-			WriteIndented = true,
-			Converters = { }
-		};
+	public static PetalModManifest? FromJson(JsonElement json)
+	{
+		var manifest = json.Deserialize(JsonTypeInfo);
+		return manifest;
+	}
 
 	[JsonPropertyName("schema_version")]
 	public int SchemaVersion
 	{
 		get;
-		init;
+		set;
 	} = 1;
 
 	[JsonPropertyName("mod_id")]
@@ -39,75 +40,75 @@ public sealed class PetalModManifest
 	public NamespacedString ModID
 	{
 		get;
-		init;
+		set;
 	} = NamespacedString.Default;
 
 	[JsonPropertyName("name")]
 	public string Name
 	{
 		get;
-		init;
+		set;
 	} = "Unnamed";
 
 	[JsonPropertyName("version")]
 	public string Version
 	{
 		get;
-		init;
+		set;
 	} = "0.0.1";
 
 	[JsonPropertyName("description")]
 	public string Description
 	{
 		get;
-		init;
+		set;
 	} = "I haven't made a description yet!";
 
 	[JsonPropertyName("authors")]
 	public IReadOnlyList<string> Authors
 	{
 		get;
-		init;
+		set;
 	} = new List<string>();
 
 	[JsonPropertyName("contact")]
 	public PetalModManifestContactInfo Contact
 	{
 		get;
-		init;
+		set;
 	} = new();
 
 	[JsonPropertyName("depends")]
 	public PetalModManifestDependenciesInfo Dependencies
 	{
 		get;
-		init;
+		set;
 	} = new();
 
 	[JsonPropertyName("mod_file_dll")]
 	public string ModFileDll
 	{
 		get;
-		init;
+		set;
 	} = string.Empty;
 
 	[JsonPropertyName("mod_main")]
 	public string ModMain
 	{
 		get;
-		init;
+		set;
 	} = string.Empty;
 
 	[JsonPropertyName("is_overhaul")]
 	public bool IsOverhaul
 	{
 		get;
-		init;
-	} = false;
+		set;
+	}
 
 	public override string ToString()
 	{
-		return JsonSerializer.Serialize(this, JsonDeserializeOptions);
+		return JsonSerializer.Serialize(this, JsonTypeInfo);
 	}
 }
 
@@ -118,14 +119,14 @@ public sealed class PetalModManifestContactInfo
 	public string Homepage
 	{
 		get;
-		init;
+		set;
 	} = PetalGame.PetalRepositoryLink;
 
 	[JsonPropertyName("source")]
 	public string Source
 	{
 		get;
-		init;
+		set;
 	} = PetalGame.PetalRepositoryLink;
 }
 
@@ -137,7 +138,7 @@ public sealed class PetalModManifestDependenciesInfo
 	public IReadOnlyList<NamespacedString> Mods
 	{
 		get;
-		init;
+		set;
 	} = new List<NamespacedString>();
 
 	[JsonPropertyName("incompatible_mods"), JsonInclude]
@@ -152,13 +153,20 @@ public sealed class PetalModManifestDependenciesInfo
 	public IReadOnlyList<string> ReferencedDlls
 	{
 		get;
-		init;
+		set;
 	} = new List<string>();
 }
 
 [JsonSourceGenerationOptions(IncludeFields = true)]
 [JsonSerializable(typeof(PetalModManifest))]
-public partial class PetalModManifestJsc : JsonSerializerContext
+internal partial class PetalModManifestJsonTypeInfo : JsonSerializerContext
+{
+
+}
+
+[JsonSourceGenerationOptions(IncludeFields = true)]
+[JsonSerializable(typeof(PetalModManifestDependenciesInfo))]
+internal partial class PetalModManifestDependenciesInfoJsonTypeInfo : JsonSerializerContext
 {
 
 }

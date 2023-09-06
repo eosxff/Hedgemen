@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Hgm.Vanilla.Scenes;
@@ -74,7 +75,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		RegisterContentThenChangeScenes();
 	}
 
-	private async void RegisterContentThenChangeScenes()
+	private /*async*/ void RegisterContentThenChangeScenes()
 	{
 		var logger = Game.Logger;
 		var assetsRegistryFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
@@ -82,10 +83,10 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		if (!assetsRegistryFound)
 			return;
 
-		await Task.Run(async delegate
+		/*await Task.Run(async delegate
 		{
 			await Task.Delay(1000);
-		});
+		});*/
 
 		Game.ChangeScenes(new MainMenuScene(Registers.Assets));
 	}
@@ -102,7 +103,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			SchemaVersion = 1,
 			ModID = ModID,
 			Name = "Hedgemen",
-			Version = Hedgemen.HedgemenVersion.ToString(),
+			Version = Hedgemen.Version,
 			Description = "Open world roguelike sidescroller. It's not even a game yet lol.",
 			Authors = new List<string>
 			{

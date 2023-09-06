@@ -107,7 +107,6 @@ public class Text : Node
 		}
 
 		Scene.Renderer.Draw(textData);
-
 		Scene.Renderer.End();
 	}
 

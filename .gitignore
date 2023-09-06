@@ -3,4 +3,5 @@
 **/bin/
 **/obj/
 **/build/
+**/tmp/
 **.sln.DotSettings**
