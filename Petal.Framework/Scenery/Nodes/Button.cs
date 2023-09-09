@@ -59,8 +59,6 @@ public class Button : Node
 
 		Scene.Renderer.Begin();
 
-		// todo testing purposes
-
 		var renderData = new RenderData
 		{
 			Color = Color,
@@ -100,13 +98,10 @@ public class Button : Node
 		{
 			case NodeState.Normal:
 				return Skin.Button.NormalTexture;
-
 			case NodeState.Input:
 				return Skin.Button.InputTexture;
-
 			case NodeState.Hover:
 				return Skin.Button.HoverTexture;
-
 			default:
 				throw new ArgumentOutOfRangeException();
 		}

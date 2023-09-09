@@ -95,7 +95,6 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 				case true:
 					_componentEvents[registeredEvent]++;
 					break;
-
 				case false:
 					_componentEvents.Add(registeredEvent, 1);
 					break;

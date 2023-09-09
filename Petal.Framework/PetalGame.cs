@@ -150,13 +150,11 @@ public abstract class PetalGame : Game
 					Window.SetBorderless(false);
 					Graphics.ApplyChanges();
 					break;
-
 				case WindowMode.BorderlessWindowed:
 					Graphics.IsFullScreen = false;
 					Window.SetBorderless(true);
 					Graphics.ApplyChanges();
 					break;
-
 				case WindowMode.BorderlessFullscreen:
 					Graphics.IsFullScreen = false;
 					Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
@@ -164,7 +162,6 @@ public abstract class PetalGame : Game
 					Window.SetBorderless(true);
 					Graphics.ApplyChanges();
 					break;
-
 				case WindowMode.Fullscreen:
 					// wonky hack for monogame works with fna as well apparently
 					// https://community.monogame.net/t/fullscreen-issues/15852/6
@@ -174,7 +171,6 @@ public abstract class PetalGame : Game
 					Graphics.ApplyChanges();
 					Graphics.ToggleFullScreen();
 					break;
-
 				default: // should never trip
 					throw new ArgumentOutOfRangeException(_windowMode.ToString());
 			}

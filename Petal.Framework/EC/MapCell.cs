@@ -95,7 +95,6 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 				case true:
 					_componentEvents[registeredEvent]++;
 					break;
-
 				case false:
 					_componentEvents.Add(registeredEvent, 1);
 					break;
