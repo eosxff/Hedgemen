@@ -1,7 +1,7 @@
 using Petal.Framework.EC;
 using Petal.Framework.Util;
 
-namespace Hgm.WorldGeneration;
+namespace Hgm.Game.WorldGeneration;
 
 public interface ILandscaper
 {

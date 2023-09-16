@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Hgm.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Petal.Framework.Content;
 using Petal.Framework.Util;
 
-namespace Hgm.WorldGeneration;
+namespace Hgm.Game.WorldGeneration;
 
 using LandscaperSupplierRO = RegistryObject<Supplier<ILandscaper>>;
 

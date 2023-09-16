@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Petal.Framework.EC;
 using Petal.Framework.Persistence;
 
-namespace Hgm.EntityComponents;
+namespace Hgm.Game.EntityComponents;
 
 public sealed class Party : IPersistent
 {

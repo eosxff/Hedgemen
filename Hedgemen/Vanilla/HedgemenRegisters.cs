@@ -1,5 +1,6 @@
 ﻿using System;
-using Hgm.WorldGeneration;
+using Hgm.Game;
+using Hgm.Game.WorldGeneration;
 using Petal.Framework;
 using Petal.Framework.Content;
 using Petal.Framework.EC;

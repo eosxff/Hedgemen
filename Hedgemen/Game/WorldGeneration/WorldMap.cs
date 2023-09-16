@@ -4,7 +4,7 @@ using Petal.Framework.EC;
 using Petal.Framework.Persistence;
 using Petal.Framework.Util;
 
-namespace Hgm.WorldGeneration;
+namespace Hgm.Game.WorldGeneration;
 
 public class WorldMap : IPersistent
 {

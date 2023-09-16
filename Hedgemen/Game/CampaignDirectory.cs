@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Hgm;
+namespace Hgm.Game;
 
 public sealed class CampaignDirectory
 {

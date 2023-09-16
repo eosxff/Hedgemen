@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
 using Petal.Framework.Persistence;
 
-namespace Hgm;
+namespace Hgm.Game;
 
 public abstract class Campaign : IPersistent
 {

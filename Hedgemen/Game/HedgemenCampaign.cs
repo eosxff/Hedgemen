@@ -1,6 +1,6 @@
 using Petal.Framework.Persistence;
 
-namespace Hgm;
+namespace Hgm.Game;
 
 public sealed class HedgemenCampaign : Campaign
 {

@@ -1,6 +1,6 @@
 using System;
 using Hgm.Components;
-using Hgm.WorldGeneration;
+using Hgm.Game.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Petal.Framework;
 using Petal.Framework.Content;

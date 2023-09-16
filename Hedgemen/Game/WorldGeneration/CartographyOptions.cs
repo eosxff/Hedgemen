@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace Hgm.WorldGeneration;
+namespace Hgm.Game.WorldGeneration;
 
 public readonly struct CartographyOptions
 {
