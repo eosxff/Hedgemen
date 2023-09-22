@@ -19,7 +19,8 @@ public sealed class HedgemenRegisters
 	public static readonly NamespacedString CellComponentsRegisterName = new("hgm:cell_components");
 	public static readonly NamespacedString LandscapersRegisterName = new("hgm:landscapers");
 	public static readonly NamespacedString CartographersRegisterName = new("hgm:cartographers");
-	public static readonly NamespacedString CampaignRegisterName = new("hgm:campaigns");
+	public static readonly NamespacedString CampaignCreatorRegisterName = new("hgm:campaign_creators");
+	public static readonly NamespacedString CampaignBehaviourRegisterName = new("hgm:campaign_behaviours");
 
 	private Register<object>? _assets;
 
@@ -76,16 +77,28 @@ public sealed class HedgemenRegisters
 		}
 	}
 
-	private Register<Supplier<Campaign>> _campaigns;
+	private Register<CampaignCreator> _campaignCreators;
 
-	public Register<Supplier<Campaign>> Campaigns
+	public Register<CampaignCreator> CampaignCreatorCreators
 	{
 		get
 		{
-			PetalExceptions.ThrowIfNull(_campaigns);
-			return _campaigns;
+			PetalExceptions.ThrowIfNull(_campaignCreators);
+			return _campaignCreators;
 		}
 	}
+
+	private Register<Supplier<ICampaignBehaviour>> _campaignBehaviours;
+
+	public Register<Supplier<ICampaignBehaviour>> CampaignBehaviours
+	{
+		get
+		{
+			PetalExceptions.ThrowIfNull(_campaignBehaviours);
+			return _campaignBehaviours;
+		}
+	}
+
 
 	/// <summary>
 	/// Initializes the registers to non-null values. Note that this does not add the content.
@@ -98,7 +111,8 @@ public sealed class HedgemenRegisters
 		SetupCellComponentsRegister(registry);
 		SetupLandscapersRegister(registry);
 		SetupCartographersRegister(registry);
-		SetupCampaignsRegister(registry);
+		SetupCampaignCreatorsRegister(registry);
+		SetupCampaignBehavioursRegister(registry);
 	}
 
 	private void SetupAssetsRegister(Registry registry)
@@ -151,14 +165,24 @@ public sealed class HedgemenRegisters
 		AddRegisterToRegistry(_cartographers, registry);
 	}
 
-	private void SetupCampaignsRegister(Registry registry)
+	private void SetupCampaignCreatorsRegister(Registry registry)
 	{
-		_campaigns = new Register<Supplier<Campaign>>(
-			CampaignRegisterName,
+		_campaignCreators = new Register<CampaignCreator>(
+			CampaignCreatorRegisterName,
 			HedgemenVanilla.ModID,
 			registry);
 
-		AddRegisterToRegistry(_campaigns, registry);
+		AddRegisterToRegistry(_campaignCreators, registry);
+	}
+
+	private void SetupCampaignBehavioursRegister(Registry registry)
+	{
+		_campaignBehaviours = new Register<Supplier<ICampaignBehaviour>>(
+			CampaignBehaviourRegisterName,
+			HedgemenVanilla.ModID,
+			registry);
+
+		AddRegisterToRegistry(_campaignBehaviours, registry);
 	}
 
 	/// <summary>

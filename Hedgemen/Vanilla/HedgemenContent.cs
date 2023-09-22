@@ -78,7 +78,13 @@ public sealed class HedgemenContent
 		private set;
 	}
 
-	public RegistryObject<Supplier<Campaign>> HedgemenCampaign
+	public RegistryObject<CampaignCreator> HedgemenCampaignCreator
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<ICampaignBehaviour>> HedgemenCampaignBehaviour
 	{
 		get;
 		private set;
@@ -96,7 +102,8 @@ public sealed class HedgemenContent
 		RegisterCellComponents(registers);
 		RegisterLandscapers(registers);
 		RegisterCartographers(registers);
-		RegisterCampaigns(registers);
+		RegisterCampaignBehaviours(registers);
+		RegisterCampaignCreators(registers);
 	}
 
 	private void RegisterAssets(HedgemenRegisters registers)
@@ -117,11 +124,14 @@ public sealed class HedgemenContent
 	{
 		var register = registers.EntityComponents;
 
-		register.AddKey("hgm:character_sheet", () => new CharacterSheet());
-		register.AddKey("hgm:character_race", () => new CharacterRace());
+		var characterSheetName = new NamespacedString("hgm:character_sheet");
+		var characterRaceName = new NamespacedString("hgm:character_race");
 
-		CharacterSheet = register.MakeReference("hgm:character_sheet");
-		CharacterRace = register.MakeReference("hgm:character_race");
+		register.AddKey(characterSheetName, () => new CharacterSheet());
+		register.AddKey(characterRaceName, () => new CharacterRace());
+
+		CharacterSheet = register.MakeReference(characterSheetName);
+		CharacterRace = register.MakeReference(characterRaceName);
 	}
 
 	private void RegisterCellComponents(HedgemenRegisters registers)
@@ -188,21 +198,38 @@ public sealed class HedgemenContent
 	{
 		var register = registers.Cartographers;
 
+		var overworldCartographerName = new NamespacedString("hgm:overworld_cartographer");
+
 		var overworld = new Cartographer();
 		overworld.Landscapers.Add(OverworldTerrainLandscaper);
-		register.AddKey("hgm:overworld_cartographer", overworld);
+		register.AddKey(overworldCartographerName, overworld);
 
 		OverworldCartographer = register.MakeReference("hgm:overworld_cartographer");
 	}
 
-	private void RegisterCampaigns(HedgemenRegisters registers)
+	private void RegisterCampaignCreators(HedgemenRegisters registers)
 	{
-		var register = registers.Campaigns;
+		var register = registers.CampaignCreatorCreators;
 
-		var hedgemenCampaignName = new NamespacedString("hgm:hedgemen_campaign");
+		var hedgemenCampaignCreatorName = new NamespacedString("hgm:hedgemen_campaign_creator");
+		var hedgemenCampaignBehaviourName = new NamespacedString("hgm:campaign_behaviour");
 
-		register.AddKey(hedgemenCampaignName, () => new HedgemenCampaign());
+		register.AddKey(hedgemenCampaignCreatorName, new CampaignCreator
+		{
+			CampaignBehaviourName = hedgemenCampaignBehaviourName
+		});
 
-		HedgemenCampaign = register.MakeReference(hedgemenCampaignName);
+		HedgemenCampaignCreator = register.MakeReference(hedgemenCampaignCreatorName);
+	}
+
+	private void RegisterCampaignBehaviours(HedgemenRegisters registers)
+	{
+		var register = registers.CampaignBehaviours;
+
+		var hedgemenCampaignBehaviourName = new NamespacedString("hgm:campaign_behaviour");
+
+		register.AddKey(hedgemenCampaignBehaviourName, () => new HedgemenCampaignBehaviour());
+
+		HedgemenCampaignBehaviour = register.MakeReference(hedgemenCampaignBehaviourName);
 	}
 }

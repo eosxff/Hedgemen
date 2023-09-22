@@ -64,33 +64,6 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 		var newParty = new Party();
 		newParty.ReadData(party.WriteData());
 		Game.Logger.Debug($"New party member: {newParty.Members[0]}");
-
-		var serializedCampaign = new HedgemenCampaign
-		{
-			Directory = new CampaignDirectory(new DirectoryInfo("campaigns/hedgemen_campaign")),
-			Settings = new CampaignSettings
-			{
-				CampaignName = "Hedgemen Campaign",
-				Ironman = true,
-				Mods =
-				{
-					"hgm:mod".ToNamespaced(),
-					"hgm_debug:mod".ToNamespaced()
-				}
-			}
-		};
-
-		const string serializedCampaignFileName = "campaign_settings.json";
-		var serializedCampaignFile = new FileInfo(serializedCampaignFileName);
-		serializedCampaignFile.WriteString(
-			serializedCampaign.WriteData().Serialize().ToString(),
-			Encoding.UTF8,
-			FileMode.OpenOrCreate);
-
-		var campaignData = PersistentData.FromStream(new FileInfo(serializedCampaignFileName).Open(FileMode.Open));
-		var campaign = campaignData.InstantiateData<Campaign>();
-
-		Game.Logger.Debug($"Campaign mods count: {campaign.Settings.Mods.Count}. Type: {campaign.GetType()}");
 	}
 
 	private void GenerateMap(Cartographer cartographer)

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using Hgm.Game;
+using Hgm.Vanilla;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
@@ -12,7 +13,7 @@ using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
 
-namespace Hgm.Vanilla.Scenes;
+namespace Hgm.Game.Scenes;
 
 public sealed class MainMenuScene : Scene
 {
@@ -126,15 +127,12 @@ public sealed class MainMenuScene : Scene
 		if (Game is not Hedgemen hedgemen)
 			return;
 
-		if (!hedgemen.Registry.GetRegister("hgm:campaigns", out Register<Supplier<Campaign>> campaignRegister))
-		{
-			Game.Logger.Error($"Could not find hgm:campaigns register.");
-			return;
-		}
+		var campaignCreators = HedgemenVanilla.Instance.Registers.CampaignCreatorCreators;
 
-		var campaignRO = campaignRegister.MakeReference("hgm:hedgemen_campaign");
+		var campaignCreatorRO =
+			campaignCreators.MakeReference("hgm:hedgemen_campaign_creator");
 
-		var campaign = (HedgemenCampaign)campaignRO.Supply<Campaign>();
+		var campaign = campaignCreatorRO.Get().Create();
 		campaign.StartCampaign();
 	}
 

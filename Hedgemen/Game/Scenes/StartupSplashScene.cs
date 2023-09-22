@@ -7,7 +7,7 @@ using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
 
-namespace Hgm.Vanilla.Scenes;
+namespace Hgm.Game.Scenes;
 
 public sealed class StartupSplashScene : Scene
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Petal.Framework.Util;
 
 namespace Petal.Framework.Content;
@@ -7,6 +8,7 @@ namespace Petal.Framework.Content;
 public sealed class Register<TContent> : IRegister
 {
 	private readonly Dictionary<NamespacedString, ContentKey> _content = new();
+	// todo make contentkey a reference and add a weakreference list
 
 	public event EventHandler? OnKeyAdded;
 	public event EventHandler? OnKeyRemoved;
@@ -100,6 +102,9 @@ public sealed class Register<TContent> : IRegister
 	{
 		return _content.ContainsKey(id);
 	}
+
+	public IReadOnlyList<TContent> ListRegisteredContent()
+		=> new List<TContent>(_content.Select(c => (TContent)c.Value.Content));
 
 	public ICollection<ContentKey> RegisteredContent
 		=> _content.Values;

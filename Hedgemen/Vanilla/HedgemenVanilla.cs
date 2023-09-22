@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Hgm.Vanilla.Scenes;
+using Hgm.Game.Scenes;
 using Petal.Framework;
 using Petal.Framework.Content;
 using Petal.Framework.Modding;

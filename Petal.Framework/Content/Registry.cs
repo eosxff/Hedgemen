@@ -43,7 +43,10 @@ public sealed class Registry
 	public bool AddRegister(IRegister register)
 	{
 		if (_registers.ContainsKey(register.RegistryName))
+		{
+			Logger.Warn($"Attempting to add a register to registry with a duplicate name. Ignored.");
 			return false;
+		}
 
 		_registers.Add(register.RegistryName, register);
 		Logger.Info($"Added {register.RegistryName} to the registry.");

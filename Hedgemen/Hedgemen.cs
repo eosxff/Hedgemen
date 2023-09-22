@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Hgm.Game;
 using Hgm.Vanilla;
 using Petal.Framework;
 using Petal.Framework.Content;
@@ -18,7 +19,7 @@ public class Hedgemen : PetalGame
 {
 	private const LogLevel DebugLogLevel = LogLevel.Debug;
 	private const LogLevel ReleaseLogLevel = LogLevel.Warn;
-	public static string Version => VersionStringify(typeof(Hedgemen).Assembly.GetName().Version!);
+	public static string Version => StringifyVersion(typeof(Hedgemen).Assembly.GetName().Version!);
 
 	private static Hedgemen HedgemenInstance;
 
@@ -42,6 +43,17 @@ public class Hedgemen : PetalGame
 		get;
 		private set;
 	}
+
+	private Campaign? _currentCampaign;
+
+	public Campaign GetCurrentCampaign()
+	{
+		PetalExceptions.ThrowIfNull(_currentCampaign);
+		return _currentCampaign;
+	}
+
+	public bool IsCampaignCurrentlyRunning
+		=> _currentCampaign is not null;
 
 	public Hedgemen()
 	{
@@ -206,6 +218,6 @@ public class Hedgemen : PetalGame
 #endif
 	}
 
-	private static string VersionStringify(Version version)
+	private static string StringifyVersion(Version version)
 		=> $"indev-{version.Major}.{version.Minor}.{version.Build}";
 }
