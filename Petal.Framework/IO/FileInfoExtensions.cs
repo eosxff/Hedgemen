@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Petal.Framework.IO;
 
@@ -25,29 +26,56 @@ public static class FileInfoExtensions
 		return true;
 	}
 
-	public static bool WriteBytes(
+	public static void WriteBytes(
 		this FileInfo self,
 		byte[] buffer,
 		Encoding? encoding,
 		FileMode fileMode = FileMode.Truncate)
 	{
-		return WriteBytes(self, buffer, 0, buffer.Length, encoding, fileMode);
+		WriteBytes(self, buffer, 0, buffer.Length, encoding, fileMode);
 	}
 
-	public static bool WriteBytes(
+	public static void WriteBytes(
 		this FileInfo self,
 		byte[] buffer,
 		int index,
 		int count,
 		Encoding? encoding,
-		FileMode fileMode = FileMode.Truncate)
+		FileMode fileMode = FileMode.OpenOrCreate)
 	{
 		encoding ??= Encoding.UTF8;
 
 		using var writer = new BinaryWriter(self.Open(fileMode), encoding);
 		writer.Write(buffer, index, count);
 		writer.Flush();
-		return true;
+	}
+
+	public async static Task WriteBytesAsync(
+		this FileInfo self,
+		byte[] buffer,
+		int index,
+		int count,
+		Encoding? encoding,
+		FileMode fileMode = FileMode.OpenOrCreate)
+	{
+		encoding ??= Encoding.UTF8;
+
+		await using var stream = self.Open(fileMode);
+		await stream.WriteAsync(buffer, 0, buffer.Length);
+	}
+
+	public async static Task WriteBytesAsync(
+		this FileInfo self,
+		ReadOnlyMemory<byte> buffer,
+		int index,
+		int count,
+		Encoding? encoding,
+		FileMode fileMode = FileMode.OpenOrCreate)
+	{
+		encoding ??= Encoding.UTF8;
+
+		await using var stream = self.Open(fileMode);
+		await stream.WriteAsync(buffer);
 	}
 
 	public static string ReadString(
@@ -62,6 +90,22 @@ public static class FileInfoExtensions
 
 		using var reader = new StreamReader(self.Open(fileMode), encoding);
 		return reader.ReadToEnd();
+	}
+
+	public async static Task<string> ReadStringAsync(
+		this FileInfo self,
+		Encoding? encoding,
+		FileMode fileMode = FileMode.Open)
+	{
+		encoding ??= Encoding.UTF8;
+
+		if (!self.Exists)
+			return string.Empty;
+
+		using var reader = new StreamReader(self.Open(fileMode), encoding);
+		string readTask = await reader.ReadToEndAsync();
+
+		return readTask;
 	}
 
 	public static string ReadStringSilently(
@@ -93,6 +137,17 @@ public static class FileInfoExtensions
 		using var ms = new MemoryStream();
 
 		stream.CopyTo(ms);
+		return ms.ToArray();
+	}
+
+	public async static Task<byte[]> ReadBytesAsync(
+		this FileInfo self,
+		FileMode fileMode = FileMode.Open)
+	{
+		await using var stream = self.Open(fileMode);
+		using var ms = new MemoryStream();
+
+		await stream.CopyToAsync(ms);
 		return ms.ToArray();
 	}
 
