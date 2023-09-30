@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Hgm.Game;
 using Hgm.Vanilla;
 using Microsoft.Xna.Framework;
@@ -17,8 +18,6 @@ namespace Hgm.Game.Scenes;
 
 public sealed class MainMenuScene : Scene
 {
-	private readonly Register<object> _assetsRegister;
-
 	public Background BackgroundSplash
 	{
 		get;
@@ -55,22 +54,20 @@ public sealed class MainMenuScene : Scene
 		private set;
 	}
 
-	public MainMenuScene(Register<object> assetsRegister)
+	public MainMenuScene()
 	{
-		_assetsRegister = assetsRegister;
-		Skin = Skin.FromJson(new FileInfo("main_menu_skin.json").ReadString(Encoding.UTF8), assetsRegister);
-
 		Name = "hgm:main_menu_scene".ToNamespaced();
-
 		ViewportAdapter = new BoxingViewportAdapter(
 			Game.GraphicsDevice,
 			Game.Window,
 			new Vector2Int(320, 180));
 	}
 
-	protected override void OnInitialize()
+	protected override void OnLoad()
 	{
 		var assetsRegister = HedgemenVanilla.Instance.Registers.Assets;
+
+		Skin = Skin.FromJson(new FileInfo("main_menu_skin.json").ReadString(Encoding.UTF8), assetsRegister);
 
 		BackgroundSplash = Root.Add(new Background
 		{

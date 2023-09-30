@@ -4,11 +4,14 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Hgm.Game;
+using Hgm.Game.Scenes;
 using Hgm.Vanilla;
 using Petal.Framework;
 using Petal.Framework.Content;
 using Petal.Framework.IO;
 using Petal.Framework.Modding;
+using Petal.Framework.Scenery;
+using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
 using Petal.Framework.Util.Logging;
 using Petal.Framework.Windowing;
@@ -65,6 +68,11 @@ public class Hedgemen : PetalGame
 
 	protected override void Setup()
 	{
+		ChangeScenes(new StartupSplashScene(
+			new Stage(),
+			new Skin(),
+			new FileInfo("splash.png").Open(FileMode.Open)));
+
 		var embeddedMods = new List<PetalEmbeddedMod>(2)
 		{
 			new HedgemenVanilla()
@@ -94,6 +102,8 @@ public class Hedgemen : PetalGame
 			Logger.Add($"{nameof(PetalModLoader)} could not be started. Aborting.", modLoaderUnsuccessfulLevel);
 			throw new PetalException();
 		}
+
+		ChangeScenesAsync(() => new MainMenuScene());
 	}
 
 	protected override void OnExiting(object sender, EventArgs args)

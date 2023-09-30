@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -65,30 +66,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		{
 			logger.Info($"Changing scene.");
 		};
-
-		var scene = new StartupSplashScene(
-			new Stage(),
-			new Skin(Registers.Assets),
-			new FileInfo("splash.png").Open(FileMode.Open));
-		Game.ChangeScenes(scene);
-
-		RegisterContentThenChangeScenes();
-	}
-
-	private /*async*/ void RegisterContentThenChangeScenes()
-	{
-		var logger = Game.Logger;
-		var assetsRegistryFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
-
-		if (!assetsRegistryFound)
-			return;
-
-		/*await Task.Run(async delegate
-		{
-			await Task.Delay(1000);
-		});*/
-
-		Game.ChangeScenes(new MainMenuScene(Registers.Assets));
 	}
 
 	protected override void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)

@@ -1,7 +1,8 @@
+using Hgm.Vanilla.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Petal.Framework.EC;
 
-namespace Hgm.Vanilla.WorldGeneration;
+namespace Hgm.Game.WorldGeneration;
 
 public abstract class Terrain : CellComponent
 {

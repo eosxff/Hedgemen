@@ -11,7 +11,7 @@ namespace Hgm.Game.Scenes;
 
 public sealed class StartupSplashScene : Scene
 {
-	private Texture2D _splashBackground;
+	private readonly Texture2D _splashBackground;
 
 	public StartupSplashScene(Stage root, Skin skin, Stream backgroundStream, PetalGame game = null)
 		: base(root, skin, game)
@@ -25,7 +25,7 @@ public sealed class StartupSplashScene : Scene
 
 		_splashBackground = Game.Assets.LoadAsset<Texture2D>(backgroundStream);
 	}
-	protected override void OnInitialize()
+	protected override void OnLoad()
 	{
 		Root.Add(new Image
 		{

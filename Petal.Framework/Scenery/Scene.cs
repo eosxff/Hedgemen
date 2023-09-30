@@ -9,6 +9,12 @@ namespace Petal.Framework.Scenery;
 
 public abstract class Scene : IDisposable
 {
+	public bool IsFinishedLoading
+	{
+		get;
+		private set;
+	} = false;
+
 	public PetalGame Game
 	{
 		get;
@@ -214,16 +220,17 @@ public abstract class Scene : IDisposable
 		AfterExit?.Invoke(this, EventArgs.Empty);
 	}
 
-	public void Initialize()
+	public void Load()
 	{
 		PetalGame.Petal.Window.ClientSizeChanged += OnWindowClientSizeChanged;
 		ViewportAdapter.Reset();
 
-		OnInitialize();
+		OnLoad();
+		IsFinishedLoading = true;
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
 	}
 
-	protected virtual void OnInitialize()
+	protected virtual void OnLoad()
 	{
 
 	}

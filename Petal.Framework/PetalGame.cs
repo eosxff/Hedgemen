@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Assets;
@@ -94,6 +95,8 @@ public abstract class PetalGame : Game
 		private set;
 	}
 
+	private EnqueuedScene? _enqueuedScene = null;
+
 	public CoroutineManager Coroutines
 	{
 		get;
@@ -107,25 +110,41 @@ public abstract class PetalGame : Game
 	{
 		PetalExceptions.ThrowIfNull(scene);
 
-		if (Scene is not null)
-		{
-			lock (Scene)
-			{
-				Scene.Exit();
-				Scene = scene;
-				Scene.Initialize();
-			}
-		}
+		Scene?.Exit();
 
-		else
-		{
-			Scene = scene;
-			Scene.Initialize();
-		}
+		if(!scene.IsFinishedLoading)
+			scene.Load();
+
+		Scene = scene;
 
 		OnSceneChanged?.Invoke(this, new SceneChangedArgs
 		{
 			NewScene = scene
+		});
+	}
+
+	public async void ChangeScenesAsync(Func<Scene> sceneSupplier)
+	{
+		var scene = await Task.Run(() =>
+		{
+			var scene = sceneSupplier();
+			scene.Load();
+			return scene;
+		});
+
+		_enqueuedScene = new EnqueuedScene
+		{
+			Scene = scene
+		};
+	}
+
+	private async Task<Scene> SupplySceneAsync(Func<Scene> sceneSupplier)
+	{
+		return await Task.Run(() =>
+		{
+			var scene = sceneSupplier();
+			scene.Load();
+			return scene;
 		});
 	}
 
@@ -319,8 +338,23 @@ public abstract class PetalGame : Game
 	/// <param name="gameTime">the elapsed time since the previous update call.</param>
 	protected override void Update(GameTime gameTime)
 	{
+		if (_enqueuedScene is not null)
+		{
+			ChangeScenes(_enqueuedScene.Scene);
+			_enqueuedScene = null;
+		}
+
 		Coroutines.Update(gameTime);
 		Scene?.Update(gameTime);
 		base.Update(gameTime);
+	}
+
+	private class EnqueuedScene
+	{
+		public required Scene Scene
+		{
+			get;
+			init;
+		}
 	}
 }

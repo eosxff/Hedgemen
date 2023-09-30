@@ -1,7 +1,5 @@
 ﻿namespace Petal.Framework.Content;
 
-public delegate T Supplier<out T>();
-
 public interface IRegister
 {
 	public NamespacedString RegistryName
