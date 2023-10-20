@@ -1,7 +1,7 @@
 ﻿using Petal.Framework.EC;
 using Petal.Framework.Persistence;
 
-namespace Hgm.Components;
+namespace Hgm.Vanilla.EntityComponents;
 
 public class CharacterSheet : EntityComponent
 {

@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Hgm.Components;
 using Hgm.Game.EntityComponents;
 using Hgm.Game;
 using Hgm.Vanilla.WorldGeneration;

@@ -3,9 +3,11 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using Hgm.Game;
-using Hgm.Components;
+using Hgm.Game.CampaignSystem;
+using Hgm.Game.CellComponents;
 using Hgm.Vanilla.WorldGeneration;
 using Hgm.Game.WorldGeneration;
+using Hgm.Vanilla.EntityComponents;
 using Microsoft.Xna.Framework;
 using Petal.Framework;
 using Petal.Framework.Assets;
@@ -79,13 +81,7 @@ public sealed class HedgemenContent
 		private set;
 	}
 
-	public RegistryObject<CampaignCreator> HedgemenCampaignCreator
-	{
-		get;
-		private set;
-	}
-
-	public RegistryObject<Supplier<ICampaignBehaviour>> HedgemenCampaignBehaviour
+	public RegistryObject<Supplier<Campaign>> HedgemenCampaign
 	{
 		get;
 		private set;
@@ -103,8 +99,6 @@ public sealed class HedgemenContent
 		RegisterCellComponents(registers);
 		RegisterLandscapers(registers);
 		RegisterCartographers(registers);
-		RegisterCampaignBehaviours(registers);
-		RegisterCampaignCreators(registers);
 	}
 
 	private void RegisterAssets(HedgemenRegisters registers)
@@ -206,31 +200,5 @@ public sealed class HedgemenContent
 		register.AddKey(overworldCartographerName, overworld);
 
 		OverworldCartographer = register.MakeReference("hgm:overworld_cartographer");
-	}
-
-	private void RegisterCampaignCreators(HedgemenRegisters registers)
-	{
-		var register = registers.CampaignCreatorCreators;
-
-		var hedgemenCampaignCreatorName = new NamespacedString("hgm:hedgemen_campaign_creator");
-		var hedgemenCampaignBehaviourName = new NamespacedString("hgm:campaign_behaviour");
-
-		register.AddKey(hedgemenCampaignCreatorName, new CampaignCreator
-		{
-			CampaignBehaviourName = hedgemenCampaignBehaviourName
-		});
-
-		HedgemenCampaignCreator = register.MakeReference(hedgemenCampaignCreatorName);
-	}
-
-	private void RegisterCampaignBehaviours(HedgemenRegisters registers)
-	{
-		var register = registers.CampaignBehaviours;
-
-		var hedgemenCampaignBehaviourName = new NamespacedString("hgm:campaign_behaviour");
-
-		register.AddKey(hedgemenCampaignBehaviourName, () => new HedgemenCampaignBehaviour());
-
-		HedgemenCampaignBehaviour = register.MakeReference(hedgemenCampaignBehaviourName);
 	}
 }

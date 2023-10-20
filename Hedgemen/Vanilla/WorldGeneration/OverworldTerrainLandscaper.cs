@@ -1,9 +1,8 @@
 using System;
-using Hgm.Components;
+using Hgm.Game.CellComponents;
 using Hgm.Game.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Petal.Framework;
-using Petal.Framework.Content;
 using Petal.Framework.EC;
 using Petal.Framework.Util;
 using Petal.Framework.Vendor;

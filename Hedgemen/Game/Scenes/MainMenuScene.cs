@@ -1,18 +1,18 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
-using Hgm.Game;
+using Hgm.Game.CampaignSystem;
+using Hgm.Game.WorldGeneration;
 using Hgm.Vanilla;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
-using Petal.Framework.Content;
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
+using Petal.Framework.Modding;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
-using Petal.Framework.Util;
+using Petal.Framework.Util.Extensions;
 
 namespace Hgm.Game.Scenes;
 
@@ -124,13 +124,18 @@ public sealed class MainMenuScene : Scene
 		if (Game is not Hedgemen hedgemen)
 			return;
 
-		var campaignCreators = HedgemenVanilla.Instance.Registers.CampaignCreatorCreators;
+		var cartographers = HedgemenVanilla.Instance.Registers.Cartographers;
 
-		var campaignCreatorRO =
-			campaignCreators.MakeReference("hgm:hedgemen_campaign_creator");
+		if (!cartographers.GetItem(new NamespacedString("hgm:overworld_cartographer"), out Cartographer cartographer))
+			return;
 
-		var campaign = campaignCreatorRO.Get().Create();
-		campaign.StartCampaign();
+		Campaign.StartCampaign(new CampaignStartArgs
+		{
+			StartingWorldCartographer = cartographer,
+			Hedgemen = hedgemen,
+			ModList = PetalModList.FromParams("hgm:mod", "example:mod"),
+			SessionDirectory = new DirectoryInfo("debug_save_path")
+		});
 	}
 
 	private void QuitButtonOnMousePressed(object? sender, EventArgs args)

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Petal.Framework.Util;
+namespace Petal.Framework.Util.Extensions;
 
 public static class XnaExtensions
 {

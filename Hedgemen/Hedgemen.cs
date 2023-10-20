@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Reflection;
 using System.Text;
-using Hgm.Game;
+using Hgm.Game.CampaignSystem;
 using Hgm.Game.Scenes;
 using Hgm.Vanilla;
 using Petal.Framework;
@@ -20,11 +20,7 @@ namespace Hgm;
 
 public class Hedgemen : PetalGame
 {
-	private const LogLevel DebugLogLevel = LogLevel.Debug;
-	private const LogLevel ReleaseLogLevel = LogLevel.Warn;
-	public static string Version => StringifyVersion(typeof(Hedgemen).Assembly.GetName().Version!);
-
-	private static Hedgemen HedgemenInstance;
+	public static string Version => StringifyVersion(typeof(Hedgemen).Assembly.GetName().Version);
 
 	public static Hedgemen Instance
 	{
@@ -35,7 +31,16 @@ public class Hedgemen : PetalGame
 		}
 	}
 
+	public static bool HasInstance
+		=> HedgemenInstance is not null;
+
 	public Registry Registry
+	{
+		get;
+		private set;
+	}
+
+	public HedgemenGlobalEvents GlobalEvents
 	{
 		get;
 		private set;
@@ -47,21 +52,23 @@ public class Hedgemen : PetalGame
 		private set;
 	}
 
-	private Campaign? _currentCampaign;
-
-	public Campaign GetCurrentCampaign()
+	public Campaign? CurrentCampaign
 	{
-		PetalExceptions.ThrowIfNull(_currentCampaign);
-		return _currentCampaign;
+		get;
+		private set;
 	}
 
-	public bool IsCampaignCurrentlyRunning
-		=> _currentCampaign is not null;
+	public bool TryGetCurrentCampaign([NotNullWhen(true)] out Campaign? campaign)
+	{
+		campaign = CurrentCampaign;
+		return campaign is not null;
+	}
 
 	public Hedgemen()
 	{
 		HedgemenInstance = this;
 
+		GlobalEvents = new HedgemenGlobalEvents(this);
 		OnDebugChanged += DebugChangedCallback;
 		AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 	}
@@ -229,5 +236,39 @@ public class Hedgemen : PetalGame
 	}
 
 	private static string StringifyVersion(Version version)
-		=> $"indev-{version.Major}.{version.Minor}.{version.Build}";
+	{
+		if (version is null)
+			return "unknown_version";
+
+		return $"indev-{version.Major}.{version.Minor}.{version.Build}";
+	}
+
+	private const LogLevel DebugLogLevel = LogLevel.Debug;
+	private const LogLevel ReleaseLogLevel = LogLevel.Warn;
+
+	private static Hedgemen HedgemenInstance;
+
+	internal void MakeCampaignCurrent(Campaign campaign)
+	{
+		CurrentCampaign = campaign;
+	}
+
+	public sealed class HedgemenGlobalEvents
+	{
+		public delegate void CampaignGeneratorInitialization(Hedgemen hedgemen, CampaignGenerator generator);
+
+		public HedgemenGlobalEvents(Hedgemen hedgemen)
+		{
+			_instance = hedgemen;
+		}
+
+		public event CampaignGeneratorInitialization? CampaignGeneratorInitializationEvent;
+
+		public void OnCampaignGeneratorInitialization(CampaignGenerator generator)
+		{
+			CampaignGeneratorInitializationEvent?.Invoke(_instance, generator);
+		}
+
+		private readonly Hedgemen _instance;
+	}
 }

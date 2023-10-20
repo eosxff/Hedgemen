@@ -30,6 +30,11 @@
             <HintPath>..\Petal.Framework\lib\FNA.dll</HintPath>
         </Reference>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Game\Scenes\Nodes\" />
+      <Folder Include="Vanilla\CellComponents\" />
+    </ItemGroup>
 </Project>
 
 <!--i'm bad at remembering things-->

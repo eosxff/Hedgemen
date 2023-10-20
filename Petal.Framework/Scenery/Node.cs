@@ -10,61 +10,24 @@ namespace Petal.Framework.Scenery;
 
 public abstract class Node
 {
-	public sealed class ChildAddedEventArgs : EventArgs
-	{
-		public required Node Child
-		{
-			get;
-			init;
-		}
-	}
+	public static NamespacedString GenerateDefaultNodeName(Node node)
+		=> new($"{NamespacedString.DefaultNamespace}:{node.GetType().Name.ToLowerInvariant()}@{node.GetHashCode()}");
 
-	public sealed class ChildRemovedEventArgs : EventArgs
-	{
-		public Node Child
-		{
-			get;
-			init;
-		}
-	}
-
-	public sealed class ParentChangedEventArgs : EventArgs
-	{
-		public Node? OldParent
-		{
-			get;
-			init;
-		}
-
-		public Node? NewParent
-		{
-			get;
-			init;
-		}
-	}
+	public event EventHandler<ParentChangedEventArgs>? OnParentChanged;
+	public event EventHandler<ChildAddedEventArgs>? OnChildAdded;
+	public event EventHandler<ChildRemovedEventArgs>? OnChildRemoved;
 
 	public event EventHandler? OnBeforeDraw;
 	public event EventHandler? OnAfterDraw;
-
 	public event EventHandler? OnBeforeUpdate;
 	public event EventHandler? OnAfterUpdate;
-
 	public event EventHandler? OnDestroy;
-
 	public event EventHandler? OnFocusGained;
 	public event EventHandler? OnFocusLost;
-
 	public event EventHandler? OnMouseHover;
 	public event EventHandler? OnMouseDown;
 	public event EventHandler? OnMousePressed;
 	public event EventHandler? OnMouseReleased;
-
-	public event EventHandler<ParentChangedEventArgs>? OnParentChanged;
-
-	public event EventHandler<ChildAddedEventArgs>? OnChildAdded;
-	public event EventHandler<ChildRemovedEventArgs>? OnChildRemoved;
-
-	private readonly List<Node> _children = new();
 
 	public IReadOnlyList<Node> Children
 		=> _children;
@@ -72,22 +35,11 @@ public abstract class Node
 	public int NestedChildrenCount
 		=> GetNestedChildrenCount();
 
-	public int GetNestedChildrenCount(int count = 0)
-	{
-		foreach (var child in Children)
-			count = child.GetNestedChildrenCount(count);
-
-		count += Children.Count;
-		return count;
-	}
-
 	public string Tag
 	{
 		get;
 		set;
 	} = string.Empty;
-
-	private NamespacedString _name;
 
 	public NamespacedString Name
 	{
@@ -125,8 +77,6 @@ public abstract class Node
 		private set;
 	} = NodeState.Normal;
 
-	private Anchor _anchor = Anchor.TopLeft;
-
 	public Anchor Anchor
 	{
 		get => _anchor;
@@ -136,8 +86,6 @@ public abstract class Node
 			MarkAsDirty();
 		}
 	}
-
-	private Node? _parent;
 
 	public Node? Parent
 	{
@@ -154,8 +102,6 @@ public abstract class Node
 			OnParentChanged?.Invoke(this, args);
 		}
 	}
-
-	private Scene? _scene;
 
 	public Scene? Scene
 	{
@@ -244,6 +190,15 @@ public abstract class Node
 		}
 
 		OnAfterUpdate?.Invoke(this, EventArgs.Empty);
+	}
+
+	public int GetNestedChildrenCount(int count = 0)
+	{
+		foreach (var child in Children)
+			count = child.GetNestedChildrenCount(count);
+
+		count += Children.Count;
+		return count;
 	}
 
 	protected virtual void OnUpdate(GameTime time, NodeSelection selection)
@@ -368,10 +323,6 @@ public abstract class Node
 		set;
 	}
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal void InternalDestroy()
-		=> Destroy();
-
 	protected virtual void Destroy()
 	{
 		foreach (var child in Children.ToList()) child.Destroy();
@@ -478,6 +429,8 @@ public abstract class Node
 	protected void MarkAsClean()
 		=> _isDirty = false;
 
+	// PRIVATE
+
 	private void UpdateBounds()
 	{
 		CalculateAbsoluteBounds(_bounds);
@@ -519,6 +472,50 @@ public abstract class Node
 			State = NodeState.Input;
 	}
 
-	public static NamespacedString GenerateDefaultNodeName(Node node)
-		=> new($"{NamespacedString.DefaultNamespace}:{node.GetType().Name.ToLowerInvariant()}@{node.GetHashCode()}");
+	private readonly List<Node> _children = new();
+	private Anchor _anchor = Anchor.TopLeft;
+	private Node? _parent;
+	private Scene? _scene;
+	private NamespacedString _name;
+
+	// INTERNAL
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal void InternalDestroy()
+		=> Destroy();
+
+	// INNER CLASSES
+
+	public sealed class ChildAddedEventArgs : EventArgs
+	{
+		public required Node Child
+		{
+			get;
+			init;
+		}
+	}
+
+	public sealed class ChildRemovedEventArgs : EventArgs
+	{
+		public Node Child
+		{
+			get;
+			init;
+		}
+	}
+
+	public sealed class ParentChangedEventArgs : EventArgs
+	{
+		public Node? OldParent
+		{
+			get;
+			init;
+		}
+
+		public Node? NewParent
+		{
+			get;
+			init;
+		}
+	}
 }

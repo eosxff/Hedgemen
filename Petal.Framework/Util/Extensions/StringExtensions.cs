@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace Petal.Framework.Util;
+namespace Petal.Framework.Util.Extensions;
 
 public static class StringExtensions
 {

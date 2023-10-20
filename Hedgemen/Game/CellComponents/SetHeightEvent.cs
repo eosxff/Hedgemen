@@ -1,6 +1,6 @@
 ﻿using Petal.Framework.EC;
 
-namespace Hgm.Components;
+namespace Hgm.Game.CellComponents;
 
 public class SetHeightEvent : CellEvent
 {

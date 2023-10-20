@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Content;
 using Petal.Framework.Util;
@@ -133,16 +134,18 @@ public sealed class Skin
 
 	public static Skin FromJson(string json, Register<object> assets)
 	{
-		var skin = JsonSerializer.Deserialize(json, SkinDataRecordJsc.Default.DataRecord).Create(assets);
+		var skin = JsonSerializer.Deserialize(json, JsonData.JsonTypeInfo).Create(assets);
 		skin.Assets = assets;
 
 		return skin;
 	}
 
 	[Serializable]
-	public struct DataRecord
+	public struct JsonData
 	{
-		[JsonIgnore]
+		public static JsonTypeInfo<JsonData> JsonTypeInfo
+			=> SkinJsonDataJsonTypeInfo.Default.JsonData;
+
 		public static JsonSerializerOptions JsonDeserializeOptions
 			=> new()
 			{
@@ -209,8 +212,8 @@ public sealed class Skin
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(Skin.DataRecord))]
-public partial class SkinDataRecordJsc : JsonSerializerContext
+[JsonSerializable(typeof(Skin.JsonData))]
+internal partial class SkinJsonDataJsonTypeInfo : JsonSerializerContext
 {
 
 }

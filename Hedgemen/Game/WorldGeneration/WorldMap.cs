@@ -8,7 +8,7 @@ namespace Hgm.Game.WorldGeneration;
 
 public class WorldMap : IPersistent
 {
-	public Guid UniverseGuid
+	public Guid WorldGuid
 	{
 		get;
 		internal set;

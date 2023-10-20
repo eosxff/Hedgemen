@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Graphics;
@@ -9,6 +10,16 @@ namespace Petal.Framework.Scenery;
 
 public abstract class Scene : IDisposable
 {
+	public event EventHandler<SkinChangedEventArgs>? OnSkinChanged;
+	public event EventHandler? BeforeUpdate;
+	public event EventHandler? AfterUpdate;
+	public event EventHandler? BeforeDraw;
+	public event EventHandler? AfterDraw;
+	public event EventHandler? AfterInitialize;
+	public event EventHandler? BeforeExit;
+	public event EventHandler? AfterExit;
+	public event EventHandler? OnViewportAdapterChanged;
+
 	public bool IsFinishedLoading
 	{
 		get;
@@ -18,7 +29,11 @@ public abstract class Scene : IDisposable
 	public PetalGame Game
 	{
 		get;
-		private set;
+	}
+
+	public SignalHandler Signals
+	{
+		get;
 	}
 
 	public NamespacedString Name
@@ -26,23 +41,6 @@ public abstract class Scene : IDisposable
 		get;
 		protected set;
 	} = NamespacedString.Default;
-
-	public class SkinChangedEventArgs : EventArgs
-	{
-		public Skin OldSkin
-		{
-			get;
-			init;
-		}
-
-		public Skin NewSkin
-		{
-			get;
-			init;
-		}
-	}
-
-	private RenderTarget2D? _renderTarget;
 
 	public Renderer Renderer
 	{
@@ -70,8 +68,6 @@ public abstract class Scene : IDisposable
 		get;
 	} = new();
 
-	private ViewportAdapter _viewportAdapter;
-
 	public ViewportAdapter ViewportAdapter
 	{
 		get => _viewportAdapter;
@@ -83,8 +79,6 @@ public abstract class Scene : IDisposable
 			OnViewportAdapterChanged?.Invoke(this, EventArgs.Empty);
 		}
 	}
-
-	private Skin _skin = new();
 
 	public Skin Skin
 	{
@@ -104,26 +98,16 @@ public abstract class Scene : IDisposable
 		}
 	}
 
-	public event EventHandler? BeforeUpdate;
-	public event EventHandler? AfterUpdate;
-
-	public event EventHandler? BeforeDraw;
-	public event EventHandler? AfterDraw;
-
-	public event EventHandler? AfterInitialize;
-
-	public event EventHandler? BeforeExit;
-	public event EventHandler? AfterExit;
-
-	public event EventHandler<SkinChangedEventArgs>? OnSkinChanged;
-
-	public event EventHandler? OnViewportAdapterChanged;
+	private RenderTarget2D? _renderTarget;
+	private ViewportAdapter _viewportAdapter;
+	private Skin _skin = new();
 
 	protected Scene(Stage root, Skin skin, PetalGame? game = null)
 	{
 		game ??= PetalGame.Petal;
 		Game = game;
 
+		Signals = new SignalHandler(this);
 		Skin = skin;
 
 		Input = new InputProvider();
@@ -169,12 +153,6 @@ public abstract class Scene : IDisposable
 		Root.DestroyAllMarkedNodes();
 
 		AfterUpdate?.Invoke(this, EventArgs.Empty);
-	}
-
-	private Vector2 TransformCursorPosition(Vector2 position)
-	{
-		var point = ViewportAdapter.PointToScreen(position.X, position.Y);
-		return new Vector2(point.X, point.Y);
 	}
 
 	public void Draw(GameTime time)
@@ -230,14 +208,26 @@ public abstract class Scene : IDisposable
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
 	}
 
+	public void Dispose()
+	{
+		GC.SuppressFinalize(this);
+
+		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
+
+		_renderTarget?.Dispose();
+		Renderer?.Dispose();
+		ViewportAdapter?.Dispose();
+	}
+
 	protected virtual void OnLoad()
 	{
 
 	}
 
-	private void OnWindowClientSizeChanged(object? sender, EventArgs args)
+	private Vector2 TransformCursorPosition(Vector2 position)
 	{
-		Reset();
+		var point = ViewportAdapter.PointToScreen(position.X, position.Y);
+		return new Vector2(point.X, point.Y);
 	}
 
 	private void OnSkinRefreshed(object? sender, EventArgs args)
@@ -265,14 +255,23 @@ public abstract class Scene : IDisposable
 		ResetRenderTarget();
 	}
 
-	public void Dispose()
+	private void OnWindowClientSizeChanged(object? sender, EventArgs args)
 	{
-		GC.SuppressFinalize(this);
+		Reset();
+	}
 
-		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
+	public class SkinChangedEventArgs : EventArgs
+	{
+		public Skin OldSkin
+		{
+			get;
+			init;
+		}
 
-		_renderTarget?.Dispose();
-		Renderer?.Dispose();
-		ViewportAdapter?.Dispose();
+		public Skin NewSkin
+		{
+			get;
+			init;
+		}
 	}
 }

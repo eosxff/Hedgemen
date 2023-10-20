@@ -8,6 +8,7 @@ using Petal.Framework.Content;
 using Petal.Framework.IO;
 using Petal.Framework.Persistence;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.Assets;
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.Content;
 
@@ -34,6 +36,23 @@ public sealed class Register<TContent> : IRegister
 		RegistryName = registryName;
 		ModID = modID;
 		Registry = registry;
+	}
+
+	public bool GetItem<T>(
+		NamespacedString id,
+		[NotNullWhen(true)]
+		out T? item)
+	{
+		item = default;
+
+		if (!GetKey(id, out var key))
+			return false;
+
+		if (key.Content is not T content)
+			return false;
+
+		item = content;
+		return true;
 	}
 
 	public bool AddKey(NamespacedString id, TContent content)

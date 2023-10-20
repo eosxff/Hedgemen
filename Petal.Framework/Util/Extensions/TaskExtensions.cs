@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Petal.Framework.Util;
+namespace Petal.Framework.Util.Extensions;
 
 public static class TaskExtensions
 {

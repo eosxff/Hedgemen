@@ -6,6 +6,7 @@ using Petal.Framework.Graphics;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Extensions;
 
 namespace Hgm.Game.Scenes;
 

@@ -7,6 +7,7 @@ using Petal.Framework.Scenery;
 using Petal.Framework.Windowing;
 using Petal.Framework.Util;
 using Petal.Framework.Util.Coroutines;
+using Petal.Framework.Util.Extensions;
 using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework;

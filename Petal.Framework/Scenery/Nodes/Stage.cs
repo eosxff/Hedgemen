@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.Scenery.Nodes;
 

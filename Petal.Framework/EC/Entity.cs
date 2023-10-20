@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Petal.Framework.Persistence;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.EC;
 

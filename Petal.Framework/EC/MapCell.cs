@@ -7,6 +7,7 @@ using Petal.Framework;
 using Petal.Framework.EC;
 using Petal.Framework.Persistence;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Extensions;
 
 public sealed class MapCell : IEntity<CellComponent, CellEvent>
 {

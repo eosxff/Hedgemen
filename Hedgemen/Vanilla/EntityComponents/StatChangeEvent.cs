@@ -1,6 +1,6 @@
 ﻿using Petal.Framework.EC;
 
-namespace Hgm.Components;
+namespace Hgm.Vanilla.EntityComponents;
 
 public class StatChangeEvent : EntityEvent
 {

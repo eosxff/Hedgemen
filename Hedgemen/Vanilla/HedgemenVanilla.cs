@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
+using Hgm.Game.CampaignSystem;
 using Hgm.Game.Scenes;
 using Petal.Framework;
 using Petal.Framework.Content;
+using Petal.Framework.IO;
 using Petal.Framework.Modding;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
@@ -61,6 +64,14 @@ public class HedgemenVanilla : PetalEmbeddedMod
 
 		Registers.SetupRegisters(Game.Registry);
 		Content.Setup(Registers);
+
+		/*var manifest =
+			Petal.Framework.Persistence.Manifest.FromJson(
+				new FileInfo("hedgemen_campaign_setting.json").ReadString(Encoding.UTF8));
+
+		var campaignSetting = manifest.NewInstance<CampaignSetting>();
+
+		Game.Logger.Debug($"Campaign setting mod count: {campaignSetting.Mods.Count}");*/
 
 		Game.OnSceneChanged += (sender, args) =>
 		{

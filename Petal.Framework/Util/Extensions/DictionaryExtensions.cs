@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Petal.Framework.Util;
+namespace Petal.Framework.Util.Extensions;
 
 public static class DictionaryExtensions
 {
