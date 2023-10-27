@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Hgm.Game.Scenes;
 using Petal.Framework.Content;
 using Petal.Framework.Util;
 
@@ -32,5 +33,10 @@ public sealed class Cartographer
 		}
 
 		return new WorldMap(cells);
+	}
+
+	public WorldMap GenerateScenic(CampaignGenerationScene scene, CartographyOptions options)
+	{
+		return null; // todo stub
 	}
 }

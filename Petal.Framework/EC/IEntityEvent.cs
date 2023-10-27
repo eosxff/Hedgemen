@@ -1,6 +1,6 @@
 ﻿namespace Petal.Framework.EC;
 
-public interface IEvent
+public interface IEntityEvent
 {
 	public bool AllowAsync
 	{

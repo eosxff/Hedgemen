@@ -26,6 +26,7 @@ public sealed class StartupSplashScene : Scene
 
 		_splashBackground = Game.Assets.LoadAsset<Texture2D>(backgroundStream);
 	}
+
 	protected override void OnLoad()
 	{
 		Root.Add(new Image

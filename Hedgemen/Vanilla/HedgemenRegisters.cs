@@ -1,6 +1,6 @@
 ﻿using System;
 using Hgm.Game;
-using Hgm.Game.CampaignSystem;
+using Hgm.Game.Campaigning;
 using Hgm.Game.WorldGeneration;
 using Petal.Framework;
 using Petal.Framework.Content;

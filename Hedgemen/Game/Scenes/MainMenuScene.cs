@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
-using Hgm.Game.CampaignSystem;
+using Hgm.Game.Systems;
 using Hgm.Game.WorldGeneration;
 using Hgm.Vanilla;
 using Microsoft.Xna.Framework;
@@ -67,7 +67,7 @@ public sealed class MainMenuScene : Scene
 	{
 		var assetsRegister = HedgemenVanilla.Instance.Registers.Assets;
 
-		Skin = Skin.FromJson(new FileInfo("main_menu_skin.json").ReadString(Encoding.UTF8), assetsRegister);
+		Skin = Skin.FromJson(new FileInfo("vanilla_skin.json").ReadString(Encoding.UTF8), assetsRegister);
 
 		BackgroundSplash = Root.Add(new Background
 		{
@@ -129,7 +129,7 @@ public sealed class MainMenuScene : Scene
 		if (!cartographers.GetItem(new NamespacedString("hgm:overworld_cartographer"), out Cartographer cartographer))
 			return;
 
-		Campaign.StartCampaign(new CampaignStartArgs
+		CampaignSystem.StartCampaign(new CampaignStartArgs
 		{
 			StartingWorldCartographer = cartographer,
 			Hedgemen = hedgemen,

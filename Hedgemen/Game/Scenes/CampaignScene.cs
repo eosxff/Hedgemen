@@ -15,7 +15,7 @@ public sealed class CampaignScene : Scene
 	{
 		var assets = HedgemenVanilla.Instance.Registers.Assets;
 
-		Skin = Skin.FromJson(new FileInfo("main_menu_skin.json").ReadString(Encoding.UTF8), assets);
+		Skin = Skin.FromJson(new FileInfo("vanilla_skin.json").ReadString(Encoding.UTF8), assets);
 		Name = new NamespacedString("hgm:campaign_scene");
 		BackgroundColor = Color.Black;
 		ViewportAdapter = new BoxingViewportAdapter(

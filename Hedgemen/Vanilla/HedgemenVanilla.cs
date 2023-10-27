@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Hgm.Game.CampaignSystem;
+using Hgm.Game.Campaigning;
 using Hgm.Game.Scenes;
 using Petal.Framework;
 using Petal.Framework.Content;

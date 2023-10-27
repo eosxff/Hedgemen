@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using Hgm.Game;
-using Hgm.Game.CampaignSystem;
+using Hgm.Game.Campaigning;
 using Hgm.Game.CellComponents;
 using Hgm.Vanilla.WorldGeneration;
 using Hgm.Game.WorldGeneration;

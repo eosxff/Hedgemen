@@ -30,7 +30,7 @@ public class WorldMap : IPersistent
 		Cells = cells;
 	}
 
-	public void Delete()
+	public void Destroy()
 	{
 
 	}

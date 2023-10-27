@@ -1,4 +1,4 @@
-using Hgm.Game.CampaignSystem;
+using Hgm.Game.Campaigning;
 
 namespace Hgm.Modding;
 

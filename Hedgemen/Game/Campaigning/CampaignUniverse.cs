@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Hgm.Game.WorldGeneration;
 using Petal.Framework.Persistence;
 
-namespace Hgm.Game.CampaignSystem;
+namespace Hgm.Game.Campaigning;
 
 public sealed class CampaignUniverse : IPersistent
 {
