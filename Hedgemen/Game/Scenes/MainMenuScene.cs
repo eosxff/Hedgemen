@@ -30,6 +30,12 @@ public sealed class MainMenuScene : Scene
 		private set;
 	}
 
+	public Panel ButtonPanel
+	{
+		get;
+		private set;
+	}
+
 	public Button SingleplayerButton
 	{
 		get;
@@ -84,10 +90,16 @@ public sealed class MainMenuScene : Scene
 			Anchor = Anchor.Top
 		});
 
-		SingleplayerButton = Root.Add(new Button(Skin)
+		ButtonPanel = Root.Add(new Panel(Skin)
 		{
 			Anchor = Anchor.Center,
-			Bounds = new Rectangle(0, -16, 96, 16)
+			Bounds = new Rectangle(0, 0, 100, 36)
+		});
+
+		SingleplayerButton = ButtonPanel.Add(new Button(Skin)
+		{
+			Anchor = Anchor.Top,
+			Bounds = new Rectangle(0, 2, 96, 16)
 		});
 
 		SingleplayerButton.OnMousePressed += SingleplayerButtonOnMousePressed;
@@ -101,10 +113,10 @@ public sealed class MainMenuScene : Scene
 			Scale = 0.15f
 		});
 
-		QuitButton = Root.Add(new Button(Skin)
+		QuitButton = ButtonPanel.Add(new Button(Skin)
 		{
-			Anchor = Anchor.Center,
-			Bounds = new Rectangle(0, 1, 96, 16)
+			Anchor = Anchor.Top,
+			Bounds = new Rectangle(0, 18, 96, 16)
 		});
 
 		QuitButton.OnMousePressed += QuitButtonOnMousePressed;

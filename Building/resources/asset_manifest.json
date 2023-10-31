@@ -40,6 +40,12 @@
 			"name": "hgm:ui/large_font",
 			"path": "pixelade_regular_64",
 			"type": "Font"
+		},
+
+		{
+			"name": "hgm:ui/panel_texture",
+			"path": "panel_default.png",
+			"type": "Texture"
 		}
 	]
 }

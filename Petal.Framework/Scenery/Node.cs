@@ -129,8 +129,11 @@ public abstract class Node
 	public Rectangle AbsoluteBounds
 		=> _absoluteBounds;
 
-	public Rectangle Size
-		=> new(0, 0, Bounds.Width, Bounds.Height);
+	public Vector2Int Size
+	{
+		get => new(Bounds.Width, Bounds.Height);
+		set => Bounds = new Rectangle(_bounds.X, _bounds.Y, value.X, value.Y);
+	}
 
 	private bool _isDirty = true;
 

@@ -102,7 +102,7 @@ public sealed class CampaignGenerator
 }
 
 
-public sealed class CampaignStartArgs
+public struct CampaignStartArgs
 {
 	public required PetalModList ModList
 	{
@@ -129,7 +129,7 @@ public sealed class CampaignStartArgs
 	}
 }
 
-public sealed class CampaignContinueArgs
+public struct CampaignContinueArgs
 {
 	public required Hedgemen Hedgemen
 	{

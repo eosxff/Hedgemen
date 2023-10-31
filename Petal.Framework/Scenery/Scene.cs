@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Graphics;
 using Petal.Framework.Input;
 using Petal.Framework.Scenery.Nodes;
+using Petal.Framework.Util;
 
 namespace Petal.Framework.Scenery;
 
@@ -27,11 +27,6 @@ public abstract class Scene : IDisposable
 	} = false;
 
 	public PetalGame Game
-	{
-		get;
-	}
-
-	public SignalHandler Signals
 	{
 		get;
 	}
@@ -102,12 +97,12 @@ public abstract class Scene : IDisposable
 	private ViewportAdapter _viewportAdapter;
 	private Skin _skin = new();
 
+
 	protected Scene(Stage root, Skin skin, PetalGame? game = null)
 	{
 		game ??= PetalGame.Petal;
 		Game = game;
 
-		Signals = new SignalHandler(this);
 		Skin = skin;
 
 		Input = new InputProvider();
@@ -195,6 +190,7 @@ public abstract class Scene : IDisposable
 	{
 		BeforeExit?.Invoke(this, EventArgs.Empty);
 		Dispose();
+		OnDispose(); // should we call this before or after disposing everything else?
 		AfterExit?.Invoke(this, EventArgs.Empty);
 	}
 
@@ -213,10 +209,14 @@ public abstract class Scene : IDisposable
 		GC.SuppressFinalize(this);
 
 		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
-
 		_renderTarget?.Dispose();
 		Renderer?.Dispose();
 		ViewportAdapter?.Dispose();
+	}
+
+	protected virtual void OnDispose()
+	{
+
 	}
 
 	protected virtual void OnLoad()

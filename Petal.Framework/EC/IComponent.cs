@@ -6,7 +6,7 @@ namespace Petal.Framework.EC;
 
 public interface IComponent<in TEvent> :
 	IPersistent
-	where TEvent : IEvent
+	where TEvent : IEntityEvent
 {
 	public IReadOnlyCollection<Type> GetRegisteredEvents();
 

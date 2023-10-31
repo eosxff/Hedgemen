@@ -90,5 +90,11 @@ public sealed class CampaignGenerationScene : Scene
 		});
 
 		WorldGenerationCanvas.ApplyColorMap();
+		GenerateMapCreatedPanel();
+	}
+
+	private void GenerateMapCreatedPanel()
+	{
+
 	}
 }

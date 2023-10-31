@@ -1,6 +1,6 @@
 ﻿namespace Petal.Framework.EC;
 
-public abstract class CellEvent : IEvent
+public abstract class CellEvent : IEntityEvent
 {
 	public bool AllowAsync
 	{

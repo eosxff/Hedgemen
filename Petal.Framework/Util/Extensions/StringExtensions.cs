@@ -9,10 +9,8 @@ public static class StringExtensions
 	{
 		int occurrences = 0;
 
-		foreach (var cStr in str)
-		{
-			occurrences = (cStr == c) ? occurrences + 1 : occurrences;
-		}
+		foreach (char cFromStr in str)
+			occurrences = (cFromStr == c) ? occurrences + 1 : occurrences;
 
 		return occurrences;
 	}
@@ -21,9 +19,9 @@ public static class StringExtensions
 	{
 		int occurrences = 0;
 
-		foreach (var cStr in span)
+		foreach (char cFromSpan in span)
 		{
-			occurrences = (cStr == c) ? occurrences + 1 : occurrences;
+			occurrences = (cFromSpan == c) ? occurrences + 1 : occurrences;
 		}
 
 		return occurrences;

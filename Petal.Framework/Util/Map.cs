@@ -1,12 +1,14 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Petal.Framework.EC;
+using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.Util;
 
-public sealed class Map<T>
+public sealed class Map<T> : IEnumerable<T>
 {
-	private T[,] _array;
+	private readonly T[,] _array;
 
 	public int Width
 		=> _array.GetLength(0);
@@ -61,6 +63,32 @@ public sealed class Map<T>
 		}
 	}
 
+	public Map<TLocal> Select<TLocal>(Func<T, TLocal> selector)
+	{
+		var map = new Map<TLocal>(Width, Height);
+
+		for (int y = 0; y < Height; ++y)
+		{
+			for (int x = 0; x < Width; ++x)
+				map[x, y] = selector(this[x, y]);
+		}
+
+		return map;
+	}
+
+	public T[] ToArray()
+	{
+		var array = new T[Width * Height];
+
+		for (int y = 0; y < Height; ++y)
+		{
+			for (int x = 0; x < Width; ++x)
+				array[x + (y * Width)] = _array[x, y];
+		}
+
+		return array;
+	}
+
 	public T this[int x, int y]
 	{
 		get => _array[x, y];
@@ -71,5 +99,15 @@ public sealed class Map<T>
 	{
 		get => _array[position.X, position.Y];
 		set => _array[position.X, position.Y] = value;
+	}
+
+	public IEnumerator<T> GetEnumerator()
+	{
+		return _array.ToEnumerable().GetEnumerator();
+	}
+
+	IEnumerator IEnumerable.GetEnumerator()
+	{
+		return GetEnumerator();
 	}
 }

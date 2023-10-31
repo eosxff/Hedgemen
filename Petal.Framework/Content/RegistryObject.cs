@@ -15,6 +15,9 @@ public sealed class RegistryObject<TContent>
 	public NamespacedString Location
 		=> _location;
 
+	/// <summary>
+	/// Returns true if this <see cref="RegistryObject{TContent}"/> points to valid content, otherwise false.
+	/// </summary>
 	public bool IsPresent
 		=> _content is not null && Location != NamespacedString.Default;
 
