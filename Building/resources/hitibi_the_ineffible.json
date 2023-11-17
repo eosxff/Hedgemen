@@ -1,0 +1,12 @@
+{
+    "content_id": "hgm:hitibi_the_ineffible",
+    "components": {
+        "hgm:character_sheet": {
+            "hgm:intelligence": 9001,
+            "hgm:wisdom": 9001
+        },
+        "hgm:character_race": {
+            "hgm:race_name": "slime"
+        }
+    }
+}

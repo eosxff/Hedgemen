@@ -6,11 +6,6 @@ public sealed class DefaultRenderer : Renderer
 {
 	private readonly SpriteBatch _renderer;
 
-	public DefaultRenderer() : this(PetalGame.Petal.GraphicsDevice)
-	{
-
-	}
-
 	public DefaultRenderer(GraphicsDevice graphicsDevice)
 	{
 		_renderer = new SpriteBatch(graphicsDevice);

@@ -65,14 +65,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		Registers.SetupRegisters(Game.Registry);
 		Content.Setup(Registers);
 
-		/*var manifest =
-			Petal.Framework.Persistence.Manifest.FromJson(
-				new FileInfo("hedgemen_campaign_setting.json").ReadString(Encoding.UTF8));
-
-		var campaignSetting = manifest.NewInstance<CampaignSetting>();
-
-		Game.Logger.Debug($"Campaign setting mod count: {campaignSetting.Mods.Count}");*/
-
 		Game.OnSceneChanged += (sender, args) =>
 		{
 			logger.Info($"Changing scene.");
