@@ -46,6 +46,12 @@
 			"name": "hgm:ui/panel_texture",
 			"path": "panel_default.png",
 			"type": "Texture"
+		},
+
+		{
+			"name": "hgm:sprites/hedge_knight",
+			"path": "hedge_knight.png",
+			"type": "Texture"
 		}
 	]
 }

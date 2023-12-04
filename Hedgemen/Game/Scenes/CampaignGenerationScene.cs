@@ -5,6 +5,7 @@ using Hgm.Game.Systems;
 using Hgm.Vanilla;
 using Hgm.Vanilla.WorldGeneration;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework;
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
@@ -66,14 +67,25 @@ public sealed class CampaignGenerationScene : Scene
 
 	private async void GenerateAndDisplayMap()
 	{
+		var assets = HedgemenVanilla.Instance.Registers.Assets;
 		var map = await Task.Run(
 			() => Generator.StartingWorldCartographer.Generate(Generator.StartingWorldCartographyOptions));
 
 		Root.Add(new Panel(Skin)
 		{
-			Bounds = new Rectangle(0, 8, 128, 64),
-			Anchor = Anchor.Top
+			Bounds = new Rectangle(0, 8, 32, 64),
+			Anchor = Anchor.BottomLeft
 		});
+
+		if (assets.GetItem("hgm:sprites/hedge_knight", out Texture2D texture))
+		{
+			Root.Add(new Image
+			{
+				Texture = texture,
+				Bounds = new Rectangle(0, 8, 32, 64),
+				Anchor = Anchor.BottomLeft
+			});
+		}
 
 		var colorMap = WorldGenerationCanvas.ColorMap;
 		var mapPixelColorQuery = new QueryMapPixelColorEvent();
