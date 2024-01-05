@@ -8,7 +8,6 @@ namespace Petal.Framework.EC;
 public abstract class CellComponent : IComponent<CellEvent>
 {
 	protected delegate void EventHandle<in TEvent>(TEvent e) where TEvent : CellEvent;
-
 	private delegate void EventHandleWrapped(CellEvent e);
 
 	private readonly Dictionary<Type, EventHandleWrapped> _registeredEvents = new();

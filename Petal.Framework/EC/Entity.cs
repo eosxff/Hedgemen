@@ -17,6 +17,9 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 	public IReadOnlyCollection<EntityComponent> Components
 		=> _components.Values as Dictionary<Type, EntityComponent>.ValueCollection;
 
+	public bool HasComponents()
+		=> _components.Count > 0;
+
 	public void PropagateEvent(EntityEvent e)
 	{
 		foreach (var component in Components)

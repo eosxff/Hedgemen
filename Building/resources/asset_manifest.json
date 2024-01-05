@@ -5,49 +5,41 @@
 			"path": "button_hover.png",
 			"type": "Texture"
 		},
-	
 		{
 			"name": "hgm:ui/skin/button_normal_texture",
 			"path": "button_normal.png",
 			"type": "Texture"
 		},
-	
 		{
 			"name": "hgm:ui/skin/button_input_texture",
 			"path": "button_input.png",
 			"type": "Texture"
 		},
-
 		{
 			"name": "hgm:ui/splash_texture",
 			"path": "splash.png",
 			"type": "Texture"
 		},
-	
 		{
 			"name": "hgm:ui/small_font",
 			"path": "pixelade_regular",
 			"type": "Font"
 		},
-	
 		{
 			"name": "hgm:ui/medium_font",
 			"path": "pixelade_regular_32",
 			"type": "Font"
 		},
-	
 		{
 			"name": "hgm:ui/large_font",
 			"path": "pixelade_regular_64",
 			"type": "Font"
 		},
-
 		{
 			"name": "hgm:ui/panel_texture",
 			"path": "panel_default.png",
 			"type": "Texture"
 		},
-
 		{
 			"name": "hgm:sprites/hedge_knight",
 			"path": "hedge_knight.png",

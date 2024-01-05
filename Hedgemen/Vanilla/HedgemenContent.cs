@@ -33,7 +33,7 @@ public sealed class HedgemenContent
 		private set;
 	}
 
-	public RegistryObject<Supplier<ILandscaper>> OverworldTerrainLandscaper
+	public RegistryObject<Supplier<IGenerationPass>> OverworldTerrainGenerationPass
 	{
 		get;
 		private set;
@@ -97,7 +97,7 @@ public sealed class HedgemenContent
 		RegisterAssets(registers);
 		RegisterEntityComponents(registers);
 		RegisterCellComponents(registers);
-		RegisterLandscapers(registers);
+		RegisterGenerationPasses(registers);
 		RegisterCartographers(registers);
 	}
 
@@ -155,13 +155,13 @@ public sealed class HedgemenContent
 		OverworldTallMountain = register.MakeReference(overworldTallMountainName);
 	}
 
-	private void RegisterLandscapers(HedgemenRegisters registers)
+	private void RegisterGenerationPasses(HedgemenRegisters registers)
 	{
-		var register = registers.Landscapers;
+		var register = registers.GenerationPasses;
 
-		var overworldTerrainLandscaperName = new NamespacedString("hgm:overworld_terrain_landscaper");
+		var overworldTerrainGenerationPassName = new NamespacedString("hgm:overworld_terrain_landscaper");
 
-		register.AddKey(overworldTerrainLandscaperName, () => new OverworldTerrainLandscaper
+		register.AddKey(overworldTerrainGenerationPassName, () => new OverworldTerrainGenerationPass
 		{
 			DeepWater = OverworldDeepWater.Get(),
 			DeepWaterHeight = 0.5f,
@@ -177,16 +177,9 @@ public sealed class HedgemenContent
 
 			TallMountain = OverworldTallMountain.Get(),
 			TallMountainHeight = 1.0f,
-
-			Scale = 50.0f,
-			Octaves = 5,
-			Frequency = 2.5f,
-			Lacunarity = 2.75f,
-			Offset = new Vector2Int(0, 0),
-			FalloffModifier = 0.0f
 		});
 
-		OverworldTerrainLandscaper = register.MakeReference(overworldTerrainLandscaperName);
+		OverworldTerrainGenerationPass = register.MakeReference(overworldTerrainGenerationPassName);
 	}
 
 	private void RegisterCartographers(HedgemenRegisters registers)
@@ -195,10 +188,24 @@ public sealed class HedgemenContent
 
 		var overworldCartographerName = new NamespacedString("hgm:overworld_cartographer");
 
-		var overworld = new Cartographer();
-		overworld.Landscapers.Add(OverworldTerrainLandscaper);
+		var overworld = new Cartographer
+		{
+			NoiseGenerationArgs = new NoiseArgs
+			{
+				Seed = new Random().Next(int.MinValue, int.MaxValue),
+				Dimensions = new Vector2Int(512, 512),
+				Scale = 50.0f,
+				Octaves = 5,
+				Frequency = 2.5f,
+				Lacunarity = 2.75f,
+				Offset = new Vector2Int(0, 0),
+				FalloffModifier = 0.0f
+			},
+			GenerationPasses = { OverworldTerrainGenerationPass.Get() }
+		};
+
 		register.AddKey(overworldCartographerName, overworld);
 
-		OverworldCartographer = register.MakeReference("hgm:overworld_cartographer");
+		OverworldCartographer = register.MakeReference(overworldCartographerName);
 	}
 }

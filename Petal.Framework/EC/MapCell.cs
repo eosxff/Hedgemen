@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Petal.Framework;
-using Petal.Framework.EC;
 using Petal.Framework.Persistence;
-using Petal.Framework.Util;
 using Petal.Framework.Util.Extensions;
+
+namespace Petal.Framework.EC;
 
 public sealed class MapCell : IEntity<CellComponent, CellEvent>
 {
@@ -16,6 +15,9 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 
 	public IReadOnlyCollection<CellComponent> Components
 		=> _components.Values as Dictionary<Type, CellComponent>.ValueCollection;
+
+	public bool HasComponents()
+		=> _components.Count > 0;
 
 	public void PropagateEvent(CellEvent e)
 	{

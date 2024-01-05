@@ -1,42 +1,63 @@
 using System.Collections.Generic;
-using Hgm.Game.Scenes;
-using Petal.Framework.Content;
+using Petal.Framework.EC;
 using Petal.Framework.Util;
 
 namespace Hgm.Game.WorldGeneration;
 
-using LandscaperSupplierRO = RegistryObject<Supplier<ILandscaper>>;
+public enum CartographyStage
+{
+	None,
+	Terrain,
+	Biome,
+	Simulation
+}
 
 public sealed class Cartographer
 {
-	public List<LandscaperSupplierRO> Landscapers
+	public Cartographer()
 	{
-		get;
-	} = new();
 
-	public WorldMap Generate(CartographyOptions options)
-	{
-		var cells = new Map<MapCell>(options.MapDimensions);
-		cells.Populate(() => new MapCell());
-
-		foreach (var landscaperRO in Landscapers)
-		{
-			if (!landscaperRO.IsPresent)
-				continue;
-
-			var landscaper = landscaperRO.Supply<ILandscaper>();
-
-			if (!landscaper.ShouldPerformGenerationStep(cells, options))
-				continue;
-
-			landscaper.PerformGenerationStep(cells, options);
-		}
-
-		return new WorldMap(cells);
 	}
 
-	public WorldMap GenerateScenic(CampaignGenerationScene scene, CartographyOptions options)
+	public CartographyStage Stage
 	{
-		return null; // todo stub
+		get;
+		set;
+	} = CartographyStage.None;
+
+	public List<Supplier<IGenerationPass>> GenerationPasses
+	{
+		get;
+		private set;
+	} = new();
+
+	public NoiseArgs NoiseGenerationArgs
+	{
+		get;
+		set;
+	} = NoiseArgs.New();
+
+	public WorldMap Generate()
+	{
+		var cells = new Map<MapCell>(NoiseGenerationArgs.Dimensions.X, NoiseGenerationArgs.Dimensions.Y);
+		cells.Populate(() => new MapCell());
+
+		var genInfo = new WorldGenerationInfo(NoiseGenerationArgs)
+		{
+			Cells = cells
+		};
+
+		foreach (var generationPassSupplier in GenerationPasses)
+		{
+			var generationPass = generationPassSupplier();
+
+			if (!generationPass.ShouldPerformGenerationStep(genInfo))
+				continue;
+
+			generationPass.PerformGenerationStep(genInfo);
+		}
+
+		var worldMap = new WorldMap(genInfo.Cells);
+		return worldMap;
 	}
 }

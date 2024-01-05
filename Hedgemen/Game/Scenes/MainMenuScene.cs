@@ -143,10 +143,10 @@ public sealed class MainMenuScene : Scene
 
 		CampaignSystem.StartCampaign(new CampaignStartArgs
 		{
-			StartingWorldCartographer = cartographer,
 			Hedgemen = hedgemen,
 			ModList = PetalModList.FromParams("hgm:mod", "example:mod"),
-			SessionDirectory = new DirectoryInfo("debug_save_path")
+			SessionDirectory = new DirectoryInfo("debug_save_path"),
+			StartingWorldCartographer = cartographer
 		});
 	}
 

@@ -150,6 +150,7 @@ public class Hedgemen : PetalGame
 
 		return logger;
 	}
+
 	protected override GameSettings GetInitialGameSettings()
 	{
 		var oldLogLevel = Logger.LogLevel;

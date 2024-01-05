@@ -18,7 +18,7 @@ public sealed class HedgemenRegisters
 	public static readonly NamespacedString AssetsRegisterName = new("hgm:assets");
 	public static readonly NamespacedString EntityComponentsRegisterName = new("hgm:entity_components");
 	public static readonly NamespacedString CellComponentsRegisterName = new("hgm:cell_components");
-	public static readonly NamespacedString LandscapersRegisterName = new("hgm:landscapers");
+	public static readonly NamespacedString GenerationPassesRegisterName = new("hgm:generation_passes");
 	public static readonly NamespacedString CartographersRegisterName = new("hgm:cartographers");
 	public static readonly NamespacedString CampaignsRegisterName = new("hgm:campaigns");
 
@@ -55,14 +55,14 @@ public sealed class HedgemenRegisters
 		}
 	}
 
-	private Register<Supplier<ILandscaper>>? _landscapers;
+	private Register<Supplier<IGenerationPass>>? _generationPasses;
 
-	public Register<Supplier<ILandscaper>> Landscapers
+	public Register<Supplier<IGenerationPass>> GenerationPasses
 	{
 		get
 		{
-			PetalExceptions.ThrowIfNull(_landscapers);
-			return _landscapers;
+			PetalExceptions.ThrowIfNull(_generationPasses);
+			return _generationPasses;
 		}
 	}
 
@@ -98,7 +98,7 @@ public sealed class HedgemenRegisters
 		SetupAssetsRegister(registry);
 		SetupEntityComponentsRegister(registry);
 		SetupCellComponentsRegister(registry);
-		SetupLandscapersRegister(registry);
+		SetupGenerationPassesRegister(registry);
 		SetupCartographersRegister(registry);
 		SetupCampaignsRegister(registry);
 	}
@@ -133,14 +133,14 @@ public sealed class HedgemenRegisters
 		AddRegisterToRegistry(_cellComponents, registry);
 	}
 
-	private void SetupLandscapersRegister(Registry registry)
+	private void SetupGenerationPassesRegister(Registry registry)
 	{
-		_landscapers = new Register<Supplier<ILandscaper>>(
-			LandscapersRegisterName,
+		_generationPasses = new Register<Supplier<IGenerationPass>>(
+			GenerationPassesRegisterName,
 			HedgemenVanilla.ModID,
 			registry);
 
-		AddRegisterToRegistry(_landscapers, registry);
+		AddRegisterToRegistry(_generationPasses, registry);
 	}
 
 	private void SetupCartographersRegister(Registry registry)

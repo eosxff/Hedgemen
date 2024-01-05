@@ -37,38 +37,25 @@ public readonly struct Vector2Int
 	}
 
 	public bool Equals(Vector2Int vector)
-	{
-		return X == vector.X &&
-		       Y == vector.Y;
-	}
+		=> X == vector.X && Y == vector.Y;
 
 	public override bool Equals(object obj)
-	{
-		return obj is Vector2Int vector && Equals(vector);
-	}
+		=> obj is Vector2Int vector && Equals(vector);
 
 	public override int GetHashCode()
-	{
-		return HashCode.Combine(X, Y);
-	}
+		=> HashCode.Combine(X, Y);
 
 	public int Length()
-	{
-		return (int)Math.Sqrt(X * X + Y * Y);
-	}
+		=> (int)Math.Sqrt(X * X + Y * Y);
 
 	public int LengthSquared()
-	{
-		return X * X + Y * Y;
-	}
+		=> X * X + Y * Y;
 
 	public readonly Vector2 ToVector2()
 		=> new(X, Y);
 
 	public override string ToString()
-	{
-		return $"{{X: {X} Y: {Y}}}";
-	}
+		=> $"{{X: {X} Y: {Y}}}";
 
 	public static Vector2Int Add(Vector2Int a, Vector2Int b)
 		=> new()

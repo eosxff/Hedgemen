@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
@@ -11,14 +12,27 @@ using Petal.Framework.Util;
 
 namespace Petal.Framework.Persistence;
 
+/// <summary>
+/// Persistent storage for game states between sessions.
+/// </summary>
 [Serializable]
 public sealed class PersistentData
 {
+	/// <summary>
+	/// Source generated type info.
+	/// </summary>
 	public static JsonTypeInfo<PersistentData> JsonTypeInfo =>
 		PersistentDataJsonTypeInfo.Default.PersistentData;
 
+	/// <summary>
+	/// All the currently loaded assemblies in the current app domain. This is not thread safe and is regenerated each
+	/// time a type's assembly is not found in the dictionary.
+	/// </summary>
 	private static readonly Dictionary<string, Assembly> Assemblies = new();
 
+	/// <summary>
+	/// Default serialization options for writing fields to json.
+	/// </summary>
 	private static JsonSerializerOptions DefaultJsonOptions
 		=> new()
 		{
@@ -27,13 +41,23 @@ public sealed class PersistentData
 			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
 		};
 
-	public static PersistentData FromJson(JsonElement element)
+	/// <summary>
+	/// Deserializes a json element to <see cref="PersistentData"/>.
+	/// </summary>
+	/// <param name="json">the json element to deserialize.</param>
+	/// <returns></returns>
+	public static PersistentData FromJson(JsonElement json)
 	{
-		var storage = element.Deserialize(JsonTypeInfo);
+		var storage = json.Deserialize(JsonTypeInfo);
 		PetalExceptions.ThrowIfNull(storage);
 		return storage;
 	}
 
+	/// <summary>
+	/// Deserializes a json string to <see cref="PersistentData"/>.
+	/// </summary>
+	/// <param name="json">the json element to deserialize.</param>
+	/// <returns></returns>
 	public static PersistentData FromJson(string json)
 	{
 		PetalExceptions.ThrowIfNullOrEmpty(json, nameof(json));
@@ -42,9 +66,14 @@ public sealed class PersistentData
 		return storage;
 	}
 
+	/// <summary>
+	/// Deserializes a json string from to <see cref="PersistentData"/>.
+	/// </summary>
+	/// <param name="stream">the stream to read the json string from. The string should be UTF8 format.</param>
+	/// <returns></returns>
 	public static PersistentData FromStream(Stream stream)
 	{
-		var reader = new StreamReader(stream);
+		var reader = new StreamReader(stream, Encoding.UTF8);
 		return FromJson(reader.ReadToEnd());
 	}
 
@@ -58,13 +87,10 @@ public sealed class PersistentData
 		set;
 	} = new();
 
-	[RequiresUnreferencedCode("Use FromJson(string) instead if targeting ahead of time compilation.")]
-	public static PersistentData FromJson(string json, JsonSerializerOptions? options)
-	{
-		options ??= DefaultJsonOptions;
-		return JsonSerializer.Deserialize<PersistentData>(json, options);
-	}
-
+	/// <summary>
+	/// This is only public for serialization purposes. Highly recommended to use static methods or other constructors
+	/// to get instances of <see cref="PersistentData"/>.
+	/// </summary>
 	public PersistentData()
 	{
 	}
@@ -323,7 +349,7 @@ public sealed class PersistentData
 	private void WritePersistentObject(NamespacedString name, IPersistent handler)
 	{
 		var fieldJsonElement =
-			JsonSerializer.SerializeToElement(handler.WriteData(), DefaultJsonOptions);
+			JsonSerializer.SerializeToElement(handler.WriteData(), JsonTypeInfo);
 
 		ExtensionData.TryAdd(name, fieldJsonElement);
 	}

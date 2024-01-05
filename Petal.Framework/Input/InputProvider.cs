@@ -196,7 +196,5 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 			default:
 				return false;
 		}
-
-		return false;
 	}
 }

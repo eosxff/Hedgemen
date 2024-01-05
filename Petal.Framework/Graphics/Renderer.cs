@@ -73,7 +73,7 @@ public struct RenderData
 
 	public RenderData()
 	{
-
+		
 	}
 
 	[SetsRequiredMembers]

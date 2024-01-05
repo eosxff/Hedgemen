@@ -11,6 +11,7 @@ using Petal.Framework.Graphics;
 using Petal.Framework.IO;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
+using Petal.Framework.Util.Extensions;
 
 namespace Hgm.Game.Scenes;
 
@@ -38,7 +39,7 @@ public sealed class CampaignGenerationScene : Scene
 		ViewportAdapter = new BoxingViewportAdapter(
 			Game.GraphicsDevice,
 			Game.Window,
-			new Vector2Int(320, 180));
+			new Vector2Int(320*2, 180*2));
 	}
 
 
@@ -50,11 +51,12 @@ public sealed class CampaignGenerationScene : Scene
 	protected override void OnLoad()
 	{
 		WorldGenerationCanvas = Root.Add(new Canvas(
-			Generator.StartingWorldCartographyOptions.MapDimensions,
+			Generator.StartingWorldCartographer.NoiseGenerationArgs.Dimensions, // todo maybe this sucks
 			Renderer.RenderState.Graphics.GraphicsDevice)
 		{
 			Name = new NamespacedString("hgm:world_generation_canvas"),
-			Bounds = new Rectangle(0, 0, 180, 180),
+			//Bounds = new Rectangle(0, 0, 180, 180),
+			Bounds = new Rectangle(0, 0, 312, 312),
 			Anchor = Anchor.Center,
 			IsInteractable = false
 		});
@@ -69,7 +71,7 @@ public sealed class CampaignGenerationScene : Scene
 	{
 		var assets = HedgemenVanilla.Instance.Registers.Assets;
 		var map = await Task.Run(
-			() => Generator.StartingWorldCartographer.Generate(Generator.StartingWorldCartographyOptions));
+			() => WorldGenerationSystem.GenerateWorldMap(Generator.StartingWorldCartographer));
 
 		Root.Add(new Panel(Skin)
 		{
@@ -77,7 +79,7 @@ public sealed class CampaignGenerationScene : Scene
 			Anchor = Anchor.BottomLeft
 		});
 
-		if (assets.GetItem("hgm:sprites/hedge_knight", out Texture2D texture))
+		if (assets.GetItem("hgm:sprites/hedge_knight".ToNamespaced(), out Texture2D texture))
 		{
 			Root.Add(new Image
 			{

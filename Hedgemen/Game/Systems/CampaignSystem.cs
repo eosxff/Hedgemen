@@ -14,6 +14,7 @@ public static class CampaignSystem
 {
 	public static void StartCampaign(CampaignStartArgs args)
 	{
+		/*var mapDimensions = new Vector2Int(512, 512); // 384, 384
 		var campaign = new Campaign(new CampaignSession(args.SessionDirectory, args.Hedgemen), args.Hedgemen);
 
 		var generator = new CampaignGenerator
@@ -24,13 +25,29 @@ public static class CampaignSystem
 			StartingWorldCartographer = args.StartingWorldCartographer,
 			StartingWorldCartographyOptions = new CartographyOptions
 			{
-				MapDimensions = new Vector2Int(384, 384),
+				MapDimensions = mapDimensions,
 				Seed = new Random().Next(int.MinValue, int.MaxValue)
 			}
+		};*/
+
+		var mapDimensions = new Vector2Int(512, 512); // 384, 384
+		var campaign = new Campaign(new CampaignSession(args.SessionDirectory, args.Hedgemen), args.Hedgemen);
+
+		var generator = new CampaignGenerator
+		{
+			StartingWorldCartographer = args.StartingWorldCartographer,
+			CampaignSessionDirectoryName = "new_campaign",
+			Hedgemen = args.Hedgemen,
+			ModList = args.ModList,
 		};
 
 		args.Hedgemen.GlobalEvents.OnCampaignGeneratorInitialization(generator);
 		generator.GenerateCampaignScenic(campaign);
+	}
+
+	public static void StartCampaignNew(CampaignStartArgs args)
+	{
+
 	}
 
 	public static void ContinueCampaign(CampaignContinueArgs args)
@@ -46,6 +63,12 @@ public static class CampaignSystem
 
 public sealed class CampaignGenerator
 {
+	public Cartographer StartingWorldCartographer
+	{
+		get;
+		set;
+	}
+
 	public required Hedgemen Hedgemen
 	{
 		get;
@@ -64,30 +87,18 @@ public sealed class CampaignGenerator
 		set;
 	}
 
-	public required Cartographer StartingWorldCartographer
-	{
-		get;
-		set;
-	}
-
-	public required CartographyOptions StartingWorldCartographyOptions
-	{
-		get;
-		set;
-	}
-
 	public async void GenerateCampaignAsync(Campaign campaign)
 	{
 		WorldMap startingWorldMap = null;
 
-		await Task.Run(() =>
+		/*await Task.Run(() =>
 		{
 			startingWorldMap = StartingWorldCartographer.Generate(new CartographyOptions
 			{
 				MapDimensions = new Vector2Int(384, 384),
 				Seed = new Random().Next(int.MinValue, int.MaxValue)
 			});
-		});
+		});*/
 
 		PetalExceptions.ThrowIfNull(startingWorldMap);
 
