@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Petal.Framework.Persistence;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.EC;
 
@@ -15,6 +16,9 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 	public IReadOnlyCollection<EntityComponent> Components
 		=> _components.Values as Dictionary<Type, EntityComponent>.ValueCollection;
+
+	public bool HasComponents()
+		=> _components.Count > 0;
 
 	public void PropagateEvent(EntityEvent e)
 	{
@@ -95,7 +99,6 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 				case true:
 					_componentEvents[registeredEvent]++;
 					break;
-
 				case false:
 					_componentEvents.Add(registeredEvent, 1);
 					break;
@@ -109,9 +112,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
-
-			if (!found)
+			if (!_componentEvents.TryGetValue(registeredEvent, out int eventCount))
 				continue;
 
 			if (eventCount - 1 <= 0)
@@ -131,13 +132,11 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 	{
 		component = default;
 
-		bool found = _components.TryGetValue(typeof(T), out var comp);
-
-		if (!found)
+		if (!_components.TryGetValue(typeof(T), out var comp))
 			return false;
 
-		if (comp is T compAsT)
-			component = compAsT;
+		if (comp is T compT)
+			component = compT;
 
 		return true;
 	}
@@ -145,7 +144,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)] // will this even inline?
 	public T? GetComponent<T>() where T : EntityComponent
 	{
-		bool found = GetComponent<T>(out var component);
+		GetComponent<T>(out var component);
 		return component;
 	}
 
@@ -163,9 +162,7 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 	public bool RemoveComponent(Type componentType)
 	{
-		bool found = _components.TryGetValue(componentType, out var component);
-
-		if (!found)
+		if (!_components.TryGetValue(componentType, out var component))
 			return false;
 
 		return RemoveComponent(component, true);
@@ -197,35 +194,29 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 		RemoveAllComponents();
 	}
 
-	public DataStorage WriteStorage()
+	public PersistentData WriteData()
 	{
-		var data = new DataStorage(this);
+		var data = new PersistentData(this);
 
-		var components = new List<DataStorage>(_components.Count);
+		var components = new List<PersistentData>(_components.Count);
 
 		foreach (var component in Components)
-		{
-			components.Add(component.WriteStorage());
-		}
+			components.Add(component.WriteData());
 
-		data.WriteData(NamespacedString.FromDefaultNamespace("components"), components);
+		data.WriteField("components", components);
 
 		return data;
 	}
 
-	public void ReadStorage(DataStorage storage)
+	public void ReadData(PersistentData data)
 	{
-		if (storage.ReadData(
-			    NamespacedString.FromDefaultNamespace("components"),
-			    out List<DataStorage> dataList))
-		{
-			foreach (var element in dataList)
-			{
-				bool found = element.InstantiateData<EntityComponent>(out var component);
+		if (!data.ReadField("components", out List<PersistentData> dataList))
+			return;
 
-				if (found)
-					AddComponent(component);
-			}
+		foreach (var element in dataList)
+		{
+			if(element.InstantiateData<EntityComponent>(out var component))
+				AddComponent(component);
 		}
 	}
 }

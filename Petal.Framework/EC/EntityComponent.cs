@@ -76,12 +76,12 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 		_registeredEvents.TryAdd(typeof(TEvent), args => handle((TEvent)args));
 	}
 
-	public virtual DataStorage WriteStorage()
+	public virtual PersistentData WriteData()
 	{
-		return new DataStorage(this);
+		return new PersistentData(this);
 	}
 
-	public virtual void ReadStorage(DataStorage storage)
+	public virtual void ReadData(PersistentData data)
 	{
 
 	}

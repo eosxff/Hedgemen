@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Content;
-using Petal.Framework.Util;
 
 namespace Petal.Framework.Scenery;
 
 public sealed class Skin
 {
-	public event EventHandler? OnSkinRefreshed;
-
 	private Register<object> _assets;
 
 	public Register<object> Assets
@@ -47,6 +46,18 @@ public sealed class Skin
 		init => _font = value;
 	}
 
+	private PanelData _panel;
+
+	public PanelData Panel
+	{
+		get
+		{
+			HandleRefresh();
+			return _panel;
+		}
+		init => _panel = value;
+	}
+
 	public bool ShouldRefresh
 	{
 		get;
@@ -68,13 +79,21 @@ public sealed class Skin
 				HoverTexture = assets.MakeReference<Texture2D>(NamespacedString.Default),
 				InputTexture = assets.MakeReference<Texture2D>(NamespacedString.Default),
 				NormalTexture = assets.MakeReference<Texture2D>(NamespacedString.Default),
+				HorizontalPadding = 0,
+				VerticalPadding = 0
 			};
 
-			_font = new FontData()
+			_font = new FontData
 			{
 				SmallFont = assets.MakeReference<SpriteFont>(NamespacedString.Default),
 				MediumFont = assets.MakeReference<SpriteFont>(NamespacedString.Default),
 				LargeFont = assets.MakeReference<SpriteFont>(NamespacedString.Default),
+			};
+
+			_panel = new PanelData
+			{
+				PanelTexture = assets.MakeReference<Texture2D>(NamespacedString.Default),
+				BorderPadding = 0
 			};
 		}
 
@@ -101,6 +120,8 @@ public sealed class Skin
 		public RegistryObject<Texture2D> NormalTexture;
 		public RegistryObject<Texture2D> HoverTexture;
 		public RegistryObject<Texture2D> InputTexture;
+		public int HorizontalPadding;
+		public int VerticalPadding;
 	}
 
 	public sealed class FontData
@@ -110,18 +131,24 @@ public sealed class Skin
 		public RegistryObject<SpriteFont> LargeFont;
 	}
 
+	public sealed class PanelData
+	{
+		public RegistryObject<Texture2D> PanelTexture;
+		public int BorderPadding;
+	}
+
 	public void Refresh()
 	{
 		if (_assets is null)
 			return;
 
-		_button.NormalTexture = _assets.MakeReference<Texture2D>(_button.NormalTexture.Key.ContentID);
-		_button.HoverTexture = _assets.MakeReference<Texture2D>(_button.HoverTexture.Key.ContentID);
-		_button.InputTexture = _assets.MakeReference<Texture2D>(_button.InputTexture.Key.ContentID);
+		_button.NormalTexture = _assets.MakeReference<Texture2D>(_button.NormalTexture.Location);
+		_button.HoverTexture = _assets.MakeReference<Texture2D>(_button.HoverTexture.Location);
+		_button.InputTexture = _assets.MakeReference<Texture2D>(_button.InputTexture.Location);
 
-		_font.SmallFont = _assets.MakeReference<SpriteFont>(_font.SmallFont.Key.ContentID);
-		_font.MediumFont = _assets.MakeReference<SpriteFont>(_font.MediumFont.Key.ContentID);
-		_font.LargeFont = _assets.MakeReference<SpriteFont>(_font.LargeFont.Key.ContentID);
+		_font.SmallFont = _assets.MakeReference<SpriteFont>(_font.SmallFont.Location);
+		_font.MediumFont = _assets.MakeReference<SpriteFont>(_font.MediumFont.Location);
+		_font.LargeFont = _assets.MakeReference<SpriteFont>(_font.LargeFont.Location);
 	}
 
 	private void HandleRefresh()
@@ -131,28 +158,34 @@ public sealed class Skin
 
 		Refresh();
 		ShouldRefresh = false;
-
-		OnSkinRefreshed?.Invoke(this, EventArgs.Empty);
 	}
 
 	public static Skin FromJson(string json, Register<object> assets)
 	{
-		var skin = JsonSerializer.Deserialize(json, SkinDataRecordJsc.Default.DataRecord).Create(assets);
+		var skin = JsonSerializer.Deserialize(json, JsonData.JsonTypeInfo).Create(assets);
 		skin.Assets = assets;
+		return skin;
+	}
 
+	public async static Task<Skin> FromJsonAsync(string json, Register<object> assets)
+	{
+		var skin = await Task.Run(() => FromJson(json, assets));
+		skin.Assets = assets;
 		return skin;
 	}
 
 	[Serializable]
-	public struct DataRecord
+	public struct JsonData
 	{
-		[JsonIgnore]
+		public static JsonTypeInfo<JsonData> JsonTypeInfo
+			=> SkinJsonDataJsonTypeInfo.Default.JsonData;
+
 		public static JsonSerializerOptions JsonDeserializeOptions
 			=> new()
 			{
 				IncludeFields = true,
 				WriteIndented = true,
-				Converters = { }
+				Converters = { new NamespacedString.JsonConverter() }
 			};
 
 		[JsonPropertyName("button_data_normal_texture_name"), JsonInclude]
@@ -167,6 +200,12 @@ public sealed class Skin
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString ButtonDataInputTextureName;
 
+		[JsonPropertyName("button_data_horizontal_padding"), JsonInclude]
+		public int ButtonDataHorizontalPadding;
+
+		[JsonPropertyName("button_data_vertical_padding"), JsonInclude]
+		public int ButtonDataVerticalPadding;
+
 		[JsonPropertyName("font_data_small_font_name"), JsonInclude]
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString FontDataSmallFontName;
@@ -179,6 +218,13 @@ public sealed class Skin
 		[JsonConverter(typeof(NamespacedString.JsonConverter))]
 		public NamespacedString FontDataLargeFontName;
 
+		[JsonPropertyName("panel_data_texture_name"), JsonInclude]
+		[JsonConverter(typeof(NamespacedString.JsonConverter))]
+		public NamespacedString PanelDataPanelTextureName;
+
+		[JsonPropertyName("panel_data_border_padding"), JsonInclude]
+		public int PanelDataBorderPadding;
+
 		public Skin Create(Register<object> assets)
 		{
 			return new Skin
@@ -187,7 +233,9 @@ public sealed class Skin
 				{
 					NormalTexture = assets.MakeReference<Texture2D>(ButtonDataNormalTextureName),
 					HoverTexture = assets.MakeReference<Texture2D>(ButtonDataHoverTextureName),
-					InputTexture = assets.MakeReference<Texture2D>(ButtonDataInputTextureName)
+					InputTexture = assets.MakeReference<Texture2D>(ButtonDataInputTextureName),
+					HorizontalPadding = ButtonDataHorizontalPadding,
+					VerticalPadding = ButtonDataVerticalPadding
 				},
 
 				Font = new FontData
@@ -195,26 +243,37 @@ public sealed class Skin
 					SmallFont = assets.MakeReference<SpriteFont>(FontDataSmallFontName),
 					MediumFont = assets.MakeReference<SpriteFont>(FontDataMediumFontName),
 					LargeFont = assets.MakeReference<SpriteFont>(FontDataLargeFontName)
+				},
+
+				Panel = new PanelData
+				{
+					PanelTexture = assets.MakeReference<Texture2D>(PanelDataPanelTextureName),
+					BorderPadding = PanelDataBorderPadding
 				}
 			};
 		}
 
 		public void Read(Skin obj)
 		{
-			ButtonDataNormalTextureName = obj.Button.NormalTexture.Key.ContentID;
-			ButtonDataHoverTextureName = obj.Button.HoverTexture.Key.ContentID;
-			ButtonDataInputTextureName = obj.Button.InputTexture.Key.ContentID;
+			ButtonDataNormalTextureName = obj.Button.NormalTexture.Location;
+			ButtonDataHoverTextureName = obj.Button.HoverTexture.Location;
+			ButtonDataInputTextureName = obj.Button.InputTexture.Location;
+			ButtonDataHorizontalPadding = obj.Button.HorizontalPadding;
+			ButtonDataVerticalPadding = obj.Button.VerticalPadding;
 
-			FontDataSmallFontName = obj.Font.SmallFont.Key.ContentID;
-			FontDataMediumFontName = obj.Font.MediumFont.Key.ContentID;
-			FontDataLargeFontName = obj.Font.LargeFont.Key.ContentID;
+			FontDataSmallFontName = obj.Font.SmallFont.Location;
+			FontDataMediumFontName = obj.Font.MediumFont.Location;
+			FontDataLargeFontName = obj.Font.LargeFont.Location;
+
+			PanelDataPanelTextureName = obj.Panel.PanelTexture.Location;
+			PanelDataBorderPadding = obj.Panel.BorderPadding;
 		}
 	}
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(Skin.DataRecord))]
-public partial class SkinDataRecordJsc : JsonSerializerContext
+[JsonSerializable(typeof(Skin.JsonData))]
+internal partial class SkinJsonDataJsonTypeInfo : JsonSerializerContext
 {
 
 }

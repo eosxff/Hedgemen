@@ -2,7 +2,7 @@
 
 namespace Petal.Framework.EC;
 
-public interface IAuxiliaryComponent<in TEvent> : IDataStorageHandler where TEvent : IEvent
+public interface IAuxiliaryComponent<in TEvent> : IPersistent where TEvent : IEntityEvent
 {
 	public void PropagateEvent(TEvent e);
 }

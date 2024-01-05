@@ -1,3 +1,4 @@
+using Hgm.Game.WorldGeneration;
 using Microsoft.Xna.Framework;
 
 namespace Hgm.Vanilla.WorldGeneration;

@@ -38,7 +38,7 @@ public class ExampleMod : PetalMod
 
 		TestAsset = assets.MakeReference<Texture2D>("example:test_asset");
 
-		Game.Logger.Info($"Test asset: {TestAsset.Key.ContentID}. Is valid: {TestAsset.HasValidKey}");
+		Game.Logger.Info($"Test asset: {TestAsset.Location}. Is valid: {TestAsset.IsPresent}");
 		Game.Logger.Info($"Finished forwarding assets register!");
 	}
 }

@@ -1,10 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
-using Hgm.Vanilla.Scenes;
+using Hgm.Game.Campaigning;
+using Hgm.Game.Scenes;
 using Petal.Framework;
 using Petal.Framework.Content;
+using Petal.Framework.IO;
 using Petal.Framework.Modding;
+using Petal.Framework.Scenery;
+using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
 
 namespace Hgm.Vanilla;
@@ -62,30 +69,6 @@ public class HedgemenVanilla : PetalEmbeddedMod
 		{
 			logger.Info($"Changing scene.");
 		};
-
-		var scene = SplashSceneFactory.NewScene(
-			Game,
-			new FileInfo("splash.png").Open(FileMode.Open));
-		Game.ChangeScenes(scene);
-
-		RegisterContentThenChangeScenes();
-	}
-
-	private async void RegisterContentThenChangeScenes()
-	{
-		var logger = Game.Logger;
-		var assetsRegistryFound = Game.Registry.GetRegister("hgm:assets", out Register<object> assets);
-
-		if (!assetsRegistryFound)
-			return;
-
-		await Task.Run(async delegate
-		{
-			await Task.Delay(1000);
-		});
-
-		var mainMenuScene = MainMenuSceneFactory.NewScene(Game, assets);
-		Game.ChangeScenes(mainMenuScene);
 	}
 
 	protected override void PostPetalModLoaderSetupPhase(ModLoaderSetupContext context)
@@ -100,7 +83,7 @@ public class HedgemenVanilla : PetalEmbeddedMod
 			SchemaVersion = 1,
 			ModID = ModID,
 			Name = "Hedgemen",
-			Version = Hedgemen.HedgemenVersion.ToString(),
+			Version = Hedgemen.Version,
 			Description = "Open world roguelike sidescroller. It's not even a game yet lol.",
 			Authors = new List<string>
 			{

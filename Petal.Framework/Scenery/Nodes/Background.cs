@@ -31,7 +31,7 @@ public class Background : Node
 
 	protected override void OnDraw(GameTime time)
 	{
-		if (Scene is null || !Image.HasValidKey)
+		if (Scene is null || !Image.IsPresent)
 			return;
 
 		Scene.Renderer.Begin();

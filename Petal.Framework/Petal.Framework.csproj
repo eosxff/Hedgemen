@@ -15,7 +15,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Folder Include="Algorithms\" />
         <Folder Include="IO" />
+        <Folder Include="Maths\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -23,5 +25,6 @@
             <HintPath>lib\FNA.dll</HintPath>
         </Reference>
     </ItemGroup>
+
 
 </Project>

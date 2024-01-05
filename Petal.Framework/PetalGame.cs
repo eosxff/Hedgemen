@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Assets;
@@ -6,6 +7,7 @@ using Petal.Framework.Scenery;
 using Petal.Framework.Windowing;
 using Petal.Framework.Util;
 using Petal.Framework.Util.Coroutines;
+using Petal.Framework.Util.Extensions;
 using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework;
@@ -94,6 +96,8 @@ public abstract class PetalGame : Game
 		private set;
 	}
 
+	private EnqueuedScene? _enqueuedScene = null;
+
 	public CoroutineManager Coroutines
 	{
 		get;
@@ -107,25 +111,41 @@ public abstract class PetalGame : Game
 	{
 		PetalExceptions.ThrowIfNull(scene);
 
-		if (Scene is not null)
-		{
-			lock (Scene)
-			{
-				Scene.Exit();
-				Scene = scene;
-				Scene.Initialize();
-			}
-		}
+		Scene?.Exit();
 
-		else
-		{
-			Scene = scene;
-			Scene.Initialize();
-		}
+		if(!scene.IsFinishedLoading)
+			scene.Load();
+
+		Scene = scene;
 
 		OnSceneChanged?.Invoke(this, new SceneChangedArgs
 		{
 			NewScene = scene
+		});
+	}
+
+	public async void ChangeScenesAsync(Func<Scene> sceneSupplier)
+	{
+		var scene = await Task.Run(() =>
+		{
+			var scene = sceneSupplier();
+			scene.Load();
+			return scene;
+		});
+
+		_enqueuedScene = new EnqueuedScene
+		{
+			Scene = scene
+		};
+	}
+
+	private async Task<Scene> SupplySceneAsync(Func<Scene> sceneSupplier)
+	{
+		return await Task.Run(() =>
+		{
+			var scene = sceneSupplier();
+			scene.Load();
+			return scene;
 		});
 	}
 
@@ -148,30 +168,32 @@ public abstract class PetalGame : Game
 				case WindowMode.Windowed:
 					Graphics.IsFullScreen = false;
 					Window.SetBorderless(false);
+					Graphics.ApplyChanges();
 					break;
-
 				case WindowMode.BorderlessWindowed:
 					Graphics.IsFullScreen = false;
 					Window.SetBorderless(true);
+					Graphics.ApplyChanges();
 					break;
-
 				case WindowMode.BorderlessFullscreen:
 					Graphics.IsFullScreen = false;
-					Window.SetBorderless(true);
 					Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
 					Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+					Window.SetBorderless(true);
+					Graphics.ApplyChanges();
 					break;
-
 				case WindowMode.Fullscreen:
+					// wonky hack for monogame works with fna as well apparently
+					// https://community.monogame.net/t/fullscreen-issues/15852/6
+					Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+					Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 					Window.SetBorderless(false);
+					Graphics.ApplyChanges();
 					Graphics.ToggleFullScreen();
 					break;
-
 				default: // should never trip
 					throw new ArgumentOutOfRangeException(_windowMode.ToString());
 			}
-
-			Graphics.ApplyChanges();
 		}
 	}
 
@@ -317,8 +339,23 @@ public abstract class PetalGame : Game
 	/// <param name="gameTime">the elapsed time since the previous update call.</param>
 	protected override void Update(GameTime gameTime)
 	{
+		if (_enqueuedScene is not null)
+		{
+			ChangeScenes(_enqueuedScene.Scene);
+			_enqueuedScene = null;
+		}
+
 		Coroutines.Update(gameTime);
 		Scene?.Update(gameTime);
 		base.Update(gameTime);
+	}
+
+	private class EnqueuedScene
+	{
+		public required Scene Scene
+		{
+			get;
+			init;
+		}
 	}
 }

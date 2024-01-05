@@ -32,7 +32,7 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 			{
 				case '\b':
 					return;
-				
+
 				case (char)0xD:
 					_typedChars.Append('\n');
 					break;
@@ -183,13 +183,18 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 	{
 		switch (button)
 		{
-			case MouseButtons.LeftButton: return mouseState.LeftButton == state;
-			case MouseButtons.MiddleButton: return mouseState.MiddleButton == state;
-			case MouseButtons.RightButton: return mouseState.RightButton == state;
-			case MouseButtons.XButton1: return mouseState.XButton1 == state;
-			case MouseButtons.XButton2: return mouseState.XButton2 == state;
+			case MouseButtons.LeftButton:
+				return mouseState.LeftButton == state;
+			case MouseButtons.MiddleButton:
+				return mouseState.MiddleButton == state;
+			case MouseButtons.RightButton:
+				return mouseState.RightButton == state;
+			case MouseButtons.XButton1:
+				return mouseState.XButton1 == state;
+			case MouseButtons.XButton2:
+				return mouseState.XButton2 == state;
+			default:
+				return false;
 		}
-
-		return false;
 	}
 }

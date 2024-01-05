@@ -1,5 +1,7 @@
 ﻿using System;
-using Hgm.WorldGeneration;
+using Hgm.Game;
+using Hgm.Game.Campaigning;
+using Hgm.Game.WorldGeneration;
 using Petal.Framework;
 using Petal.Framework.Content;
 using Petal.Framework.EC;
@@ -16,8 +18,9 @@ public sealed class HedgemenRegisters
 	public static readonly NamespacedString AssetsRegisterName = new("hgm:assets");
 	public static readonly NamespacedString EntityComponentsRegisterName = new("hgm:entity_components");
 	public static readonly NamespacedString CellComponentsRegisterName = new("hgm:cell_components");
-	public static readonly NamespacedString LandscapersRegisterName = new("hgm:landscapers");
+	public static readonly NamespacedString GenerationPassesRegisterName = new("hgm:generation_passes");
 	public static readonly NamespacedString CartographersRegisterName = new("hgm:cartographers");
+	public static readonly NamespacedString CampaignsRegisterName = new("hgm:campaigns");
 
 	private Register<object>? _assets;
 
@@ -52,14 +55,14 @@ public sealed class HedgemenRegisters
 		}
 	}
 
-	private Register<Supplier<ILandscaper>>? _landscapers;
+	private Register<Supplier<IGenerationPass>>? _generationPasses;
 
-	public Register<Supplier<ILandscaper>> Landscapers
+	public Register<Supplier<IGenerationPass>> GenerationPasses
 	{
 		get
 		{
-			PetalExceptions.ThrowIfNull(_landscapers);
-			return _landscapers;
+			PetalExceptions.ThrowIfNull(_generationPasses);
+			return _generationPasses;
 		}
 	}
 
@@ -74,6 +77,18 @@ public sealed class HedgemenRegisters
 		}
 	}
 
+	private Register<Supplier<Campaign>> _campaigns;
+
+	public Register<Supplier<Campaign>> Campaigns
+	{
+		get
+		{
+			PetalExceptions.ThrowIfNull(_campaigns);
+			return _campaigns;
+		}
+	}
+
+
 	/// <summary>
 	/// Initializes the registers to non-null values. Note that this does not add the content.
 	/// </summary>
@@ -83,8 +98,9 @@ public sealed class HedgemenRegisters
 		SetupAssetsRegister(registry);
 		SetupEntityComponentsRegister(registry);
 		SetupCellComponentsRegister(registry);
-		SetupLandscapersRegister(registry);
+		SetupGenerationPassesRegister(registry);
 		SetupCartographersRegister(registry);
+		SetupCampaignsRegister(registry);
 	}
 
 	private void SetupAssetsRegister(Registry registry)
@@ -117,14 +133,14 @@ public sealed class HedgemenRegisters
 		AddRegisterToRegistry(_cellComponents, registry);
 	}
 
-	private void SetupLandscapersRegister(Registry registry)
+	private void SetupGenerationPassesRegister(Registry registry)
 	{
-		_landscapers = new Register<Supplier<ILandscaper>>(
-			LandscapersRegisterName,
+		_generationPasses = new Register<Supplier<IGenerationPass>>(
+			GenerationPassesRegisterName,
 			HedgemenVanilla.ModID,
 			registry);
 
-		AddRegisterToRegistry(_landscapers, registry);
+		AddRegisterToRegistry(_generationPasses, registry);
 	}
 
 	private void SetupCartographersRegister(Registry registry)
@@ -135,6 +151,16 @@ public sealed class HedgemenRegisters
 			registry);
 
 		AddRegisterToRegistry(_cartographers, registry);
+	}
+
+	private void SetupCampaignsRegister(Registry registry)
+	{
+		_campaigns = new Register<Supplier<Campaign>>(
+			CampaignsRegisterName,
+			HedgemenVanilla.ModID,
+			registry);
+
+		AddRegisterToRegistry(_campaigns, registry);
 	}
 
 	/// <summary>

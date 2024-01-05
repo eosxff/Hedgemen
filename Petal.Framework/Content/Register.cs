@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Petal.Framework.Util;
+using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.Content;
 
 public sealed class Register<TContent> : IRegister
 {
 	private readonly Dictionary<NamespacedString, ContentKey> _content = new();
+	// todo make contentkey a reference and add a weakreference list
 
 	public event EventHandler? OnKeyAdded;
 	public event EventHandler? OnKeyRemoved;
@@ -32,6 +36,23 @@ public sealed class Register<TContent> : IRegister
 		RegistryName = registryName;
 		ModID = modID;
 		Registry = registry;
+	}
+
+	public bool GetItem<T>(
+		NamespacedString id,
+		[NotNullWhen(true)]
+		out T? item)
+	{
+		item = default;
+
+		if (!GetKey(id, out var key))
+			return false;
+
+		if (key.Content is not T content)
+			return false;
+
+		item = content;
+		return true;
 	}
 
 	public bool AddKey(NamespacedString id, TContent content)
@@ -100,6 +121,12 @@ public sealed class Register<TContent> : IRegister
 	{
 		return _content.ContainsKey(id);
 	}
+
+	public IReadOnlyList<TContent> ListRegisteredContent()
+		=> new List<TContent>(_content.Select(c => (TContent)c.Value.Content));
+
+	public ICollection<ContentKey> RegisteredContent
+		=> _content.Values;
 
 	public RegistryObject<TContentLocal> MakeReference<TContentLocal>(NamespacedString id)
 	{

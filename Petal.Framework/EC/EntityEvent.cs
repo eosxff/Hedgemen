@@ -1,6 +1,6 @@
 ﻿namespace Petal.Framework.EC;
 
-public abstract class EntityEvent : IEvent
+public abstract class EntityEvent : IEntityEvent
 {
 	public required Entity Sender
 	{

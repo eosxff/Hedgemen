@@ -2,9 +2,12 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.Json;
-using Hgm.Components;
+using Hgm.Game;
+using Hgm.Game.Campaigning;
+using Hgm.Game.CellComponents;
 using Hgm.Vanilla.WorldGeneration;
-using Hgm.WorldGeneration;
+using Hgm.Game.WorldGeneration;
+using Hgm.Vanilla.EntityComponents;
 using Microsoft.Xna.Framework;
 using Petal.Framework;
 using Petal.Framework.Assets;
@@ -12,6 +15,7 @@ using Petal.Framework.Content;
 using Petal.Framework.EC;
 using Petal.Framework.IO;
 using Petal.Framework.Persistence;
+using Petal.Framework.Util;
 
 namespace Hgm.Vanilla;
 
@@ -29,7 +33,7 @@ public sealed class HedgemenContent
 		private set;
 	}
 
-	public RegistryObject<Supplier<ILandscaper>> OverworldTerrainLandscaper
+	public RegistryObject<Supplier<IGenerationPass>> OverworldTerrainGenerationPass
 	{
 		get;
 		private set;
@@ -77,6 +81,12 @@ public sealed class HedgemenContent
 		private set;
 	}
 
+	public RegistryObject<Supplier<Campaign>> HedgemenCampaign
+	{
+		get;
+		private set;
+	}
+
 	/// <summary>
 	/// Loads all the content in vanilla Hedgemen in this order: assets > entity components > cell components >
 	/// landscapers > cartographers.
@@ -87,7 +97,7 @@ public sealed class HedgemenContent
 		RegisterAssets(registers);
 		RegisterEntityComponents(registers);
 		RegisterCellComponents(registers);
-		RegisterLandscapers(registers);
+		RegisterGenerationPasses(registers);
 		RegisterCartographers(registers);
 	}
 
@@ -99,7 +109,7 @@ public sealed class HedgemenContent
 
 		var manifestStorage = JsonSerializer.Deserialize(
 			file.ReadString(Encoding.UTF8),
-			DataStorage.JsonTypeInfo);
+			PersistentData.JsonTypeInfo);
 
 		var manifest = new AssetManifest(manifestStorage);
 		manifest.ForwardToRegister(registers.Assets, assetLoader);
@@ -109,11 +119,14 @@ public sealed class HedgemenContent
 	{
 		var register = registers.EntityComponents;
 
-		register.AddKey("hgm:character_sheet", () => new CharacterSheet());
-		register.AddKey("hgm:character_race", () => new CharacterRace());
+		var characterSheetName = new NamespacedString("hgm:character_sheet");
+		var characterRaceName = new NamespacedString("hgm:character_race");
 
-		CharacterSheet = register.MakeReference("hgm:character_sheet");
-		CharacterRace = register.MakeReference("hgm:character_race");
+		register.AddKey(characterSheetName, () => new CharacterSheet());
+		register.AddKey(characterRaceName, () => new CharacterRace());
+
+		CharacterSheet = register.MakeReference(characterSheetName);
+		CharacterRace = register.MakeReference(characterRaceName);
 	}
 
 	private void RegisterCellComponents(HedgemenRegisters registers)
@@ -142,13 +155,13 @@ public sealed class HedgemenContent
 		OverworldTallMountain = register.MakeReference(overworldTallMountainName);
 	}
 
-	private void RegisterLandscapers(HedgemenRegisters registers)
+	private void RegisterGenerationPasses(HedgemenRegisters registers)
 	{
-		var register = registers.Landscapers;
+		var register = registers.GenerationPasses;
 
-		var overworldTerrainLandscaperName = new NamespacedString("hgm:overworld_terrain_landscaper");
+		var overworldTerrainGenerationPassName = new NamespacedString("hgm:overworld_terrain_landscaper");
 
-		register.AddKey(overworldTerrainLandscaperName, () => new OverworldTerrainLandscaper
+		register.AddKey(overworldTerrainGenerationPassName, () => new OverworldTerrainGenerationPass
 		{
 			DeepWater = OverworldDeepWater.Get(),
 			DeepWaterHeight = 0.5f,
@@ -164,26 +177,35 @@ public sealed class HedgemenContent
 
 			TallMountain = OverworldTallMountain.Get(),
 			TallMountainHeight = 1.0f,
-
-			Scale = 50.0f,
-			Octaves = 5,
-			Frequency = 2.5f,
-			Lacunarity = 2.75f,
-			Offset = new Vector2Int(0, 0),
-			FalloffModifier = 0.0f
 		});
 
-		OverworldTerrainLandscaper = register.MakeReference(overworldTerrainLandscaperName);
+		OverworldTerrainGenerationPass = register.MakeReference(overworldTerrainGenerationPassName);
 	}
 
 	private void RegisterCartographers(HedgemenRegisters registers)
 	{
 		var register = registers.Cartographers;
 
-		var overworld = new Cartographer();
-		overworld.Landscapers.Add(OverworldTerrainLandscaper);
-		register.AddKey("hgm:overworld_cartographer", overworld);
+		var overworldCartographerName = new NamespacedString("hgm:overworld_cartographer");
 
-		OverworldCartographer = register.MakeReference("hgm:overworld_cartographer");
+		var overworld = new Cartographer
+		{
+			NoiseGenerationArgs = new NoiseArgs
+			{
+				Seed = new Random().Next(int.MinValue, int.MaxValue),
+				Dimensions = new Vector2Int(512, 512),
+				Scale = 50.0f,
+				Octaves = 5,
+				Frequency = 2.5f,
+				Lacunarity = 2.75f,
+				Offset = new Vector2Int(0, 0),
+				FalloffModifier = 0.0f
+			},
+			GenerationPasses = { OverworldTerrainGenerationPass.Get() }
+		};
+
+		register.AddKey(overworldCartographerName, overworld);
+
+		OverworldCartographer = register.MakeReference(overworldCartographerName);
 	}
 }

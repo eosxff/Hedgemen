@@ -1,6 +1,8 @@
 .idea/
+.config/
 .mgstats
 **/bin/
 **/obj/
 **/build/
+**/tmp/
 **.sln.DotSettings**

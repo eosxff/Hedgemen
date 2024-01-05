@@ -4,33 +4,38 @@ using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Graphics;
 using Petal.Framework.Input;
 using Petal.Framework.Scenery.Nodes;
+using Petal.Framework.Util;
 
 namespace Petal.Framework.Scenery;
 
-public class Scene : IDisposable
+public abstract class Scene : IDisposable
 {
+	public event EventHandler<SkinChangedEventArgs>? OnSkinChanged;
+	public event EventHandler? BeforeUpdate;
+	public event EventHandler? AfterUpdate;
+	public event EventHandler? BeforeDraw;
+	public event EventHandler? AfterDraw;
+	public event EventHandler? AfterInitialize;
+	public event EventHandler? BeforeExit;
+	public event EventHandler? AfterExit;
+	public event EventHandler? OnViewportAdapterChanged;
+
+	public bool IsFinishedLoading
+	{
+		get;
+		private set;
+	} = false;
+
+	public PetalGame Game
+	{
+		get;
+	}
+
 	public NamespacedString Name
 	{
 		get;
-		set;
+		protected set;
 	} = NamespacedString.Default;
-
-	public class SkinChangedEventArgs : EventArgs
-	{
-		public Skin OldSkin
-		{
-			get;
-			init;
-		}
-
-		public Skin NewSkin
-		{
-			get;
-			init;
-		}
-	}
-
-	private RenderTarget2D? _renderTarget;
 
 	public Renderer Renderer
 	{
@@ -58,8 +63,6 @@ public class Scene : IDisposable
 		get;
 	} = new();
 
-	private ViewportAdapter _viewportAdapter;
-
 	public ViewportAdapter ViewportAdapter
 	{
 		get => _viewportAdapter;
@@ -71,8 +74,6 @@ public class Scene : IDisposable
 			OnViewportAdapterChanged?.Invoke(this, EventArgs.Empty);
 		}
 	}
-
-	private Skin _skin = new();
 
 	public Skin Skin
 	{
@@ -92,34 +93,43 @@ public class Scene : IDisposable
 		}
 	}
 
-	public event EventHandler? BeforeUpdate;
-	public event EventHandler? AfterUpdate;
+	private RenderTarget2D? _renderTarget;
+	private ViewportAdapter _viewportAdapter;
+	private Skin _skin = new();
 
-	public event EventHandler? BeforeDraw;
-	public event EventHandler? AfterDraw;
 
-	public event EventHandler? AfterInitialize;
-
-	public event EventHandler? BeforeExit;
-	public event EventHandler? AfterExit;
-
-	public event EventHandler<SkinChangedEventArgs>? OnSkinChanged;
-
-	public event EventHandler? OnViewportAdapterChanged;
-
-	public Scene(Stage root, Skin skin)
+	protected Scene(Stage root, Skin skin, PetalGame? game = null)
 	{
+		game ??= PetalGame.Petal;
+		Game = game;
+
 		Skin = skin;
-		Skin.OnSkinRefreshed += OnSkinRefreshed;
 
 		Input = new InputProvider();
 		Root = root;
 		Root.Scene = this;
 
-		Renderer = new DefaultRenderer();
+		Renderer = new DefaultRenderer(game.GraphicsDevice);
 
 		ViewportAdapter = new DefaultViewportAdapter(
-			Renderer.RenderState.Graphics.GraphicsDevice, PetalGame.Petal.Window);
+			Renderer.RenderState.Graphics.GraphicsDevice, game.Window);
+
+		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
+
+		Reset();
+	}
+
+	protected Scene()
+	{
+		Game = PetalGame.Petal;
+		Input = new InputProvider();
+		Root = new Stage
+		{
+			Scene = this
+		};
+		Renderer = new DefaultRenderer(Game.GraphicsDevice);
+		ViewportAdapter = new DefaultViewportAdapter(
+			Renderer.RenderState.Graphics.GraphicsDevice, Game.Window);
 
 		Renderer.RenderState.TransformationMatrix = ViewportAdapter.GetScaleMatrix();
 
@@ -138,12 +148,6 @@ public class Scene : IDisposable
 		Root.DestroyAllMarkedNodes();
 
 		AfterUpdate?.Invoke(this, EventArgs.Empty);
-	}
-
-	private Vector2 TransformCursorPosition(Vector2 position)
-	{
-		var point = ViewportAdapter.PointToScreen(position.X, position.Y);
-		return new Vector2(point.X, point.Y);
 	}
 
 	public void Draw(GameTime time)
@@ -186,22 +190,44 @@ public class Scene : IDisposable
 	{
 		BeforeExit?.Invoke(this, EventArgs.Empty);
 		Dispose();
+		OnDispose(); // should we call this before or after disposing everything else?
 		AfterExit?.Invoke(this, EventArgs.Empty);
 	}
 
-	public void Initialize()
+	public void Load()
 	{
 		PetalGame.Petal.Window.ClientSizeChanged += OnWindowClientSizeChanged;
-		Skin.OnSkinRefreshed += OnSkinRefreshed;
 		ViewportAdapter.Reset();
 
+		OnLoad();
+		IsFinishedLoading = true;
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
 	}
 
-	private void OnWindowClientSizeChanged(object? sender, EventArgs args)
+	public void Dispose()
 	{
-		ResetRenderTarget();
-		ViewportAdapter.Reset();
+		GC.SuppressFinalize(this);
+
+		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
+		_renderTarget?.Dispose();
+		Renderer?.Dispose();
+		ViewportAdapter?.Dispose();
+	}
+
+	protected virtual void OnDispose()
+	{
+
+	}
+
+	protected virtual void OnLoad()
+	{
+
+	}
+
+	private Vector2 TransformCursorPosition(Vector2 position)
+	{
+		var point = ViewportAdapter.PointToScreen(position.X, position.Y);
+		return new Vector2(point.X, point.Y);
 	}
 
 	private void OnSkinRefreshed(object? sender, EventArgs args)
@@ -229,15 +255,23 @@ public class Scene : IDisposable
 		ResetRenderTarget();
 	}
 
-	public void Dispose()
+	private void OnWindowClientSizeChanged(object? sender, EventArgs args)
 	{
-		GC.SuppressFinalize(this);
+		Reset();
+	}
 
-		PetalGame.Petal.Window.ClientSizeChanged -= OnWindowClientSizeChanged;
-		Skin.OnSkinRefreshed -= OnSkinRefreshed;
+	public class SkinChangedEventArgs : EventArgs
+	{
+		public Skin OldSkin
+		{
+			get;
+			init;
+		}
 
-		_renderTarget?.Dispose();
-		Renderer?.Dispose();
-		ViewportAdapter?.Dispose();
+		public Skin NewSkin
+		{
+			get;
+			init;
+		}
 	}
 }

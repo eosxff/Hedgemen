@@ -1,22 +1,16 @@
 ﻿namespace Petal.Framework.EC;
 
-public abstract class CellEvent : IEvent
+public abstract class CellEvent : IEntityEvent
 {
-	public required MapCell Sender
-	{
-		get;
-		init;
-	}
-
 	public bool AllowAsync
 	{
 		get;
-		internal set;
-	}
+		protected set;
+	} = false;
 
 	public bool Async
 	{
 		get;
 		internal set;
-	}
+	} = false;
 }

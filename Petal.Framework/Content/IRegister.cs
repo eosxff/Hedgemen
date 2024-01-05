@@ -1,8 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace Petal.Framework.Content;
-
-public delegate T Supplier<out T>();
+﻿namespace Petal.Framework.Content;
 
 public interface IRegister
 {

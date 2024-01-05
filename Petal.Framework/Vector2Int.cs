@@ -5,15 +5,24 @@ using System.Runtime.CompilerServices;
 namespace Microsoft.Xna.Framework;  // ;)
 
 [Serializable]
-public struct Vector2Int
+public readonly struct Vector2Int
 {
 	public static readonly Vector2Int Zero = new(0, 0);
 	public static readonly Vector2Int One = new(1, 1);
 	public static readonly Vector2Int UnitX = new(1, 0);
 	public static readonly Vector2Int UnitY = new(0, 1);
 
-	public int X;
-	public int Y;
+	public int X
+	{
+		get;
+		init;
+	}
+
+	public int Y
+	{
+		get;
+		init;
+	}
 
 	public Vector2Int(int x, int y)
 	{
@@ -28,71 +37,53 @@ public struct Vector2Int
 	}
 
 	public bool Equals(Vector2Int vector)
-	{
-		return X == vector.X &&
-		       Y == vector.Y;
-	}
+		=> X == vector.X && Y == vector.Y;
 
 	public override bool Equals(object obj)
-	{
-		return obj is Vector2Int vector && Equals(vector);
-	}
+		=> obj is Vector2Int vector && Equals(vector);
 
 	public override int GetHashCode()
-	{
-		return HashCode.Combine(X, Y);
-	}
+		=> HashCode.Combine(X, Y);
 
 	public int Length()
-	{
-		return (int)Math.Sqrt(X * X + Y * Y);
-	}
+		=> (int)Math.Sqrt(X * X + Y * Y);
 
 	public int LengthSquared()
-	{
-		return X * X + Y * Y;
-	}
+		=> X * X + Y * Y;
+
+	public readonly Vector2 ToVector2()
+		=> new(X, Y);
 
 	public override string ToString()
-	{
-		return $"{{X: {X} Y: {Y}}}";
-	}
+		=> $"{{X: {X} Y: {Y}}}";
 
 	public static Vector2Int Add(Vector2Int a, Vector2Int b)
-	{
-		return new Vector2Int
+		=> new()
 		{
 			X = a.X + b.X,
 			Y = a.Y + b.Y
 		};
-	}
 
 	public static Vector2Int Subtract(Vector2Int a, Vector2Int b)
-	{
-		return new Vector2Int
+		=> new()
 		{
 			X = a.X - b.X,
 			Y = a.Y - b.Y
 		};
-	}
 
 	public static Vector2Int Multiply(Vector2Int a, Vector2Int b)
-	{
-		return new Vector2Int
+		=> new()
 		{
 			X = a.X * b.X,
 			Y = a.Y * b.Y
 		};
-	}
 
 	public static Vector2Int Divide(Vector2Int a, Vector2Int b)
-	{
-		return new Vector2Int
+		=> new()
 		{
 			X = a.X / b.X,
 			Y = a.Y / b.Y
 		};
-	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Add(Vector2Int a, Vector2Int b, out Vector2Int result)
@@ -120,37 +111,33 @@ public struct Vector2Int
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Vector2Int operator +(Vector2Int a, Vector2Int b)
-	{
-		return Add(a, b);
-	}
+		=> Add(a, b);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Vector2Int operator -(Vector2Int a, Vector2Int b)
-	{
-		return Subtract(a, b);
-	}
+		=> Subtract(a, b);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Vector2Int operator *(Vector2Int a, Vector2Int b)
-	{
-		return Multiply(a, b);
-	}
+		=> Multiply(a, b);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Vector2Int operator /(Vector2Int a, Vector2Int b)
-	{
-		return Divide(a, b);
-	}
+		=> Divide(a, b);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool operator ==(Vector2Int a, Vector2Int b)
-	{
-		return a.Equals(b);
-	}
+		=> a.Equals(b);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool operator !=(Vector2Int a, Vector2Int b)
-	{
-		return !a.Equals(b);
-	}
+		=> !a.Equals(b);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static explicit operator Vector2(Vector2Int a)
+		=> new(a.X, a.Y);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static explicit operator Vector2Int(Vector2 a)
+		=> new((int)a.X, (int)a.Y);
 }

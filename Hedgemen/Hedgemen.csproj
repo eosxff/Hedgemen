@@ -16,7 +16,7 @@
 
     <ItemGroup>
         <ContentWithTargetPath Include="../Building/resources/**">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
         </ContentWithTargetPath>
     </ItemGroup>
@@ -32,10 +32,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Manifests\" />
-      <Folder Include="WorldGeneration\New\" />
+      <Folder Include="Game\Scenes\Nodes\" />
+      <Folder Include="Game\Scenes\Signals\" />
+      <Folder Include="Vanilla\CellComponents\" />
     </ItemGroup>
 </Project>
 
 <!--i'm bad at remembering things-->
-<!--<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
+<!--<CopyToOutputDirectory>Always</CopyToOutputDirectory>-->

@@ -1,45 +1,49 @@
 {
-	"nil:entries": [
+	"entries": [
 		{
-			"nil:name": "hgm:ui/skin/button_hover_texture",
-			"nil:path": "button_hover.png",
-			"nil:type": "texture"
+			"name": "hgm:ui/skin/button_hover_texture",
+			"path": "button_hover.png",
+			"type": "Texture"
 		},
-	
 		{
-			"nil:name": "hgm:ui/skin/button_normal_texture",
-			"nil:path": "button_normal.png",
-			"nil:type": "texture"
+			"name": "hgm:ui/skin/button_normal_texture",
+			"path": "button_normal.png",
+			"type": "Texture"
 		},
-	
 		{
-			"nil:name": "hgm:ui/skin/button_input_texture",
-			"nil:path": "button_input.png",
-			"nil:type": "texture"
+			"name": "hgm:ui/skin/button_input_texture",
+			"path": "button_input.png",
+			"type": "Texture"
 		},
-
 		{
-			"nil:name": "hgm:ui/splash_texture",
-			"nil:path": "splash.png",
-			"nil:type": "texture"
+			"name": "hgm:ui/splash_texture",
+			"path": "splash.png",
+			"type": "Texture"
 		},
-	
 		{
-			"nil:name": "hgm:ui/small_font",
-			"nil:path": "pixelade_regular",
-			"nil:type": "font"
+			"name": "hgm:ui/small_font",
+			"path": "pixelade_regular",
+			"type": "Font"
 		},
-	
 		{
-			"nil:name": "hgm:ui/medium_font",
-			"nil:path": "pixelade_regular_32",
-			"nil:type": "font"
+			"name": "hgm:ui/medium_font",
+			"path": "pixelade_regular_32",
+			"type": "Font"
 		},
-	
 		{
-			"nil:name": "hgm:ui/large_font",
-			"nil:path": "pixelade_regular_64",
-			"nil:type": "font"
+			"name": "hgm:ui/large_font",
+			"path": "pixelade_regular_64",
+			"type": "Font"
+		},
+		{
+			"name": "hgm:ui/panel_texture",
+			"path": "panel_default.png",
+			"type": "Texture"
+		},
+		{
+			"name": "hgm:sprites/hedge_knight",
+			"path": "hedge_knight.png",
+			"type": "Texture"
 		}
 	]
 }

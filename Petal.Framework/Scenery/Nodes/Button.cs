@@ -54,12 +54,10 @@ public class Button : Node
 
 		var textureRef = GetButtonTextureFromState();
 
-		if (!textureRef.HasValidKey)
+		if (!textureRef.IsPresent)
 			return;
 
 		Scene.Renderer.Begin();
-
-		// todo testing purposes
 
 		var renderData = new RenderData
 		{
@@ -69,8 +67,10 @@ public class Button : Node
 			SrcRect = textureRef.Get().Bounds
 		};
 
-		const int xPadding = 4, yPadding = 4; // todo should not be defined here
-		const int leftPadding = xPadding, rightPadding = xPadding, topPadding = yPadding, bottomPadding = yPadding;
+		int leftPadding = Skin.Button.HorizontalPadding;
+		int rightPadding = Skin.Button.HorizontalPadding;
+		int topPadding = Skin.Button.VerticalPadding;
+		int bottomPadding = Skin.Button.VerticalPadding;
 
 		var sourcePatch = new NinePatch(
 			renderData.SrcRect.Value,
@@ -100,13 +100,10 @@ public class Button : Node
 		{
 			case NodeState.Normal:
 				return Skin.Button.NormalTexture;
-
 			case NodeState.Input:
 				return Skin.Button.InputTexture;
-
 			case NodeState.Hover:
 				return Skin.Button.HoverTexture;
-
 			default:
 				throw new ArgumentOutOfRangeException();
 		}

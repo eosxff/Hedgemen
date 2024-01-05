@@ -1,7 +1,7 @@
 {
 	"window_width": 960,
 	"window_height": 540,
-	"window_mode": "windowed",
+	"window_mode": "BorderlessFullscreen",
 
 	"preferred_framerate": 60,
 	"vsync": false,

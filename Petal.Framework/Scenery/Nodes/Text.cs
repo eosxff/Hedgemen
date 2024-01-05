@@ -27,11 +27,23 @@ public class Text : Node
 		set;
 	} = Color.White;
 
+	public Color OutlineColor
+	{
+		get;
+		set;
+	} = Color.Black;
+
 	public RegistryObject<SpriteFont> Font
 	{
 		get;
 		set;
 	}
+
+	public Vector2 Outline
+	{
+		get;
+		set;
+	} = Vector2.Zero;
 
 	public Text()
 	{
@@ -40,7 +52,7 @@ public class Text : Node
 
 	protected override Rectangle GetDefaultBounds()
 	{
-		if(Font?.Key.Content is null)
+		if(!Font.IsPresent)
 			return Rectangle.Empty;
 
 		var messageSize = Font.Get().MeasureString(Message);
@@ -53,34 +65,59 @@ public class Text : Node
 
 	protected override void OnDraw(GameTime time)
 	{
-		if (Scene is null || !Font.HasValidKey)
+		if (Scene is null || !Font.IsPresent)
 			return;
 
-		Scene.Renderer.Begin();
-
-		Scene.Renderer.Draw(new RenderStringData
+		var textData = new RenderStringData
 		{
 			Font = Font.Get(),
 			Position = new Vector2(AbsoluteBounds.X, AbsoluteBounds.Y),
 			Color = Color,
 			Text = Message,
 			Scale = Scale
-		});
+		};
 
+		Scene.Renderer.Begin();
+
+		if (Outline is { X: > 0, Y: > 0 })
+		{
+			var position = textData.Position;
+			var resolutionScale = Scene.ViewportAdapter.GetScale();
+
+			var outlineData = new RenderStringData
+			{
+				Font = Font.Get(),
+				Position = new Vector2(AbsoluteBounds.X, AbsoluteBounds.Y),
+				Color = OutlineColor,
+				Text = Message,
+				Scale = Scale
+			};
+
+			outlineData.Position = position + Vector2.UnitX * Outline.X / resolutionScale.X;
+			Scene.Renderer.Draw(outlineData);
+
+			outlineData.Position = position - Vector2.UnitX * Outline.X / resolutionScale.X;
+			Scene.Renderer.Draw(outlineData);
+
+			outlineData.Position = position + Vector2.UnitY * Outline.Y / resolutionScale.Y;
+			Scene.Renderer.Draw(outlineData);
+
+			outlineData.Position = position - Vector2.UnitY * Outline.Y / resolutionScale.Y;
+			Scene.Renderer.Draw(outlineData);
+		}
+
+		Scene.Renderer.Draw(textData);
 		Scene.Renderer.End();
 	}
 
 	protected override Rectangle CalculateBounds(Rectangle bounds)
 	{
-		var calculatedBounds = base.CalculateBounds(bounds);
-
-		if (!Font.HasValidKey)
-			return calculatedBounds;
+		if (!Font.IsPresent)
+			return base.CalculateBounds(bounds);
 
 		var measuredMessage = Font.Get().MeasureString(Message);
-		calculatedBounds.Width = (int)(measuredMessage.X * Scale);
-		calculatedBounds.Height = (int)(measuredMessage.Y * Scale);
-
-		return calculatedBounds;
+		bounds.Width = (int)(measuredMessage.X * Scale);
+		bounds.Height = (int)(measuredMessage.Y * Scale);
+		return base.CalculateBounds(bounds);
 	}
 }

@@ -61,7 +61,7 @@ public static class DirectoryInfoExtensions
 	{
 		if (!self.Exists)
 			return Array.Empty<DirectoryInfo>();
-		
+
 		var directoriesArray = self.GetDirectories();
 		var directoriesList = new List<DirectoryInfo>();
 
@@ -81,7 +81,7 @@ public static class DirectoryInfoExtensions
 	{
 		if (!self.Exists)
 			return Array.Empty<FileInfo>();
-		
+
 		var files = new List<FileInfo>();
 
 		switch (recursive)
@@ -89,11 +89,12 @@ public static class DirectoryInfoExtensions
 			case true:
 				InternalListFilesRecursively(filter, self, files);
 				break;
-			
 			case false:
 				foreach (var file in self.GetFiles())
+				{
 					if (filter(file))
 						files.Add(file);
+				}
 				break;
 		}
 

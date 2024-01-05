@@ -6,8 +6,8 @@ using Petal.Framework.Persistence;
 
 namespace Petal.Framework.EC;
 
-public interface IEntity<TComponent, in TEvent> : IDataStorageHandler
-	where TEvent : IEvent
+public interface IEntity<TComponent, in TEvent> : IPersistent
+	where TEvent : IEntityEvent
 	where TComponent : IComponent<TEvent>
 {
 	public IReadOnlyCollection<TComponent> Components
@@ -15,6 +15,7 @@ public interface IEntity<TComponent, in TEvent> : IDataStorageHandler
 		get;
 	}
 
+	public bool HasComponents();
 	public void PropagateEvent(TEvent e);
 	public Task PropagateEventAsync(TEvent e);
 	public void PropagateEventIfResponsive(TEvent e);
