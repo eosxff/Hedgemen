@@ -14,22 +14,6 @@ public static class CampaignSystem
 {
 	public static void StartCampaign(CampaignStartArgs args)
 	{
-		/*var mapDimensions = new Vector2Int(512, 512); // 384, 384
-		var campaign = new Campaign(new CampaignSession(args.SessionDirectory, args.Hedgemen), args.Hedgemen);
-
-		var generator = new CampaignGenerator
-		{
-			CampaignSessionDirectoryName = "new_campaign",
-			Hedgemen = args.Hedgemen,
-			ModList = args.ModList,
-			StartingWorldCartographer = args.StartingWorldCartographer,
-			StartingWorldCartographyOptions = new CartographyOptions
-			{
-				MapDimensions = mapDimensions,
-				Seed = new Random().Next(int.MinValue, int.MaxValue)
-			}
-		};*/
-
 		var mapDimensions = new Vector2Int(512, 512); // 384, 384
 		var campaign = new Campaign(new CampaignSession(args.SessionDirectory, args.Hedgemen), args.Hedgemen);
 
@@ -89,17 +73,7 @@ public sealed class CampaignGenerator
 
 	public async void GenerateCampaignAsync(Campaign campaign)
 	{
-		WorldMap startingWorldMap = null;
-
-		/*await Task.Run(() =>
-		{
-			startingWorldMap = StartingWorldCartographer.Generate(new CartographyOptions
-			{
-				MapDimensions = new Vector2Int(384, 384),
-				Seed = new Random().Next(int.MinValue, int.MaxValue)
-			});
-		});*/
-
+		var startingWorldMap = await Task.Run(GenerateStartingWorld);
 		PetalExceptions.ThrowIfNull(startingWorldMap);
 
 		campaign.Universe.AddWorld(startingWorldMap);
@@ -109,6 +83,11 @@ public sealed class CampaignGenerator
 	public void GenerateCampaignScenic(Campaign campaign)
 	{
 		campaign.Hedgemen.ChangeScenes(new CampaignGenerationScene(this));
+	}
+
+	private WorldMap GenerateStartingWorld()
+	{
+		return StartingWorldCartographer.Generate();
 	}
 }
 

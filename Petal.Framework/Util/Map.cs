@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Petal.Framework.Util.Extensions;
 
@@ -15,6 +16,9 @@ public sealed class Map<T> : IEnumerable<T>
 
 	public int Height
 		=> _array.GetLength(1);
+
+	public Vector2Int Dimensions
+		=> new(Width, Height);
 
 	public Map() : this(0, 0)
 	{
@@ -34,6 +38,15 @@ public sealed class Map<T> : IEnumerable<T>
 	public Map(int width, int height)
 	{
 		_array = new T[width, height];
+	}
+
+	public void Clear()
+	{
+		for (int y = 0; y < Height; ++y)
+		{
+			for (int x = 0; x < Width; ++x)
+				_array[x, y] = default;
+		}
 	}
 
 	public void Populate(Func<T> elementCreator)
@@ -63,6 +76,18 @@ public sealed class Map<T> : IEnumerable<T>
 		}
 	}
 
+	public void IterateSection(Rectangle section, Action<T, Vector2Int> iterateAction)
+	{
+		if (!IsInBounds(section.X, section.Y) || !IsInBounds(section.X + section.Width, section.Y + section.Height))
+			throw new IndexOutOfRangeException($"{section} is not fully contained in {Dimensions}.");
+
+		for (int y = section.Y; y < section.Height; ++y)
+		{
+			for (int x = section.X; x < section.Width; ++x)
+				iterateAction(this[x, y], new Vector2Int(x, y));
+		}
+	}
+
 	public Map<TLocal> Select<TLocal>(Func<T, TLocal> selector)
 	{
 		var map = new Map<TLocal>(Width, Height);
@@ -88,6 +113,14 @@ public sealed class Map<T> : IEnumerable<T>
 
 		return array;
 	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool IsInBounds(Vector2Int position)
+		=> IsInBounds(position.X, position.Y);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool IsInBounds(int x, int y)
+		=> x >= 0 && x < Width && y >= 0 && y < Height;
 
 	public T this[int x, int y]
 	{

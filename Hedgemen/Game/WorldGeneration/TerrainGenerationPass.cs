@@ -19,9 +19,6 @@ public abstract class TerrainGenerationPass : IGenerationPass
 
 	public void PerformGenerationStep(WorldGenerationInfo genInfo)
 	{
-		if (!ShouldPerformGenerationStep(genInfo))
-			return;
-
 		NoiseGen = new FastNoiseLite(genInfo.NoiseGenArgs.Seed);
 		PrepareNoiseGen(genInfo);
 
@@ -74,8 +71,8 @@ public abstract class TerrainGenerationPass : IGenerationPass
 
 	protected virtual float SampleNoiseAtCoordinate(int x, int y, WorldGenerationInfo genInfo)
 	{
-		var dimensions = genInfo.NoiseGenArgs.Dimensions;
 		float scale = genInfo.NoiseGenArgs.Scale;
+		var dimensions = genInfo.NoiseGenArgs.Dimensions;
 		var offset = genInfo.NoiseGenArgs.Offset;
 		var sample = Mathf.Torus(
 			new Vector2(x + offset.X, y + offset.Y),
