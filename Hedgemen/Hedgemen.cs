@@ -205,7 +205,7 @@ public class Hedgemen : PetalGame
 
 	private void WriteLogFile()
 	{
-		var logFile = new FileInfo($"log-{DateTime.Now:yyyy-MM-dd-hh:mm:ss}.txt");
+		var logFile = new FileInfo($"log-{DateTime.Now:yyyy-MM-dd_hh-mm-ss}.txt");
 
 		if(logFile.Exists)
 			logFile.Delete();

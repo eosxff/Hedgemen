@@ -145,7 +145,7 @@ public abstract class Scene : IDisposable
 		NodeSelector.Update();
 		Root.SearchForTargetNode(NodeSelector);
 		Root.Update(time, NodeSelector);
-		Root.DestroyAllMarkedNodes();
+		Root.PurgeAllMarkedNodes();
 
 		AfterUpdate?.Invoke(this, EventArgs.Empty);
 	}

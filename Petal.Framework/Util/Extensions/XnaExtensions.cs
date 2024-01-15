@@ -24,4 +24,14 @@ public static class XnaExtensions
 	{
 		return new Point((int)self.X, (int)self.Y);
 	}
+
+	public static Vector2Int ToSize(this Rectangle self)
+	{
+		return new Vector2Int(self.Width, self.Height);
+	}
+
+	public static Vector2Int ToPosition(this Rectangle self)
+	{
+		return new Vector2Int(self.X, self.Y);
+	}
 }

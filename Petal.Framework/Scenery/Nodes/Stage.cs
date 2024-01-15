@@ -75,7 +75,7 @@ public class Stage : Node
 		}
 	}
 
-	public void DestroyAllMarkedNodes()
+	public void PurgeAllMarkedNodes()
 	{
 		foreach (var node in _nodes.Values)
 			if (node.IsMarkedForDeletion)

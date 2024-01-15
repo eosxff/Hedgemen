@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -6,11 +7,13 @@ using Hgm.Vanilla;
 using Hgm.Vanilla.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Petal.Framework;
 using Petal.Framework.Graphics;
 using Petal.Framework.IO;
 using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
+using Petal.Framework.Util;
 using Petal.Framework.Util.Extensions;
 
 namespace Hgm.Game.Scenes;
@@ -28,6 +31,12 @@ public sealed class CampaignGenerationScene : Scene
 		private set;
 	}
 
+	public Panel WorldGenerationPanel
+	{
+		get;
+		private set;
+	}
+
 	public CampaignGenerationScene(CampaignGenerator generator)
 	{
 		var assets = HedgemenVanilla.Instance.Registers.Assets;
@@ -40,6 +49,23 @@ public sealed class CampaignGenerationScene : Scene
 			Game.GraphicsDevice,
 			Game.Window,
 			new Vector2Int(320*2, 180*2));
+
+		BeforeUpdate += (sender, args) =>
+		{
+			if (Input.IsKeyPressed(Keys.Enter))
+			{
+				if (WorldGenerationCanvas is not null)
+					WorldGenerationCanvas.IsMarkedForDeletion = true;
+
+				WorldGenerationCanvas = CreateWorldGenerationCanvas();
+				GenerateAndDisplayMap();
+			}
+		};
+
+		AfterUpdate += (sender, args) =>
+		{
+
+		};
 	}
 
 
@@ -49,6 +75,32 @@ public sealed class CampaignGenerationScene : Scene
 	}
 
 	protected override void OnLoad()
+	{
+		var assets = HedgemenVanilla.Instance.Registers.Assets;
+
+		WorldGenerationPanel = Root.Add(new Panel(Skin)
+		{
+			Bounds = new Rectangle(0, 8, 32, 64),
+			Anchor = Anchor.BottomLeft
+		});
+
+		WorldGenerationCanvas = CreateWorldGenerationCanvas();
+
+		if (assets.GetItem("hgm:sprites/hedge_knight".ToNamespaced(), out Texture2D texture))
+		{
+			Root.Add(new Image
+			{
+				Texture = texture,
+				Bounds = new Rectangle(0, 8, 32, 64),
+				Anchor = Anchor.BottomLeft
+			});
+		}
+
+		GenerateAndDisplayMap();
+		GenerateMapCreatedPanel();
+	}
+
+	private Canvas CreateWorldGenerationCanvas()
 	{
 		WorldGenerationCanvas = Root.Add(new Canvas(
 			Generator.StartingWorldCartographer.NoiseGenerationArgs.Dimensions, // todo maybe this sucks
@@ -64,30 +116,19 @@ public sealed class CampaignGenerationScene : Scene
 		WorldGenerationCanvas.ColorMap.Populate(() => Color.Black);
 		WorldGenerationCanvas.ApplyColorMap();
 
-		GenerateAndDisplayMap();
+		return WorldGenerationCanvas;
 	}
 
 	private async void GenerateAndDisplayMap()
 	{
 		var assets = HedgemenVanilla.Instance.Registers.Assets;
+
+		var noiseArgs = Generator.StartingWorldCartographer.NoiseGenerationArgs;
+		noiseArgs.Seed = new Random().Next(int.MinValue, int.MaxValue);
+		Generator.StartingWorldCartographer.NoiseGenerationArgs = noiseArgs;
+
 		var map = await Task.Run(
 			() => WorldGenerationSystem.GenerateWorldMap(Generator.StartingWorldCartographer));
-
-		Root.Add(new Panel(Skin)
-		{
-			Bounds = new Rectangle(0, 8, 32, 64),
-			Anchor = Anchor.BottomLeft
-		});
-
-		if (assets.GetItem("hgm:sprites/hedge_knight".ToNamespaced(), out Texture2D texture))
-		{
-			Root.Add(new Image
-			{
-				Texture = texture,
-				Bounds = new Rectangle(0, 8, 32, 64),
-				Anchor = Anchor.BottomLeft
-			});
-		}
 
 		var colorMap = WorldGenerationCanvas.ColorMap;
 		var mapPixelColorQuery = new QueryMapPixelColorEvent();
@@ -104,7 +145,23 @@ public sealed class CampaignGenerationScene : Scene
 		});
 
 		WorldGenerationCanvas.ApplyColorMap();
-		GenerateMapCreatedPanel();
+		SaveGeneratedMapToFile(colorMap);
+	}
+
+	private void SaveGeneratedMapToFile(Map<Color> colorMap)
+	{
+		var mapFile = new FileInfo($"map-{DateTime.Now:yyyy-MM-dd_hh-mm-ss}.png");
+
+		if(mapFile.Exists)
+			mapFile.Delete();
+
+		var mapTexture = new Texture2D(Game.GraphicsDevice, colorMap.Width, colorMap.Height);
+		mapTexture.SetData(colorMap.ToArray());
+
+		mapTexture.SaveAsPng(
+			mapFile.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite),
+			colorMap.Width,
+			colorMap.Height);
 	}
 
 	private void GenerateMapCreatedPanel()
