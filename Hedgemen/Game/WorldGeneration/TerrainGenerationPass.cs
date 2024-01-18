@@ -1,7 +1,11 @@
 using System;
+using System.Threading.Tasks;
+using Hgm.Game.CellComponents;
 using Microsoft.Xna.Framework;
 using Petal.Framework;
 using Petal.Framework.EC;
+using Petal.Framework.Scenery;
+using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
 using Petal.Framework.Vendor;
 
@@ -29,6 +33,51 @@ public abstract class TerrainGenerationPass : IGenerationPass
 		ApplyFalloffValuesToMap(noiseHeightMap, genInfo);
 
 		AddComponentsToMapCells(noiseHeightMap, genInfo);
+	}
+
+	public async Task PerformGenerationStepScenic(Canvas canvas, WorldGenerationInfo genInfo)
+	{
+		var colorMap = new Map<Color>(0, 0);
+
+		NoiseGen = new FastNoiseLite(genInfo.NoiseGenArgs.Seed);
+		PrepareNoiseGen(genInfo);
+
+		await Task.Run(() =>
+		{
+			genInfo.Cells ??= GenerateEmptyCellMap(genInfo);
+			colorMap = Cartographer.QueryCurrentMapGenerationProgress(genInfo.Cells);
+		});
+
+		canvas.ColorMap = colorMap;
+		canvas.ApplyColorMap();
+
+		var noiseHeightMap = GenerateNoiseHeightMap(genInfo);
+
+		await Task.Run(() =>
+		{
+			NormalizeNoiseMap(noiseHeightMap, genInfo);
+			colorMap = Cartographer.QueryCurrentMapGenerationProgress(genInfo.Cells);
+		});
+
+		canvas.ApplyColorMap();
+
+		await Task.Run(() =>
+		{
+			ApplyFalloffValuesToMap(noiseHeightMap, genInfo);
+			colorMap = Cartographer.QueryCurrentMapGenerationProgress(genInfo.Cells);
+		});
+
+		canvas.ColorMap = colorMap;
+		canvas.ApplyColorMap();
+
+		await Task.Run(() =>
+		{
+			AddComponentsToMapCells(noiseHeightMap, genInfo);
+			colorMap = Cartographer.QueryCurrentMapGenerationProgress(genInfo.Cells);
+		});
+
+		canvas.ColorMap = colorMap;
+		canvas.ApplyColorMap();
 	}
 
 	protected virtual void PrepareNoiseGen(WorldGenerationInfo genInfo)
@@ -101,7 +150,8 @@ public abstract class TerrainGenerationPass : IGenerationPass
 	{
 		var dimensions = genInfo.NoiseGenArgs.Dimensions;
 		var map = new Map<MapCell>(dimensions);
-		map.Populate(() => new MapCell());
+
+		map.Populate(() => new MapCell(new PerlinGeneration()));
 
 		return map;
 	}

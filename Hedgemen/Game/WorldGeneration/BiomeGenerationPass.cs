@@ -1,3 +1,6 @@
+using System.Threading.Tasks;
+using Petal.Framework.Scenery;
+using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Vendor;
 
 namespace Hgm.Game.WorldGeneration;
@@ -16,6 +19,11 @@ public abstract class BiomeGenerationPass : IGenerationPass
 	{
 		NoiseGen = new FastNoiseLite(genInfo.NoiseGenArgs.Seed);
 		PrepareNoiseGen(genInfo);
+	}
+
+	public async Task PerformGenerationStepScenic(Canvas canvas, WorldGenerationInfo genInfo)
+	{
+
 	}
 
 	protected virtual void PrepareNoiseGen(WorldGenerationInfo genInfo)

@@ -61,13 +61,7 @@ public sealed class CampaignGenerationScene : Scene
 				GenerateAndDisplayMap();
 			}
 		};
-
-		AfterUpdate += (sender, args) =>
-		{
-
-		};
 	}
-
 
 	protected override void OnDispose()
 	{
@@ -97,7 +91,6 @@ public sealed class CampaignGenerationScene : Scene
 		}
 
 		GenerateAndDisplayMap();
-		GenerateMapCreatedPanel();
 	}
 
 	private Canvas CreateWorldGenerationCanvas()
@@ -108,7 +101,7 @@ public sealed class CampaignGenerationScene : Scene
 		{
 			Name = new NamespacedString("hgm:world_generation_canvas"),
 			//Bounds = new Rectangle(0, 0, 180, 180),
-			Bounds = new Rectangle(0, 0, 312, 312),
+			Bounds = new Rectangle(0, 0, 336, 336),
 			Anchor = Anchor.Center,
 			IsInteractable = false
 		});
@@ -119,7 +112,7 @@ public sealed class CampaignGenerationScene : Scene
 		return WorldGenerationCanvas;
 	}
 
-	private async void GenerateAndDisplayMap()
+	/*private async void GenerateAndDisplayMap()
 	{
 		var assets = HedgemenVanilla.Instance.Registers.Assets;
 
@@ -127,8 +120,10 @@ public sealed class CampaignGenerationScene : Scene
 		noiseArgs.Seed = new Random().Next(int.MinValue, int.MaxValue);
 		Generator.StartingWorldCartographer.NoiseGenerationArgs = noiseArgs;
 
-		var map = await Task.Run(
-			() => WorldGenerationSystem.GenerateWorldMap(Generator.StartingWorldCartographer));
+		//var map = await Task.Run(
+		//	() => WorldGenerationSystem.GenerateWorldMap(Generator.StartingWorldCartographer));
+		var map = await WorldGenerationSystem.GenerateWorldMapScenic(Generator.StartingWorldCartographer,
+			WorldGenerationCanvas);
 
 		var colorMap = WorldGenerationCanvas.ColorMap;
 		var mapPixelColorQuery = new QueryMapPixelColorEvent();
@@ -146,6 +141,17 @@ public sealed class CampaignGenerationScene : Scene
 
 		WorldGenerationCanvas.ApplyColorMap();
 		SaveGeneratedMapToFile(colorMap);
+		GC.Collect();
+	}*/
+
+	private async void GenerateAndDisplayMap()
+	{
+		var noiseArgs = Generator.StartingWorldCartographer.NoiseGenerationArgs;
+		noiseArgs.Seed = new Random().Next(int.MinValue, int.MaxValue);
+		Generator.StartingWorldCartographer.NoiseGenerationArgs = noiseArgs;
+
+		var map = await WorldGenerationSystem.GenerateWorldMapScenic(Generator.StartingWorldCartographer,
+			WorldGenerationCanvas);
 	}
 
 	private void SaveGeneratedMapToFile(Map<Color> colorMap)
@@ -162,10 +168,5 @@ public sealed class CampaignGenerationScene : Scene
 			mapFile.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite),
 			colorMap.Width,
 			colorMap.Height);
-	}
-
-	private void GenerateMapCreatedPanel()
-	{
-
 	}
 }

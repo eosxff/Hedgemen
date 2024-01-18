@@ -20,6 +20,8 @@ public interface IEntity<TComponent, in TEvent> : IPersistent
 	public Task PropagateEventAsync(TEvent e);
 	public void PropagateEventIfResponsive(TEvent e);
 
+	public int GetSubscriberCountForEvent<T>() where T : TEvent;
+
 	public bool WillRespondToEvent(Type eventType);
 	public bool WillRespondToEvent<T>() where T : TEvent;
 

@@ -46,5 +46,5 @@ public sealed class WorldGenerationInfo
 	{
 		get;
 		set;
-	} = null;
+	}
 }

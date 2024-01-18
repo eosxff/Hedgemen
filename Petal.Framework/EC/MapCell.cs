@@ -19,6 +19,17 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 	public bool HasComponents()
 		=> _components.Count > 0;
 
+	public MapCell()
+	{
+
+	}
+
+	public MapCell(params CellComponent[] components)
+	{
+		foreach (var component in components)
+			AddComponent(component);
+	}
+
 	public void PropagateEvent(CellEvent e)
 	{
 		foreach (var component in Components)
@@ -46,6 +57,14 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 	{
 		if (WillRespondToEvent(e.GetType()))
 			PropagateEvent(e);
+	}
+
+	public int GetSubscriberCountForEvent<T>() where T : CellEvent
+	{
+		if (!_componentEvents.TryGetValue(typeof(T), out int subscriberCount))
+			return 0;
+
+		return subscriberCount;
 	}
 
 	public async Task PropagateEventIfResponsiveAsync(CellEvent e)

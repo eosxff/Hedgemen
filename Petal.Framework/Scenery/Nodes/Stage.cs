@@ -9,16 +9,11 @@ namespace Petal.Framework.Scenery.Nodes;
 
 public class Stage : Node
 {
-	private Dictionary<NamespacedString, Node> _nodes = new(); // should this be thread safe?
+	private readonly IDictionary<NamespacedString, Node> _nodes = new Dictionary<NamespacedString, Node>();
 
 	public Stage()
 	{
 		IsInteractable = false;
-	}
-
-	public void RequireBoundsRecalculation()
-	{
-		MarkAsDirty();
 	}
 
 	public void SearchForTargetNode(NodeSelection selection)
@@ -98,8 +93,7 @@ public class Stage : Node
 
 		do
 		{
-			name.Name = $"{node.Name.Name}-{duplicateCount}";
-			duplicateCount++;
+			name.Name = $"{node.Name.Name}-{duplicateCount++}";
 		} while (_nodes.ContainsKey(name));
 
 		return name;

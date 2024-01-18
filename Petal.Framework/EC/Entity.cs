@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Petal.Framework.Persistence;
-using Petal.Framework.Util;
 using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.EC;
@@ -47,6 +46,14 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 	{
 		if (WillRespondToEvent(e.GetType()))
 			PropagateEvent(e);
+	}
+
+	public int GetSubscriberCountForEvent<T>() where T : EntityEvent
+	{
+		if (!_componentEvents.TryGetValue(typeof(T), out int subscriberCount))
+			return 0;
+
+		return subscriberCount;
 	}
 
 	public async Task PropagateEventIfResponsiveAsync(EntityEvent e)
