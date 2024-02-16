@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
         <Version>0.1.1</Version>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
         <LangVersion>11</LangVersion>
         <RootNamespace>Hgm</RootNamespace>
         <NoWarn>8632</NoWarn>

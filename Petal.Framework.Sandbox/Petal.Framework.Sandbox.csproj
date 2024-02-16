@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
         <LangVersion>11</LangVersion>
         <RootNamespace>Petal.Framework.Sandbox</RootNamespace>
         <NoWarn>8632</NoWarn>

@@ -99,17 +99,10 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
-
-			switch (found)
-			{
-				case true:
-					_componentEvents[registeredEvent]++;
-					break;
-				case false:
-					_componentEvents.Add(registeredEvent, 1);
-					break;
-			}
+			if(_componentEvents.TryGetValue(registeredEvent, out int _))
+				++_componentEvents[registeredEvent];
+			else
+				_componentEvents.Add(registeredEvent, 1);
 		}
 	}
 
