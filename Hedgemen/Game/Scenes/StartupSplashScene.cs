@@ -29,7 +29,7 @@ public sealed class StartupSplashScene : Scene
 
 	protected override void OnLoad()
 	{
-		Root.Add(new Image
+		Root.AddChild(new Image
 		{
 			Texture = _splashBackground,
 			Anchor = Anchor.TopRight,

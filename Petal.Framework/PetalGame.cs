@@ -139,16 +139,6 @@ public abstract class PetalGame : Game
 		};
 	}
 
-	private async Task<Scene> SupplySceneAsync(Func<Scene> sceneSupplier)
-	{
-		return await Task.Run(() =>
-		{
-			var scene = sceneSupplier();
-			scene.Load();
-			return scene;
-		});
-	}
-
 	/// <summary>
 	/// The current window mode used by the game. Will only apply changes if the new value is not the same
 	/// as the old value.

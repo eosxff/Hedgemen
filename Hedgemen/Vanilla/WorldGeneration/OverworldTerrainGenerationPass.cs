@@ -28,7 +28,7 @@ public sealed class OverworldTerrainGenerationPass : TerrainGenerationPass
 		return true;
 	}
 
-	protected override void AddComponentsToEmptyMapCell(MapCell cell, float heightValue, WorldGenerationInfo genInfo)
+	protected override void AddComponentsToMapCell(MapCell cell, float heightValue, WorldGenerationInfo genInfo)
 	{
 		var terrain = GetTerrain(heightValue);
 		var perlin = new PerlinGeneration

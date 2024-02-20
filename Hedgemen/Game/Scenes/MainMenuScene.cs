@@ -24,37 +24,37 @@ public sealed class MainMenuScene : Scene
 		private set;
 	}
 
-	public Text Title
+	public Text? Title
 	{
 		get;
 		private set;
 	}
 
-	public Panel ButtonPanel
+	public Panel? ButtonPanel
 	{
 		get;
 		private set;
 	}
 
-	public Button SingleplayerButton
+	public Button? SingleplayerButton
 	{
 		get;
 		private set;
 	}
 
-	public Text SingleplayerButtonText
+	public Text? SingleplayerButtonText
 	{
 		get;
 		private set;
 	}
 
-	public Button QuitButton
+	public Button? QuitButton
 	{
 		get;
 		private set;
 	}
 
-	public Text QuitButtonText
+	public Text? QuitButtonText
 	{
 		get;
 		private set;
@@ -75,12 +75,12 @@ public sealed class MainMenuScene : Scene
 
 		Skin = Skin.FromJson(new FileInfo("vanilla_skin.json").ReadString(Encoding.UTF8), assetsRegister);
 
-		BackgroundSplash = Root.Add(new Background
+		BackgroundSplash = Root.AddChild(new Background
 		{
 			Image = assetsRegister.MakeReference<Texture2D>("hgm:ui/splash_texture")
 		});
 
-		Title = Root.Add(new Text
+		Title = Root.AddChild(new Text
 		{
 			Font = Skin.Font.LargeFont,
 			Bounds = new Rectangle(0, 16, 32, 12),
@@ -90,13 +90,13 @@ public sealed class MainMenuScene : Scene
 			Anchor = Anchor.Top
 		});
 
-		ButtonPanel = Root.Add(new Panel(Skin)
+		ButtonPanel = Root.AddChild(new Panel(Skin)
 		{
 			Anchor = Anchor.Center,
 			Bounds = new Rectangle(0, 0, 100, 36)
 		});
 
-		SingleplayerButton = ButtonPanel.Add(new Button(Skin)
+		SingleplayerButton = ButtonPanel.AddChild(new Button(Skin)
 		{
 			Anchor = Anchor.Top,
 			Bounds = new Rectangle(0, 2, 96, 16)
@@ -104,7 +104,7 @@ public sealed class MainMenuScene : Scene
 
 		SingleplayerButton.OnMousePressed += SingleplayerButtonOnMousePressed;
 
-		SingleplayerButtonText = SingleplayerButton.Add(new Text
+		SingleplayerButtonText = SingleplayerButton.AddChild(new Text
 		{
 			Anchor = Anchor.Center,
 			Font = Skin.Font.MediumFont,
@@ -113,7 +113,7 @@ public sealed class MainMenuScene : Scene
 			Scale = 0.15f
 		});
 
-		QuitButton = ButtonPanel.Add(new Button(Skin)
+		QuitButton = ButtonPanel.AddChild(new Button(Skin)
 		{
 			Anchor = Anchor.Top,
 			Bounds = new Rectangle(0, 18, 96, 16)
@@ -121,7 +121,7 @@ public sealed class MainMenuScene : Scene
 
 		QuitButton.OnMousePressed += QuitButtonOnMousePressed;
 
-		QuitButtonText = QuitButton.Add(new Text
+		QuitButtonText = QuitButton.AddChild(new Text
 		{
 			Anchor = Anchor.Center,
 			Font = Skin.Font.MediumFont,
@@ -138,7 +138,7 @@ public sealed class MainMenuScene : Scene
 
 		var cartographers = HedgemenVanilla.Instance.Registers.Cartographers;
 
-		if (!cartographers.GetItem(new NamespacedString("hgm:overworld_cartographer"), out Cartographer cartographer))
+		if (!cartographers.GetItem(new NamespacedString("hgm:overworld"), out Cartographer cartographer))
 			return;
 
 		CampaignSystem.StartCampaign(new CampaignStartArgs

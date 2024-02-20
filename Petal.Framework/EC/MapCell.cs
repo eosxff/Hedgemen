@@ -10,13 +10,13 @@ namespace Petal.Framework.EC;
 
 public sealed class MapCell : IEntity<CellComponent, CellEvent>
 {
-	private readonly IDictionary<Type, CellComponent> _components = new Dictionary<Type, CellComponent>();
-	private readonly IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
+	private readonly Dictionary<Type, CellComponent> _components = [];
+	private readonly Dictionary<Type, int> _componentEvents = [];
 
 	public IReadOnlyCollection<CellComponent> Components
-		=> _components.Values as Dictionary<Type, CellComponent>.ValueCollection;
+		=> _components.Values;
 
-	public bool HasComponents()
+	public bool HasAnyComponents()
 		=> _components.Count > 0;
 
 	public MapCell()
@@ -228,5 +228,31 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 			if(element.InstantiateData<CellComponent>(out var component))
 				AddComponent(component);
 		}
+	}
+
+	public bool HasComponent<T>() where T : CellComponent
+		=> _components.ContainsKey(typeof(T));
+
+	public bool HasComponents(params CellComponent[] components)
+	{
+		foreach(var component in components)
+		{
+			if(!_components.ContainsKey(component.GetType()))
+				return false;
+		}
+
+		return true;
+	}
+
+	public bool HasComponentOf<T>()
+	{
+		// maybe cache results?
+		foreach(var component in _components.Values)
+		{
+			if(component is T)
+				return true;
+		}
+
+		return false;
 	}
 }

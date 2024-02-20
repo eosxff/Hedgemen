@@ -76,6 +76,20 @@ public sealed class Map<T> : IEnumerable<T>
 		}
 	}
 
+	public void Iterate(Func<T, Vector2Int, bool> iterateFunc)
+	{
+		for (int y = 0; y < Height; ++y)
+		{
+			for (int x = 0; x < Width; ++x)
+			{
+				bool shouldContinue = iterateFunc(this[x, y], new Vector2Int(x, y));
+				
+				if(!shouldContinue)
+					return;
+			}
+		}
+	}
+
 	public Map<TLocal> Select<TLocal>(Func<T, TLocal> selector)
 	{
 		var map = new Map<TLocal>(Width, Height);

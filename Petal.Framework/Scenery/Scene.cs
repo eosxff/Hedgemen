@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Petal.Framework.Graphics;
 using Petal.Framework.Input;
 using Petal.Framework.Scenery.Nodes;
-using Petal.Framework.Util;
 
 namespace Petal.Framework.Scenery;
 

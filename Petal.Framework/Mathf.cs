@@ -13,9 +13,9 @@ public static class Mathf
 	public static Vector3 Torus(Vector2 position, int xMax, int yMax)
 	{
 		float x1 = 0, x2 = 1;
-		float y1 = 0, y2 = 1;
+		//float y1 = 0, y2 = 1;
 		float dx = x2 - x1;
-		float dy = y2 - y1;
+		//float dy = y2 - y1;
 
 		float s = position.X / xMax;
 		float t = position.Y / yMax;

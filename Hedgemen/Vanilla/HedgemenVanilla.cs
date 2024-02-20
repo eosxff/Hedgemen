@@ -107,5 +107,5 @@ public class HedgemenVanilla : PetalEmbeddedMod
 	}
 
 	private static Hedgemen Game
-		=> Hedgemen.Instance;
+		=> Hedgemen.InstanceOrThrow;
 }

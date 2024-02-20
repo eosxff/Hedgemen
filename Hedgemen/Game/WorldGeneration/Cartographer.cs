@@ -34,7 +34,7 @@ public sealed class Cartographer
 	{
 		get;
 		private set;
-	} = new();
+	} = [];
 
 	public NoiseArgs NoiseGenerationArgs
 	{
@@ -92,7 +92,7 @@ public sealed class Cartographer
 
 	public static Map<Color> QueryCurrentMapGenerationProgress(Map<MapCell> cells)
 	{
-		var mapPixelColorEvent = new QueryMapPixelColorEvent();
+		var mapPixelColorQuery = new MapPixelColorQuery();
 		var colorMap = new Map<Color>(cells.Width, cells.Height);
 
 		for (int y = 0; y < colorMap.Height; ++y)
@@ -100,18 +100,21 @@ public sealed class Cartographer
 			for (int x = 0; x < colorMap.Width; ++x)
 			{
 				var cell = cells[x, y];
+				mapPixelColorQuery.Reset();
 
-				if (!cell.WillRespondToEvent<QueryMapPixelColorEvent>())
-				{
-					colorMap[x, y] = Color.LightGray;
-					continue;
-				}
-
-				cell.PropagateEvent(mapPixelColorEvent);
-				colorMap[x, y] = mapPixelColorEvent.MapPixelColor;
+				cell.PropagateEventIfResponsive(mapPixelColorQuery);
+				colorMap[x, y] = mapPixelColorQuery.MapPixelColor;
 			}
 		}
 
 		return colorMap;
+	}
+
+	public enum DisplayPriority // todo maybe move to MapPixelColorQuery
+	{
+		Noise,
+		Terrain,
+		Biome,
+		Place
 	}
 }

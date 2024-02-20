@@ -4,9 +4,7 @@ using Petal.Framework.Persistence;
 
 namespace Petal.Framework.EC;
 
-public interface IComponent<in TEvent> :
-	IPersistent
-	where TEvent : IEntityEvent
+public interface IComponent<in TEvent> : IPersistent where TEvent : IEntityEvent
 {
 	public IReadOnlyCollection<Type> GetRegisteredEvents();
 

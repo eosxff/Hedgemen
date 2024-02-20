@@ -22,6 +22,7 @@ public sealed class HedgemenRegisters
 	public static readonly NamespacedString CartographersRegisterName = new("hgm:cartographers");
 	public static readonly NamespacedString CampaignsRegisterName = new("hgm:campaigns");
 
+
 	private Register<object>? _assets;
 
 	public Register<object> Assets

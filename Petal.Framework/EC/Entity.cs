@@ -10,13 +10,13 @@ namespace Petal.Framework.EC;
 
 public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 {
-	private readonly IDictionary<Type, EntityComponent> _components = new Dictionary<Type, EntityComponent>();
-	private readonly IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
+	private readonly Dictionary<Type, EntityComponent> _components = [];
+	private readonly Dictionary<Type, int> _componentEvents = [];
 
 	public IReadOnlyCollection<EntityComponent> Components
-		=> _components.Values as Dictionary<Type, EntityComponent>.ValueCollection;
+		=> _components.Values;
 
-	public bool HasComponents()
+	public bool HasAnyComponents()
 		=> _components.Count > 0;
 
 	public void PropagateEvent(EntityEvent e)
@@ -218,5 +218,31 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 			if(element.InstantiateData<EntityComponent>(out var component))
 				AddComponent(component);
 		}
+	}
+
+	public bool HasComponent<T>() where T : EntityComponent
+		=> _components.ContainsKey(typeof(T));
+
+	public bool HasComponents(params EntityComponent[] components)
+	{
+		foreach(var component in components)
+		{
+			if(!_components.ContainsKey(component.GetType()))
+				return false;
+		}
+
+		return true;
+	}
+
+	public bool HasComponentOf<T>()
+	{
+		// maybe cache results?
+		foreach(var component in _components.Values)
+		{
+			if(component is T)
+				return true;
+		}
+
+		return false;
 	}
 }

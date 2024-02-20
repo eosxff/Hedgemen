@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.Json;
-using Hgm.Game;
 using Hgm.Game.Campaigning;
 using Hgm.Game.CellComponents;
 using Hgm.Vanilla.WorldGeneration;
@@ -34,6 +33,12 @@ public sealed class HedgemenContent
 	}
 
 	public RegistryObject<Supplier<IGenerationPass>> OverworldTerrainGenerationPass
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<IGenerationPass>> OverworldBiomeGenerationPass
 	{
 		get;
 		private set;
@@ -75,6 +80,12 @@ public sealed class HedgemenContent
 		private set;
 	}
 
+	public RegistryObject<Supplier<CellComponent>> OverworldTundra
+	{
+		get;
+		private set;
+	}
+
 	public RegistryObject<Cartographer> OverworldCartographer
 	{
 		get;
@@ -101,9 +112,9 @@ public sealed class HedgemenContent
 		RegisterCartographers(registers);
 	}
 
-	private void RegisterAssets(HedgemenRegisters registers)
+	private static void RegisterAssets(HedgemenRegisters registers)
 	{
-		var assetLoader = Hedgemen.Instance.Assets;
+		var assetLoader = Hedgemen.InstanceOrThrow.Assets;
 
 		var file = new FileInfo("asset_manifest.json");
 
@@ -140,6 +151,8 @@ public sealed class HedgemenContent
 		var overworldMountainName = new NamespacedString("hgm:overworld_mountain");
 		var overworldTallMountainName = new NamespacedString("hgm:overworld_tall_mountain");
 
+		var overworldTundraName = new NamespacedString("hgm:overworld_tundra");
+
 		register.AddKey(perlinGenerationName, () => new PerlinGeneration());
 		register.AddKey(overworldDeepWaterName, () => new OverworldDeepWater());
 		register.AddKey(overworldShallowWaterName,() => new OverworldShallowWater());
@@ -147,19 +160,28 @@ public sealed class HedgemenContent
 		register.AddKey(overworldMountainName, () => new OverworldMountain());
 		register.AddKey(overworldTallMountainName, () => new OverworldTallMountain());
 
+		register.AddKey(overworldTundraName, () => new OverworldTundra
+		{
+			Details = WorldGeneration.OverworldTundra.BiomeDetails
+		});
+
 		PerlinGeneration = register.MakeReference(perlinGenerationName);
+
 		OverworldDeepWater = register.MakeReference(overworldDeepWaterName);
 		OverworldShallowWater = register.MakeReference(overworldShallowWaterName);
 		OverworldLand = register.MakeReference(overworldLandName);
 		OverworldMountain = register.MakeReference(overworldMountainName);
 		OverworldTallMountain = register.MakeReference(overworldTallMountainName);
+
+		OverworldTundra = register.MakeReference(overworldTundraName);
 	}
 
 	private void RegisterGenerationPasses(HedgemenRegisters registers)
 	{
 		var register = registers.GenerationPasses;
 
-		var overworldTerrainGenerationPassName = new NamespacedString("hgm:overworld_terrain_landscaper");
+		var overworldTerrainGenerationPassName = new NamespacedString("hgm:overworld_terrain");
+		var overworldBiomeGenerationPassName = new NamespacedString("hgm:overworld_biome");
 
 		register.AddKey(overworldTerrainGenerationPassName, () => new OverworldTerrainGenerationPass
 		{
@@ -179,14 +201,21 @@ public sealed class HedgemenContent
 			TallMountainHeight = 1.0f,
 		});
 
+		register.AddKey(overworldBiomeGenerationPassName, () => new OverworldBiomeGenerationPass
+		{
+			Biomes = [ WorldGeneration.OverworldTundra.BiomeDetails ],
+			DefaultBiome = WorldGeneration.OverworldTundra.BiomeDetails
+		});
+
 		OverworldTerrainGenerationPass = register.MakeReference(overworldTerrainGenerationPassName);
+		OverworldBiomeGenerationPass = register.MakeReference(overworldBiomeGenerationPassName);
 	}
 
 	private void RegisterCartographers(HedgemenRegisters registers)
 	{
 		var register = registers.Cartographers;
 
-		var overworldCartographerName = new NamespacedString("hgm:overworld_cartographer");
+		var overworldCartographerName = new NamespacedString("hgm:overworld");
 
 		var overworld = new Cartographer
 		{
@@ -201,7 +230,7 @@ public sealed class HedgemenContent
 				Offset = new Vector2Int(0, 0),
 				FalloffModifier = 0.0f
 			},
-			GenerationPasses = { OverworldTerrainGenerationPass.Get() }
+			GenerationPasses = { OverworldTerrainGenerationPass.Get(), OverworldBiomeGenerationPass.Get() }
 		};
 
 		register.AddKey(overworldCartographerName, overworld);

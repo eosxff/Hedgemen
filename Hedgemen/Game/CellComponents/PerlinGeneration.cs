@@ -1,4 +1,5 @@
-﻿using Hgm.Vanilla.WorldGeneration;
+﻿using Hgm.Game.WorldGeneration;
+using Hgm.Vanilla.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Petal.Framework.EC;
 using Petal.Framework.Persistence;
@@ -21,7 +22,8 @@ public sealed class PerlinGeneration : CellComponent
 	protected override void RegisterEvents()
 	{
 		RegisterEvent<SetHeightEvent>(SetHeight);
-		RegisterEvent<QueryMapPixelColorEvent>(QueryMapPixelColor);
+		RegisterEvent<MapPixelColorQuery>(QueryMapPixelColor);
+		RegisterEvent<WorldCellInfoQuery>(QueryWorldCellInfo);
 	}
 
 	private void SetHeight(SetHeightEvent e)
@@ -29,12 +31,18 @@ public sealed class PerlinGeneration : CellComponent
 		Height = e.Height;
 	}
 
-	private void QueryMapPixelColor(QueryMapPixelColorEvent e)
+	private void QueryMapPixelColor(MapPixelColorQuery e)
 	{
-		if (Self.GetSubscriberCountForEvent<QueryMapPixelColorEvent>() > 0) // todo lol
-			return;
+		if(e.Priority > Cartographer.DisplayPriority.Noise)
+            return;
 
-		e.MapPixelColor = Color.Red;
+		e.MapPixelColor = Color.Lerp(Color.White, Color.Black, _height);
+        e.Priority = Cartographer.DisplayPriority.Noise;
+	}
+
+	private void QueryWorldCellInfo(WorldCellInfoQuery e)
+	{
+		e.NoiseHeight = _height;
 	}
 
 	public override PersistentData WriteData()

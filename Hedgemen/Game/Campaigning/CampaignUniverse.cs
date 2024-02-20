@@ -5,19 +5,14 @@ using Petal.Framework.Persistence;
 
 namespace Hgm.Game.Campaigning;
 
-public sealed class CampaignUniverse : IPersistent
+public sealed class CampaignUniverse(Campaign campaign) : IPersistent
 {
 	public Campaign Campaign
 	{
 		get;
-	}
+	} = campaign;
 
-	private Dictionary<Guid, WorldMap> _loadedWorlds = new();
-
-	public CampaignUniverse(Campaign campaign)
-	{
-		Campaign = campaign;
-	}
+	private readonly Dictionary<Guid, WorldMap> _loadedWorlds = [];
 
 	public void AddWorld(WorldMap world)
 	{

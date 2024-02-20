@@ -2,7 +2,7 @@
 
 namespace Hgm.Game.CellComponents;
 
-public class SetHeightEvent : CellEvent
+public sealed class SetHeightEvent : CellEvent
 {
 	public required float Height
 	{
