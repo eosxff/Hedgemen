@@ -1,10 +1,9 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using Hgm.Game.Systems;
+using Hgm.Game.WorldGeneration;
 using Hgm.Vanilla;
-using Hgm.Vanilla.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -61,13 +60,7 @@ public sealed class CampaignGenerationScene : Scene
 				GenerateAndDisplayMap();
 			}
 		};
-
-		AfterUpdate += (sender, args) =>
-		{
-
-		};
 	}
-
 
 	protected override void OnDispose()
 	{
@@ -78,7 +71,7 @@ public sealed class CampaignGenerationScene : Scene
 	{
 		var assets = HedgemenVanilla.Instance.Registers.Assets;
 
-		WorldGenerationPanel = Root.Add(new Panel(Skin)
+		WorldGenerationPanel = Root.AddChild(new Panel(Skin)
 		{
 			Bounds = new Rectangle(0, 8, 32, 64),
 			Anchor = Anchor.BottomLeft
@@ -88,7 +81,7 @@ public sealed class CampaignGenerationScene : Scene
 
 		if (assets.GetItem("hgm:sprites/hedge_knight".ToNamespaced(), out Texture2D texture))
 		{
-			Root.Add(new Image
+			Root.AddChild(new Image
 			{
 				Texture = texture,
 				Bounds = new Rectangle(0, 8, 32, 64),
@@ -97,18 +90,17 @@ public sealed class CampaignGenerationScene : Scene
 		}
 
 		GenerateAndDisplayMap();
-		GenerateMapCreatedPanel();
 	}
 
 	private Canvas CreateWorldGenerationCanvas()
 	{
-		WorldGenerationCanvas = Root.Add(new Canvas(
+		WorldGenerationCanvas = Root.AddChild(new Canvas(
 			Generator.StartingWorldCartographer.NoiseGenerationArgs.Dimensions, // todo maybe this sucks
 			Renderer.RenderState.Graphics.GraphicsDevice)
 		{
 			Name = new NamespacedString("hgm:world_generation_canvas"),
 			//Bounds = new Rectangle(0, 0, 180, 180),
-			Bounds = new Rectangle(0, 0, 312, 312),
+			Bounds = new Rectangle(0, 0, 336, 336),
 			Anchor = Anchor.Center,
 			IsInteractable = false
 		});
@@ -121,31 +113,14 @@ public sealed class CampaignGenerationScene : Scene
 
 	private async void GenerateAndDisplayMap()
 	{
-		var assets = HedgemenVanilla.Instance.Registers.Assets;
-
 		var noiseArgs = Generator.StartingWorldCartographer.NoiseGenerationArgs;
 		noiseArgs.Seed = new Random().Next(int.MinValue, int.MaxValue);
 		Generator.StartingWorldCartographer.NoiseGenerationArgs = noiseArgs;
 
-		var map = await Task.Run(
-			() => WorldGenerationSystem.GenerateWorldMap(Generator.StartingWorldCartographer));
+		var map = await WorldGenerationSystem.GenerateWorldMapScenic(Generator.StartingWorldCartographer,
+			WorldGenerationCanvas);
 
-		var colorMap = WorldGenerationCanvas.ColorMap;
-		var mapPixelColorQuery = new QueryMapPixelColorEvent();
-
-		colorMap.Iterate((_, i) =>
-		{
-			var mapCell = map.Cells[i.X, i.Y];
-
-			if (mapCell.WillRespondToEvent<QueryMapPixelColorEvent>())
-			{
-				mapCell.PropagateEvent(mapPixelColorQuery);
-				colorMap[i.X, i.Y] = mapPixelColorQuery.MapPixelColor;
-			}
-		});
-
-		WorldGenerationCanvas.ApplyColorMap();
-		SaveGeneratedMapToFile(colorMap);
+		SaveGeneratedMapToFile(Cartographer.QueryCurrentMapGenerationProgress(map.Cells));
 	}
 
 	private void SaveGeneratedMapToFile(Map<Color> colorMap)
@@ -162,10 +137,5 @@ public sealed class CampaignGenerationScene : Scene
 			mapFile.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite),
 			colorMap.Width,
 			colorMap.Height);
-	}
-
-	private void GenerateMapCreatedPanel()
-	{
-
 	}
 }

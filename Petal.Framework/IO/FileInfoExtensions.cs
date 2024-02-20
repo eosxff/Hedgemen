@@ -53,27 +53,17 @@ public static class FileInfoExtensions
 	public async static Task WriteBytesAsync(
 		this FileInfo self,
 		byte[] buffer,
-		int index,
-		int count,
-		Encoding? encoding,
 		FileMode fileMode = FileMode.OpenOrCreate)
 	{
-		encoding ??= Encoding.UTF8;
-
 		await using var stream = self.Open(fileMode);
-		await stream.WriteAsync(buffer, 0, buffer.Length);
+		await stream.WriteAsync(buffer);
 	}
 
 	public async static Task WriteBytesAsync(
 		this FileInfo self,
 		ReadOnlyMemory<byte> buffer,
-		int index,
-		int count,
-		Encoding? encoding,
 		FileMode fileMode = FileMode.OpenOrCreate)
 	{
-		encoding ??= Encoding.UTF8;
-
 		await using var stream = self.Open(fileMode);
 		await stream.WriteAsync(buffer);
 	}
@@ -123,7 +113,7 @@ public static class FileInfoExtensions
 			return ReadString(self, encoding, fileMode);
 		}
 
-		catch (Exception e)
+		catch
 		{
 			return string.Empty;
 		}
@@ -160,7 +150,7 @@ public static class FileInfoExtensions
 			return ReadBytes(self, fileMode);
 		}
 
-		catch (Exception e)
+		catch
 		{
 			return Array.Empty<byte>();
 		}

@@ -16,6 +16,7 @@ using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
 using Petal.Framework.Util.Logging;
 using Petal.Framework.Windowing;
+using Optional;
 
 namespace Hgm;
 
@@ -23,7 +24,7 @@ public class Hedgemen : PetalGame
 {
 	public static string Version => StringifyVersion(typeof(Hedgemen).Assembly.GetName().Version);
 
-	public static Hedgemen Instance
+	public static Hedgemen InstanceOrThrow
 	{
 		get
 		{
@@ -31,6 +32,9 @@ public class Hedgemen : PetalGame
 			return HedgemenInstance;
 		}
 	}
+
+	public static Option<Hedgemen> Instance
+		=> (HedgemenInstance is not null) ? Option.Some(HedgemenInstance) : Option.None<Hedgemen>();
 
 	public static bool HasInstance
 		=> HedgemenInstance is not null;
@@ -53,15 +57,14 @@ public class Hedgemen : PetalGame
 		private set;
 	}
 
-	public Campaign? CurrentCampaign
-	{
-		get;
-		private set;
-	}
+	private Campaign? _currentCampaign;
+
+	public Option<Campaign> CurrentCampaign
+		=> _currentCampaign is not null ? Option.Some(_currentCampaign) : Option.None<Campaign>();
 
 	public bool TryGetCurrentCampaign([NotNullWhen(true)] out Campaign? campaign)
 	{
-		campaign = CurrentCampaign;
+		campaign = _currentCampaign;
 		return campaign is not null;
 	}
 
@@ -218,7 +221,7 @@ public class Hedgemen : PetalGame
 		if (sender is PetalGame game)
 		{
 			Logger.LogLevel = args.IsDebug ? DebugLogLevel : ReleaseLogLevel;
-			Logger.Info($"Logger now set to {game.Logger.LogLevel.ToString()}.");
+			Logger.Info($"Logger now set to {game.Logger.LogLevel}.");
 		}
 	}
 
@@ -252,18 +255,12 @@ public class Hedgemen : PetalGame
 
 	internal void MakeCampaignCurrent(Campaign campaign)
 	{
-		CurrentCampaign = campaign;
+		_currentCampaign = campaign;
 	}
 
-	public sealed class HedgemenGlobalEvents
+	public sealed class HedgemenGlobalEvents(Hedgemen hedgemen)
 	{
 		public delegate void CampaignGeneratorInitialization(Hedgemen hedgemen, CampaignGenerator generator);
-
-		public HedgemenGlobalEvents(Hedgemen hedgemen)
-		{
-			_instance = hedgemen;
-		}
-
 		public event CampaignGeneratorInitialization? CampaignGeneratorInitializationEvent;
 
 		public void OnCampaignGeneratorInitialization(CampaignGenerator generator)
@@ -271,6 +268,6 @@ public class Hedgemen : PetalGame
 			CampaignGeneratorInitializationEvent?.Invoke(_instance, generator);
 		}
 
-		private readonly Hedgemen _instance;
+		private readonly Hedgemen _instance = hedgemen;
 	}
 }

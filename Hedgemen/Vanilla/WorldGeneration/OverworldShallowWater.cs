@@ -7,4 +7,7 @@ public sealed class OverworldShallowWater : Terrain
 {
 	public override Color GetMapPixelColor()
 		=> Color.Aqua;
+
+	public override TerrainType GetTerrainType()
+		=> TerrainType.Water;
 }

@@ -57,11 +57,11 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 	internal void AddToEntity(Entity entity)
 	{
 		Self = entity;
-		Initialize();
+		Awake();
 		RegisterEvents();
 	}
 
-	protected virtual void Initialize()
+	protected virtual void Awake()
 	{
 
 	}

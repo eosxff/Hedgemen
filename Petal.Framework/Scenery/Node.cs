@@ -231,7 +231,7 @@ public abstract class Node
 	{
 	}
 
-	public TNode Add<TNode>(TNode child) where TNode : Node
+	public TNode AddChild<TNode>(TNode child) where TNode : Node
 	{
 		PetalExceptions.ThrowIfNull(child, nameof(child));
 
@@ -258,10 +258,10 @@ public abstract class Node
 	{
 	}
 
-	public void Add(params Node[] children)
+	public void AddChildren(params Node[] children)
 	{
 		foreach (var child in children)
-			Add(child);
+			AddChild(child);
 	}
 
 	public void Remove(Node child)
@@ -475,7 +475,7 @@ public abstract class Node
 			State = NodeState.Input;
 	}
 
-	private readonly List<Node> _children = new();
+	private readonly List<Node> _children = [];
 	private Anchor _anchor = Anchor.TopLeft;
 	private Node? _parent;
 	private Scene? _scene;

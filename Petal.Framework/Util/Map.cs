@@ -76,15 +76,17 @@ public sealed class Map<T> : IEnumerable<T>
 		}
 	}
 
-	public void IterateSection(Rectangle section, Action<T, Vector2Int> iterateAction)
+	public void Iterate(Func<T, Vector2Int, bool> iterateFunc)
 	{
-		if (!IsInBounds(section.X, section.Y) || !IsInBounds(section.X + section.Width, section.Y + section.Height))
-			throw new IndexOutOfRangeException($"{section} is not fully contained in {Dimensions}.");
-
-		for (int y = section.Y; y < section.Height; ++y)
+		for (int y = 0; y < Height; ++y)
 		{
-			for (int x = section.X; x < section.Width; ++x)
-				iterateAction(this[x, y], new Vector2Int(x, y));
+			for (int x = 0; x < Width; ++x)
+			{
+				bool shouldContinue = iterateFunc(this[x, y], new Vector2Int(x, y));
+				
+				if(!shouldContinue)
+					return;
+			}
 		}
 	}
 
@@ -96,6 +98,37 @@ public sealed class Map<T> : IEnumerable<T>
 		{
 			for (int x = 0; x < Width; ++x)
 				map[x, y] = selector(this[x, y]);
+		}
+
+		return map;
+	}
+
+	public void PopulateSection(Rectangle section, Func<Vector2Int, T> elementCreator)
+	{
+		for (int y = section.Y; y < section.Y + section.Height; ++y)
+		{
+			for (int x = section.X; x < section.X + section.Width; ++x)
+				elementCreator(new Vector2Int(x, y));
+		}
+	}
+
+	public void IterateSection(Rectangle section, Action<T, Vector2Int> iterateAction)
+	{
+		for (int y = section.Y; y < section.Y + section.Height; ++y)
+		{
+			for (int x = section.X; x < section.X + section.Width; ++x)
+				iterateAction(this[x, y], new Vector2Int(x, y));
+		}
+	}
+
+	public Map<TLocal> SelectSection<TLocal>(Rectangle section, Func<T, TLocal> selector)
+	{
+		var map = new Map<TLocal>(section.Width, section.Height);
+
+		for (int y = 0; y < section.Height; ++y)
+		{
+			for (int x = 0; x < section.Width; ++x)
+				map[x, y] = selector(this[x + section.X, y + section.Y]);
 		}
 
 		return map;
@@ -121,6 +154,10 @@ public sealed class Map<T> : IEnumerable<T>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsInBounds(int x, int y)
 		=> x >= 0 && x < Width && y >= 0 && y < Height;
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool IsInBounds(Rectangle section)
+		=> IsInBounds(section.X, section.Y) && IsInBounds(section.X + section.Width, section.Y + section.Height);
 
 	public T this[int x, int y]
 	{

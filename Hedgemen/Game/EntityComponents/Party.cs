@@ -6,7 +6,7 @@ namespace Hgm.Game.EntityComponents;
 
 public sealed class Party : IPersistent
 {
-	private List<PartyMember> _members = new();
+	private List<PartyMember> _members = [];
 
 	//public IReadOnlyList<PartyMember> Members
 	public List<PartyMember> Members

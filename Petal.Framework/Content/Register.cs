@@ -9,7 +9,7 @@ namespace Petal.Framework.Content;
 
 public sealed class Register<TContent> : IRegister
 {
-	private readonly Dictionary<NamespacedString, ContentKey> _content = new();
+	private readonly Dictionary<NamespacedString, ContentKey> _content = [];
 	// todo make contentkey a reference and add a weakreference list
 
 	public event EventHandler? OnKeyAdded;

@@ -8,9 +8,12 @@ namespace Petal.Framework.Scenery.Nodes;
 
 public sealed class Canvas : Node, IDisposable
 {
+	private Map<Color> _colorMap;
+
 	public Map<Color> ColorMap
 	{
-		get;
+		get => _colorMap;
+		set => _colorMap = value;
 	}
 
 	private readonly Texture2D _texture;
@@ -21,6 +24,7 @@ public sealed class Canvas : Node, IDisposable
 		ColorMap = new Map<Color>(dimensions);
 		ColorMap.Populate(() => Color.Black);
 
+		_graphicsDevice = graphicsDevice;
 		_texture = new Texture2D(graphicsDevice, dimensions.X, dimensions.Y);
 	}
 

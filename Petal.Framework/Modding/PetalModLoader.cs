@@ -15,9 +15,9 @@ namespace Petal.Framework.Modding;
 /// <summary>
 /// A somewhat general purpose mod loader. Obviously designed with Hedgemen in mind.
 /// </summary>
-public class PetalModLoader
+public class PetalModLoader(ILogger logger)
 {
-	private readonly Dictionary<NamespacedString, PetalMod> _mods = new();
+	private readonly Dictionary<NamespacedString, PetalMod> _mods = [];
 
 	public IReadOnlyDictionary<NamespacedString, PetalMod> Mods
 		=> _mods;
@@ -25,12 +25,7 @@ public class PetalModLoader
 	public ILogger Logger
 	{
 		get;
-	}
-
-	public PetalModLoader(ILogger logger)
-	{
-		Logger = logger;
-	}
+	} = logger;
 
 	/// <summary>
 	/// Readies the mod loader to be able to start with a <see cref="ModLoaderSetupContext"/>.
@@ -142,7 +137,7 @@ public class PetalModLoader
 		if (!directory.Exists)
 		{
 			Logger.Warn($"Could not find directory '{directory.FullName}'");
-			return new List<DirectoryInfo>();
+			return [];
 		}
 
 		bool DirectoryFilter(DirectoryInfo d)
@@ -182,10 +177,10 @@ public class PetalModLoader
 		// load third party mods
 		foreach (var directory in directories)
 		{
-			bool loadSuccessful = LoadModFromDirectory(context, directory, out var mod);
-
-			if (!loadSuccessful)
+			if(!LoadModFromDirectory(context, directory, out var mod))
+			{
 				Logger.Error($"Could not load mod from '{directory.Name}'.");
+			}
 			else
 			{
 				Logger.Info($"Loaded '{mod.Manifest.ModID}' of type '{mod.GetType()}'.");
@@ -199,7 +194,7 @@ public class PetalModLoader
 	private bool LoadModFromDirectory(
 		ModLoaderSetupContext context,
 		DirectoryInfo directory,
-		[NotNullWhen(true)]
+		[MaybeNullWhen(false)]
 		out PetalMod mod)
 	{
 		// create the manifest from file. handle invalid values
@@ -213,6 +208,7 @@ public class PetalModLoader
 		}
 
 		string manifestJson = manifestFile.ReadString(Encoding.UTF8);
+#pragma warning disable IL2026, IL3050
 		var manifest = JsonSerializer.Deserialize<PetalModManifest?>(manifestJson);
 
 		if (manifest is null)
@@ -236,6 +232,7 @@ public class PetalModLoader
 				return false;
 			}
 
+#pragma warning disable IL2026
 			var assembly = Assembly.LoadFile(dllFile.FullName);
 
 			foreach (string dependencyFileName in manifest.Dependencies.ReferencedDlls)
@@ -261,6 +258,7 @@ public class PetalModLoader
 				return false;
 			}
 
+#pragma warning disable IL2072
 			mod = (PetalMod)Activator.CreateInstance(modMainType, true);
 
 			if (mod is null)
@@ -344,7 +342,7 @@ public sealed class ModLoaderSetupContext
 /// <summary>
 /// <see cref="PetalModLoader"/> custom arguments for <see cref="PetalModLoader.Setup"/>.
 /// </summary>
-public struct ModLoaderSetupArgs
+public readonly struct ModLoaderSetupArgs
 {
 	/// <summary>
 	/// The game instance the mod loader uses.

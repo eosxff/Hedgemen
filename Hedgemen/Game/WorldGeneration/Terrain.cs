@@ -1,3 +1,4 @@
+using Hgm.Game.CellComponents;
 using Hgm.Vanilla.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Petal.Framework.EC;
@@ -7,15 +8,33 @@ namespace Hgm.Game.WorldGeneration;
 public abstract class Terrain : CellComponent
 {
 	public abstract Color GetMapPixelColor();
+	public abstract TerrainType GetTerrainType();
 
 	protected override void RegisterEvents()
 	{
-		base.RegisterEvents();
-		RegisterEvent<QueryMapPixelColorEvent>(QueryMapPixelColor);
+		RegisterEvent<MapPixelColorQuery>(QueryMapPixelColor);
+		RegisterEvent<WorldCellInfoQuery>(QueryWorldCellInfo);
 	}
 
-	private void QueryMapPixelColor(QueryMapPixelColorEvent e)
+	private void QueryMapPixelColor(MapPixelColorQuery e)
 	{
+		if(e.Priority > Cartographer.DisplayPriority.Terrain)
+            return;
+
 		e.MapPixelColor = GetMapPixelColor();
+        e.Priority = Cartographer.DisplayPriority.Terrain;
 	}
+
+	private void QueryWorldCellInfo(WorldCellInfoQuery e)
+	{
+		e.TerrainType = GetTerrainType();
+	}
+}
+
+public enum TerrainType
+{
+	None,
+	Water,
+	Land,
+	Mountain
 }

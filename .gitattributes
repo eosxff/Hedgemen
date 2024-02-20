@@ -1,0 +1,19 @@
+text=auto
+binary=auto
+
+*.cs text
+*.py text
+*.json text
+*.xml text
+*.csproj text
+*.gpl text
+
+*.sln text eol=crlf # necessary?
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.xnb binary
+*.dll binary
+*.dylib binary
+*.so binary

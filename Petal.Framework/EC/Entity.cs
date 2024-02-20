@@ -4,20 +4,19 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Petal.Framework.Persistence;
-using Petal.Framework.Util;
 using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.EC;
 
 public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 {
-	private readonly IDictionary<Type, EntityComponent> _components = new Dictionary<Type, EntityComponent>();
-	private readonly IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
+	private readonly Dictionary<Type, EntityComponent> _components = [];
+	private readonly Dictionary<Type, int> _componentEvents = [];
 
 	public IReadOnlyCollection<EntityComponent> Components
-		=> _components.Values as Dictionary<Type, EntityComponent>.ValueCollection;
+		=> _components.Values;
 
-	public bool HasComponents()
+	public bool HasAnyComponents()
 		=> _components.Count > 0;
 
 	public void PropagateEvent(EntityEvent e)
@@ -47,6 +46,14 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 	{
 		if (WillRespondToEvent(e.GetType()))
 			PropagateEvent(e);
+	}
+
+	public int GetSubscriberCountForEvent<T>() where T : EntityEvent
+	{
+		if (!_componentEvents.TryGetValue(typeof(T), out int subscriberCount))
+			return 0;
+
+		return subscriberCount;
 	}
 
 	public async Task PropagateEventIfResponsiveAsync(EntityEvent e)
@@ -92,17 +99,10 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
-
-			switch (found)
-			{
-				case true:
-					_componentEvents[registeredEvent]++;
-					break;
-				case false:
-					_componentEvents.Add(registeredEvent, 1);
-					break;
-			}
+			if(_componentEvents.TryGetValue(registeredEvent, out int _))
+				++_componentEvents[registeredEvent];
+			else
+				_componentEvents.Add(registeredEvent, 1);
 		}
 	}
 
@@ -218,5 +218,31 @@ public sealed class Entity : IEntity<EntityComponent, EntityEvent>
 			if(element.InstantiateData<EntityComponent>(out var component))
 				AddComponent(component);
 		}
+	}
+
+	public bool HasComponent<T>() where T : EntityComponent
+		=> _components.ContainsKey(typeof(T));
+
+	public bool HasComponents(params EntityComponent[] components)
+	{
+		foreach(var component in components)
+		{
+			if(!_components.ContainsKey(component.GetType()))
+				return false;
+		}
+
+		return true;
+	}
+
+	public bool HasComponentOf<T>()
+	{
+		// maybe cache results?
+		foreach(var component in _components.Values)
+		{
+			if(component is T)
+				return true;
+		}
+
+		return false;
 	}
 }

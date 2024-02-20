@@ -6,10 +6,9 @@ public static class DictionaryExtensions
 {
 	public static bool ChangeKey<TKey, TValue>(this IDictionary<TKey, TValue> self, TKey from, TKey to)
 	{
-		if (!self.ContainsKey(from))
+		if(!self.TryGetValue(from, out var value))
 			return false;
 
-		var value = self[from];
 		self.Remove(from);
 		self.Add(to, value);
 

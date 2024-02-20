@@ -14,7 +14,7 @@ namespace Petal.Framework;
 
 /// <summary>
 /// Entry point for games using the petal framework. Sets up a window with a graphics device that runs a game loop
-/// calling <see cref="Update"/> and <see cref="Draw"/>
+/// calling <see cref="Update"/> and <see cref="Draw"/>. Note that you must call <see cref="Game.Run"/> to start the game.
 /// </summary>
 public abstract class PetalGame : Game
 {
@@ -44,7 +44,7 @@ public abstract class PetalGame : Game
 		}
 	}
 
-	public struct DebugChangedArgs
+	public readonly struct DebugChangedArgs
 	{
 		public required bool IsDebug
 		{
@@ -53,7 +53,7 @@ public abstract class PetalGame : Game
 		}
 	}
 
-	public struct SceneChangedArgs
+	public readonly struct SceneChangedArgs
 	{
 		public required Scene NewScene
 		{
@@ -137,16 +137,6 @@ public abstract class PetalGame : Game
 		{
 			Scene = scene
 		};
-	}
-
-	private async Task<Scene> SupplySceneAsync(Func<Scene> sceneSupplier)
-	{
-		return await Task.Run(() =>
-		{
-			var scene = sceneSupplier();
-			scene.Load();
-			return scene;
-		});
 	}
 
 	/// <summary>

@@ -10,7 +10,7 @@ namespace Example;
 public class ExampleMod : PetalMod
 {
 	public static Hedgemen Game
-		=> Hedgemen.Instance;
+		=> Hedgemen.InstanceOrThrow;
 
 	public RegistryObject<Texture2D> TestAsset = null;
 

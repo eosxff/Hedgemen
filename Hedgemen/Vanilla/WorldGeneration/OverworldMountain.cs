@@ -7,4 +7,7 @@ public sealed class OverworldMountain : Terrain
 {
 	public override Color GetMapPixelColor()
 		=> Color.Gray;
+
+	public override TerrainType GetTerrainType()
+		=> TerrainType.Mountain;
 }

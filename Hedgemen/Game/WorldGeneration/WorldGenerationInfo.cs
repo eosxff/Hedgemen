@@ -30,21 +30,16 @@ public struct NoiseArgs
 	public required Vector2Int Dimensions;
 }
 
-public sealed class WorldGenerationInfo
+public sealed class WorldGenerationInfo(NoiseArgs noiseGenArgs)
 {
-	public WorldGenerationInfo(NoiseArgs noiseGenArgs)
-	{
-		NoiseGenArgs = noiseGenArgs;
-	}
-
 	public NoiseArgs NoiseGenArgs
 	{
 		get;
-	}
+	} = noiseGenArgs;
 
 	public Map<MapCell>? Cells
 	{
 		get;
 		set;
-	} = null;
+	}
 }

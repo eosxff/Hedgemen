@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <Version>0.1.1</Version>
-        <TargetFramework>net7.0</TargetFramework>
-        <LangVersion>11</LangVersion>
+        <TargetFrameworks>net8.0</TargetFrameworks>
+        <LangVersion>12</LangVersion>
         <RootNamespace>Petal.Framework</RootNamespace>
         <NoWarn>8632</NoWarn>
         <IsAotCompatible>true</IsAotCompatible>
@@ -15,9 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Algorithms\" />
-        <Folder Include="IO" />
-        <Folder Include="Maths\" />
+        <PackageReference Include="Optional" Version="4.0.0" />
     </ItemGroup>
 
     <ItemGroup>

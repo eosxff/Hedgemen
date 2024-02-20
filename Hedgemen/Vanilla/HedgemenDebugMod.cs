@@ -55,5 +55,5 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 	}
 
 	private static Hedgemen Game
-		=> Hedgemen.Instance;
+		=> Hedgemen.InstanceOrThrow;
 }

@@ -10,14 +10,25 @@ namespace Petal.Framework.EC;
 
 public sealed class MapCell : IEntity<CellComponent, CellEvent>
 {
-	private readonly IDictionary<Type, CellComponent> _components = new Dictionary<Type, CellComponent>();
-	private readonly IDictionary<Type, int> _componentEvents = new Dictionary<Type, int>();
+	private readonly Dictionary<Type, CellComponent> _components = [];
+	private readonly Dictionary<Type, int> _componentEvents = [];
 
 	public IReadOnlyCollection<CellComponent> Components
-		=> _components.Values as Dictionary<Type, CellComponent>.ValueCollection;
+		=> _components.Values;
 
-	public bool HasComponents()
+	public bool HasAnyComponents()
 		=> _components.Count > 0;
+
+	public MapCell()
+	{
+
+	}
+
+	public MapCell(params CellComponent[] components)
+	{
+		foreach (var component in components)
+			AddComponent(component);
+	}
 
 	public void PropagateEvent(CellEvent e)
 	{
@@ -46,6 +57,14 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 	{
 		if (WillRespondToEvent(e.GetType()))
 			PropagateEvent(e);
+	}
+
+	public int GetSubscriberCountForEvent<T>() where T : CellEvent
+	{
+		if (!_componentEvents.TryGetValue(typeof(T), out int subscriberCount))
+			return 0;
+
+		return subscriberCount;
 	}
 
 	public async Task PropagateEventIfResponsiveAsync(CellEvent e)
@@ -91,17 +110,10 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 
 		foreach (var registeredEvent in registeredEvents)
 		{
-			bool found = _componentEvents.TryGetValue(registeredEvent, out int eventCount);
-
-			switch (found)
-			{
-				case true:
-					_componentEvents[registeredEvent]++;
-					break;
-				case false:
-					_componentEvents.Add(registeredEvent, 1);
-					break;
-			}
+			if(_componentEvents.TryGetValue(registeredEvent, out int _))
+				++_componentEvents[registeredEvent];
+			else
+				_componentEvents.Add(registeredEvent, 1);
 		}
 	}
 
@@ -216,5 +228,31 @@ public sealed class MapCell : IEntity<CellComponent, CellEvent>
 			if(element.InstantiateData<CellComponent>(out var component))
 				AddComponent(component);
 		}
+	}
+
+	public bool HasComponent<T>() where T : CellComponent
+		=> _components.ContainsKey(typeof(T));
+
+	public bool HasComponents(params CellComponent[] components)
+	{
+		foreach(var component in components)
+		{
+			if(!_components.ContainsKey(component.GetType()))
+				return false;
+		}
+
+		return true;
+	}
+
+	public bool HasComponentOf<T>()
+	{
+		// maybe cache results?
+		foreach(var component in _components.Values)
+		{
+			if(component is T)
+				return true;
+		}
+
+		return false;
 	}
 }

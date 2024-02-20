@@ -15,10 +15,16 @@ public interface IEntity<TComponent, in TEvent> : IPersistent
 		get;
 	}
 
-	public bool HasComponents();
+	public bool HasAnyComponents();
+	public bool HasComponent<T>() where T : TComponent;
+	public bool HasComponents(params TComponent[] components);
+	public bool HasComponentOf<T>();
+
 	public void PropagateEvent(TEvent e);
 	public Task PropagateEventAsync(TEvent e);
 	public void PropagateEventIfResponsive(TEvent e);
+
+	public int GetSubscriberCountForEvent<T>() where T : TEvent;
 
 	public bool WillRespondToEvent(Type eventType);
 	public bool WillRespondToEvent<T>() where T : TEvent;

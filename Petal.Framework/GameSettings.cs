@@ -81,7 +81,7 @@ public struct GameSettings
 	public static GameSettings FromJson(JsonElement json)
 		=> ReadFromJson(json, JsonTypeInfo);
 
-	public override string ToString()
+	public readonly override string ToString()
 	{
 		return $"[{nameof(WindowWidth)}:{WindowWidth}, " +
 		       $"{nameof(WindowHeight)}:{WindowHeight}, " +

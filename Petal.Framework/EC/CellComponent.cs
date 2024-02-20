@@ -10,7 +10,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 	protected delegate void EventHandle<in TEvent>(TEvent e) where TEvent : CellEvent;
 	private delegate void EventHandleWrapped(CellEvent e);
 
-	private readonly Dictionary<Type, EventHandleWrapped> _registeredEvents = new();
+	private readonly Dictionary<Type, EventHandleWrapped> _registeredEvents = [];
 
 	public MapCell Self
 	{
@@ -56,11 +56,11 @@ public abstract class CellComponent : IComponent<CellEvent>
 	internal void AddToMapCell(MapCell cell)
 	{
 		Self = cell;
-		Initialize();
+		Awake();
 		RegisterEvents();
 	}
 
-	protected virtual void Initialize()
+	protected virtual void Awake()
 	{
 
 	}

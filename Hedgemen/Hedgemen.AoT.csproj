@@ -4,8 +4,8 @@
         <PublishAot>true</PublishAot>
         <IsAotCompatible>true</IsAotCompatible>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
-        <LangVersion>11</LangVersion>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>12</LangVersion>
         <RootNamespace>Hgm</RootNamespace>
         <NoWarn>8632</NoWarn>
         

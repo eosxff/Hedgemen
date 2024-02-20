@@ -5,23 +5,17 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace Hgm.Game.Campaigning;
 
-public sealed class CampaignSession
+public sealed class CampaignSession(DirectoryInfo sessionDirectory, Hedgemen hedgemen)
 {
 	public Hedgemen Hedgemen
 	{
 		get;
-	}
+	} = hedgemen;
 
 	public DirectoryInfo Directory
 	{
 		get;
-	}
-
-	public CampaignSession(DirectoryInfo sessionDirectory, Hedgemen hedgemen)
-	{
-		Hedgemen = hedgemen;
-		Directory = sessionDirectory;
-	}
+	} = sessionDirectory;
 
 	public void Save()
 	{
