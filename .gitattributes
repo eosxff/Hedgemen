@@ -8,7 +8,7 @@ binary=auto
 *.csproj text
 *.gpl text
 
-*.sln text eol=crlf # necessary?
+*.sln text eol=crlf
 
 *.png binary
 *.jpg binary
