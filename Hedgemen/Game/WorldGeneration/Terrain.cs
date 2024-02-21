@@ -18,11 +18,11 @@ public abstract class Terrain : CellComponent
 
 	private void QueryMapPixelColor(MapPixelColorQuery e)
 	{
-		if(e.Priority > Cartographer.DisplayPriority.Terrain)
+		if(e.Priority > MapPixelColorQuery.DisplayPriority.Terrain)
             return;
 
 		e.MapPixelColor = GetMapPixelColor();
-        e.Priority = Cartographer.DisplayPriority.Terrain;
+        e.Priority = MapPixelColorQuery.DisplayPriority.Terrain;
 	}
 
 	private void QueryWorldCellInfo(WorldCellInfoQuery e)

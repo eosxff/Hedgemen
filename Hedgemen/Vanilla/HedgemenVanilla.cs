@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using Hgm.Game.Campaigning;
-using Hgm.Game.Scenes;
+﻿using System.Collections.Generic;
 using Petal.Framework;
-using Petal.Framework.Content;
-using Petal.Framework.IO;
 using Petal.Framework.Modding;
-using Petal.Framework.Scenery;
-using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
 
 namespace Hgm.Vanilla;

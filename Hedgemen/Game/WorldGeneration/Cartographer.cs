@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Hgm.Vanilla.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Petal.Framework.EC;
-using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
 
@@ -108,13 +107,5 @@ public sealed class Cartographer
 		}
 
 		return colorMap;
-	}
-
-	public enum DisplayPriority // todo maybe move to MapPixelColorQuery
-	{
-		Noise,
-		Terrain,
-		Biome,
-		Place
 	}
 }

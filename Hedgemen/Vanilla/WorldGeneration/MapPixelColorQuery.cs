@@ -13,15 +13,23 @@ public sealed class MapPixelColorQuery : CellEvent, IResettable
 		set;
 	} = Color.LightGray;
 
-	public Cartographer.DisplayPriority Priority
+	public DisplayPriority Priority
 	{
 		get;
 		set;
-	} = Cartographer.DisplayPriority.Noise;
+	} = DisplayPriority.Noise;
 
 	public void Reset()
 	{
-		Priority = Cartographer.DisplayPriority.Noise;
+		Priority = DisplayPriority.Noise;
 		MapPixelColor = Color.LightGray;
+	}
+
+	public enum DisplayPriority // todo maybe move to MapPixelColorQuery
+	{
+		Noise,
+		Terrain,
+		Biome,
+		Place
 	}
 }

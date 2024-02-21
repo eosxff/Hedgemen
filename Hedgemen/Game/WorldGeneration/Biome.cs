@@ -35,11 +35,11 @@ public abstract class Biome : CellComponent
 
 	private void QueryMapPixelColor(MapPixelColorQuery e)
     {
-        if(e.Priority > Cartographer.DisplayPriority.Biome)
+        if(e.Priority > MapPixelColorQuery.DisplayPriority.Biome)
             return;
 
         e.MapPixelColor = GetMapPixelColor();
-        e.Priority = Cartographer.DisplayPriority.Biome;
+        e.Priority = MapPixelColorQuery.DisplayPriority.Biome;
     }
 
     private void QueryWorldCellInfo(WorldCellInfoQuery e)

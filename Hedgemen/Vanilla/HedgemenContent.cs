@@ -204,7 +204,7 @@ public sealed class HedgemenContent
 		register.AddKey(overworldBiomeGenerationPassName, () => new OverworldBiomeGenerationPass
 		{
 			Biomes = [ WorldGeneration.OverworldTundra.BiomeDetails ],
-			DefaultBiome = WorldGeneration.OverworldTundra.BiomeDetails
+			//DefaultBiome = WorldGeneration.OverworldTundra.BiomeDetails
 		});
 
 		OverworldTerrainGenerationPass = register.MakeReference(overworldTerrainGenerationPassName);

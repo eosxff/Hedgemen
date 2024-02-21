@@ -20,7 +20,7 @@ using Optional;
 
 namespace Hgm;
 
-public class Hedgemen : PetalGame
+public sealed class Hedgemen : PetalGame
 {
 	public static string Version => StringifyVersion(typeof(Hedgemen).Assembly.GetName().Version);
 
@@ -35,9 +35,6 @@ public class Hedgemen : PetalGame
 
 	public static Option<Hedgemen> Instance
 		=> (HedgemenInstance is not null) ? Option.Some(HedgemenInstance) : Option.None<Hedgemen>();
-
-	public static bool HasInstance
-		=> HedgemenInstance is not null;
 
 	public Registry Registry
 	{

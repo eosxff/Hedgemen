@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Optional.Unsafe;
 using Petal.Framework.EC;
 using Petal.Framework.Util;
+using Petal.Framework.Vendor;
 
 namespace Hgm.Vanilla.WorldGeneration;
 
@@ -16,7 +17,7 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 		init;
 	}
 
-	public required BiomeDetails DefaultBiome
+	public BiomeDetails? DefaultBiome
 	{
 		get;
 		init;
@@ -40,6 +41,23 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 		});
 
 		return shouldGenerate;
+	}
+
+	protected override void PrepareTemperaturePrecipitationNoiseGen(WorldGenerationInfo genInfo)
+	{
+		base.PrepareTemperaturePrecipitationNoiseGen(genInfo);
+
+		PrecipitationNoiseGen.SetSeed(genInfo.NoiseGenArgs.Seed);
+		PrecipitationNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
+		PrecipitationNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
+		PrecipitationNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
+		PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
+
+		TemperatureNoiseGen.SetSeed(genInfo.NoiseGenArgs.Seed);
+		TemperatureNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
+		TemperatureNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
+		TemperatureNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
+		TemperatureNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
 	}
 
 	protected override void AddComponentsToMapCell(
@@ -72,7 +90,7 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 		// todo just using a whittaker diagram as reference, maybe don't hardcode
 		temperatureMap.Iterate((temperature, position) =>
 		{
-			temperatureMap[position] = (temperature * 40.0f) - 10.0f;
+			temperatureMap[position] = (temperature * 45.0f) - 15.0f;
 		});
 	}
 
@@ -85,13 +103,15 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 	{
 		foreach(var biome in Biomes)
 		{
-			if(InRange(temperature, biome.TemperatureRange) &&
-				InRange(precipitation, biome.PrecipitationRange) &&
-				terrainType == biome.RequiredTerrainType)
+			bool temperatureInRange = InRange(temperature, biome.TemperatureRange);
+			bool precipitationInRange = InRange(precipitation, biome.PrecipitationRange);
+			bool correctTerrainType = true;//terrainType == biome.RequiredTerrainType;
+
+			if(temperatureInRange && precipitationInRange && correctTerrainType)
 				return biome;
 		}
 
-		if(DefaultBiome.RequiredTerrainType == terrainType)
+		if(DefaultBiome is not null && DefaultBiome.RequiredTerrainType == terrainType)
 			return DefaultBiome;
 
 		return null;
