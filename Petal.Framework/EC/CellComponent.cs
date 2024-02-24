@@ -23,9 +23,7 @@ public abstract class CellComponent : IComponent<CellEvent>
 
 	public void PropagateEvent(CellEvent e)
 	{
-		bool found = _registeredEvents.TryGetValue(e.GetType(), out var handle);
-
-		if (!found)
+		if(!_registeredEvents.TryGetValue(e.GetType(), out var handle))
 			return;
 
 		handle(e);

@@ -87,22 +87,45 @@ public class Text : Node
 			var outlineData = new RenderStringData
 			{
 				Font = Font.Get(),
-				Position = new Vector2(AbsoluteBounds.X, AbsoluteBounds.Y),
+				Position = position + Vector2.UnitX * Outline.X / resolutionScale.X,
 				Color = OutlineColor,
 				Text = Message,
 				Scale = Scale
 			};
 
-			outlineData.Position = position + Vector2.UnitX * Outline.X / resolutionScale.X;
 			Scene.Renderer.Draw(outlineData);
 
-			outlineData.Position = position - Vector2.UnitX * Outline.X / resolutionScale.X;
+			outlineData = new RenderStringData
+			{
+				Font = Font.Get(),
+				Position = position - Vector2.UnitX * Outline.X / resolutionScale.X,
+				Color = OutlineColor,
+				Text = Message,
+				Scale = Scale
+			};
+
 			Scene.Renderer.Draw(outlineData);
 
-			outlineData.Position = position + Vector2.UnitY * Outline.Y / resolutionScale.Y;
+			outlineData = new RenderStringData
+			{
+				Font = Font.Get(),
+				Position = position + Vector2.UnitY * Outline.Y / resolutionScale.Y,
+				Color = OutlineColor,
+				Text = Message,
+				Scale = Scale
+			};
+
 			Scene.Renderer.Draw(outlineData);
 
-			outlineData.Position = position - Vector2.UnitY * Outline.Y / resolutionScale.Y;
+			outlineData = new RenderStringData
+			{
+				Font = Font.Get(),
+				Position = position - Vector2.UnitY * Outline.Y / resolutionScale.Y,
+				Color = OutlineColor,
+				Text = Message,
+				Scale = Scale
+			};
+
 			Scene.Renderer.Draw(outlineData);
 		}
 

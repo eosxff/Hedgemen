@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hgm.Vanilla.WorldGeneration;
@@ -59,6 +60,7 @@ public sealed class Cartographer
 				continue;
 
 			generationPass.PerformGenerationStep(genInfo);
+			GC.Collect();
 		}
 
 		var worldMap = new WorldMap(genInfo.Cells);

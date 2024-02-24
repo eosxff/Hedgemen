@@ -48,7 +48,6 @@ public abstract class BiomeGenerationPass : IGenerationPass
 	public async Task PerformGenerationStepScenic(Canvas canvas, WorldGenerationInfo genInfo)
 	{
 		await Task.Run(() => PerformGenerationStep(genInfo)); // todo
-		//PerformGenerationStep(genInfo);
 
 		Hedgemen.InstanceOrThrow.Logger.Debug($"Updating canvas.");
 		var colorMap = Cartographer.QueryCurrentMapGenerationProgress(genInfo.Cells);
@@ -121,17 +120,19 @@ public abstract class BiomeGenerationPass : IGenerationPass
 
 	protected virtual void PrepareTemperaturePrecipitationNoiseGen(WorldGenerationInfo genInfo)
 	{
-		PrecipitationNoiseGen.SetSeed(genInfo.NoiseGenArgs.Seed);
-		PrecipitationNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
-		PrecipitationNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
-		PrecipitationNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
-		PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
+		// fixme using noisegenargs.seed is bad here
 
 		TemperatureNoiseGen.SetSeed(genInfo.NoiseGenArgs.Seed);
 		TemperatureNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
 		TemperatureNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
 		TemperatureNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
 		TemperatureNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
+
+		PrecipitationNoiseGen.SetSeed(genInfo.NoiseGenArgs.Seed);
+		PrecipitationNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
+		PrecipitationNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
+		PrecipitationNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
+		PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
 	}
 
 	protected virtual void AddComponentsToMapCells(

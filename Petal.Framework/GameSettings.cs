@@ -84,13 +84,13 @@ public struct GameSettings
 	public readonly override string ToString()
 	{
 		return $"[{nameof(WindowWidth)}:{WindowWidth}, " +
-		       $"{nameof(WindowHeight)}:{WindowHeight}, " +
-		       $"{nameof(WindowMode)}:{WindowMode}, " +
-		       $"{nameof(PreferredFramerate)}:{PreferredFramerate}, " +
-		       $"{nameof(Vsync)}:{Vsync}, " +
-		       $"{nameof(IsMouseVisible)}:{IsMouseVisible}, " +
-		       $"{nameof(IsWindowUserResizable)}:{IsWindowUserResizable}, " +
-		       $"{nameof(IsDebug)}:{IsDebug}]";
+			   $"{nameof(WindowHeight)}:{WindowHeight}, " +
+			   $"{nameof(WindowMode)}:{WindowMode}, " +
+			   $"{nameof(PreferredFramerate)}:{PreferredFramerate}, " +
+			   $"{nameof(Vsync)}:{Vsync}, " +
+			   $"{nameof(IsMouseVisible)}:{IsMouseVisible}, " +
+			   $"{nameof(IsWindowUserResizable)}:{IsWindowUserResizable}, " +
+			   $"{nameof(IsDebug)}:{IsDebug}]";
 	}
 }
 

@@ -9,8 +9,8 @@ public sealed class OverworldTundra : Biome
     public static readonly BiomeDetails BiomeDetails = new()
     {
         Name = "Tundra",
-        TemperatureRange = new(-15.0f, -5.0f),
-        PrecipitationRange = new(0.0f, 100.0f),
+        TemperatureRange = new(-15.0f, 0.0f),
+        PrecipitationRange = new(0.0f, 150.0f),
         RequiredTerrainType = TerrainType.Land,
         BiomeSupplier = () => new OverworldTundra() // fixme should reference BiomeDetails but would cause infinite loop
     };

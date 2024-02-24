@@ -7,7 +7,8 @@ using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.Content;
 
-public sealed class Register<TContent> : IRegister
+public sealed class Register<TContent>(NamespacedString registryName, NamespacedString modID, Registry registry)
+	: IRegister
 {
 	private readonly Dictionary<NamespacedString, ContentKey> _content = [];
 	// todo make contentkey a reference and add a weakreference list
@@ -19,24 +20,17 @@ public sealed class Register<TContent> : IRegister
 	public NamespacedString RegistryName
 	{
 		get;
-	}
+	} = registryName;
 
 	public NamespacedString ModID
 	{
 		get;
-	}
+	} = modID;
 
 	public Registry Registry
 	{
 		get;
-	}
-
-	public Register(NamespacedString registryName, NamespacedString modID, Registry registry)
-	{
-		RegistryName = registryName;
-		ModID = modID;
-		Registry = registry;
-	}
+	} = registry;
 
 	public bool GetItem<T>(
 		NamespacedString id,
@@ -74,10 +68,10 @@ public sealed class Register<TContent> : IRegister
 	{
 		key = default;
 
-		if (id == NamespacedString.Default || !_content.ContainsKey(id))
+		if (id == NamespacedString.Default || !_content.TryGetValue(id, out var value))
 			return false;
 
-		key = _content[id];
+		key = value;
 		return true;
 	}
 

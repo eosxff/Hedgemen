@@ -138,7 +138,7 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 	public bool IsMouseButtonClicked(MouseButtons button)
 	{
 		return MouseStateFired(_previousButtons, button, ButtonState.Pressed) &&
-		       !MouseStateFired(_currentButtons, button, ButtonState.Pressed);
+			   !MouseStateFired(_currentButtons, button, ButtonState.Pressed);
 	}
 
 	public bool IsAnyMouseButtonClicked(params MouseButtons[] buttons)
@@ -163,7 +163,7 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 	public bool IsMouseButtonReleased(MouseButtons button)
 	{
 		return MouseStateFired(_currentButtons, button, ButtonState.Released) &&
-		       MouseStateFired(_previousButtons, button, ButtonState.Pressed);
+			   MouseStateFired(_previousButtons, button, ButtonState.Pressed);
 	}
 
 	public bool IsAnyMouseButtonReleased(params MouseButtons[] buttons)

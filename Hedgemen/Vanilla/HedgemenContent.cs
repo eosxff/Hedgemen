@@ -86,6 +86,12 @@ public sealed class HedgemenContent
 		private set;
 	}
 
+	public RegistryObject<Supplier<CellComponent>> OverworldGrassland
+	{
+		get;
+		private set;
+	}
+
 	public RegistryObject<Cartographer> OverworldCartographer
 	{
 		get;
@@ -152,6 +158,7 @@ public sealed class HedgemenContent
 		var overworldTallMountainName = new NamespacedString("hgm:overworld_tall_mountain");
 
 		var overworldTundraName = new NamespacedString("hgm:overworld_tundra");
+		var overworldGrasslandName = new NamespacedString("hgm:overworld_grassland");
 
 		register.AddKey(perlinGenerationName, () => new PerlinGeneration());
 		register.AddKey(overworldDeepWaterName, () => new OverworldDeepWater());
@@ -165,6 +172,11 @@ public sealed class HedgemenContent
 			Details = WorldGeneration.OverworldTundra.BiomeDetails
 		});
 
+		register.AddKey(overworldGrasslandName, () => new OverworldGrassland
+		{
+			Details = WorldGeneration.OverworldGrassland.BiomeDetails
+		});
+
 		PerlinGeneration = register.MakeReference(perlinGenerationName);
 
 		OverworldDeepWater = register.MakeReference(overworldDeepWaterName);
@@ -174,6 +186,7 @@ public sealed class HedgemenContent
 		OverworldTallMountain = register.MakeReference(overworldTallMountainName);
 
 		OverworldTundra = register.MakeReference(overworldTundraName);
+		OverworldGrassland = register.MakeReference(overworldGrasslandName);
 	}
 
 	private void RegisterGenerationPasses(HedgemenRegisters registers)
@@ -204,7 +217,7 @@ public sealed class HedgemenContent
 		register.AddKey(overworldBiomeGenerationPassName, () => new OverworldBiomeGenerationPass
 		{
 			Biomes = [ WorldGeneration.OverworldTundra.BiomeDetails ],
-			//DefaultBiome = WorldGeneration.OverworldTundra.BiomeDetails
+			DefaultBiome = WorldGeneration.OverworldGrassland.BiomeDetails
 		});
 
 		OverworldTerrainGenerationPass = register.MakeReference(overworldTerrainGenerationPassName);

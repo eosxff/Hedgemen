@@ -34,10 +34,10 @@ public sealed class PerlinGeneration : CellComponent
 	private void QueryMapPixelColor(MapPixelColorQuery e)
 	{
 		if(e.Priority > MapPixelColorQuery.DisplayPriority.Noise)
-            return;
+			return;
 
 		e.MapPixelColor = Color.Lerp(Color.White, Color.Black, _height);
-        e.Priority = MapPixelColorQuery.DisplayPriority.Noise;
+		e.Priority = MapPixelColorQuery.DisplayPriority.Noise;
 	}
 
 	private void QueryWorldCellInfo(WorldCellInfoQuery e)

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Microsoft.Xna.Framework;
 
 namespace Petal.Framework.Graphics;
 
 [Serializable]
-public struct NinePatch
+public readonly struct NinePatch
 {
+	public static JsonTypeInfo<NinePatch> JsonTypeInfo
+		=> NinePatchJsonTypeInfo.Default.NinePatch;
+
 	[JsonPropertyName("top_left"), JsonInclude]
 	public required Rectangle TopLeft
 	{
@@ -71,8 +75,8 @@ public struct NinePatch
 		init;
 	}
 
-	public Rectangle[] ToArray()
-		=> new[] { TopLeft, Top, TopRight, Left, Center, Right, BottomLeft, Bottom, BottomRight };
+	public readonly Rectangle[] ToArray()
+		=> [ TopLeft, Top, TopRight, Left, Center, Right, BottomLeft, Bottom, BottomRight ];
 
 	[SetsRequiredMembers]
 	public NinePatch(Rectangle rectangle, int leftPadding, int rightPadding, int topPadding, int bottomPadding)
@@ -98,4 +102,11 @@ public struct NinePatch
 		Bottom = new Rectangle(leftX, bottomY, centerWidth, bottomPadding);
 		BottomRight = new Rectangle(rightX, bottomY, rightPadding, bottomPadding);
 	}
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(NinePatch))]
+internal partial class NinePatchJsonTypeInfo : JsonSerializerContext
+{
+
 }

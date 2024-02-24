@@ -79,11 +79,11 @@ public sealed class Hedgemen : PetalGame
 		ChangeScenes(new StartupSplashScene(
 			new Stage(),
 			new Skin(),
-			new FileInfo("splash.png").Open(FileMode.Open)));
+			new FileInfo("splash.png").Open(FileMode.Open))); // todo
 
 		var embeddedMods = new List<PetalEmbeddedMod>(2)
 		{
-			new HedgemenVanilla()
+			new HedgemenVanilla(),
 		};
 
 		if(IsDebug)

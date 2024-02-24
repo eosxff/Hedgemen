@@ -20,7 +20,7 @@ public interface IEntity<TComponent, in TEvent> : IPersistent
 	public bool HasComponents(params TComponent[] components);
 	public bool HasComponentOf<T>();
 
-	public void PropagateEvent(TEvent e);
+	public void PropagateEvent(TEvent e); // todo make a sane system for sorting events when propagating
 	public Task PropagateEventAsync(TEvent e);
 	public void PropagateEventIfResponsive(TEvent e);
 

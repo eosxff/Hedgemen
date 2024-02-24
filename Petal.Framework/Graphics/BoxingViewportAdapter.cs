@@ -89,17 +89,12 @@ public class BoxingViewportAdapter : ScalingViewportAdapter
 			(int)(scale * VirtualResolution.X + 0.5f),
 			(int)(scale * VirtualResolution.Y + 0.5f));
 
+		BoxingMode = BoxingMode.None;
+
 		if (dimensions.Y >= clientBounds.Height && dimensions.X < clientBounds.Width)
-		{
 			BoxingMode = BoxingMode.PillarBox;
-		}
-		else
-		{
-			if (dimensions.X >= clientBounds.Height && dimensions.Y <= clientBounds.Height)
-				BoxingMode = BoxingMode.LetterBox;
-			else
-				BoxingMode = BoxingMode.None;
-		}
+		else if (dimensions.X >= clientBounds.Height && dimensions.Y <= clientBounds.Height)
+			BoxingMode = BoxingMode.LetterBox;
 
 		int x = clientBounds.Width / 2 - dimensions.X / 2;
 		int y = clientBounds.Height / 2 - dimensions.Y / 2;

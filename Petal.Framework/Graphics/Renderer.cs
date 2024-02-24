@@ -21,7 +21,7 @@ public abstract class Renderer : IDisposable
 	public abstract void Dispose();
 }
 
-public struct RenderData
+public readonly struct RenderData
 {
 	public required Texture2D Texture
 	{
@@ -41,29 +41,29 @@ public struct RenderData
 		init;
 	}
 
-	public Color Color
+	public required Color Color
 	{
 		get;
 		init;
-	} = Color.White;
+	}
 
 	public float Rotation
 	{
 		get;
 		init;
-	} = 0.0f;
+	}
 
-	public Vector2 Origin
+	public Vector2? Origin
 	{
 		get;
 		init;
-	} = Vector2.Zero;
+	}
 
 	public SpriteEffects SpriteEffects
 	{
 		get;
 		init;
-	} = SpriteEffects.None;
+	}
 
 	public float LayerDepth
 	{
@@ -90,61 +90,61 @@ public struct RenderData
 	}
 }
 
-public struct RenderStringData
+public readonly struct RenderStringData
 {
-	public string Text
+	public required string Text
 	{
 		get;
-		set;
-	} = string.Empty;
+		init;
+	}
 
-	public SpriteFont Font
+	public required SpriteFont Font
 	{
 		get;
-		set;
-	} = null;
+		init;
+	}
 
 	public Vector2 Position
 	{
 		get;
-		set;
-	} = Vector2.Zero;
+		init;
+	}
 
-	public Color Color
+	public required Color Color
 	{
 		get;
-		set;
-	} = Color.White;
+		init;
+	}
 
 	public float Rotation
 	{
 		get;
-		set;
-	} = 0.0f;
+		init;
+	}
 
-	public Vector2 Origin
+	public Vector2? Origin
 	{
 		get;
-		set;
-	} = new(0.0f, 0.0f);
+		init;
+	}
 
-	public float Scale
+	public float? Scale
 	{
 		get;
-		set;
-	} = 1.0f;
+		init;
+	}
 
 	public SpriteEffects SpriteEffects
 	{
 		get;
-		set;
-	} = SpriteEffects.None;
+		init;
+	}
 
 	public float LayerDepth
 	{
 		get;
-		set;
-	} = 0.0f;
+		init;
+	}
 
 	public RenderStringData()
 	{

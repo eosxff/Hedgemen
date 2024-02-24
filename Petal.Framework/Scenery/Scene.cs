@@ -172,6 +172,7 @@ public abstract class Scene : IDisposable
 			Renderer.Draw(new RenderData
 			{
 				Texture = _renderTarget,
+				Color = Color.White,
 				SrcRect = new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height),
 				DstRect = new Rectangle(
 					0,

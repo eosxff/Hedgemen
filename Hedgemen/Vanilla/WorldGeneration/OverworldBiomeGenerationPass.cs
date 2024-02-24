@@ -45,19 +45,25 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 
 	protected override void PrepareTemperaturePrecipitationNoiseGen(WorldGenerationInfo genInfo)
 	{
-		base.PrepareTemperaturePrecipitationNoiseGen(genInfo);
+		 // fixme dont use harcoded values for frequency
 
-		PrecipitationNoiseGen.SetSeed(genInfo.NoiseGenArgs.Seed);
-		PrecipitationNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
-		PrecipitationNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
-		PrecipitationNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
-		PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
+		var prng = new Random(genInfo.NoiseGenArgs.Seed);
+		int temperatureSeed = prng.Next(int.MinValue, int.MaxValue);
+		int precipitationSeed = prng.Next(int.MinValue, int.MaxValue);
 
-		TemperatureNoiseGen.SetSeed(genInfo.NoiseGenArgs.Seed);
+		TemperatureNoiseGen.SetSeed(temperatureSeed);
 		TemperatureNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
 		TemperatureNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
 		TemperatureNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
-		TemperatureNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
+		TemperatureNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency / 4.0f);
+		//TemperatureNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
+
+		PrecipitationNoiseGen.SetSeed(precipitationSeed);
+		PrecipitationNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
+		PrecipitationNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
+		PrecipitationNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
+		PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency / 4.0f);
+		//PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
 	}
 
 	protected override void AddComponentsToMapCell(
@@ -105,7 +111,7 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 		{
 			bool temperatureInRange = InRange(temperature, biome.TemperatureRange);
 			bool precipitationInRange = InRange(precipitation, biome.PrecipitationRange);
-			bool correctTerrainType = true;//terrainType == biome.RequiredTerrainType;
+			bool correctTerrainType = terrainType == biome.RequiredTerrainType;
 
 			if(temperatureInRange && precipitationInRange && correctTerrainType)
 				return biome;

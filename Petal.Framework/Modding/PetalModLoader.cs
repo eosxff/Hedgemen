@@ -72,7 +72,12 @@ public class PetalModLoader(ILogger logger)
 
 		foreach (var mod in loadedMods)
 		{
-			_mods.Add(mod.Manifest.ModID, mod);
+			if(!_mods.TryAdd(mod.Manifest.ModID, mod))
+			{
+				logger.Error($"Attempted to load mod that is already loaded. Mod: {mod.Manifest.ModID}");
+				continue;
+			}
+
 			mod.OnLoadedToPetalModLoader();
 		}
 
@@ -169,7 +174,7 @@ public class PetalModLoader(ILogger logger)
 			else
 			{
 				Logger.Critical($"First class/embedded mod {embeddedModsElement.GetType()} " +
-				                $"is not of type {typeof(PetalEmbeddedMod)}. This should never happen.");
+								$"is not of type {typeof(PetalEmbeddedMod)}. This should never happen.");
 				throw new PetalException();
 			}
 		}
@@ -208,7 +213,7 @@ public class PetalModLoader(ILogger logger)
 		}
 
 		string manifestJson = manifestFile.ReadString(Encoding.UTF8);
-#pragma warning disable IL2026, IL3050
+#pragma warning disable IL2026, IL3050 // if we reach this point we're assuming it's confirmed to not be AOT compiled
 		var manifest = JsonSerializer.Deserialize<PetalModManifest?>(manifestJson);
 
 		if (manifest is null)
@@ -232,7 +237,7 @@ public class PetalModLoader(ILogger logger)
 				return false;
 			}
 
-#pragma warning disable IL2026
+#pragma warning disable IL2026 // if we reach this point we're assuming it's confirmed to not be AOT compiled
 			var assembly = Assembly.LoadFile(dllFile.FullName);
 
 			foreach (string dependencyFileName in manifest.Dependencies.ReferencedDlls)
@@ -258,7 +263,7 @@ public class PetalModLoader(ILogger logger)
 				return false;
 			}
 
-#pragma warning disable IL2072
+#pragma warning disable IL2072 // if we reach this point we're assuming it's confirmed to not be AOT compiled
 			mod = (PetalMod)Activator.CreateInstance(modMainType, true);
 
 			if (mod is null)

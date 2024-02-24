@@ -1,15 +1,11 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Petal.Framework.Graphics;
 
-public sealed class DefaultRenderer : Renderer
+public sealed class DefaultRenderer(GraphicsDevice graphicsDevice) : Renderer
 {
-	private readonly SpriteBatch _renderer;
-
-	public DefaultRenderer(GraphicsDevice graphicsDevice)
-	{
-		_renderer = new SpriteBatch(graphicsDevice);
-	}
+	private readonly SpriteBatch _renderer = new(graphicsDevice);
 
 	public override void Begin()
 	{
@@ -39,7 +35,7 @@ public sealed class DefaultRenderer : Renderer
 			data.SrcRect,
 			data.Color,
 			data.Rotation,
-			data.Origin,
+			data.Origin ?? Vector2.Zero,
 			data.SpriteEffects,
 			data.LayerDepth);
 	}
@@ -75,8 +71,8 @@ public sealed class DefaultRenderer : Renderer
 			data.Position,
 			data.Color,
 			data.Rotation,
-			data.Origin,
-			data.Scale,
+			data.Origin ?? Vector2.Zero,
+			data.Scale ?? 1.0f,
 			data.SpriteEffects,
 			data.LayerDepth);
 	}

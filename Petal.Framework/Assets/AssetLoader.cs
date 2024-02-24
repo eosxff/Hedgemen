@@ -8,7 +8,7 @@ using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework.Assets;
 
-public sealed class AssetLoader : IDisposable
+public sealed class AssetLoader(GraphicsDevice graphicsDevice, ILogger logger) : IDisposable
 {
 	public delegate void OnAssetLoaded(object asset);
 
@@ -17,19 +17,12 @@ public sealed class AssetLoader : IDisposable
 	public event OnAssetLoaded? AssetLoaded;
 	public event OnAssetUnknownType? AssetUnknownType;
 
-	private readonly GraphicsDevice _graphicsDevice;
-	private readonly ContentManager _contentManager;
-	private readonly ILogger _logger;
+	private readonly GraphicsDevice _graphicsDevice = graphicsDevice;
+	private readonly ContentManager _contentManager = new AssetLoaderInternalContentManager(PetalGame.Petal.Services);
+	private readonly ILogger _logger = logger;
 
 	public GraphicsDevice GraphicsDevice
 		=> _graphicsDevice;
-
-	public AssetLoader(GraphicsDevice graphicsDevice, ILogger logger)
-	{
-		_logger = logger;
-		_graphicsDevice = graphicsDevice;
-		_contentManager = new AssetLoaderInternalContentManager(PetalGame.Petal.Services);
-	}
 
 	public T LoadAsset<T>(Stream stream)
 	{

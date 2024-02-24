@@ -24,9 +24,7 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 
 	public void PropagateEvent(EntityEvent e)
 	{
-		bool found = _registeredEvents.TryGetValue(e.GetType(), out var handle);
-
-		if (!found)
+		if(!_registeredEvents.TryGetValue(e.GetType(), out var handle))
 			return;
 
 		handle(e);
