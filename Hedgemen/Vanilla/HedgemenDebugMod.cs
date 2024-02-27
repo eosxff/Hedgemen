@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using Petal.Framework;
 using Petal.Framework.Modding;
+using Petal.Framework.Modding.New;
 
 namespace Hgm.Vanilla;
 
@@ -22,6 +25,17 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 	protected override void Setup(ModLoaderSetupContext context)
 	{
 		// ...
+
+		/*var proxyModLoader = new PetalModProxyLoader(context.Game.Logger);
+
+		var mods = proxyModLoader.LoadModProxies(new PetalModProxyLoadArgs
+		{
+			FirstPartyProxies = [ ],
+			Game = Game,
+			LoadFirstPartyProxiesOnly = false,
+			ProxyDirectory = new DirectoryInfo("mods"),
+			ProxyManifestFileName = "proxy.json"
+		});*/
 	}
 
 	public override PetalModManifest GetEmbeddedManifest()

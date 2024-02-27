@@ -94,7 +94,9 @@ public static class PetalExceptions
 /// </summary>
 public sealed class PetalException : Exception
 {
-	public PetalException() { }
+	private const string BasicErrorMessage = "Check logger for details!";
+
+	public PetalException() : base(BasicErrorMessage) { }
 	public PetalException(string? message) : base(message) { }
 	public PetalException(string? message, Exception? innerException) : base(message, innerException) { }
 }

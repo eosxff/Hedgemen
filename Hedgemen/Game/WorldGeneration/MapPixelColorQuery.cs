@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Petal.Framework.EC;
 using Petal.Framework.Util;
 
-namespace Hgm.Vanilla.WorldGeneration;
+namespace Hgm.Game.WorldGeneration;
 
 public sealed class MapPixelColorQuery : CellEvent, IResettable
 {
@@ -25,7 +25,7 @@ public sealed class MapPixelColorQuery : CellEvent, IResettable
 		MapPixelColor = Color.LightGray;
 	}
 
-	public enum DisplayPriority // todo maybe move to MapPixelColorQuery
+	public enum DisplayPriority
 	{
 		Noise,
 		Terrain,

@@ -46,7 +46,6 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 	protected override void PrepareTemperaturePrecipitationNoiseGen(WorldGenerationInfo genInfo)
 	{
 		 // fixme dont use harcoded values for frequency
-
 		var prng = new Random(genInfo.NoiseGenArgs.Seed);
 		int temperatureSeed = prng.Next(int.MinValue, int.MaxValue);
 		int precipitationSeed = prng.Next(int.MinValue, int.MaxValue);
@@ -55,15 +54,13 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 		TemperatureNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
 		TemperatureNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
 		TemperatureNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
-		TemperatureNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency / 4.0f);
-		//TemperatureNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
+		TemperatureNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency / 2.5f);
 
 		PrecipitationNoiseGen.SetSeed(precipitationSeed);
 		PrecipitationNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
 		PrecipitationNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
 		PrecipitationNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
-		PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency / 4.0f);
-		//PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency);
+		PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency / 2.5f);
 	}
 
 	protected override void AddComponentsToMapCell(
