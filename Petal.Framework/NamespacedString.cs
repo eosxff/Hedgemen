@@ -48,7 +48,7 @@ public struct NamespacedString
 	private string _namespace;
 	private string _name;
 
-	public bool IsDefaultNamespacedString
+	public readonly bool IsDefaultNamespacedString
 		=> this == Default;
 
 	[JsonConstructor]
@@ -100,10 +100,10 @@ public struct NamespacedString
 	}
 
 	[JsonPropertyName("namespaced_string")]
-	public string FullName
+	public readonly string FullName
 		=> _namespace + ':' + _name;
 
-	public override bool Equals(object obj)
+	public override readonly bool Equals(object obj)
 	{
 		if (obj is not NamespacedString nsStr)
 			return false;
@@ -111,10 +111,10 @@ public struct NamespacedString
 		return FullName.Equals(nsStr.FullName, StringComparison.InvariantCulture);
 	}
 
-	public override int GetHashCode()
+	public override readonly int GetHashCode()
 		=> FullName.GetHashCode();
 
-	public override string ToString()
+	public override readonly string ToString()
 	{
 		return FullName;
 	}

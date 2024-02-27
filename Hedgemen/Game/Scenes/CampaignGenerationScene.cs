@@ -59,6 +59,12 @@ public sealed class CampaignGenerationScene : Scene
 				WorldGenerationCanvas = CreateWorldGenerationCanvas();
 				GenerateAndDisplayMap();
 			}
+
+			else if(Input.IsKeyPressed(Keys.Escape))
+			{
+				WorldGenerationCanvas.Dispose();
+				Game.Exit();
+			}
 		};
 	}
 

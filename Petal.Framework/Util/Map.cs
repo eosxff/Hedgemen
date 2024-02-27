@@ -7,9 +7,9 @@ using Petal.Framework.Util.Extensions;
 
 namespace Petal.Framework.Util;
 
-public sealed class Map<T> : IEnumerable<T>
+public sealed class Map<T>(int width, int height) : IEnumerable<T>
 {
-	private readonly T[,] _array;
+	private readonly T[,] _array = new T[width, height];
 
 	public int Width
 		=> _array.GetLength(0);
@@ -33,11 +33,6 @@ public sealed class Map<T> : IEnumerable<T>
 	public Map(Vector2Int dimensions) : this(dimensions.X, dimensions.Y)
 	{
 
-	}
-
-	public Map(int width, int height)
-	{
-		_array = new T[width, height];
 	}
 
 	public void Clear()
@@ -83,7 +78,7 @@ public sealed class Map<T> : IEnumerable<T>
 			for (int x = 0; x < Width; ++x)
 			{
 				bool shouldContinue = iterateFunc(this[x, y], new Vector2Int(x, y));
-				
+
 				if(!shouldContinue)
 					return;
 			}

@@ -22,7 +22,7 @@ public sealed class OverworldTundra : Biome
 
 	public override Color GetMapPixelColor()
 	{
-		return Color.BurlyWood;
+		return new Color(79, 172, 178);
 	}
 
 	public override void ReadData(PersistentData data)

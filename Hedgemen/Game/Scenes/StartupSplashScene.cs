@@ -37,4 +37,9 @@ public sealed class StartupSplashScene : Scene
 			Bounds = ViewportAdapter.VirtualResolution.ToRectangleSize()
 		});
 	}
+
+	protected override void OnDispose()
+	{
+		_splashBackground.Dispose();
+	}
 }

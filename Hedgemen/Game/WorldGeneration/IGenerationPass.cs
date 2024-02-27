@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Petal.Framework;
 using Petal.Framework.EC;
-using Petal.Framework.Scenery;
 using Petal.Framework.Scenery.Nodes;
 using Petal.Framework.Util;
 

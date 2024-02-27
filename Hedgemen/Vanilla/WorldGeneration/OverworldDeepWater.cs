@@ -6,7 +6,7 @@ namespace Hgm.Vanilla.WorldGeneration;
 public sealed class OverworldDeepWater : Terrain
 {
 	public override Color GetMapPixelColor()
-		=> Color.Blue;
+		=> new(52, 68, 149);
 
 	public override TerrainType GetTerrainType()
 		=> TerrainType.Water;

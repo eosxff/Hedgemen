@@ -86,6 +86,42 @@ public sealed class HedgemenContent
 		private set;
 	}
 
+	public RegistryObject<Supplier<CellComponent>> OverworldTaiga
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> OverworldTemperateRainforest
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> OverworldDesert
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> OverworldForest
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> OverworldShrubland
+	{
+		get;
+		private set;
+	}
+
+	public RegistryObject<Supplier<CellComponent>> OverworldTropicalRainforest
+	{
+		get;
+		private set;
+	}
+
 	public RegistryObject<Supplier<CellComponent>> OverworldGrassland
 	{
 		get;
@@ -158,6 +194,12 @@ public sealed class HedgemenContent
 		var overworldTallMountainName = new NamespacedString("hgm:overworld_tall_mountain");
 
 		var overworldTundraName = new NamespacedString("hgm:overworld_tundra");
+		var overworldTaigaName = new NamespacedString("hgm:overworld_taiga");
+		var overworldTemperateRainforestName = new NamespacedString("hgm:overworld_temperate_rainforest");
+		var overworldTropicalRainforestName = new NamespacedString("hgm:overworld_tropical_rainforest");
+		var overworldDesert = new NamespacedString("hgm:overworld_desert");
+		var overworldForest = new NamespacedString("hgm:overworld_forest");
+		var overworldShrubland = new NamespacedString("hgm:overworld_shrubland");
 		var overworldGrasslandName = new NamespacedString("hgm:overworld_grassland");
 
 		register.AddKey(perlinGenerationName, () => new PerlinGeneration());
@@ -172,9 +214,39 @@ public sealed class HedgemenContent
 			Details = WorldGeneration.OverworldTundra.BiomeDetails
 		});
 
+		register.AddKey(overworldTaigaName, () => new OverworldTaiga
+		{
+			Details = WorldGeneration.OverworldTaiga.BiomeDetails
+		});
+
+		register.AddKey(overworldTaigaName, () => new OverworldTemperateRainforest
+		{
+			Details = WorldGeneration.OverworldTemperateRainforest.BiomeDetails
+		});
+
+		register.AddKey(overworldTaigaName, () => new OverworldDesert
+		{
+			Details = WorldGeneration.OverworldDesert.BiomeDetails
+		});
+
+		register.AddKey(overworldTaigaName, () => new OverworldForest
+		{
+			Details = WorldGeneration.OverworldForest.BiomeDetails
+		});
+
+		register.AddKey(overworldTaigaName, () => new OverworldShrubland
+		{
+			Details = WorldGeneration.OverworldShrubland.BiomeDetails
+		});
+
 		register.AddKey(overworldGrasslandName, () => new OverworldGrassland
 		{
 			Details = WorldGeneration.OverworldGrassland.BiomeDetails
+		});
+
+		register.AddKey(overworldGrasslandName, () => new OverworldTropicalRainforest
+		{
+			Details = WorldGeneration.OverworldTropicalRainforest.BiomeDetails
 		});
 
 		PerlinGeneration = register.MakeReference(perlinGenerationName);
@@ -186,6 +258,12 @@ public sealed class HedgemenContent
 		OverworldTallMountain = register.MakeReference(overworldTallMountainName);
 
 		OverworldTundra = register.MakeReference(overworldTundraName);
+		OverworldTaiga = register.MakeReference(overworldTaigaName);
+		OverworldForest = register.MakeReference(overworldForest);
+		OverworldDesert = register.MakeReference(overworldDesert);
+		OverworldShrubland = register.MakeReference(overworldShrubland);
+		OverworldTemperateRainforest = register.MakeReference(overworldTemperateRainforestName);
+		OverworldTropicalRainforest = register.MakeReference(overworldTropicalRainforestName);
 		OverworldGrassland = register.MakeReference(overworldGrasslandName);
 	}
 
@@ -198,7 +276,7 @@ public sealed class HedgemenContent
 
 		register.AddKey(overworldTerrainGenerationPassName, () => new OverworldTerrainGenerationPass
 		{
-			DeepWater = OverworldDeepWater.Get(),
+			/*DeepWater = OverworldDeepWater.Get(),
 			DeepWaterHeight = 0.5f,
 
 			ShallowWater = OverworldShallowWater.Get(),
@@ -211,12 +289,36 @@ public sealed class HedgemenContent
 			MountainHeight = 0.85f,
 
 			TallMountain = OverworldTallMountain.Get(),
+			TallMountainHeight = 1.0f,*/
+
+			DeepWater = OverworldDeepWater.Get(),
+			DeepWaterHeight = 0.4f,
+
+			ShallowWater = OverworldShallowWater.Get(),
+			ShallowWaterHeight = 0.48f,
+
+			Land = OverworldLand.Get(),
+			LandHeight = 0.65f,
+
+			Mountain = OverworldMountain.Get(),
+			MountainHeight = 0.75f,
+
+			TallMountain = OverworldTallMountain.Get(),
 			TallMountainHeight = 1.0f,
 		});
 
 		register.AddKey(overworldBiomeGenerationPassName, () => new OverworldBiomeGenerationPass
 		{
-			Biomes = [ WorldGeneration.OverworldTundra.BiomeDetails ],
+			Biomes =
+			[
+				WorldGeneration.OverworldTundra.BiomeDetails,
+				WorldGeneration.OverworldDesert.BiomeDetails,
+				WorldGeneration.OverworldTaiga.BiomeDetails,
+				WorldGeneration.OverworldShrubland.BiomeDetails,
+				WorldGeneration.OverworldForest.BiomeDetails,
+				WorldGeneration.OverworldTropicalRainforest.BiomeDetails,
+				WorldGeneration.OverworldTemperateRainforest.BiomeDetails
+			],
 			DefaultBiome = WorldGeneration.OverworldGrassland.BiomeDetails
 		});
 
