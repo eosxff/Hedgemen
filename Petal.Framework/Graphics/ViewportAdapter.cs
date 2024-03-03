@@ -81,7 +81,13 @@ public abstract class ViewportAdapter : IDisposable
 			GraphicsDevice.Viewport.Height);
 	}
 
+	~ViewportAdapter()
+	{
+		Dispose();
+	}
+
 	public virtual void Dispose()
 	{
+		GC.SuppressFinalize(this);
 	}
 }

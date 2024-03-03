@@ -2,20 +2,15 @@ using Microsoft.Xna.Framework;
 
 namespace Petal.Framework.Util.Coroutines;
 
-public class WaitForSeconds : ICoroutineUpdateable
+public class WaitForSeconds(float seconds) : ICoroutineUpdateable
 {
 	public float Seconds
 	{
 		get;
-	}
+	} = seconds;
 
-	private float _elapsedTimeInSeconds;
+	private float _elapsedTimeInSeconds = 0.0f;
 
-	public WaitForSeconds(float seconds)
-	{
-		Seconds = seconds;
-		_elapsedTimeInSeconds = 0.0f;
-	}
 	public void Update(GameTime gameTime)
 	{
 		_elapsedTimeInSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;

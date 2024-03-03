@@ -6,7 +6,7 @@ namespace Petal.Framework.Content;
 
 public class DeferredRegister<TContent> : IDeferredRegister
 {
-	private readonly Dictionary<NamespacedString, TContent> _content = new();
+	private readonly Dictionary<NamespacedString, TContent> _content = [];
 
 	public event EventHandler? OnForwarded;
 

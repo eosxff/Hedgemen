@@ -4,13 +4,13 @@ using Petal.Framework.Util;
 
 namespace Petal.Framework.Content;
 
-public sealed class RegistryObject<TContent>
+public sealed class RegistryObject<TContent>(ContentKey key)
 {
 	public static RegistryObject<TContent> Empty
 		=> new(new ContentKey(NamespacedString.Default, null, null));
 
-	private TContent? _content;
-	private NamespacedString _location;
+	private readonly TContent? _content = (TContent) key.Content;
+	private NamespacedString _location = key.Location;
 
 	public NamespacedString Location
 		=> _location;
@@ -20,12 +20,6 @@ public sealed class RegistryObject<TContent>
 	/// </summary>
 	public bool IsPresent
 		=> _content is not null && Location != NamespacedString.Default;
-
-	public RegistryObject(ContentKey key)
-	{
-		_location = key.Location;
-		_content = (TContent)key.Content;
-	}
 
 	public TSuppliedContent Supply<TSuppliedContent>()
 	{

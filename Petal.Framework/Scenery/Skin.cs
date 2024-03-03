@@ -225,7 +225,7 @@ public sealed class Skin
 		[JsonPropertyName("panel_data_border_padding"), JsonInclude]
 		public int PanelDataBorderPadding;
 
-		public Skin Create(Register<object> assets)
+		public readonly Skin Create(Register<object> assets)
 		{
 			return new Skin
 			{

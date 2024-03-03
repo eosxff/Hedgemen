@@ -179,22 +179,16 @@ public class InputProvider : IKeyboardProvider, IMouseProvider
 	public int MouseWheelChange
 		=> Math.Abs(_currentButtons.ScrollWheelValue - _previousButtons.ScrollWheelValue);
 
-	private bool MouseStateFired(MouseState mouseState, MouseButtons button, ButtonState state)
+	private static bool MouseStateFired(MouseState mouseState, MouseButtons button, ButtonState state)
 	{
-		switch (button)
+		return button switch
 		{
-			case MouseButtons.LeftButton:
-				return mouseState.LeftButton == state;
-			case MouseButtons.MiddleButton:
-				return mouseState.MiddleButton == state;
-			case MouseButtons.RightButton:
-				return mouseState.RightButton == state;
-			case MouseButtons.XButton1:
-				return mouseState.XButton1 == state;
-			case MouseButtons.XButton2:
-				return mouseState.XButton2 == state;
-			default:
-				return false;
-		}
+			MouseButtons.LeftButton => mouseState.LeftButton == state,
+			MouseButtons.MiddleButton => mouseState.MiddleButton == state,
+			MouseButtons.RightButton => mouseState.RightButton == state,
+			MouseButtons.XButton1 => mouseState.XButton1 == state,
+			MouseButtons.XButton2 => mouseState.XButton2 == state,
+			_ => false,
+		};
 	}
 }

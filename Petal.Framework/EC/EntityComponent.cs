@@ -11,7 +11,7 @@ public abstract class EntityComponent : IComponent<EntityEvent>
 
 	private delegate void EventHandleWrapped(EntityEvent e);
 
-	private readonly Dictionary<Type, EventHandleWrapped> _registeredEvents = new();
+	private readonly Dictionary<Type, EventHandleWrapped> _registeredEvents = [];
 
 	public Entity Self
 	{

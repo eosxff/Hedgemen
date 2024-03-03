@@ -6,7 +6,7 @@ using Petal.Framework.Graphics;
 
 namespace Petal.Framework.Scenery.Nodes;
 
-public class Panel : Node
+public class Panel(Skin skin) : Node
 {
 	public Color Color
 	{
@@ -18,12 +18,7 @@ public class Panel : Node
 	{
 		get;
 		set;
-	}
-
-	public Panel(Skin skin)
-	{
-		Skin = skin;
-	}
+	} = skin;
 
 	protected override void OnSceneSet()
 	{

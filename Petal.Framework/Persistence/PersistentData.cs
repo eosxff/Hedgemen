@@ -117,7 +117,7 @@ public sealed class PersistentData
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool ReadField<TField>(
 		NamespacedString name,
-		[NotNullWhen(true), NotNullIfNotNull("defaultValue")]
+		[NotNullWhen(true), NotNullIfNotNull(nameof(defaultValue))]
 		out TField? field,
 		TField defaultValue = default)
 		=> ReadField(name.FullName, out field);
@@ -178,7 +178,7 @@ public sealed class PersistentData
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool ReadData<TData>(
 		NamespacedString name,
-		[NotNullWhen(true), NotNullIfNotNull("defaultValue")]
+		[NotNullWhen(true), NotNullIfNotNull(nameof(defaultValue))]
 		out TData? data,
 		TData? defaultValue = default)
 		where TData : IPersistent
@@ -370,7 +370,7 @@ public struct PersistentDataInstantiateData
 	public string? AssemblyFullName;
 
 	[JsonIgnore]
-	public bool IsValid => !string.IsNullOrEmpty(TypeFullName) || !string.IsNullOrEmpty(AssemblyFullName);
+	public readonly bool IsValid => !string.IsNullOrEmpty(TypeFullName) || !string.IsNullOrEmpty(AssemblyFullName);
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true, IgnoreReadOnlyProperties = true)]

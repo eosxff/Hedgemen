@@ -14,7 +14,7 @@ namespace Petal.Framework.Assets;
 
 public class AssetManifest : IBankManifest
 {
-	private readonly List<AssetManifestEntry> _entries = new();
+	private readonly List<AssetManifestEntry> _entries = [];
 
 	public IReadOnlyList<AssetManifestEntry> Entries
 		=> _entries;
@@ -80,22 +80,15 @@ public readonly struct AssetManifestEntry
 
 	public object LoadAsset(AssetLoader loader)
 	{
-		switch (Type)
+		return Type switch
 		{
-			case AssetType.Texture:
-				return loader.LoadAsset<Texture2D>(new FileInfo(Path).Open(FileMode.Open));
-			case AssetType.Font:
-				return loader.LoadAsset<SpriteFont>(Path);
-			case AssetType.Effect:
-				return new Effect(loader.GraphicsDevice, new FileInfo(Path).ReadBytes());
-			case AssetType.SoundEffect:
-				return SoundEffect.FromStream(new FileInfo(Path).Open(FileMode.Open));
-			case AssetType.Song:
-				return Song.FromUri(Path, new Uri($"file://{Path}"));
-			case AssetType.None:
-				throw new InvalidOperationException($"Can't load asset type {Type}.");
-			default:
-				throw new ArgumentOutOfRangeException(Type.ToString());
-		}
+			AssetType.Texture => loader.LoadAsset<Texture2D>(new FileInfo(Path).Open(FileMode.Open)),
+			AssetType.Font => loader.LoadAsset<SpriteFont>(Path),
+			AssetType.Effect => new Effect(loader.GraphicsDevice, new FileInfo(Path).ReadBytes()),
+			AssetType.SoundEffect => SoundEffect.FromStream(new FileInfo(Path).Open(FileMode.Open)),
+			AssetType.Song => Song.FromUri(Path, new Uri($"file://{Path}")),
+			AssetType.None => throw new InvalidOperationException($"Can't load asset type {Type}."),
+			_ => throw new ArgumentOutOfRangeException(Type.ToString()),
+		};
 	}
 }

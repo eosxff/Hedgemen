@@ -3,7 +3,7 @@ using Petal.Framework.Util.Logging;
 
 namespace Hgm.Game;
 
-public class HedgemenModProxy : IPetalModProxy
+public abstract class HedgemenModProxy : IPetalModProxy
 {
 	public ILogger Logger
 	{

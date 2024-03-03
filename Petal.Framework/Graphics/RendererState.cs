@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Petal.Framework.Graphics;
 
-public class RendererState
+public sealed class RendererState
 {
 	public GraphicsDeviceManager Graphics
 	{
@@ -15,7 +15,7 @@ public class RendererState
 	{
 		get;
 		internal set;
-	} = null;
+	}
 
 	public Rectangle Scissor
 	{

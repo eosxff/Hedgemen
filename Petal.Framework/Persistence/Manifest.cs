@@ -52,7 +52,7 @@ public sealed class Manifest
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool ReadField<TField>(
 		NamespacedString name,
-		[NotNullWhen(true), NotNullIfNotNull("defaultValue")]
+		[NotNullWhen(true), NotNullIfNotNull(nameof(defaultValue))]
 		out TField? field,
 		TField defaultValue = default)
 		=> ReadField(name.FullName, out field);

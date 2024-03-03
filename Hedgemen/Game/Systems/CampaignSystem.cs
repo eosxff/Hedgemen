@@ -14,7 +14,6 @@ public static class CampaignSystem
 {
 	public static void StartCampaign(CampaignStartArgs args)
 	{
-		var mapDimensions = new Vector2Int(512, 512); // 384, 384
 		var campaign = new Campaign(new CampaignSession(args.SessionDirectory, args.Hedgemen), args.Hedgemen);
 
 		var generator = new CampaignGenerator
@@ -92,7 +91,7 @@ public sealed class CampaignGenerator
 }
 
 
-public struct CampaignStartArgs
+public readonly struct CampaignStartArgs
 {
 	public required PetalModList ModList
 	{
@@ -119,7 +118,7 @@ public struct CampaignStartArgs
 	}
 }
 
-public struct CampaignContinueArgs
+public readonly struct CampaignContinueArgs
 {
 	public required Hedgemen Hedgemen
 	{
@@ -127,9 +126,9 @@ public struct CampaignContinueArgs
 		init;
 	}
 
-	public DirectoryInfo SessionDirectory
+	public required DirectoryInfo SessionDirectory
 	{
 		get;
-		set;
+		init;
 	}
 }

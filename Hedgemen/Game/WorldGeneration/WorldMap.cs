@@ -6,7 +6,7 @@ using Petal.Framework.Util;
 
 namespace Hgm.Game.WorldGeneration;
 
-public class WorldMap : IPersistent
+public class WorldMap(Map<MapCell> cells) : IPersistent
 {
 	public Guid WorldGuid
 	{
@@ -23,12 +23,7 @@ public class WorldMap : IPersistent
 	public Map<MapCell> Cells
 	{
 		get;
-	}
-
-	public WorldMap(Map<MapCell> cells)
-	{
-		Cells = cells;
-	}
+	} = cells;
 
 	public void Destroy()
 	{

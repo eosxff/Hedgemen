@@ -33,7 +33,7 @@ public readonly struct RenderData
 	{
 		get;
 		init;
-	} = null;
+	}
 
 	public required Rectangle DstRect
 	{
@@ -69,11 +69,11 @@ public readonly struct RenderData
 	{
 		get;
 		init;
-	} = 0.0f;
+	}
 
 	public RenderData()
 	{
-		
+
 	}
 
 	[SetsRequiredMembers]
