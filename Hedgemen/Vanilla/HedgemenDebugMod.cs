@@ -67,7 +67,4 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 			IsOverhaul = false
 		};
 	}
-
-	private static Hedgemen Game
-		=> Hedgemen.InstanceOrThrow;
 }

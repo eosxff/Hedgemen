@@ -96,8 +96,6 @@ public abstract class PetalGame : Game
 		private set;
 	}
 
-	private EnqueuedScene? _enqueuedScene = null;
-
 	public CoroutineManager Coroutines
 	{
 		get;
@@ -109,12 +107,8 @@ public abstract class PetalGame : Game
 	/// <param name="scene">new scene to change to.</param>
 	public void ChangeScenes(Scene scene)
 	{
-		PetalExceptions.ThrowIfNull(scene);
-
 		Scene?.Exit();
-
-		if(!scene.IsFinishedLoading)
-			scene.Load();
+		scene.Load();
 
 		Scene = scene;
 
@@ -133,10 +127,13 @@ public abstract class PetalGame : Game
 			return scene;
 		});
 
-		_enqueuedScene = new EnqueuedScene
+		Scene?.Exit();
+		Scene = scene;
+
+		OnSceneChanged?.Invoke(this, new SceneChangedArgs
 		{
-			Scene = scene
-		};
+			NewScene = scene
+		});
 	}
 
 	/// <summary>
@@ -329,23 +326,8 @@ public abstract class PetalGame : Game
 	/// <param name="gameTime">the elapsed time since the previous update call.</param>
 	protected override void Update(GameTime gameTime)
 	{
-		if (_enqueuedScene is not null)
-		{
-			ChangeScenes(_enqueuedScene.Scene);
-			_enqueuedScene = null;
-		}
-
 		Coroutines.Update(gameTime);
 		Scene?.Update(gameTime);
 		base.Update(gameTime);
-	}
-
-	private class EnqueuedScene
-	{
-		public required Scene Scene
-		{
-			get;
-			init;
-		}
 	}
 }

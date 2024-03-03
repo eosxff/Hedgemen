@@ -12,7 +12,6 @@ public sealed class OverworldShallowWater : Terrain
 		=> TerrainType.Water;
 }
 
-
 public sealed class OverworldDeepWater : Terrain
 {
 	public override Color GetMapPixelColor()
@@ -40,7 +39,7 @@ public sealed class OverworldMountain : Terrain
 		=> TerrainType.Mountain;
 }
 
-public sealed class OverworldTallMountain : Terrain
+public sealed class OverworldMountainPeak : Terrain
 {
 	public override Color GetMapPixelColor()
 		=> Color.White;

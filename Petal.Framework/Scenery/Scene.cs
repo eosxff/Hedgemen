@@ -19,12 +19,6 @@ public abstract class Scene : IDisposable
 	public event EventHandler? AfterExit;
 	public event EventHandler? OnViewportAdapterChanged;
 
-	public bool IsFinishedLoading
-	{
-		get;
-		private set;
-	} = false;
-
 	public PetalGame Game
 	{
 		get;
@@ -200,7 +194,6 @@ public abstract class Scene : IDisposable
 		ViewportAdapter.Reset();
 
 		OnLoad();
-		IsFinishedLoading = true;
 		AfterInitialize?.Invoke(this, EventArgs.Empty);
 	}
 

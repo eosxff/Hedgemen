@@ -74,7 +74,7 @@ public sealed class HedgemenContent
 		private set;
 	}
 
-	public RegistryObject<Supplier<CellComponent>> OverworldTallMountain
+	public RegistryObject<Supplier<CellComponent>> OverworldMountainPeak
 	{
 		get;
 		private set;
@@ -191,7 +191,7 @@ public sealed class HedgemenContent
 		var overworldShallowWaterName = new NamespacedString("hgm:overworld_shallow_water");
 		var overworldLandName = new NamespacedString("hgm:overworld_land");
 		var overworldMountainName = new NamespacedString("hgm:overworld_mountain");
-		var overworldTallMountainName = new NamespacedString("hgm:overworld_tall_mountain");
+		var overworldMountainPeakName = new NamespacedString("hgm:overworld_mountain_peak");
 
 		var overworldTundraName = new NamespacedString("hgm:overworld_tundra");
 		var overworldTaigaName = new NamespacedString("hgm:overworld_taiga");
@@ -207,7 +207,7 @@ public sealed class HedgemenContent
 		register.AddKey(overworldShallowWaterName,() => new OverworldShallowWater());
 		register.AddKey(overworldLandName, () => new OverworldLand());
 		register.AddKey(overworldMountainName, () => new OverworldMountain());
-		register.AddKey(overworldTallMountainName, () => new OverworldTallMountain());
+		register.AddKey(overworldMountainPeakName, () => new OverworldMountainPeak());
 
 		register.AddKey(overworldTundraName, () => new OverworldTundra
 		{
@@ -255,7 +255,7 @@ public sealed class HedgemenContent
 		OverworldShallowWater = register.MakeReference(overworldShallowWaterName);
 		OverworldLand = register.MakeReference(overworldLandName);
 		OverworldMountain = register.MakeReference(overworldMountainName);
-		OverworldTallMountain = register.MakeReference(overworldTallMountainName);
+		OverworldMountainPeak = register.MakeReference(overworldMountainPeakName);
 
 		OverworldTundra = register.MakeReference(overworldTundraName);
 		OverworldTaiga = register.MakeReference(overworldTaigaName);
@@ -303,7 +303,7 @@ public sealed class HedgemenContent
 			Mountain = OverworldMountain.Get(),
 			MountainHeight = 0.8f,
 
-			TallMountain = OverworldTallMountain.Get(),
+			TallMountain = OverworldMountainPeak.Get(),
 			TallMountainHeight = 1.0f,
 		});
 
