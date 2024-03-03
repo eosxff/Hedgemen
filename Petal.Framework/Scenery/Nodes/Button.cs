@@ -6,7 +6,7 @@ using Petal.Framework.Graphics;
 
 namespace Petal.Framework.Scenery.Nodes;
 
-public class Button : Node
+public class Button(Skin skin) : Node
 {
 	public Color Color
 	{
@@ -18,12 +18,7 @@ public class Button : Node
 	{
 		get;
 		set;
-	}
-
-	public Button(Skin skin)
-	{
-		Skin = skin;
-	}
+	} = skin;
 
 	protected override void OnSceneSet()
 	{
@@ -96,16 +91,12 @@ public class Button : Node
 		if (Skin is null)
 			return null;
 
-		switch (State)
+		return State switch
 		{
-			case NodeState.Normal:
-				return Skin.Button.NormalTexture;
-			case NodeState.Input:
-				return Skin.Button.InputTexture;
-			case NodeState.Hover:
-				return Skin.Button.HoverTexture;
-			default:
-				throw new ArgumentOutOfRangeException();
-		}
+			NodeState.Normal => Skin.Button.NormalTexture,
+			NodeState.Input => Skin.Button.InputTexture,
+			NodeState.Hover => Skin.Button.HoverTexture,
+			_ => throw new ArgumentOutOfRangeException(),
+		};
 	}
 }

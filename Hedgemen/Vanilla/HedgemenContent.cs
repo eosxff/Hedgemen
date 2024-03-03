@@ -292,16 +292,16 @@ public sealed class HedgemenContent
 			TallMountainHeight = 1.0f,*/
 
 			DeepWater = OverworldDeepWater.Get(),
-			DeepWaterHeight = 0.4f,
+			DeepWaterHeight = 0.45f,
 
 			ShallowWater = OverworldShallowWater.Get(),
-			ShallowWaterHeight = 0.48f,
+			ShallowWaterHeight = 0.53f,
 
 			Land = OverworldLand.Get(),
-			LandHeight = 0.65f,
+			LandHeight = 0.7f,
 
 			Mountain = OverworldMountain.Get(),
-			MountainHeight = 0.75f,
+			MountainHeight = 0.8f,
 
 			TallMountain = OverworldTallMountain.Get(),
 			TallMountainHeight = 1.0f,
@@ -311,11 +311,11 @@ public sealed class HedgemenContent
 		{
 			Biomes =
 			[
-				WorldGeneration.OverworldTundra.BiomeDetails,
 				WorldGeneration.OverworldDesert.BiomeDetails,
+				WorldGeneration.OverworldTundra.BiomeDetails,
 				WorldGeneration.OverworldTaiga.BiomeDetails,
-				WorldGeneration.OverworldShrubland.BiomeDetails,
 				WorldGeneration.OverworldForest.BiomeDetails,
+				WorldGeneration.OverworldShrubland.BiomeDetails,
 				WorldGeneration.OverworldTropicalRainforest.BiomeDetails,
 				WorldGeneration.OverworldTemperateRainforest.BiomeDetails
 			],
@@ -340,8 +340,8 @@ public sealed class HedgemenContent
 				Dimensions = new Vector2Int(512, 512),
 				Scale = 50.0f,
 				Octaves = 5,
-				Frequency = 2.5f,
-				Lacunarity = 2.75f,
+				Frequency = 2.0f,
+				Lacunarity = 2.65f, /*2.75f,*/
 				Offset = new Vector2Int(0, 0),
 				FalloffModifier = 0.0f
 			},

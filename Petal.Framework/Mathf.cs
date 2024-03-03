@@ -6,9 +6,7 @@ namespace Petal.Framework;
 public static class Mathf
 {
 	public static float Lerp(float value, float min, float max)
-	{
-		return (value - min) / (max - min);
-	}
+		=> (value - min) / (max - min);
 
 	public static Vector3 Torus(Vector2 position, int xMax, int yMax)
 	{

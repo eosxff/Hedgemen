@@ -9,7 +9,7 @@ namespace Petal.Framework.Scenery.Nodes;
 
 public class Stage : Node
 {
-	private readonly IDictionary<NamespacedString, Node> _nodes = new Dictionary<NamespacedString, Node>();
+	private readonly Dictionary<NamespacedString, Node> _nodes = [];
 
 	public Stage()
 	{

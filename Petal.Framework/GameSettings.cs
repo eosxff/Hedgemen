@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using Petal.Framework.Util.Logging;
 using Petal.Framework.Windowing;
 using static Petal.Framework.Util.PetalUtilities;
 

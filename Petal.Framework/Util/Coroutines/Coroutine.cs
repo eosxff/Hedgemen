@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace Petal.Framework.Util.Coroutines;
 
-public class Coroutine
+public sealed class Coroutine
 {
 	public IEnumerator Enumerator
 	{

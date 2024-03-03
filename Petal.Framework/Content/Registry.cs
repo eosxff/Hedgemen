@@ -8,7 +8,7 @@ namespace Petal.Framework.Content;
 /// <summary>
 /// Central depository for content registering.
 /// </summary>
-public sealed class Registry
+public sealed class Registry(ILogger logger)
 {
 	public sealed class RegisterAdded : EventArgs
 	{
@@ -19,21 +19,16 @@ public sealed class Registry
 		}
 	}
 
-	private const int RegistersInitialCapacity = 0;
+	private const int RegistersInitialCapacity = 8;
 
 	private readonly Dictionary<NamespacedString, IRegister> _registers = new(RegistersInitialCapacity);
 
-	public readonly ILogger Logger;
+	public readonly ILogger Logger = logger;
 
 	/// <summary>
 	/// Callback for successful register additions.
 	/// </summary>
 	public event EventHandler<RegisterAdded>? OnRegisterAdded;
-
-	public Registry(ILogger logger)
-	{
-		Logger = logger;
-	}
 
 	/// <summary>
 	/// Attempts to register an <see cref="IRegister"/> to the registry.

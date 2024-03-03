@@ -54,13 +54,13 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 		TemperatureNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
 		TemperatureNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
 		TemperatureNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
-		TemperatureNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency / 2.5f);
+		TemperatureNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency / 3.0f);
 
 		PrecipitationNoiseGen.SetSeed(precipitationSeed);
 		PrecipitationNoiseGen.SetFractalType(FastNoiseLite.FractalType.FBm);
 		PrecipitationNoiseGen.SetFractalLacunarity(genInfo.NoiseGenArgs.Lacunarity);
 		PrecipitationNoiseGen.SetFractalOctaves(genInfo.NoiseGenArgs.Octaves);
-		PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency / 2.5f);
+		PrecipitationNoiseGen.SetFrequency(genInfo.NoiseGenArgs.Frequency / 3.0f);
 	}
 
 	protected override void AddComponentsToMapCell(
