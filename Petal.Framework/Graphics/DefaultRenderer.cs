@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Petal.Framework.Graphics;
@@ -45,8 +46,32 @@ public sealed class DefaultRenderer(GraphicsDevice graphicsDevice) : Renderer
 		if (data.Texture is null)
 			return;
 
-		var sourcePatches = sourcePatch.ToArray();
-		var destinationPatches = destinationPatch.ToArray();
+		Span<Rectangle> sourcePatches = stackalloc Rectangle[9];
+		Span<Rectangle> destinationPatches = stackalloc Rectangle[9];
+
+		sourcePatches[0] = sourcePatch.TopLeft;
+		sourcePatches[1] = sourcePatch.Top;
+		sourcePatches[2] = sourcePatch.TopRight;
+
+		sourcePatches[3] = sourcePatch.Left;
+		sourcePatches[4] = sourcePatch.Center;
+		sourcePatches[5] = sourcePatch.Right;
+
+		sourcePatches[6] = sourcePatch.BottomLeft;
+		sourcePatches[7] = sourcePatch.Bottom;
+		sourcePatches[8] = sourcePatch.BottomRight;
+
+		destinationPatches[0] = destinationPatch.TopLeft;
+		destinationPatches[1] = destinationPatch.Top;
+		destinationPatches[2] = destinationPatch.TopRight;
+
+		destinationPatches[3] = destinationPatch.Left;
+		destinationPatches[4] = destinationPatch.Center;
+		destinationPatches[5] = destinationPatch.Right;
+
+		destinationPatches[6] = destinationPatch.BottomLeft;
+		destinationPatches[7] = destinationPatch.Bottom;
+		destinationPatches[8] = destinationPatch.BottomRight;
 
 		for (int i = 0; i < 9; ++i)
 		{

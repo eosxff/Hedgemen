@@ -19,7 +19,7 @@ public class Image : Node
 		set;
 	} = Color.White;
 
-	public Texture2D Texture
+	public Texture2D? Texture
 	{
 		get;
 		set;

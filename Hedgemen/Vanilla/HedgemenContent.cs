@@ -92,12 +92,6 @@ public sealed class HedgemenContent
 		private set;
 	}
 
-	public RegistryObject<Supplier<CellComponent>> OverworldTemperateRainforest
-	{
-		get;
-		private set;
-	}
-
 	public RegistryObject<Supplier<CellComponent>> OverworldDesert
 	{
 		get;
@@ -116,7 +110,7 @@ public sealed class HedgemenContent
 		private set;
 	}
 
-	public RegistryObject<Supplier<CellComponent>> OverworldTropicalRainforest
+	public RegistryObject<Supplier<CellComponent>> OverworldJungle
 	{
 		get;
 		private set;
@@ -196,7 +190,7 @@ public sealed class HedgemenContent
 		var overworldTundraName = new NamespacedString("hgm:overworld_tundra");
 		var overworldTaigaName = new NamespacedString("hgm:overworld_taiga");
 		var overworldTemperateRainforestName = new NamespacedString("hgm:overworld_temperate_rainforest");
-		var overworldTropicalRainforestName = new NamespacedString("hgm:overworld_tropical_rainforest");
+		var overworldJungleName = new NamespacedString("hgm:overworld_tropical_rainforest");
 		var overworldDesert = new NamespacedString("hgm:overworld_desert");
 		var overworldForest = new NamespacedString("hgm:overworld_forest");
 		var overworldShrubland = new NamespacedString("hgm:overworld_shrubland");
@@ -219,11 +213,6 @@ public sealed class HedgemenContent
 			Details = WorldGeneration.OverworldTaiga.BiomeDetails
 		});
 
-		register.AddKey(overworldTaigaName, () => new OverworldTemperateRainforest
-		{
-			Details = WorldGeneration.OverworldTemperateRainforest.BiomeDetails
-		});
-
 		register.AddKey(overworldTaigaName, () => new OverworldDesert
 		{
 			Details = WorldGeneration.OverworldDesert.BiomeDetails
@@ -244,9 +233,9 @@ public sealed class HedgemenContent
 			Details = WorldGeneration.OverworldGrassland.BiomeDetails
 		});
 
-		register.AddKey(overworldGrasslandName, () => new OverworldTropicalRainforest
+		register.AddKey(overworldGrasslandName, () => new OverworldJungle
 		{
-			Details = WorldGeneration.OverworldTropicalRainforest.BiomeDetails
+			Details = WorldGeneration.OverworldJungle.BiomeDetails
 		});
 
 		PerlinGeneration = register.MakeReference(perlinGenerationName);
@@ -262,8 +251,7 @@ public sealed class HedgemenContent
 		OverworldForest = register.MakeReference(overworldForest);
 		OverworldDesert = register.MakeReference(overworldDesert);
 		OverworldShrubland = register.MakeReference(overworldShrubland);
-		OverworldTemperateRainforest = register.MakeReference(overworldTemperateRainforestName);
-		OverworldTropicalRainforest = register.MakeReference(overworldTropicalRainforestName);
+		OverworldJungle = register.MakeReference(overworldJungleName);
 		OverworldGrassland = register.MakeReference(overworldGrasslandName);
 	}
 
@@ -314,10 +302,10 @@ public sealed class HedgemenContent
 				WorldGeneration.OverworldDesert.BiomeDetails,
 				WorldGeneration.OverworldTundra.BiomeDetails,
 				WorldGeneration.OverworldTaiga.BiomeDetails,
-				WorldGeneration.OverworldForest.BiomeDetails,
 				WorldGeneration.OverworldShrubland.BiomeDetails,
-				WorldGeneration.OverworldTropicalRainforest.BiomeDetails,
-				WorldGeneration.OverworldTemperateRainforest.BiomeDetails
+				WorldGeneration.OverworldForest.BiomeDetails,
+				WorldGeneration.OverworldJungle.BiomeDetails,
+				
 			],
 			DefaultBiome = WorldGeneration.OverworldGrassland.BiomeDetails
 		});

@@ -1,38 +1,54 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "shell",
-            "args": [
-                "build",
-                "Hedgemen.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "group": "build",
-            "presentation": {
-                "reveal": "silent"
-            },
-            "problemMatcher": "$msCompile",
-        },
-
-        {
-            "label": "run",
-            "command": "dotnet",
-            "type": "shell",
-            "args": [
-                "run",
-                "--project",
-                "../Hedgemen.csproj" // cwd affects this arg
-            ],
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceFolder}/Hedgemen/build"
-            }
-        }
-    ]
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build",
+			"command": "dotnet",
+			"type": "shell",
+			"args": [
+				"build",
+				"Hedgemen.csproj",
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
+			],
+			"group": "build",
+			"presentation": {
+				"reveal": "silent"
+			},
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"make_build_directory"
+			]
+		},
+		{
+			"label": "run",
+			"command": "dotnet",
+			"type": "shell",
+			"args": [
+				"run",
+				"--project",
+				"../Hedgemen.csproj"
+			],
+			"problemMatcher": [],
+			"options": {
+				"cwd": "${workspaceFolder}/Hedgemen/build"
+			}
+		},
+		{
+			"label": "make_build_directory",
+			"type": "shell",
+			"linux": {
+				"command": "mkdir -p ./Hedgemen/build"
+			},
+			"windows": {
+				"command": "mkdir \"./Hedgemen/build\""
+			},
+			"osx": {
+				"command": "mkdir -p ./Hedgemen/build"
+			},
+			"problemMatcher": []
+		}
+	]
 }

@@ -48,7 +48,7 @@ public sealed class PetalModList
 	{
 		get;
 		set;
-	} = new();
+	} = [];
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true)]

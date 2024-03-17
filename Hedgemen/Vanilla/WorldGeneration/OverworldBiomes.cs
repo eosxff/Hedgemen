@@ -12,7 +12,7 @@ public sealed class OverworldDesert : Biome
 	public static readonly BiomeDetails BiomeDetails = new()
 	{
 		Name = "Desert",
-		TemperatureRange = new(10.0f, 30.0f),
+		TemperatureRange = new(12.0f, 30.0f),
 		PrecipitationRange = new(0.0f, 125.0f),
 		RequiredTerrainType = TerrainType.Land,
 		BiomeSupplier = () => new OverworldDesert()
@@ -22,28 +22,13 @@ public sealed class OverworldDesert : Biome
 		=> new(253, 209, 77);
 }
 
-public sealed class OverworldForest : Biome
-{
-	public static readonly BiomeDetails BiomeDetails = new()
-	{
-		Name = "Forest",
-		TemperatureRange = new(6.0f, 26.0f),
-		PrecipitationRange = new(100.0f, 220.0f),
-		RequiredTerrainType = TerrainType.Land,
-		BiomeSupplier = () => new OverworldForest()
-	};
-
-	public override Color GetMapPixelColor()
-		=> new(27, 76, 42);
-}
-
 public sealed class OverworldGrassland : Biome
 {
 	public static readonly BiomeDetails BiomeDetails = new()
 	{
 		Name = "Grassland",
-		TemperatureRange = new(-15.0f, 0.0f),
-		PrecipitationRange = new(0.0f, 150.0f),
+		TemperatureRange = new(0.0f, 20.0f),
+		PrecipitationRange = new(0.0f, 200.0f),
 		RequiredTerrainType = TerrainType.Land,
 		BiomeSupplier = () => new OverworldGrassland()
 	};
@@ -54,9 +39,7 @@ public sealed class OverworldGrassland : Biome
 	}
 
 	public override Color GetMapPixelColor()
-	{
-		return new Color(36, 120, 36);
-	}
+		=> new(36, 120, 36);
 
 	public override void ReadData(PersistentData data)
 	{
@@ -70,14 +53,44 @@ public sealed class OverworldShrubland : Biome
 	public static readonly BiomeDetails BiomeDetails = new()
 	{
 		Name = "Shrubland",
-		TemperatureRange = new(-5.0f, 30.0f),
-		PrecipitationRange = new(0.0f, 60.0f),
+		TemperatureRange = new(20.0f, 30.0f),
+		PrecipitationRange = new(50.0f, 250.0f),
 		RequiredTerrainType = TerrainType.Land,
 		BiomeSupplier = () => new OverworldShrubland()
 	};
 
 	public override Color GetMapPixelColor()
-		=> new(155, 186, 61);
+		=> new(72, 131, 47);
+}
+
+public sealed class OverworldJungle : Biome
+{
+	public static readonly BiomeDetails BiomeDetails = new()
+	{
+		Name = "Tropical Rainforest",
+		TemperatureRange = new(15.0f, 30.0f),
+		PrecipitationRange = new(300.0f, 455.0f),
+		RequiredTerrainType = TerrainType.Land,
+		BiomeSupplier = () => new OverworldJungle()
+	};
+
+	public override Color GetMapPixelColor()
+		=> new(72, 131, 47);
+}
+
+public sealed class OverworldForest : Biome
+{
+	public static readonly BiomeDetails BiomeDetails = new()
+	{
+		Name = "Forest",
+		TemperatureRange = new(5.0f, 20.0f),
+		PrecipitationRange = new(250.0f, 350.0f),
+		RequiredTerrainType = TerrainType.Land,
+		BiomeSupplier = () => new OverworldForest()
+	};
+
+	public override Color GetMapPixelColor()
+		=> new(36, 120, 36);
 }
 
 public sealed class OverworldTaiga : Biome
@@ -85,44 +98,14 @@ public sealed class OverworldTaiga : Biome
 	public static readonly BiomeDetails BiomeDetails = new()
 	{
 		Name = "Taiga",
-		TemperatureRange = new(-15.0f, 10.0f),
-		PrecipitationRange = new(20.0f, 220.0f),
+		TemperatureRange = new(-5.0f, 5.0f),
+		PrecipitationRange = new(50.0f, 250.0f),
 		RequiredTerrainType = TerrainType.Land,
 		BiomeSupplier = () => new OverworldTaiga()
 	};
 
 	public override Color GetMapPixelColor()
-		=> Color.DarkGreen;
-}
-
-public sealed class OverworldTemperateRainforest : Biome
-{
-	public static readonly BiomeDetails BiomeDetails = new()
-	{
-		Name = "Temperate Rainforest",
-		TemperatureRange = new(8.0f, 20.0f),
-		PrecipitationRange = new(220.0f, 300.0f),
-		RequiredTerrainType = TerrainType.Land,
-		BiomeSupplier = () => new OverworldTemperateRainforest()
-	};
-
-	public override Color GetMapPixelColor()
-		=> new(81, 189, 59);
-}
-
-public sealed class OverworldTropicalRainforest : Biome
-{
-	public static readonly BiomeDetails BiomeDetails = new()
-	{
-		Name = "Tropical Rainforest",
-		TemperatureRange = new(20.0f, 28.0f),
-		PrecipitationRange = new(320.0f, 420.0f),
-		RequiredTerrainType = TerrainType.Land,
-		BiomeSupplier = () => new OverworldTropicalRainforest()
-	};
-
-	public override Color GetMapPixelColor()
-		=> new(72, 131, 47);
+		=> new(20, 66, 22);
 }
 
 public sealed class OverworldTundra : Biome
@@ -130,8 +113,8 @@ public sealed class OverworldTundra : Biome
     public static readonly BiomeDetails BiomeDetails = new()
     {
         Name = "Tundra",
-        TemperatureRange = new(-15.0f, 4.0f),
-        PrecipitationRange = new(0.0f, 150.0f),
+        TemperatureRange = new(-15.0f, 2.0f),
+        PrecipitationRange = new(0.0f, 200.0f),
         RequiredTerrainType = TerrainType.Land,
         BiomeSupplier = () => new OverworldTundra()
     };
@@ -142,9 +125,7 @@ public sealed class OverworldTundra : Biome
 	}
 
 	public override Color GetMapPixelColor()
-	{
-		return new Color(79, 172, 178);
-	}
+		=> new(168, 230, 226);
 
 	public override void ReadData(PersistentData data)
 	{

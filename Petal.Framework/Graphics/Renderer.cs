@@ -21,7 +21,7 @@ public abstract class Renderer : IDisposable
 	public abstract void Dispose();
 }
 
-public readonly struct RenderData
+public readonly ref struct RenderData
 {
 	public required Texture2D Texture
 	{
@@ -90,7 +90,7 @@ public readonly struct RenderData
 	}
 }
 
-public readonly struct RenderStringData
+public readonly ref struct RenderStringData
 {
 	public required string Text
 	{

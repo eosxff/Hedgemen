@@ -190,9 +190,10 @@ public sealed class Hedgemen : PetalGame
 
 		try
 		{
+			var settings = GameSettings.FromJson(json);
 			Logger.Info($"Using settings from {fileName}.");
 			Logger.LogLevel = oldLogLevel;
-			return GameSettings.FromJson(json);
+			return settings;
 		}
 
 		catch (Exception e)

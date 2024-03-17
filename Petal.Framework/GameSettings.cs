@@ -94,7 +94,6 @@ public struct GameSettings
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(GameSettings))]
-[JsonConverter(typeof(JsonStringEnumConverter))]
 internal partial class GameSettingsJsonTypeInfo : JsonSerializerContext
 {
 

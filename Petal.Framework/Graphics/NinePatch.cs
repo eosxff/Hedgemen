@@ -1,74 +1,60 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
 using Microsoft.Xna.Framework;
 
 namespace Petal.Framework.Graphics;
 
 [Serializable]
-public readonly struct NinePatch
+public readonly ref struct NinePatch
 {
-	public static JsonTypeInfo<NinePatch> JsonTypeInfo
-		=> NinePatchJsonTypeInfo.Default.NinePatch;
-
-	[JsonPropertyName("top_left"), JsonInclude]
 	public required Rectangle TopLeft
 	{
 		get;
 		init;
 	}
 
-	[JsonPropertyName("top"), JsonInclude]
 	public required Rectangle Top
 	{
 		get;
 		init;
 	}
 
-	[JsonPropertyName("top_right"), JsonInclude]
 	public required Rectangle TopRight
 	{
 		get;
 		init;
 	}
 
-	[JsonPropertyName("left"), JsonInclude]
 	public required Rectangle Left
 	{
 		get;
 		init;
 	}
 
-	[JsonPropertyName("center"), JsonInclude]
 	public required Rectangle Center
 	{
 		get;
 		init;
 	}
 
-	[JsonPropertyName("right"), JsonInclude]
 	public required Rectangle Right
 	{
 		get;
 		init;
 	}
 
-	[JsonPropertyName("bottom_left"), JsonInclude]
 	public required Rectangle BottomLeft
 	{
 		get;
 		init;
 	}
 
-	[JsonPropertyName("bottom"), JsonInclude]
 	public required Rectangle Bottom
 	{
 		get;
 		init;
 	}
 
-	[JsonPropertyName("bottom_right"), JsonInclude]
 	public required Rectangle BottomRight
 	{
 		get;
@@ -102,11 +88,4 @@ public readonly struct NinePatch
 		Bottom = new Rectangle(leftX, bottomY, centerWidth, bottomPadding);
 		BottomRight = new Rectangle(rightX, bottomY, rightPadding, bottomPadding);
 	}
-}
-
-[JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(NinePatch))]
-internal partial class NinePatchJsonTypeInfo : JsonSerializerContext
-{
-
 }

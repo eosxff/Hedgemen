@@ -8,7 +8,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Petal.Framework.IO;
-using Petal.Framework.Util;
 using Petal.Framework.Util.Logging;
 
 namespace Petal.Framework.Modding.New;

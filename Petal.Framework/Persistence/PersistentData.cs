@@ -85,7 +85,7 @@ public sealed class PersistentData
 	{
 		get;
 		set;
-	} = new();
+	} = [];
 
 	/// <summary>
 	/// This is only public for serialization purposes. Highly recommended to use static methods or other constructors
@@ -120,7 +120,11 @@ public sealed class PersistentData
 		[NotNullWhen(true), NotNullIfNotNull(nameof(defaultValue))]
 		out TField? field,
 		TField defaultValue = default)
-		=> ReadField(name.FullName, out field);
+	{
+		bool result = ReadField(name.FullName, out TField readValue);
+		field = result ? readValue : defaultValue;
+		return result;
+	}
 
 	public bool ReadField<TField>(
 		string name,

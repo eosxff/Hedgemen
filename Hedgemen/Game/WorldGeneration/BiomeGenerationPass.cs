@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Hgm.Game.CellComponents;
 using Microsoft.Xna.Framework;
@@ -43,6 +42,15 @@ public abstract class BiomeGenerationPass : IGenerationPass
 		OnPrecipitationMapNormalized(precipitationMap, genInfo);
 
 		AddComponentsToMapCells(temperatureMap, precipitationMap, genInfo);
+		OnComponentsAddedToMapCells(temperatureMap, precipitationMap, genInfo);
+	}
+
+	protected virtual void OnComponentsAddedToMapCells(
+		Map<float> temperatureMap,
+		Map<float> precipitationMap,
+		WorldGenerationInfo genInfo)
+	{
+
 	}
 
 	public async Task PerformGenerationStepScenic(Canvas canvas, WorldGenerationInfo genInfo)
@@ -57,7 +65,7 @@ public abstract class BiomeGenerationPass : IGenerationPass
 
 	protected virtual void OnPreTemperaturePrecipitationMapsGenerated(WorldGenerationInfo genInfo)
 	{
-		
+
 	}
 
 	protected virtual void OnPostTemperaturePrecipitationMapsGenerated(
@@ -65,7 +73,7 @@ public abstract class BiomeGenerationPass : IGenerationPass
 		Map<float> precipitationMap,
 		WorldGenerationInfo genInfo)
 	{
-		
+
 	}
 
 	private Map<float> GeneratePrecipitationMap(WorldGenerationInfo genInfo)

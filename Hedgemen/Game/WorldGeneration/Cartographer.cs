@@ -84,6 +84,7 @@ public sealed class Cartographer
 				continue;
 
 			await generationPass.PerformGenerationStepScenic(canvas, genInfo);
+			GC.Collect();
 		}
 
 		var worldMap = new WorldMap(genInfo.Cells);

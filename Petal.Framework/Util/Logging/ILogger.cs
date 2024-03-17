@@ -2,7 +2,7 @@
 
 namespace Petal.Framework.Util.Logging;
 
-public struct LogLevelChangedArgs
+public readonly struct LogLevelChangedArgs
 {
 	public required LogLevel Old
 	{

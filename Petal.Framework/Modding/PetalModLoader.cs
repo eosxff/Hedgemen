@@ -347,7 +347,7 @@ public sealed class ModLoaderSetupContext
 /// <summary>
 /// <see cref="PetalModLoader"/> custom arguments for <see cref="PetalModLoader.Setup"/>.
 /// </summary>
-public readonly struct ModLoaderSetupArgs
+public readonly ref struct ModLoaderSetupArgs
 {
 	/// <summary>
 	/// The game instance the mod loader uses.

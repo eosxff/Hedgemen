@@ -111,7 +111,7 @@ public sealed class CoroutineManager
 			if (coroutine.IsFinished)
 				continue;
 
-			if (coroutine.WaitForCoroutine != null)
+			if (coroutine.WaitForCoroutine is not null)
 			{
 				if (coroutine.WaitForCoroutine.IsFinished)
 					coroutine.WaitForCoroutine = null;
@@ -122,8 +122,7 @@ public sealed class CoroutineManager
 				}
 			}
 
-			if (coroutine.Enumerator.Current is ICoroutineUpdateable updateable &&
-			    !updateable.ShouldFinish())
+			if (coroutine.Enumerator.Current is ICoroutineUpdateable updateable && !updateable.ShouldFinish())
 			{
 				updateable.Update(gameTime);
 				_runningNextFrame.AddLast(coroutine);

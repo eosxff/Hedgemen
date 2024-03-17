@@ -34,4 +34,7 @@ public static class XnaExtensions
 	{
 		return new Vector2Int(self.X, self.Y);
 	}
+
+	public static Vector2 ToVector2(this Point self)
+		=> new(self.X, self.Y);
 }

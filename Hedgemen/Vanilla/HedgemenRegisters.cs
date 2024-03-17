@@ -15,6 +15,7 @@ namespace Hgm.Vanilla;
 /// </summary>
 public sealed class HedgemenRegisters
 {
+	public static readonly NamespacedString DefaultRegisterName = new("hgm:default");
 	public static readonly NamespacedString AssetsRegisterName = new("hgm:assets");
 	public static readonly NamespacedString EntityComponentsRegisterName = new("hgm:entity_components");
 	public static readonly NamespacedString CellComponentsRegisterName = new("hgm:cell_components");
@@ -22,6 +23,16 @@ public sealed class HedgemenRegisters
 	public static readonly NamespacedString CartographersRegisterName = new("hgm:cartographers");
 	public static readonly NamespacedString CampaignsRegisterName = new("hgm:campaigns");
 
+	private Register<object>? _default;
+
+	public Register<object> Default
+	{
+		get
+		{
+			PetalExceptions.ThrowIfNull(_default);
+			return _default;
+		}
+	}
 
 	private Register<object>? _assets;
 
@@ -96,12 +107,23 @@ public sealed class HedgemenRegisters
 	/// <param name="registry">the registry to be registered to</param>
 	public void SetupRegisters(Registry registry)
 	{
+		SetupDefaultRegister(registry);
 		SetupAssetsRegister(registry);
 		SetupEntityComponentsRegister(registry);
 		SetupCellComponentsRegister(registry);
 		SetupGenerationPassesRegister(registry);
 		SetupCartographersRegister(registry);
 		SetupCampaignsRegister(registry);
+	}
+
+	private void SetupDefaultRegister(Registry registry)
+	{
+		_default = new Register<object>(
+			DefaultRegisterName,
+			HedgemenVanilla.ModID,
+			registry);
+
+		AddRegisterToRegistry(_default, registry);
 	}
 
 	private void SetupAssetsRegister(Registry registry)

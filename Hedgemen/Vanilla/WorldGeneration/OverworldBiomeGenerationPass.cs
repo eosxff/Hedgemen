@@ -70,6 +70,9 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 		TerrainType terrainType,
 		WorldGenerationInfo genInfo)
 	{
+		if(cell.HasComponentOf<Biome>())
+			return;
+
 		var selectedBiome = SelectBiomeDetails(temperature, precipitation, terrainType);
 
 		if(selectedBiome is null)
@@ -112,11 +115,18 @@ public sealed class OverworldBiomeGenerationPass : BiomeGenerationPass
 
 			if(temperatureInRange && precipitationInRange && correctTerrainType)
 				return biome;
+
+			// it's not exactly elegant but since the whittaker diagram has a very clear diagonal bias for
+			// precipitation and temperature, if we invert the values that aren't in range of any biome then
+			// we should be able to find one
+			bool inverseTemperatureInRange = InRange(30.0f - temperature, biome.TemperatureRange);
+			bool inversePrecipitationInRange = InRange(455.0f - precipitation, biome.PrecipitationRange);
+
+			if(inverseTemperatureInRange && inversePrecipitationInRange && correctTerrainType)
+				return biome;
 		}
 
-		if(DefaultBiome is not null && DefaultBiome.RequiredTerrainType == terrainType)
-			return DefaultBiome;
-
-		return null;
+		return (DefaultBiome is not null && DefaultBiome.RequiredTerrainType == terrainType)
+			? DefaultBiome : null;
 	}
 }

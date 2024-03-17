@@ -20,10 +20,8 @@ public static class StringExtensions
 		int occurrences = 0;
 
 		foreach (char cFromSpan in span)
-		{
 			occurrences = (cFromSpan == c) ? occurrences + 1 : occurrences;
-		}
-
+			
 		return occurrences;
 	}
 

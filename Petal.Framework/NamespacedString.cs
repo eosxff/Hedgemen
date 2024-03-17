@@ -39,7 +39,7 @@ public struct NamespacedString
 			return false;
 
 		bool correctColonOccurrences = str.Occurrences(':') == 1;
-		bool noSpaceOccurrences = str.Occurrences(' ') == 0;
+		bool noSpaceOccurrences = !str.Contains(' ');
 		bool hasMinimumThreeCharacters = str.Length >= 3; // "_:_"
 
 		return correctColonOccurrences && noSpaceOccurrences && hasMinimumThreeCharacters;
@@ -57,10 +57,14 @@ public struct NamespacedString
 		if (!IsValidQualifiedString(fullyQualifiedString))
 			throw new ArgumentException($"String '{fullyQualifiedString}' is not a valid namespaced string!");
 
-		string[] fullyQualifiedStringSplit = fullyQualifiedString.Split(':');
+		int colonIndex = fullyQualifiedString.IndexOf(':');
+		_namespace = fullyQualifiedString[.. colonIndex];
+		_name = fullyQualifiedString[colonIndex ..];
+	}
 
-		_namespace = fullyQualifiedStringSplit[0];
-		_name = fullyQualifiedStringSplit[1];
+	public NamespacedString(NamespacedString other) : this(other.Namespace, other.Name)
+	{
+
 	}
 
 	public NamespacedString(string @namespace, string name)

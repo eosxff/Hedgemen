@@ -4,6 +4,7 @@ using System.IO;
 using Petal.Framework;
 using Petal.Framework.Modding;
 using Petal.Framework.Modding.New;
+using Petal.Framework.Persistence;
 
 namespace Hgm.Vanilla;
 
@@ -36,6 +37,15 @@ public sealed class HedgemenDebugMod : PetalEmbeddedMod
 			ProxyDirectory = new DirectoryInfo("mods"),
 			ProxyManifestFileName = "proxy.json"
 		});*/
+		var typeInfo = JsonManifest.SupportedTypes;
+
+		var jsonManifest = new JsonManifest();
+		jsonManifest.WriteType("hgm:strength", 10, typeInfo.Int32);
+		jsonManifest.WriteType("hgm:dexterity", 1025, typeInfo.Int32);
+
+		Console.WriteLine(jsonManifest.ReadType("hgm:strength", typeInfo.Int32));
+
+		PetalGame.Petal.Logger.Debug($"JsonManifest: {jsonManifest}.");
 	}
 
 	public override PetalModManifest GetEmbeddedManifest()

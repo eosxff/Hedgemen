@@ -4,7 +4,7 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace Petal.Framework.Assets;
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<AssetType>))]
 public enum AssetType
 {
 	None,
@@ -23,6 +23,7 @@ public static class AssetTypeExtensions
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(AssetType))]
+[JsonConverter(typeof(JsonStringEnumConverter<AssetType>))]
 internal partial class AssetTypeJsonTypeInfo : JsonSerializerContext
 {
 

@@ -1,5 +1,4 @@
 using Hgm.Game.CellComponents;
-using Hgm.Vanilla.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Petal.Framework.EC;
 using Petal.Framework.Persistence;
