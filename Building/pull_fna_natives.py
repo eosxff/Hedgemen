@@ -17,6 +17,9 @@ natives_directory=f'{cwd}/natives'
 def copy_file(src, dst):
 	shutil.copy(f'{temporary_directory}/{src}', f'{natives_directory}/{dst}')
 
+os.rmdir(natives_directory)
+os.rmdir(temporary_directory)
+
 archive_url='https://fna.flibitijibibo.com/archive/fnalibs.tar.bz2'
 archive_download_file=f'{temporary_directory}/fna_natives.tar.bz2'
 
@@ -29,24 +32,28 @@ archive = tarfile.open(archive_download_file)
 archive.extractall(path=temporary_directory)
 archive.close()
 
+# make the natives directory
 Path(natives_directory).mkdir(parents=True, exist_ok=True)
 shutil.copytree(src=f'{temporary_directory}/vulkan', dst=f'{natives_directory}/vulkan', dirs_exist_ok=True)
 
+# windows x64 files
 copy_file('x64/FAudio.dll', 'FAudio.dll')
 copy_file('x64/FNA3D.dll', 'FNA3D.dll')
 copy_file('x64/libtheorafile.dll', 'libtheorafile.dll')
 copy_file('x64/SDL2.dll', 'SDL2.dll')
 
+# osx files
 copy_file('osx/libFAudio.0.dylib', 'libFAudio.dylib')
 copy_file('osx/libFNA3D.0.dylib', 'libFNA3D.dylib')
 copy_file('osx/libtheorafile.dylib', 'libtheorafile.dylib')
 copy_file('osx/libSDL2-2.0.0.dylib', 'libSDL2.dylib')
 copy_file('osx/libvulkan.1.dylib', 'libvulkan.dylib')
 
+# linux x64 files
 copy_file('lib64/libFAudio.so.0', 'libFAudio.so')
 copy_file('lib64/libFNA3D.so.0', 'libFNA3D.so')
 copy_file('lib64/libtheorafile.so', 'libtheorafile.so')
 copy_file('lib64/libSDL2-2.0.so.0', 'libSDL2.so')
 
+# remove temporary directory
 shutil.rmtree(temporary_directory, ignore_errors=True)
-#shutil.rmtree(natives_directory, ignore_errors=False)
